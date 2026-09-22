@@ -1,4 +1,4 @@
-# tdspy — Time Delay Stability for Python
+# pyTDS — Time Delay Stability for Python
 
 A clean, general-purpose Python implementation of the **Time Delay Stability (TDS)** algorithm.
 
