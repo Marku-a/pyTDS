@@ -68,6 +68,7 @@ params = TDSParams(
     stability_window=5,   # points assessed together
     stability_min=4,      # min points that must agree
     tolerance=1,          # allowed deviation ±1 sample
+    stability_anchor="any", # "any" (default, look-ahead) or "end" (causal)
 )
 
 result = tdspy.tds(s1, s2, params)
@@ -90,6 +91,7 @@ All algorithm parameters in one place. Pass a single instance through all functi
 | `stability_min` | `4` | Minimum points within tolerance to call stable (out of `stability_window`) |
 | `tolerance` | `1` | Allowed deviation in τ₀ to still count as "same lag" (±samples) |
 | `window_anchor` | `"center"` | Where to stamp each `t_vec` timestamp: `"center"` = window midpoint (`start + L//2`); `"end"` = last sample of window — the earliest moment the result could be known in real time |
+| `stability_anchor` | `"any"` | Which points inside a stable window get labeled: `"any"` (default) = original Bashan et al. definition, **uses look-ahead**; `"end"` = causal, only the window's last point — safe for real-time / walk-forward use |
 | `n_surrogates` | `1000` | Number of surrogate subjects for null distribution |
 | `alpha` | `0.05` | Significance level — threshold = (1−α) percentile of null scores |
 
@@ -117,6 +119,16 @@ Step 1 only. Returns the raw time delay series without stability labeling.
 #### `stable_label(tau, params=None) → ndarray`
 
 Step 2 only. Takes a τ₀ series and returns binary stability labels.
+
+**Warning — look-ahead by default.** With the default `stability_anchor="any"`,
+labeling is non-causal: the label at index `j` depends on τ₀ values up to
+`j + stability_window - 1` (4 future windows at the default
+`stability_window=5`) — only the final element of the series is causal. For
+real-time or walk-forward/backtest use, pass `TDSParams(stability_anchor="end")`,
+which guarantees `stable_label(tau)[:k] == stable_label(tau[:k])`, zeroes the
+first `stability_window - 1` labels (warm-up), and yields scores no higher
+than `"any"` (its labels are always a subset). Note that `window_anchor="end"` alone
+does **not** make labels causal — both flags are needed together.
 
 #### `tds_score(stbl_lbl) → float`
 
