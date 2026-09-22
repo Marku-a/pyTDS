@@ -110,6 +110,111 @@ def test_tds_params_configurable():
     assert 0.0 <= r2["score"] <= 100.0
 
 
+# ── stability_anchor / causality ───────────────────────────────────────────────
+
+def test_stable_label_default_regression_exact_labels():
+    """Default ("any") stability_anchor reproduces the original exact labels."""
+    tau = np.array([0, 5, 5, 5, 5, 5, 9, 9, 9], dtype=float)
+    np.testing.assert_array_equal(
+        stable_label(tau), np.array([0, 1, 1, 1, 1, 1, 0, 0, 0])
+    )
+
+def test_stable_label_default_anchor_is_non_causal():
+    """Default ("any") anchor is look-ahead: label at index 1 flips once
+    future data (indices 2..5) arrive."""
+    tau = np.array([0, 5, 5, 5, 5, 5, 9, 9, 9], dtype=float)
+    assert stable_label(tau)[1] == 1
+    assert stable_label(tau[:2])[1] == 0
+
+def test_stable_label_end_anchor_prefix_invariance():
+    """"end" anchor guarantees stable_label(tau)[:k] == stable_label(tau[:k])."""
+    rng = np.random.default_rng(1234)
+    tau = rng.integers(-4, 5, size=80).astype(float)
+    p = TDSParams(stability_anchor="end")
+    full = stable_label(tau, p)
+    for k in range(len(tau) + 1):
+        np.testing.assert_array_equal(full[:k], stable_label(tau[:k], p))
+
+def test_stable_label_end_anchor_prefix_invariance_with_nans():
+    """Same prefix-invariance guarantee holds with NaN and sentinel values
+    present (covers the skip branch)."""
+    rng = np.random.default_rng(4321)
+    tau = rng.integers(-4, 5, size=80).astype(float)
+    max_lag = TDSParams().max_lag
+    tau[3] = np.nan
+    tau[17] = np.nan
+    tau[40] = max_lag + 1  # sentinel: outside valid range
+    tau[65] = np.nan
+    p = TDSParams(stability_anchor="end")
+    full = stable_label(tau, p)
+    for k in range(len(tau) + 1):
+        np.testing.assert_array_equal(full[:k], stable_label(tau[:k], p))
+
+def test_stable_label_end_anchor_prefix_invariance_nondefault_params():
+    """Prefix invariance holds for non-default stability_window/min/tolerance."""
+    rng = np.random.default_rng(99)
+    tau = rng.integers(-4, 5, size=80).astype(float)
+    p = TDSParams(
+        stability_anchor="end", stability_window=7, stability_min=5, tolerance=2
+    )
+    full = stable_label(tau, p)
+    for k in range(len(tau) + 1):
+        np.testing.assert_array_equal(full[:k], stable_label(tau[:k], p))
+
+def test_stable_label_end_anchor_is_subset_of_any():
+    """"end" labels are always a subset of "any" labels."""
+    rng = np.random.default_rng(2024)
+    tau = rng.integers(-4, 5, size=80).astype(float)
+    any_ = stable_label(tau, TDSParams(stability_anchor="any"))
+    end = stable_label(tau, TDSParams(stability_anchor="end"))
+    assert np.all(end <= any_)
+
+    # Strict subset on the fixed regression series (avoid a flaky
+    # strict-inequality assertion on the random series above).
+    tau_fixed = np.array([0, 5, 5, 5, 5, 5, 9, 9, 9], dtype=float)
+    any_fixed = stable_label(tau_fixed, TDSParams(stability_anchor="any"))
+    end_fixed = stable_label(tau_fixed, TDSParams(stability_anchor="end"))
+    assert np.sum(end_fixed) < np.sum(any_fixed)
+
+def test_stable_label_end_anchor_warmup_is_zero():
+    """First stability_window - 1 labels are always 0 in "end" mode."""
+    rng = np.random.default_rng(55)
+    tau = rng.integers(-4, 5, size=40).astype(float)
+    p = TDSParams(stability_anchor="end")
+    lbl = stable_label(tau, p)
+    assert np.all(lbl[: p.stability_window - 1] == 0)
+
+def test_stable_label_invalid_stability_anchor_raises():
+    """Post-construction mutation of stability_anchor is caught at call time."""
+    tau = np.array([0, 5, 5, 5, 5, 5, 9, 9, 9], dtype=float)
+    p = TDSParams()
+    p.stability_anchor = "last"
+    with pytest.raises(ValueError):
+        stable_label(tau, p)
+
+def test_tds_params_invalid_stability_anchor_raises():
+    with pytest.raises(ValueError):
+        TDSParams(stability_anchor="Last")
+
+def test_tds_params_invalid_window_anchor_raises():
+    with pytest.raises(ValueError):
+        TDSParams(window_anchor="middle")
+
+def test_tds_threads_stability_anchor():
+    """tds() forwards stability_anchor through to stable_label()/score."""
+    rng = np.random.default_rng(6)
+    N = 600
+    s1, s2 = rng.standard_normal(N), rng.standard_normal(N)
+    r_any = tds(s1, s2)
+    r_end = tds(s1, s2, TDSParams(stability_anchor="end"))
+    assert np.all(r_end["stbl_lbl"] <= r_any["stbl_lbl"])
+    assert r_end["score"] <= r_any["score"]
+    np.testing.assert_array_equal(
+        r_end["stbl_lbl"],
+        stable_label(r_end["tau"], TDSParams(stability_anchor="end")),
+    )
+
+
 # ── Benchmark: reproduce Ronny's TDS = 43.6% ──────────────────────────────────
 
 def load_ronny_data():

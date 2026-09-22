@@ -7,7 +7,7 @@ Core TDS algorithm — 3 steps:
 """
 
 import numpy as np
-from .params import TDSParams
+from .params import TDSParams, VALID_STABILITY_ANCHORS
 from .utils import zscore, pbc_xcorr
 
 
@@ -95,6 +95,21 @@ def stable_label(
     tried as a candidate delay. If at least stability_min points fall within
     ±tolerance of it, those points are marked stable. Output length = len(tau).
 
+    Which points within a winning window get labeled is controlled by
+    ``params.stability_anchor`` (see ``TDSParams.stability_anchor``):
+
+    - ``"any"`` (default): non-causal / look-ahead. A label at index ``j``
+      may be set by any window start in ``[j - stability_window + 1, j]``,
+      so it depends on future tau values up to ``j + stability_window - 1``.
+      Matches the published offline definition (Bashan et al. 2012). Not
+      safe for walk-forward backtests or real-time use.
+    - ``"end"``: causal. Only index ``i + stability_window - 1`` of each
+      window is writable, and only if that point is within ``tolerance`` of
+      the winning candidate. Guarantee: ``stable_label(tau, p)[:k] ==
+      stable_label(tau[:k], p)`` for every ``k``. The first
+      ``stability_window - 1`` labels are always 0. Labels are always a
+      subset of the ``"any"`` labels.
+
     Parameters
     ----------
     tau : np.ndarray
@@ -108,6 +123,13 @@ def stable_label(
     """
     if params is None:
         params = TDSParams()
+
+    anchor = params.stability_anchor
+    if anchor not in VALID_STABILITY_ANCHORS:
+        raise ValueError(
+            f"stability_anchor must be one of {VALID_STABILITY_ANCHORS}, "
+            f"got {anchor!r}"
+        )
 
     N = len(tau)
     win = params.stability_window      # default 5
@@ -127,8 +149,12 @@ def stable_label(
         for d in np.unique(seg):
             in_range = np.abs(seg - d) <= tol
             if np.sum(in_range) >= min_stable:
-                indices = np.where(in_range)[0] + i
-                stbl_lbl[indices] = 1
+                if anchor == "end":
+                    if in_range[-1]:
+                        stbl_lbl[i + win - 1] = 1
+                else:
+                    indices = np.where(in_range)[0] + i
+                    stbl_lbl[indices] = 1
                 break
 
     return stbl_lbl
@@ -176,6 +202,9 @@ def tds(
         'cmax'      : ndarray — peak cross-correlation per window
         'stbl_lbl'  : ndarray — binary stable/unstable labels
         'stable_taus': ndarray — τ₀ values at stable points only
+
+    'stbl_lbl' and 'score' honour params.stability_anchor (see
+    TDSParams.stability_anchor and stable_label()).
     """
     if params is None:
         params = TDSParams()
