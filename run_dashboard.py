@@ -1,5 +1,5 @@
 """
-TDSPY Test Dashboard
+pyTDS Test Dashboard
 ====================
 Runs the full test suite and writes results to an Excel spreadsheet.
 
@@ -112,7 +112,7 @@ def write_excel(results, out_path):
     # ── Title row ─────────────────────────────────────────────────────────────
     ws.merge_cells("A1:E1")
     c = ws["A1"]
-    c.value = f"TDSPY — Test Dashboard   |   {now}"
+    c.value = f"pyTDS — Test Dashboard   |   {now}"
     c.fill   = HEADER_FILL
     c.font   = Font(color="FFFFFF", bold=True, size=13)
     c.alignment = Alignment(horizontal="center", vertical="center")

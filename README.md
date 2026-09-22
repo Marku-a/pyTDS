@@ -35,8 +35,8 @@ TDS = (number of stable points / total points) × 100   →   [0%, 100%]
 ## Installation
 
 ```bash
-git clone https://github.com/Marku-a/tdspy.git
-cd tdspy
+git clone https://github.com/Marku-a/pyTDS.git
+cd pyTDS
 pip install -e .
 ```
 
@@ -299,7 +299,7 @@ The dashboard saves a timestamped `.xlsx` file showing every test — green for 
 ## Project Structure
 
 ```
-tdspy/
+pyTDS/
 ├── tdspy/
 │   ├── __init__.py       # public API exports
 │   ├── params.py         # TDSParams dataclass
