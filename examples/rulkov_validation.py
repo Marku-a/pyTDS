@@ -1,7 +1,7 @@
 """
 Rulkov Oscillator Validation
 ============================
-Validates the tdspy core algorithm on synthetic coupled chaotic oscillators
+Validates the pyTDS core algorithm on synthetic coupled chaotic oscillators
 where the ground-truth time delay is known exactly.
 
 The Rulkov map (Rulkov 2001) is a 2D discrete-time model of a spiking/bursting
@@ -25,8 +25,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import numpy as np
 import matplotlib.pyplot as plt
-import tdspy
-from tdspy.params import TDSParams
+import pyTDS
+from pyTDS.params import TDSParams
 
 
 # ── Rulkov map ─────────────────────────────────────────────────────────────────
@@ -110,7 +110,7 @@ def coupled_rulkov_with_delay(n, mu, alpha, sigma, beta, sigma_e, g, delay):
 
 def run_validation():
     print("=" * 55)
-    print("  tdspy — Rulkov Oscillator Validation")
+    print("  pyTDS — Rulkov Oscillator Validation")
     print("=" * 55)
 
     # Parameters from Asaf's thesis
@@ -130,7 +130,7 @@ def run_validation():
     x1, x2 = coupled_rulkov_with_delay(
         n, mu, alpha, sigma, beta, sigma_e, g_coupled, tau_true
     )
-    result_coupled = tdspy.tds(x1, x2, params)
+    result_coupled = pyTDS.tds(x1, x2, params)
     score_c = result_coupled["score"]
     tau_stable = result_coupled["stable_taus"]
     detected_delay = int(np.round(np.median(tau_stable))) if len(tau_stable) > 0 else None
@@ -149,7 +149,7 @@ def run_validation():
     x1r, x2r = coupled_rulkov_with_delay(
         n, mu, alpha, sigma, beta, sigma_e, g=0.0, delay=tau_true
     )
-    result_rulkov_unc = tdspy.tds(x1r, x2r, params)
+    result_rulkov_unc = pyTDS.tds(x1r, x2r, params)
     score_r = result_rulkov_unc["score"]
     print(f"   TDS score    : {score_r:.1f}%  (small but non-zero — same oscillator type)")
 
@@ -160,7 +160,7 @@ def run_validation():
     rng = np.random.default_rng(0)
     x1n = rng.standard_normal(n)
     x2n = rng.standard_normal(n)
-    result_noise = tdspy.tds(x1n, x2n, params)
+    result_noise = pyTDS.tds(x1n, x2n, params)
     score_n = result_noise["score"]
     print(f"   TDS score    : {score_n:.1f}%  (expected exactly 0.0%)")
 
@@ -188,9 +188,9 @@ def run_validation():
 
     # ── Plot ─────────────────────────────────────────────────────────────────
     fig, axes = plt.subplots(3, 2, figsize=(14, 12))
-    fig.suptitle("tdspy — Rulkov Oscillator Validation", fontsize=13, fontweight='bold')
+    fig.suptitle("pyTDS — Rulkov Oscillator Validation", fontsize=13, fontweight='bold')
 
-    from tdspy.viz import plot_tau_series
+    from pyTDS.viz import plot_tau_series
     t = np.arange(n)
 
     # Row 1: Coupled

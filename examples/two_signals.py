@@ -1,7 +1,7 @@
 """
 Minimal two-signal TDS demo
 ============================
-Shows the simplest possible usage of tdspy on two synthetic signals
+Shows the simplest possible usage of pyTDS on two synthetic signals
 with a known time delay.
 
 Scenario
@@ -20,9 +20,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import numpy as np
 import matplotlib.pyplot as plt
-import tdspy
-from tdspy.params import TDSParams
-from tdspy.viz import plot_tau_series
+import pyTDS
+from pyTDS.params import TDSParams
+from pyTDS.viz import plot_tau_series
 
 # ── Generate synthetic signals ─────────────────────────────────────────────────
 rng = np.random.default_rng(0)
@@ -37,7 +37,7 @@ s2 = np.roll(s1, TRUE_DELAY) + 0.3 * rng.standard_normal(T)  # delay s2 by 8
 
 # ── Run TDS ────────────────────────────────────────────────────────────────────
 params = TDSParams(window=60, overlap=30, max_lag=30)
-result = tdspy.tds(s1, s2, params)
+result = pyTDS.tds(s1, s2, params)
 
 score        = result["score"]
 tau          = result["tau"]
@@ -48,7 +48,7 @@ stable_taus  = result["stable_taus"]
 detected_lag = int(np.round(np.median(stable_taus))) if len(stable_taus) > 0 else None
 
 print("=" * 50)
-print("  tdspy — Two-Signal Minimal Demo")
+print("  pyTDS — Two-Signal Minimal Demo")
 print("=" * 50)
 print(f"  True delay      : {TRUE_DELAY}  (s1 leads s2)")
 print(f"  Expected lag    : -{TRUE_DELAY}  (negative = s1 leads)")
@@ -58,7 +58,7 @@ print("=" * 50)
 
 # ── Plot ───────────────────────────────────────────────────────────────────────
 fig, axes = plt.subplots(1, 2, figsize=(14, 4))
-fig.suptitle("tdspy — Two-Signal Demo", fontsize=13, fontweight='bold')
+fig.suptitle("pyTDS — Two-Signal Demo", fontsize=13, fontweight='bold')
 
 # Raw signals
 axes[0].plot(t[:200], s1[:200], color='steelblue', lw=1.0, label='s1')

@@ -47,11 +47,11 @@ pip install -e .
 ## Quick Start
 
 ```python
-import tdspy
-from tdspy.params import TDSParams
+import pyTDS
+from pyTDS.params import TDSParams
 
 # Two signals of equal length
-result = tdspy.tds(s1, s2)
+result = pyTDS.tds(s1, s2)
 
 print(result["score"])        # TDS score in [0, 100]
 print(result["tau"])          # time delay series τ₀(t)
@@ -71,7 +71,7 @@ params = TDSParams(
     stability_anchor="any", # "any" (default, look-ahead) or "end" (causal)
 )
 
-result = tdspy.tds(s1, s2, params)
+result = pyTDS.tds(s1, s2, params)
 ```
 
 ---
@@ -97,7 +97,7 @@ All algorithm parameters in one place. Pass a single instance through all functi
 
 ---
 
-### `tdspy.core` — Core Algorithm
+### `pyTDS.core` — Core Algorithm
 
 #### `tds(s1, s2, params=None) → dict`
 
@@ -136,7 +136,7 @@ Step 3 only. Computes the TDS score from a binary label array.
 
 ---
 
-### `tdspy.network` — Physiological Networks
+### `pyTDS.network` — Physiological Networks
 
 Build interaction networks from a set of N signals.
 
@@ -147,7 +147,7 @@ Element `[i, j]` is the TDS score between signal i and signal j.
 
 ```python
 import numpy as np
-from tdspy.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
+from pyTDS.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
 
 signals = np.column_stack([hr, spo2, thorax, abdomen])  # shape (T, 4)
 mat = tds_matrix(signals, params)
@@ -178,7 +178,7 @@ G = to_networkx(adj, tds_mat=mat, labels=labels)
 
 ---
 
-### `tdspy.surrogate` — Significance Testing
+### `pyTDS.surrogate` — Significance Testing
 
 Build a null TDS distribution using cross-subject surrogate mixing.
 
@@ -205,7 +205,7 @@ threshold = significance_threshold(null_scores, params)
 
 ---
 
-### `tdspy.viz` — Visualization
+### `pyTDS.viz` — Visualization
 
 #### `plot_tau_series(tau, t_vec, stbl_lbl=None, title="", ax=None)`
 
@@ -228,11 +228,11 @@ Edge thickness and colour represent TDS link strength.
 
 ```python
 import numpy as np
-import tdspy
-from tdspy.params import TDSParams
-from tdspy.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
-from tdspy.surrogate import surrogate_tds, significance_threshold
-from tdspy.viz import plot_tds_matrix, plot_network
+import pyTDS
+from pyTDS.params import TDSParams
+from pyTDS.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
+from pyTDS.surrogate import surrogate_tds, significance_threshold
+from pyTDS.viz import plot_tds_matrix, plot_network
 
 # signals shape: (T, N) — one column per physiological signal
 signals = np.load("patient_signals.npy")
@@ -300,7 +300,7 @@ The dashboard saves a timestamped `.xlsx` file showing every test — green for 
 
 ```
 pyTDS/
-├── tdspy/
+├── pyTDS/
 │   ├── __init__.py       # public API exports
 │   ├── params.py         # TDSParams dataclass
 │   ├── core.py           # core algorithm (steps 1–3)

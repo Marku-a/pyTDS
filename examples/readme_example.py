@@ -30,11 +30,11 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-import tdspy
-from tdspy.params import TDSParams
-from tdspy.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
-from tdspy.surrogate import surrogate_tds, significance_threshold
-from tdspy.viz import plot_tds_matrix, plot_network
+import pyTDS
+from pyTDS.params import TDSParams
+from pyTDS.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
+from pyTDS.surrogate import surrogate_tds, significance_threshold
+from pyTDS.viz import plot_tds_matrix, plot_network
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__))

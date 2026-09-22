@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Does
 
-**tdspy** is a Python implementation of the Time Delay Stability (TDS) algorithm — a method for detecting whether two time-series signals maintain a stable fixed time delay, indicating stable coupling. Developed for physiological network analysis (EEG, heart rate, SpO2) based on Bashan et al. (Nature Communications 2012) and Bartsch et al. (PLoS ONE 2015).
+**pyTDS** is a Python implementation of the Time Delay Stability (TDS) algorithm — a method for detecting whether two time-series signals maintain a stable fixed time delay, indicating stable coupling. Developed for physiological network analysis (EEG, heart rate, SpO2) based on Bashan et al. (Nature Communications 2012) and Bartsch et al. (PLoS ONE 2015).
 
 ## Commands
 
@@ -22,7 +22,7 @@ python -m pytest tests/test_core.py
 python -m pytest tests/test_core.py::test_tds_score_basic
 
 # Run tests with coverage
-python -m pytest tests/ --cov=tdspy
+python -m pytest tests/ --cov=pyTDS
 
 # Generate Excel test dashboard report (timestamped .xlsx in "tests reports/")
 python run_dashboard.py

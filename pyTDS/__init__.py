@@ -1,5 +1,5 @@
 """
-tdspy — Time Delay Stability (TDS) library
+pyTDS — Time Delay Stability (TDS) library
 ==========================================
 General-purpose algorithm for detecting stable coupling between time-series signals.
 
@@ -12,8 +12,8 @@ Python port and generalization by Asaf Markuza.
 
 Quick start
 -----------
->>> import tdspy
->>> result = tdspy.tds(s1, s2)
+>>> import pyTDS
+>>> result = pyTDS.tds(s1, s2)
 >>> print(result['score'])   # TDS % in [0, 100]
 """
 

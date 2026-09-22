@@ -1,5 +1,5 @@
 """
-Tests for tdspy.surrogate — surrogate TDS null distribution and significance threshold.
+Tests for pyTDS.surrogate — surrogate TDS null distribution and significance threshold.
 """
 
 import numpy as np
@@ -9,8 +9,8 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from tdspy.params import TDSParams
-from tdspy.surrogate import build_surrogate_subject, surrogate_tds, significance_threshold
+from pyTDS.params import TDSParams
+from pyTDS.surrogate import build_surrogate_subject, surrogate_tds, significance_threshold
 
 
 # ── build_surrogate_subject ────────────────────────────────────────────────────
@@ -170,7 +170,7 @@ def test_significance_threshold_coupled_above_uncoupled_below():
     threshold = significance_threshold(null, params)
 
     # Uncoupled random pair should be near threshold (mostly below)
-    from tdspy.core import tds
+    from pyTDS.core import tds
     s1 = rng.standard_normal(T)
     s2 = rng.standard_normal(T)
     result = tds(s1, s2, params)

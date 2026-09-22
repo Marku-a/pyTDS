@@ -1,5 +1,5 @@
 """
-Tests for tdspy.network — TDS matrix, thresholding, and networkx conversion.
+Tests for pyTDS.network — TDS matrix, thresholding, and networkx conversion.
 """
 
 import numpy as np
@@ -9,8 +9,8 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from tdspy.params import TDSParams
-from tdspy.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
+from pyTDS.params import TDSParams
+from pyTDS.network import tds_matrix, fix_symmetry, apply_threshold, to_networkx
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────

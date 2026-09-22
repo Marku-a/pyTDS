@@ -1,5 +1,5 @@
 """
-Tests for tdspy.core — includes the 43.6% benchmark from Ronny's original data.
+Tests for pyTDS.core — includes the 43.6% benchmark from Ronny's original data.
 """
 
 import numpy as np
@@ -9,9 +9,9 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from tdspy.params import TDSParams
-from tdspy.utils import zscore, pbc_xcorr
-from tdspy.core import time_delay_interaction, stable_label, tds_score, tds
+from pyTDS.params import TDSParams
+from pyTDS.utils import zscore, pbc_xcorr
+from pyTDS.core import time_delay_interaction, stable_label, tds_score, tds
 
 
 # ── Utility tests ──────────────────────────────────────────────────────────────
