@@ -18,7 +18,7 @@ A **low TDS score** means the relationship is erratic or non-existent.
 
 **Step 1 — Sliding-window cross-correlation → τ₀(t)**
 
-For each window of length `L`, compute the circular (PBC) cross-correlation between the two segments. The lag at the peak correlation is τ₀ — the dominant time delay at that moment.
+For each window of length `L`, compute the circular (PBC) cross-correlation between the two segments. The lag at the peak correlation is τ₀ — the dominant time delay at that moment. Sign convention: negative τ₀ means `s1` leads `s2`, positive τ₀ means `s2` leads `s1`.
 
 **Step 2 — Stable labeling**
 
@@ -106,7 +106,7 @@ Full TDS pipeline. Returns a dictionary with:
 | Key | Type | Description |
 |-----|------|-------------|
 | `score` | `float` | TDS score ∈ [0, 100] |
-| `tau` | `ndarray` | Time delay series τ₀(t) |
+| `tau` | `ndarray` | Time delay series τ₀(t), in samples. **τ < 0 → `s1` leads `s2`; τ > 0 → `s2` leads `s1`** |
 | `t_vec` | `ndarray` | Window centre timestamps |
 | `cmax` | `ndarray` | Peak cross-correlation per window |
 | `stbl_lbl` | `ndarray` | Binary stable (1) / unstable (0) labels |
