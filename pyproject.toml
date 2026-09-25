@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyTDS"
-version = "0.2.0"
+version = "0.2.1"
 description = "Time Delay Stability (TDS) — general-purpose signal coupling analysis"
 readme = "README.md"
 requires-python = ">=3.10"

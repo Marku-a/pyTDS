@@ -43,12 +43,14 @@ def pbc_xcorr(seg1: np.ndarray, seg2: np.ndarray, max_lag: int) -> tuple[np.ndar
     seg2 : np.ndarray
         Second signal segment (already z-scored), same length as seg1.
     max_lag : int
-        Maximum lag to return (returns lags from -max_lag to +max_lag).
+        Maximum lag to return (returns lags from -max_lag to +max_lag),
+        subject to the aliasing limit described below.
 
     Returns
     -------
     lags : np.ndarray
-        Array of lag values: [-max_lag, ..., 0, ..., +max_lag].
+        Array of lag values: [-m, ..., 0, ..., +m] where
+        ``m = min(max_lag, (N - 1) // 2)``.
     C : np.ndarray
         Normalized cross-correlation values at each lag.
 
@@ -58,8 +60,22 @@ def pbc_xcorr(seg1: np.ndarray, seg2: np.ndarray, max_lag: int) -> tuple[np.ndar
     seg1 LEADS seg2 (seg2[i] ~= seg1[i - D] gives a peak at k = -D); the
     peak occurs at k > 0 when seg2 leads seg1. Swapping the two arguments
     flips the sign of the detected lag.
+
+    Aliasing
+    --------
+    Under periodic boundary conditions a circular shift by k is
+    indistinguishable from a shift by k - N, so lags with |k| > (N - 1) // 2
+    alias onto the opposite sign (e.g. for even N, +N/2 and -N/2 are the
+    exact same circular shift). To keep the returned lags unambiguous,
+    ``pbc_xcorr`` only returns |k| <= (N - 1) // 2, even if ``max_lag`` is
+    larger. Callers that rely on a fixed ``2 * max_lag + 1``-length output
+    should account for this.
     """
     N = len(seg1)
+
+    # Effective max lag: cap at (N - 1) // 2 to avoid returning the same
+    # circular shift twice under two different signs (see "Aliasing" above).
+    m = min(max_lag, (N - 1) // 2)
 
     # FFT-based circular cross-correlation
     # C[k] = sum_i seg1[(i + k) % N] * seg2[i]  (periodic shift)
@@ -71,12 +87,12 @@ def pbc_xcorr(seg1: np.ndarray, seg2: np.ndarray, max_lag: int) -> tuple[np.ndar
     xc_full /= N
 
     # Rearrange: FFT output has positive lags first, then negative lags
-    # Positive lags: xc_full[0 .. max_lag]
-    # Negative lags: xc_full[N-max_lag .. N-1]  (wrap-around)
-    pos = xc_full[:max_lag + 1]           # lags 0 .. +max_lag
-    neg = xc_full[N - max_lag: N]         # lags -max_lag .. -1
+    # Positive lags: xc_full[0 .. m]
+    # Negative lags: xc_full[N-m .. N-1]  (wrap-around)
+    pos = xc_full[:m + 1]           # lags 0 .. +m
+    neg = xc_full[N - m: N]         # lags -m .. -1
 
-    lags = np.concatenate([np.arange(-max_lag, 0), np.arange(0, max_lag + 1)])
+    lags = np.concatenate([np.arange(-m, 0), np.arange(0, m + 1)])
     C = np.concatenate([neg, pos])
 
     return lags, C

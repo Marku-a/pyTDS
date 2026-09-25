@@ -25,7 +25,11 @@ class TDSParams:
         Step size between windows in samples. Default 30 (50% overlap).
     max_lag : int
         Maximum cross-correlation lag to search, in samples (±max_lag).
-        Default 30.
+        Default 30. Under periodic boundary conditions, lags with
+        |k| > (window - 1) // 2 alias onto the opposite sign, so the
+        effective max lag actually searched is
+        ``min(max_lag, (window - 1) // 2)`` (see ``pbc_xcorr``). With the
+        defaults (window=60, max_lag=30) the effective max lag is 29.
     stability_window : int
         Number of consecutive τ₀ points assessed for stability. Default 5.
     stability_min : int

@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.2.1] - 2026-09-25
+
+### Fixed
+
+- **`pbc_xcorr()` aliased lag at `max_lag >= window / 2` (the defaults).**
+  Under periodic boundary conditions a circular shift by `k` is
+  indistinguishable from a shift by `k - N`, so `pbc_xcorr()` was
+  returning the same aliased `±N/2` circular shift twice (once as `+max_lag`
+  and once as `-max_lag`) whenever `max_lag >= N/2`, which is true for the
+  default parameters (`window=60`, `max_lag=30`). `time_delay_interaction()`
+  then picked the peak with `np.argmax(np.abs(C))`, which ties on these
+  duplicate values and always resolves to the first (most negative) one
+  regardless of argument order, breaking the documented antisymmetry
+  `tds(b, a)['tau'] == -tds(a, b)['tau']`. Lags returned by `pbc_xcorr()`
+  are now limited to `|k| <= (window - 1) // 2`, so with the default
+  parameters `tau = ±30` can no longer be reported (effective max lag is
+  now 29). Results may change in windows whose cross-correlation peak was
+  at `±30`.
+
 ## [0.2.0] - 2026-09-25
 
 ### Fixed

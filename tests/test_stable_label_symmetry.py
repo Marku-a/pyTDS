@@ -149,10 +149,7 @@ def test_argument_swap_flips_tau_sign():
     """
     old_diffs_found = 0
 
-    # Seeds 0-11 avoid a separate, pre-existing edge case: when
-    # max_lag == window // 2, lags +max_lag and -max_lag are the same
-    # circular shift, and argmax picks -max_lag in both argument orders.
-    for seed in range(12):
+    for seed in range(100):
         rng = np.random.default_rng(seed)
         N = 3000
 
