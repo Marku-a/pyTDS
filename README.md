@@ -95,6 +95,8 @@ All algorithm parameters in one place. Pass a single instance through all functi
 | `n_surrogates` | `1000` | Number of surrogate subjects for null distribution |
 | `alpha` | `0.05` | Significance level — threshold = (1−α) percentile of null scores |
 
+> **Order-independent labelling (since 0.2.0).** Within each stability window, *every* candidate delay is evaluated (not just the first one in ascending order), and a point is labeled stable if *any* qualifying candidate covers it. Versions <= 0.1.0 stopped at the first qualifying candidate in ascending order, which made results depend on that arbitrary order and biased labeling toward negative lags. The new labels are always a superset of the old ones (scores can only go up after upgrading). See `CHANGELOG.md` for details.
+
 ---
 
 ### `pyTDS.core` — Core Algorithm
@@ -111,6 +113,14 @@ Full TDS pipeline. Returns a dictionary with:
 | `cmax` | `ndarray` | Peak cross-correlation per window |
 | `stbl_lbl` | `ndarray` | Binary stable (1) / unstable (0) labels |
 | `stable_taus` | `ndarray` | τ₀ values at stable points only |
+
+##### Sign convention
+
+`τ < 0` means **s1 leads s2** (s1's pattern appears first, s2 follows).
+`τ > 0` means **s2 leads s1**. Swapping the `s1`/`s2` arguments flips the
+sign of every `τ` value. See `CHANGELOG.md` — prior to 0.2.0 the
+`pbc_xcorr()` docstring stated this backwards (the computation itself was
+always correct; only the documentation was wrong).
 
 #### `time_delay_interaction(s1, s2, params=None) → (tau, t_vec, cmax)`
 

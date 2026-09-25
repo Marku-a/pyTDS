@@ -35,6 +35,12 @@ def time_delay_interaction(
         Centre-time of each window (sample index).
     cmax : np.ndarray
         Peak cross-correlation value at each window (signed).
+
+    Sign convention
+    ----------------
+    τ < 0 means s1 leads s2 (s1's pattern appears first, s2 follows).
+    τ > 0 means s2 leads s1. Swapping s1 and s2 flips the sign of τ.
+    See ``pbc_xcorr`` for the underlying convention.
     """
     if params is None:
         params = TDSParams()
@@ -91,9 +97,13 @@ def stable_label(
     """
     Step 2: label each τ₀ value as stable (1) or unstable (0).
 
-    For each sliding window of length stability_window, every unique τ₀ is
-    tried as a candidate delay. If at least stability_min points fall within
-    ±tolerance of it, those points are marked stable. Output length = len(tau).
+    Order-independent rule: for each sliding window of length
+    ``stability_window``, every candidate delay ``d`` present in the window
+    (not just the first qualifying one) is evaluated. A candidate qualifies
+    if at least ``stability_min`` of the points in the window fall within
+    ``±tolerance`` of ``d``. Point ``j`` is labeled stable iff *some* window
+    containing ``j`` has a qualifying candidate whose in-range set includes
+    ``j``. Output length = len(tau).
 
     Which points within a winning window get labeled is controlled by
     ``params.stability_anchor`` (see ``TDSParams.stability_anchor``):
@@ -101,14 +111,26 @@ def stable_label(
     - ``"any"`` (default): non-causal / look-ahead. A label at index ``j``
       may be set by any window start in ``[j - stability_window + 1, j]``,
       so it depends on future tau values up to ``j + stability_window - 1``.
+      Union over all qualifying candidates' in-range points in that window.
       Matches the published offline definition (Bashan et al. 2012). Not
       safe for walk-forward backtests or real-time use.
     - ``"end"``: causal. Only index ``i + stability_window - 1`` of each
-      window is writable, and only if that point is within ``tolerance`` of
-      the winning candidate. Guarantee: ``stable_label(tau, p)[:k] ==
-      stable_label(tau[:k], p)`` for every ``k``. The first
-      ``stability_window - 1`` labels are always 0. Labels are always a
-      subset of the ``"any"`` labels.
+      window is writable, and only if ANY qualifying candidate in that
+      window has that last point within tolerance. Guarantee:
+      ``stable_label(tau, p)[:k] == stable_label(tau[:k], p)`` for every
+      ``k``. The first ``stability_window - 1`` labels are always 0. Labels
+      are always a subset of the ``"any"`` labels.
+
+    Deviation note: versions <=0.1.0 stopped at the first qualifying
+    candidate in ascending order (``np.unique`` order) and broke out of the
+    loop, so results depended on candidate order and were biased toward
+    negative lags (e.g. tau=[0,0,0,-1,1] and tau=[0,0,0,1,-1] produced
+    different last labels). The ``break`` was present since the initial
+    port; no MATLAB reference source is available in this repo to confirm
+    whether it originated there. The published definition (Bashan et al.
+    2012) does not specify a candidate evaluation order, so this
+    implementation now evaluates every candidate and is order-independent.
+    New labels (>=0.2.0) are always a superset of the old (<=0.1.0) labels.
 
     Parameters
     ----------
@@ -146,16 +168,22 @@ def stable_label(
         if np.any(np.isnan(seg)) or np.any(np.abs(seg) > max_lag):
             continue
 
-        for d in np.unique(seg):
-            in_range = np.abs(seg - d) <= tol
-            if np.sum(in_range) >= min_stable:
-                if anchor == "end":
-                    if in_range[-1]:
-                        stbl_lbl[i + win - 1] = 1
-                else:
-                    indices = np.where(in_range)[0] + i
-                    stbl_lbl[indices] = 1
-                break
+        # Vectorized: pairwise distance between every point in the window
+        # and every other point, used as candidate delays.
+        dist = np.abs(seg[:, None] - seg[None, :])
+        in_range_matrix = dist <= tol            # rows = candidate d = seg[c]
+        qualifies = in_range_matrix.sum(axis=1) >= min_stable
+
+        if not np.any(qualifies):
+            continue
+
+        if anchor == "end":
+            if np.any(in_range_matrix[qualifies, -1]):
+                stbl_lbl[i + win - 1] = 1
+        else:
+            union = np.any(in_range_matrix[qualifies], axis=0)
+            indices = np.where(union)[0] + i
+            stbl_lbl[indices] = 1
 
     return stbl_lbl
 
@@ -205,6 +233,10 @@ def tds(
 
     'stbl_lbl' and 'score' honour params.stability_anchor (see
     TDSParams.stability_anchor and stable_label()).
+
+    Sign convention: 'tau' < 0 means s1 leads s2; 'tau' > 0 means s2 leads
+    s1. Swapping s1 and s2 flips the sign of 'tau' (see
+    time_delay_interaction() / pbc_xcorr()).
     """
     if params is None:
         params = TDSParams()
