@@ -51,11 +51,18 @@ def pbc_xcorr(seg1: np.ndarray, seg2: np.ndarray, max_lag: int) -> tuple[np.ndar
         Array of lag values: [-max_lag, ..., 0, ..., +max_lag].
     C : np.ndarray
         Normalized cross-correlation values at each lag.
+
+    Sign convention
+    ----------------
+    C[k] = sum_i seg1[(i + k) % N] * seg2[i]. The peak occurs at k < 0 when
+    seg1 LEADS seg2 (seg2[i] ~= seg1[i - D] gives a peak at k = -D); the
+    peak occurs at k > 0 when seg2 leads seg1. Swapping the two arguments
+    flips the sign of the detected lag.
     """
     N = len(seg1)
 
     # FFT-based circular cross-correlation
-    # C[k] = sum_i seg1[i] * seg2[(i + k) % N]  (periodic shift)
+    # C[k] = sum_i seg1[(i + k) % N] * seg2[i]  (periodic shift)
     xc_full = np.fft.ifft(np.fft.fft(seg1) * np.conj(np.fft.fft(seg2))).real
 
     # Normalize to correlation coefficient in [-1, 1]

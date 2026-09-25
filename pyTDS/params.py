@@ -45,7 +45,7 @@ class TDSParams:
         at ``j``, so it depends on tau up to index ``j + stability_window - 1``.
         ``"end"`` is causal: within each stability window only the last index
         may be labeled, and only if that last point is itself within
-        ``tolerance`` of the winning candidate delay; guarantees
+        ``tolerance`` of ANY qualifying candidate delay in that window; guarantees
         ``stable_label(tau)[:k] == stable_label(tau[:k])``. Note the first
         ``stability_window - 1`` labels are always 0 in ``"end"`` mode
         (warm-up) and that TDS scores in ``"end"`` mode are never higher
