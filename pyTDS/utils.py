@@ -63,6 +63,7 @@ def pbc_xcorr(seg1: np.ndarray, seg2: np.ndarray, max_lag: int) -> tuple[np.ndar
 
     # FFT-based circular cross-correlation
     # C[k] = sum_i seg1[(i + k) % N] * seg2[i]  (periodic shift)
+    # ifft(F1 * conj(F2)) shifts seg1, not seg2 → negative k means seg1 leads.
     xc_full = np.fft.ifft(np.fft.fft(seg1) * np.conj(np.fft.fft(seg2))).real
 
     # Normalize to correlation coefficient in [-1, 1]

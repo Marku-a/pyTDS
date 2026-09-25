@@ -242,3 +242,22 @@ def test_benchmark():
     score = result["score"]
     print(f"\nBenchmark TDS score: {score:.4f}%")
     assert 0.0 <= score <= 100.0
+
+
+def test_tds_sign_convention_planted_lead():
+    """
+    End-to-end pin of the τ sign convention through tds():
+    y[t] = x[t - 25] (x leads y by 25) → tds(x, y) gives τ ≈ -25,
+    and swapping the arguments flips the sign.
+    """
+    rng = np.random.default_rng(0)
+    x = np.convolve(rng.standard_normal(3000), np.ones(5) / 5, mode="same")
+    lead = 25
+    y = np.roll(x, lead)   # y[t] = x[t - 25] → x leads y
+    params = TDSParams(window=120, overlap=60, max_lag=40)
+
+    fwd = tds(x, y, params)
+    rev = tds(y, x, params)
+    assert np.median(fwd["tau"]) == -lead, "s1 leading s2 must give negative τ"
+    assert np.median(rev["tau"]) == lead, "s2 leading s1 must give positive τ"
+    assert fwd["score"] > 90

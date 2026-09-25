@@ -30,7 +30,8 @@ def time_delay_interaction(
     Returns
     -------
     tau : np.ndarray
-        Time delay at each window (samples).
+        Time delay at each window (samples). Negative τ means ``s1`` leads
+        ``s2``; positive τ means ``s2`` leads ``s1`` (see ``pbc_xcorr``).
     t_vec : np.ndarray
         Centre-time of each window (sample index).
     cmax : np.ndarray
@@ -225,7 +226,8 @@ def tds(
     -------
     dict with keys:
         'score'     : float   — TDS score in [0, 100]
-        'tau'       : ndarray — time delay series
+        'tau'       : ndarray — time delay series (τ < 0 → s1 leads s2,
+                                τ > 0 → s2 leads s1)
         't_vec'     : ndarray — window centre times
         'cmax'      : ndarray — peak cross-correlation per window
         'stbl_lbl'  : ndarray — binary stable/unstable labels
