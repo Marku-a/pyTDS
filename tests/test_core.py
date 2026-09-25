@@ -51,10 +51,43 @@ def test_pbc_xcorr_known_shift():
     assert detected == -shift, f"Expected lag {-shift} (s1 leads s2), got {detected}"
 
 def test_pbc_xcorr_returns_correct_shape():
+    # N=60, max_lag=30: aliasing caps the effective max lag at
+    # (60 - 1) // 2 == 29, so lags run -29 .. +29 (length 59), not -30..+30.
     seg = zscore(np.random.randn(60))
     lags, C = pbc_xcorr(seg, seg, max_lag=30)
-    assert len(lags) == 61   # -30 .. +30
-    assert len(C) == 61
+    assert len(lags) == 59   # -29 .. +29
+    assert len(C) == 59
+
+
+def test_pbc_xcorr_aliasing_limits_lags_even_n():
+    """N=60, max_lag=30: returned lags are -29..29, no duplicates."""
+    rng = np.random.default_rng(1)
+    seg1 = zscore(rng.standard_normal(60))
+    seg2 = zscore(rng.standard_normal(60))
+    lags, C = pbc_xcorr(seg1, seg2, max_lag=30)
+    assert list(lags) == list(range(-29, 30))
+    assert len(set(lags.tolist())) == len(lags)
+
+
+def test_pbc_xcorr_aliasing_limits_lags_odd_n():
+    """N=61, max_lag=30: returned lags are -30..30 (no aliasing for odd N)."""
+    rng = np.random.default_rng(2)
+    seg1 = zscore(rng.standard_normal(61))
+    seg2 = zscore(rng.standard_normal(61))
+    lags, C = pbc_xcorr(seg1, seg2, max_lag=30)
+    assert list(lags) == list(range(-30, 31))
+    assert len(set(lags.tolist())) == len(lags)
+
+
+def test_pbc_xcorr_swap_reverses_C():
+    """pbc_xcorr(b, a) equals pbc_xcorr(a, b) with C reversed."""
+    rng = np.random.default_rng(3)
+    seg1 = zscore(rng.standard_normal(60))
+    seg2 = zscore(rng.standard_normal(60))
+    lags_ab, C_ab = pbc_xcorr(seg1, seg2, max_lag=30)
+    lags_ba, C_ba = pbc_xcorr(seg2, seg1, max_lag=30)
+    assert list(lags_ab) == list(lags_ba)
+    assert np.allclose(C_ba, C_ab[::-1])
 
 
 # ── Core algorithm tests ───────────────────────────────────────────────────────
