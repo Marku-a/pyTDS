@@ -134,7 +134,25 @@ def test_negation_symmetry():
 
 
 def test_argument_swap_flips_tau_sign():
-    for seed in range(8):
+    """Swap symmetry must hold on *noisy* tau sequences with real jitter,
+    not just near-constant ones. Signal design: weak coupling (so
+    cross-correlation is noisy from window to window) with a slowly
+    drifting delay that oscillates between `shift` and `shift + 1`
+    samples. This makes tau0(t) hop between neighbouring integer lags
+    across windows, so many stability windows contain several distinct
+    candidate delays that simultaneously qualify (>= stability_min points
+    within tolerance) -- exactly the situation where the pre-fix
+    stable_label()'s "break at the first candidate in ascending order"
+    behaviour is order- (and thus sign-) dependent. We confirm this has
+    teeth by also checking that `_stable_label_old` actually disagrees
+    between the a->b and b->a tau sequences for at least one seed.
+    """
+    old_diffs_found = 0
+
+    # Seeds 0-11 avoid a separate, pre-existing edge case: when
+    # max_lag == window // 2, lags +max_lag and -max_lag are the same
+    # circular shift, and argmax picks -max_lag in both argument orders.
+    for seed in range(12):
         rng = np.random.default_rng(seed)
         N = 3000
 
@@ -142,14 +160,43 @@ def test_argument_swap_flips_tau_sign():
         innovations = rng.standard_normal(N)
         a = np.cumsum(innovations) * 0.1 + innovations
 
-        shift = 3
-        b = np.roll(a, shift) + 0.01 * rng.standard_normal(N)
+        # `b` tracks a blend of two neighbouring shifted copies of `a`
+        # whose mixing weight drifts slowly (a few full cycles over N),
+        # under heavy additive noise and a coupling well below 1. This
+        # keeps the dominant per-window delay jittering near shift/shift+1
+        # (and occasionally elsewhere, since the coupling is weak) instead
+        # of sitting at one constant value.
+        shift = 1
+        coupling = 0.6
+        noise_scale = 0.8
+        s_lo = np.roll(a, shift)
+        s_hi = np.roll(a, shift + 1)
+        w = (np.sin(np.linspace(0, 6 * np.pi, N)) + 1) / 2
+        core = w * s_hi + (1 - w) * s_lo
+        b = coupling * core + noise_scale * rng.standard_normal(N)
 
         r_ab = tds(a, b)
         r_ba = tds(b, a)
 
-        np.testing.assert_array_equal(r_ba["tau"], -r_ab["tau"])
-        np.testing.assert_array_equal(r_ba["stbl_lbl"], r_ab["stbl_lbl"])
+        np.testing.assert_array_equal(
+            r_ba["tau"], -r_ab["tau"], err_msg=f"seed={seed}"
+        )
+        np.testing.assert_array_equal(
+            r_ba["stbl_lbl"], r_ab["stbl_lbl"], err_msg=f"seed={seed}"
+        )
+
+        # Teeth check: the OLD order-dependent labeller should NOT be
+        # swap-symmetric on at least one of these noisy tau sequences.
+        old_ab = _stable_label_old(r_ab["tau"])
+        old_ba = _stable_label_old(r_ba["tau"])
+        if not np.array_equal(old_ab, old_ba):
+            old_diffs_found += 1
+
+    assert old_diffs_found > 0, (
+        "expected at least one seed where the OLD stable_label breaks "
+        "swap-symmetry (i.e. differs between tau_ab and tau_ba = -tau_ab); "
+        "none found -- signal generation may need to be noisier"
+    )
 
 
 # ── 4. "end" anchor causal prefix invariance + any/end subset ─────────────
