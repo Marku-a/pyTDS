@@ -1,0 +1,161 @@
+{
+ "dataset": "sleep-edfx",
+ "wall_time_s": 1270.1908535957336,
+ "jobs": 2,
+ "n_null": 100,
+ "max_window_s": 300,
+ "annotation_labels_seen": {
+  "Sleep stage W": 281,
+  "Sleep stage 1": 436,
+  "Sleep stage 2": 833,
+  "Sleep stage 3": 678,
+  "Sleep stage 4": 244,
+  "Sleep stage R": 183,
+  "Sleep stage ?": 23,
+  "Movement time": 22
+ },
+ "files": [
+  {
+   "psg": "SC4001E0-PSG.edf",
+   "psg_bytes": 48338048,
+   "hyp": "SC4001EC-Hypnogram.edf",
+   "hyp_bytes": 4620
+  },
+  {
+   "psg": "SC4011E0-PSG.edf",
+   "psg_bytes": 51110528,
+   "hyp": "SC4011EH-Hypnogram.edf",
+   "hyp_bytes": 3896
+  },
+  {
+   "psg": "SC4021E0-PSG.edf",
+   "psg_bytes": 51147008,
+   "hyp": "SC4021EH-Hypnogram.edf",
+   "hyp_bytes": 4804
+  },
+  {
+   "psg": "SC4031E0-PSG.edf",
+   "psg_bytes": 51438848,
+   "hyp": "SC4031EC-Hypnogram.edf",
+   "hyp_bytes": 3700
+  },
+  {
+   "psg": "SC4041E0-PSG.edf",
+   "psg_bytes": 46878848,
+   "hyp": "SC4041EC-Hypnogram.edf",
+   "hyp_bytes": 4830
+  },
+  {
+   "psg": "SC4051E0-PSG.edf",
+   "psg_bytes": 49651328,
+   "hyp": "SC4051EC-Hypnogram.edf",
+   "hyp_bytes": 3976
+  },
+  {
+   "psg": "SC4061E0-PSG.edf",
+   "psg_bytes": 50526848,
+   "hyp": "SC4061EC-Hypnogram.edf",
+   "hyp_bytes": 2620
+  },
+  {
+   "psg": "SC4071E0-PSG.edf",
+   "psg_bytes": 51256448,
+   "hyp": "SC4071EC-Hypnogram.edf",
+   "hyp_bytes": 3628
+  },
+  {
+   "psg": "SC4081E0-PSG.edf",
+   "psg_bytes": 51001088,
+   "hyp": "SC4081EC-Hypnogram.edf",
+   "hyp_bytes": 4306
+  },
+  {
+   "psg": "SC4091E0-PSG.edf",
+   "psg_bytes": 49833728,
+   "hyp": "SC4091EC-Hypnogram.edf",
+   "hyp_bytes": 4474
+  },
+  {
+   "psg": "SC4101E0-PSG.edf",
+   "psg_bytes": 49614848,
+   "hyp": "SC4101EC-Hypnogram.edf",
+   "hyp_bytes": 2224
+  },
+  {
+   "psg": "SC4111E0-PSG.edf",
+   "psg_bytes": 48192128,
+   "hyp": "SC4111EC-Hypnogram.edf",
+   "hyp_bytes": 3876
+  },
+  {
+   "psg": "SC4121E0-PSG.edf",
+   "psg_bytes": 50818688,
+   "hyp": "SC4121EC-Hypnogram.edf",
+   "hyp_bytes": 4012
+  },
+  {
+   "psg": "SC4131E0-PSG.edf",
+   "psg_bytes": 51329408,
+   "hyp": "SC4131EC-Hypnogram.edf",
+   "hyp_bytes": 4442
+  },
+  {
+   "psg": "SC4141E0-PSG.edf",
+   "psg_bytes": 50271488,
+   "hyp": "SC4141EU-Hypnogram.edf",
+   "hyp_bytes": 3774
+  },
+  {
+   "psg": "SC4151E0-PSG.edf",
+   "psg_bytes": 47790848,
+   "hyp": "SC4151EC-Hypnogram.edf",
+   "hyp_bytes": 3164
+  },
+  {
+   "psg": "SC4161E0-PSG.edf",
+   "psg_bytes": 47900288,
+   "hyp": "SC4161EC-Hypnogram.edf",
+   "hyp_bytes": 4656
+  },
+  {
+   "psg": "SC4171E0-PSG.edf",
+   "psg_bytes": 50016128,
+   "hyp": "SC4171EU-Hypnogram.edf",
+   "hyp_bytes": 5380
+  },
+  {
+   "psg": "SC4181E0-PSG.edf",
+   "psg_bytes": 50271488,
+   "hyp": "SC4181EC-Hypnogram.edf",
+   "hyp_bytes": 4806
+  },
+  {
+   "psg": "SC4191E0-PSG.edf",
+   "psg_bytes": 50599808,
+   "hyp": "SC4191EP-Hypnogram.edf",
+   "hyp_bytes": 5282
+  }
+ ],
+ "samples_per_night": {
+  "SC4001": 25230,
+  "SC4011": 33090,
+  "SC4021": 30750,
+  "SC4031": 28560,
+  "SC4041": 37080,
+  "SC4051": 20160,
+  "SC4061": 25290,
+  "SC4071": 29280,
+  "SC4081": 34020,
+  "SC4091": 34290,
+  "SC4101": 33150,
+  "SC4111": 27870,
+  "SC4121": 31560,
+  "SC4131": 30840,
+  "SC4141": 30120,
+  "SC4151": 28680,
+  "SC4161": 34470,
+  "SC4171": 30090,
+  "SC4181": 28920,
+  "SC4191": 46050
+ }
+}
