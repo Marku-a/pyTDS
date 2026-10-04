@@ -1,0 +1,963 @@
+{
+ "hook": {
+  "dur": 4.69922902494331,
+  "sentences": [
+   {
+    "text": "Can an algorithm tune itself?",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Can an algorithm tune itself?",
+      "start": 0.0,
+      "end": 1.7763265306122449
+     }
+    ],
+    "end": 1.7763265306122449
+   },
+   {
+    "text": "We tested it on nine fields of science.",
+    "start": 2.2263038548752836,
+    "chunks": [
+     {
+      "text": "We tested it on nine fields of science.",
+      "start": 2.2263038548752836,
+      "end": 4.69922902494331
+     }
+    ],
+    "end": 4.69922902494331
+   }
+  ]
+ },
+ "what": {
+  "dur": 15.546122448979592,
+  "sentences": [
+   {
+    "text": "First, what does T D S do?",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "First, what does T D S do?",
+      "start": 0.0,
+      "end": 2.147845804988662
+     }
+    ],
+    "end": 2.147845804988662
+   },
+   {
+    "text": "It slides a window along two signals.",
+    "start": 2.597823129251701,
+    "chunks": [
+     {
+      "text": "It slides a window along two signals.",
+      "start": 2.597823129251701,
+      "end": 4.884988662131519
+     }
+    ],
+    "end": 4.884988662131519
+   },
+   {
+    "text": "In each window, it finds the delay where the two signals match best.",
+    "start": 5.3349659863945575,
+    "chunks": [
+     {
+      "text": "In each window, it finds the delay where the two signals match best.",
+      "start": 5.3349659863945575,
+      "end": 9.630657596371883
+     }
+    ],
+    "end": 9.630657596371883
+   },
+   {
+    "text": "Then it counts how often that delay stays the same.",
+    "start": 10.080634920634921,
+    "chunks": [
+     {
+      "text": "Then it counts how often that delay stays the same.",
+      "start": 10.080634920634921,
+      "end": 12.890249433106575
+     }
+    ],
+    "end": 12.890249433106575
+   },
+   {
+    "text": "That share is the T D S score.",
+    "start": 13.340226757369615,
+    "chunks": [
+     {
+      "text": "That share is the T D S score.",
+      "start": 13.340226757369615,
+      "end": 15.546122448979592
+     }
+    ],
+    "end": 15.546122448979592
+   }
+  ]
+ },
+ "problem": {
+  "dur": 15.756961451247166,
+  "sentences": [
+   {
+    "text": "The original method uses fixed numbers: a window of sixty samples, for every kind of data.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "The original method uses fixed numbers: a window of sixty samples,",
+      "start": 0.0,
+      "end": 4.388571428571429
+     },
+     {
+      "text": "for every kind of data.",
+      "start": 4.538548752834467,
+      "end": 5.862086167800453
+     }
+    ],
+    "end": 5.862086167800453
+   },
+   {
+    "text": "Here is one night of sleep, recorded at different sampling rates.",
+    "start": 6.312063492063492,
+    "chunks": [
+     {
+      "text": "Here is one night of sleep, recorded at different sampling rates.",
+      "start": 6.312063492063492,
+      "end": 9.876326530612245
+     }
+    ],
+    "end": 9.876326530612245
+   },
+   {
+    "text": "Same brain.",
+    "start": 10.326303854875283,
+    "chunks": [
+     {
+      "text": "Same brain.",
+      "start": 10.326303854875283,
+      "end": 11.173832199546485
+     }
+    ],
+    "end": 11.173832199546485
+   },
+   {
+    "text": "But the score drops from seventy five, to twenty seven percent.",
+    "start": 11.623809523809523,
+    "chunks": [
+     {
+      "text": "But the score drops from seventy five, to twenty seven percent.",
+      "start": 11.623809523809523,
+      "end": 15.756961451247166
+     }
+    ],
+    "end": 15.756961451247166
+   }
+  ]
+ },
+ "how_intro": {
+  "dur": 9.038548752834467,
+  "sentences": [
+   {
+    "text": "So we let the algorithm choose its own settings, in four steps.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "So we let the algorithm choose its own settings, in four steps.",
+      "start": 0.0,
+      "end": 3.564263038548753
+     }
+    ],
+    "end": 3.564263038548753
+   },
+   {
+    "text": "Our example is a river.",
+    "start": 4.014240362811791,
+    "chunks": [
+     {
+      "text": "Our example is a river.",
+      "start": 4.014240362811791,
+      "end": 5.686077097505669
+     }
+    ],
+    "end": 5.686077097505669
+   },
+   {
+    "text": "Rain falls, and the river rises a few hours later.",
+    "start": 6.136054421768708,
+    "chunks": [
+     {
+      "text": "Rain falls, and the river rises a few hours later.",
+      "start": 6.136054421768708,
+      "end": 9.038548752834467
+     }
+    ],
+    "end": 9.038548752834467
+   }
+  ]
+ },
+ "step1_memory": {
+  "dur": 15.406802721088436,
+  "sentences": [
+   {
+    "text": "Step one: measure each signal's memory.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Step one: measure each signal's memory.",
+      "start": 0.0,
+      "end": 3.0650340136054424
+     }
+    ],
+    "end": 3.0650340136054424
+   },
+   {
+    "text": "The algorithm compares each signal with a shifted copy of itself.",
+    "start": 3.5150113378684806,
+    "chunks": [
+     {
+      "text": "The algorithm compares each signal with a shifted copy of itself.",
+      "start": 3.5150113378684806,
+      "end": 7.833922902494331
+     }
+    ],
+    "end": 7.833922902494331
+   },
+   {
+    "text": "Rain forgets fast.",
+    "start": 8.28390022675737,
+    "chunks": [
+     {
+      "text": "Rain forgets fast.",
+      "start": 8.28390022675737,
+      "end": 9.909297052154194
+     }
+    ],
+    "end": 9.909297052154194
+   },
+   {
+    "text": "After a few hours, it is new weather.",
+    "start": 10.359274376417234,
+    "chunks": [
+     {
+      "text": "After a few hours, it is new weather.",
+      "start": 10.359274376417234,
+      "end": 12.971519274376417
+     }
+    ],
+    "end": 12.971519274376417
+   },
+   {
+    "text": "But the river remembers for days.",
+    "start": 13.421496598639456,
+    "chunks": [
+     {
+      "text": "But the river remembers for days.",
+      "start": 13.421496598639456,
+      "end": 15.406802721088436
+     }
+    ],
+    "end": 15.406802721088436
+   }
+  ]
+ },
+ "step2_window": {
+  "dur": 19.121043083900226,
+  "sentences": [
+   {
+    "text": "Step two: choose the window.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Step two: choose the window.",
+      "start": 0.0,
+      "end": 1.9620861678004535
+     }
+    ],
+    "end": 1.9620861678004535
+   },
+   {
+    "text": "In a slow signal, neighbouring points are almost copies of each other.",
+    "start": 2.412063492063492,
+    "chunks": [
+     {
+      "text": "In a slow signal, neighbouring points are almost copies of each other.",
+      "start": 2.412063492063492,
+      "end": 6.289795918367347
+     }
+    ],
+    "end": 6.289795918367347
+   },
+   {
+    "text": "For this river, about sixty four hourly points hold the information of just one new point.",
+    "start": 6.739773242630386,
+    "chunks": [
+     {
+      "text": "For this river,",
+      "start": 6.739773242630386,
+      "end": 7.680181405895691
+     },
+     {
+      "text": "about sixty four hourly points hold the information of just one new point.",
+      "start": 7.83015873015873,
+      "end": 11.963310657596372
+     }
+    ],
+    "end": 11.963310657596372
+   },
+   {
+    "text": "To hold thirty new points, the window must be thirty times sixty four hours.",
+    "start": 12.41328798185941,
+    "chunks": [
+     {
+      "text": "To hold thirty new points, the window must be thirty times sixty four hours.",
+      "start": 12.41328798185941,
+      "end": 16.906349206349205
+     }
+    ],
+    "end": 16.906349206349205
+   },
+   {
+    "text": "That is about eighty days.",
+    "start": 17.356326530612243,
+    "chunks": [
+     {
+      "text": "That is about eighty days.",
+      "start": 17.356326530612243,
+      "end": 19.121043083900226
+     }
+    ],
+    "end": 19.121043083900226
+   }
+  ]
+ },
+ "step3_delay": {
+  "dur": 13.10108843537415,
+  "sentences": [
+   {
+    "text": "Step three: the longest delay to search is half the window.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Step three: the longest delay to search is half the window.",
+      "start": 0.0,
+      "end": 3.3436734693877552
+     }
+    ],
+    "end": 3.3436734693877552
+   },
+   {
+    "text": "Here, that is forty days.",
+    "start": 3.7936507936507935,
+    "chunks": [
+     {
+      "text": "Here, that is forty days.",
+      "start": 3.7936507936507935,
+      "end": 5.430657596371882
+     }
+    ],
+    "end": 5.430657596371882
+   },
+   {
+    "text": "If a signal has a rhythm, like a heartbeat, it stops at half a beat, because longer delays would look exactly the same.",
+    "start": 5.880634920634921,
+    "chunks": [
+     {
+      "text": "If a signal has a rhythm, like a heartbeat, it stops at half a beat,",
+      "start": 5.880634920634921,
+      "end": 10.071836734693878
+     },
+     {
+      "text": "because longer delays would look exactly the same.",
+      "start": 10.221814058956916,
+      "end": 13.10108843537415
+     }
+    ],
+    "end": 13.10108843537415
+   }
+  ]
+ },
+ "step4_tolerance": {
+  "dur": 21.209886621315192,
+  "sentences": [
+   {
+    "text": "Step four: decide how strict to be.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Step four: decide how strict to be.",
+      "start": 0.0,
+      "end": 2.8444444444444446
+     }
+    ],
+    "end": 2.8444444444444446
+   },
+   {
+    "text": "The algorithm slides the river far away in time, so it no longer matches the rain.",
+    "start": 3.294421768707483,
+    "chunks": [
+     {
+      "text": "The algorithm slides the river far away in time,",
+      "start": 3.294421768707483,
+      "end": 6.278185941043084
+     },
+     {
+      "text": "so it no longer matches the rain.",
+      "start": 6.4281632653061225,
+      "end": 8.262539682539682
+     }
+    ],
+    "end": 8.262539682539682
+   },
+   {
+    "text": "Any stability it still finds is fake.",
+    "start": 8.71251700680272,
+    "chunks": [
+     {
+      "text": "Any stability it still finds is fake.",
+      "start": 8.71251700680272,
+      "end": 11.429251700680272
+     }
+    ],
+    "end": 11.429251700680272
+   },
+   {
+    "text": "It loosens the tolerance step by step, and stops just before fake stability passes five percent.",
+    "start": 11.87922902494331,
+    "chunks": [
+     {
+      "text": "It loosens the tolerance step by step,",
+      "start": 11.87922902494331,
+      "end": 14.352154195011337
+     },
+     {
+      "text": "and stops just before fake stability passes five percent.",
+      "start": 14.502131519274377,
+      "end": 18.22893424036281
+     }
+    ],
+    "end": 18.22893424036281
+   },
+   {
+    "text": "For the river, that is plus or minus three days.",
+    "start": 18.67891156462585,
+    "chunks": [
+     {
+      "text": "For the river, that is plus or minus three days.",
+      "start": 18.67891156462585,
+      "end": 21.209886621315192
+     }
+    ],
+    "end": 21.209886621315192
+   }
+  ]
+ },
+ "step5_you": {
+  "dur": 9.145850340136054,
+  "sentences": [
+   {
+    "text": "Only one choice stays with you: how sharp your timing must be.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Only one choice stays with you: how sharp your timing must be.",
+      "start": 0.0,
+      "end": 4.342131519274377
+     }
+    ],
+    "end": 4.342131519274377
+   },
+   {
+    "text": "Longer windows find links more reliably, but they blur when the link happens.",
+    "start": 4.792108843537415,
+    "chunks": [
+     {
+      "text": "Longer windows find links more reliably, but they blur when the link happens.",
+      "start": 4.792108843537415,
+      "end": 9.145850340136054
+     }
+    ],
+    "end": 9.145850340136054
+   }
+  ]
+ },
+ "hydrology_hourly": {
+  "dur": 9.456507936507936,
+  "sentences": [
+   {
+    "text": "Rain to river.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Rain to river.",
+      "start": 0.0,
+      "end": 0.9868480725623583
+     }
+    ],
+    "end": 0.9868480725623583
+   },
+   {
+    "text": "With these settings, the link is found far above chance, with a ten hour delay.",
+    "start": 1.4368253968253968,
+    "chunks": [
+     {
+      "text": "With these settings, the link is found far above chance, with a ten hour delay.",
+      "start": 1.4368253968253968,
+      "end": 5.8021768707482995
+     }
+    ],
+    "end": 5.8021768707482995
+   },
+   {
+    "text": "The fixed version could not tell it apart from chance.",
+    "start": 6.252154195011338,
+    "chunks": [
+     {
+      "text": "The fixed version could not tell it apart from chance.",
+      "start": 6.252154195011338,
+      "end": 9.456507936507936
+     }
+    ],
+    "end": 9.456507936507936
+   }
+  ]
+ },
+ "energy_vic_summer": {
+  "dur": 12.192698412698412,
+  "sentences": [
+   {
+    "text": "Heat to electricity demand.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Heat to electricity demand.",
+      "start": 0.0,
+      "end": 1.8692063492063493
+     }
+    ],
+    "end": 1.8692063492063493
+   },
+   {
+    "text": "Demand remembers about a day and a half, so the window becomes twenty seven days.",
+    "start": 2.3191836734693876,
+    "chunks": [
+     {
+      "text": "Demand remembers about a day and a half,",
+      "start": 2.3191836734693876,
+      "end": 4.478639455782313
+     },
+     {
+      "text": "so the window becomes twenty seven days.",
+      "start": 4.628616780045351,
+      "end": 7.171201814058957
+     }
+    ],
+    "end": 7.171201814058957
+   },
+   {
+    "text": "Adaptive finds the one hour delay.",
+    "start": 7.621179138321995,
+    "chunks": [
+     {
+      "text": "Adaptive finds the one hour delay.",
+      "start": 7.621179138321995,
+      "end": 9.78063492063492
+     }
+    ],
+    "end": 9.78063492063492
+   },
+   {
+    "text": "The fixed version says zero.",
+    "start": 10.230612244897959,
+    "chunks": [
+     {
+      "text": "The fixed version says zero.",
+      "start": 10.230612244897959,
+      "end": 12.192698412698412
+     }
+    ],
+    "end": 12.192698412698412
+   }
+  ]
+ },
+ "climate_nino34_gistemp": {
+  "dur": 14.061904761904762,
+  "sentences": [
+   {
+    "text": "El Nino to global temperature.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "El Nino to global temperature.",
+      "start": 0.0,
+      "end": 1.787936507936508
+     }
+    ],
+    "end": 1.787936507936508
+   },
+   {
+    "text": "El Nino remembers about seven months, so the window grows to thirteen years.",
+    "start": 2.2379138321995464,
+    "chunks": [
+     {
+      "text": "El Nino remembers about seven months, so the window grows to thirteen years.",
+      "start": 2.2379138321995464,
+      "end": 6.963174603174603
+     }
+    ],
+    "end": 6.963174603174603
+   },
+   {
+    "text": "The link is detected more strongly, but the delay comes out as one month, not about three.",
+    "start": 7.413151927437641,
+    "chunks": [
+     {
+      "text": "The link is detected more strongly, but the delay comes out as one month,",
+      "start": 7.413151927437641,
+      "end": 11.348934240362812
+     },
+     {
+      "text": "not about three.",
+      "start": 11.49891156462585,
+      "end": 12.590249433106576
+     }
+    ],
+    "end": 12.590249433106576
+   },
+   {
+    "text": "A mixed result.",
+    "start": 13.040226757369615,
+    "chunks": [
+     {
+      "text": "A mixed result.",
+      "start": 13.040226757369615,
+      "end": 14.061904761904762
+     }
+    ],
+    "end": 14.061904761904762
+   }
+  ]
+ },
+ "beijing_pm25": {
+  "dur": 9.235918367346938,
+  "sentences": [
+   {
+    "text": "Wind to air pollution in Beijing.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Wind to air pollution in Beijing.",
+      "start": 0.0,
+      "end": 1.9853061224489796
+     }
+    ],
+    "end": 1.9853061224489796
+   },
+   {
+    "text": "Wind remembers almost a day, so the window is twenty six days.",
+    "start": 2.435283446712018,
+    "chunks": [
+     {
+      "text": "Wind remembers almost a day, so the window is twenty six days.",
+      "start": 2.435283446712018,
+      "end": 6.672925170068027
+     }
+    ],
+    "end": 6.672925170068027
+   },
+   {
+    "text": "The link is found far above chance.",
+    "start": 7.122902494331066,
+    "chunks": [
+     {
+      "text": "The link is found far above chance.",
+      "start": 7.122902494331066,
+      "end": 9.235918367346938
+     }
+    ],
+    "end": 9.235918367346938
+   }
+  ]
+ },
+ "gas_furnace": {
+  "dur": 8.96888888888889,
+  "sentences": [
+   {
+    "text": "A gas furnace, with only two hundred ninety six data points.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "A gas furnace, with only two hundred ninety six data points.",
+      "start": 0.0,
+      "end": 3.866122448979592
+     }
+    ],
+    "end": 3.866122448979592
+   },
+   {
+    "text": "The window it wants is longer than the data allows.",
+    "start": 4.31609977324263,
+    "chunks": [
+     {
+      "text": "The window it wants is longer than the data allows.",
+      "start": 4.31609977324263,
+      "end": 6.7890249433106575
+     }
+    ],
+    "end": 6.7890249433106575
+   },
+   {
+    "text": "Here, the fixed settings win.",
+    "start": 7.239002267573696,
+    "chunks": [
+     {
+      "text": "Here, the fixed settings win.",
+      "start": 7.239002267573696,
+      "end": 8.96888888888889
+     }
+    ],
+    "end": 8.96888888888889
+   }
+  ]
+ },
+ "gasoline_weekly_diff": {
+  "dur": 8.144580498866214,
+  "sentences": [
+   {
+    "text": "Crude oil to petrol prices.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Crude oil to petrol prices.",
+      "start": 0.0,
+      "end": 2.0085260770975055
+     }
+    ],
+    "end": 2.0085260770975055
+   },
+   {
+    "text": "Both versions detect the link.",
+    "start": 2.4585034013605442,
+    "chunks": [
+     {
+      "text": "Both versions detect the link.",
+      "start": 2.4585034013605442,
+      "end": 4.281269841269841
+     }
+    ],
+    "end": 4.281269841269841
+   },
+   {
+    "text": "But weekly data is too coarse to see the one to two week lag.",
+    "start": 4.73124716553288,
+    "chunks": [
+     {
+      "text": "But weekly data is too coarse to see the one to two week lag.",
+      "start": 4.73124716553288,
+      "end": 8.144580498866214
+     }
+    ],
+    "end": 8.144580498866214
+   }
+  ]
+ },
+ "jena_T_rh": {
+  "dur": 10.663945578231292,
+  "sentences": [
+   {
+    "text": "Temperature and humidity: a control, with zero delay.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Temperature and humidity: a control, with zero delay.",
+      "start": 0.0,
+      "end": 3.8080725623582765
+     }
+    ],
+    "end": 3.8080725623582765
+   },
+   {
+    "text": "Both versions find zero.",
+    "start": 4.258049886621315,
+    "chunks": [
+     {
+      "text": "Both versions find zero.",
+      "start": 4.258049886621315,
+      "end": 6.115646258503402
+     }
+    ],
+    "end": 6.115646258503402
+   },
+   {
+    "text": "The yearly cycle makes fake stability high, and adaptive warns about it.",
+    "start": 6.56562358276644,
+    "chunks": [
+     {
+      "text": "The yearly cycle makes fake stability high, and adaptive warns about it.",
+      "start": 6.56562358276644,
+      "end": 10.663945578231292
+     }
+    ],
+    "end": 10.663945578231292
+   }
+  ]
+ },
+ "sleep_eeg_delta_sigma": {
+  "dur": 7.101541950113378,
+  "sentences": [
+   {
+    "text": "Sleep E E G.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Sleep E E G.",
+      "start": 0.0,
+      "end": 1.3699773242630386
+     }
+    ],
+    "end": 1.3699773242630386
+   },
+   {
+    "text": "Capped at five minutes for good timing, adaptive gives the same answer at any sampling rate.",
+    "start": 1.8199546485260771,
+    "chunks": [
+     {
+      "text": "Capped at five minutes for good timing,",
+      "start": 1.8199546485260771,
+      "end": 4.002630385487528
+     },
+     {
+      "text": "adaptive gives the same answer at any sampling rate.",
+      "start": 4.1526077097505665,
+      "end": 7.101541950113378
+     }
+    ],
+    "end": 7.101541950113378
+   }
+  ]
+ },
+ "neurokit_hr_rsp": {
+  "dur": 8.425079365079364,
+  "sentences": [
+   {
+    "text": "Heart rate and breathing.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Heart rate and breathing.",
+      "start": 0.0,
+      "end": 1.486077097505669
+     }
+    ],
+    "end": 1.486077097505669
+   },
+   {
+    "text": "The breathing rhythm caps the delay, and the settings end up close to the original ones, because those already fit.",
+    "start": 1.9360544217687075,
+    "chunks": [
+     {
+      "text": "The breathing rhythm caps the delay,",
+      "start": 1.9360544217687075,
+      "end": 3.921360544217687
+     },
+     {
+      "text": "and the settings end up close to the original ones, because those already fit.",
+      "start": 4.071337868480725,
+      "end": 8.425079365079364
+     }
+    ],
+    "end": 8.425079365079364
+   }
+  ]
+ },
+ "board": {
+  "dur": 5.808163265306122,
+  "sentences": [
+   {
+    "text": "Nine fields.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Nine fields.",
+      "start": 0.0,
+      "end": 1.1261678004535147
+     }
+    ],
+    "end": 1.1261678004535147
+   },
+   {
+    "text": "Four better.",
+    "start": 1.5761451247165532,
+    "chunks": [
+     {
+      "text": "Four better.",
+      "start": 1.5761451247165532,
+      "end": 2.388843537414966
+     }
+    ],
+    "end": 2.388843537414966
+   },
+   {
+    "text": "Four ties or mixed.",
+    "start": 2.8388208616780046,
+    "chunks": [
+     {
+      "text": "Four ties or mixed.",
+      "start": 2.8388208616780046,
+      "end": 4.185578231292517
+     }
+    ],
+    "end": 4.185578231292517
+   },
+   {
+    "text": "And one worse.",
+    "start": 4.635555555555555,
+    "chunks": [
+     {
+      "text": "And one worse.",
+      "start": 4.635555555555555,
+      "end": 5.808163265306122
+     }
+    ],
+    "end": 5.808163265306122
+   }
+  ]
+ },
+ "outro": {
+  "dur": 9.630657596371883,
+  "sentences": [
+   {
+    "text": "Use the original settings for very short data.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Use the original settings for very short data.",
+      "start": 0.0,
+      "end": 2.705124716553288
+     }
+    ],
+    "end": 2.705124716553288
+   },
+   {
+    "text": "Choose your time resolution.",
+    "start": 3.1551020408163266,
+    "chunks": [
+     {
+      "text": "Choose your time resolution.",
+      "start": 3.1551020408163266,
+      "end": 4.641179138321996
+     }
+    ],
+    "end": 4.641179138321996
+   },
+   {
+    "text": "And remember: for rhythmic signals, delays are limited to half a cycle.",
+    "start": 5.091156462585034,
+    "chunks": [
+     {
+      "text": "And remember: for rhythmic signals, delays are limited to half a cycle.",
+      "start": 5.091156462585034,
+      "end": 9.630657596371883
+     }
+    ],
+    "end": 9.630657596371883
+   }
+  ]
+ }
+}
