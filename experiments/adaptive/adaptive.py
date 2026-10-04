@@ -110,6 +110,7 @@ def adaptive_params(
     quantile: float = 1.0,
     min_window: int = 20,
     max_window_frac: float = 0.1,
+    max_window: int | None = None,
     cap_lag_by_period: bool = True,
     tolerance: str = "fixed",
     alpha_stab: float = 0.05,
@@ -134,6 +135,8 @@ def adaptive_params(
         scale (1.0 = slowest signal, 0.5 = median signal).
     min_window, max_window_frac : window is clipped to
         [min_window, max(min_window, max_window_frac * T)].
+    max_window : optional user cap in samples (the longest window you accept,
+        i.e. your time resolution). Overrides max_window_frac when given.
     cap_lag_by_period : cap max_lag at half the shortest detected period.
     tolerance : "fixed" keeps base.tolerance; "calibrated" chooses it on a
         circular-shift null (see module docstring).
@@ -155,7 +158,7 @@ def adaptive_params(
     periods = [dominant_period(s) for s in sigs]
     tau_sys = float(np.quantile(tau_c, quantile))
 
-    hi = max(min_window, int(max_window_frac * T))
+    hi = max(min_window, int(max_window_frac * T) if max_window is None else int(max_window))
     bart = np.array([bartlett_factor(s) for s in sigs])
     if window_rule == "decorr":
         L_raw = round(cycles * max(tau_sys, 1.0))
