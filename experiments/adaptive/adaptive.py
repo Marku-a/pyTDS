@@ -88,9 +88,25 @@ def dominant_period(x: np.ndarray, max_lag: int | None = None, min_peak: float =
     return z + k
 
 
+def bartlett_factor(x: np.ndarray, max_lag: int | None = None) -> float:
+    """
+    Variance inflation of a correlation estimate due to autocorrelation:
+    B = 1 + 2 * sum_k r(k)^2, summed until the ACF first crosses zero.
+    A window of L samples holds about L / B independent samples
+    (Bartlett 1946). Unlike the 1/e decorrelation time, the sum sees the
+    whole ACF, so slow structure (e.g. bursts riding on spikes) counts.
+    """
+    r = acf(x, max_lag)
+    neg = np.nonzero(r <= 0)[0]
+    K = int(neg[0]) if len(neg) else len(r)
+    return float(1.0 + 2.0 * np.sum(r[1:K] ** 2))
+
+
 def adaptive_params(
     signals,
     cycles: float = 10.0,
+    window_rule: str = "decorr",
+    n_eff: float = 30.0,
     quantile: float = 1.0,
     min_window: int = 20,
     max_window_frac: float = 0.1,
@@ -108,7 +124,12 @@ def adaptive_params(
     Parameters
     ----------
     signals : T x N array or list of N equal-length 1-D arrays.
-    cycles : window length in units of the system decorrelation time.
+    cycles : window length in units of the system decorrelation time
+        (window_rule="decorr", the v1 rule).
+    window_rule : "decorr" (v1: window = cycles * decorrelation time) or
+        "bartlett" (v2: window = n_eff * Bartlett factor, i.e. the window
+        holds about n_eff independent samples for every signal).
+    n_eff : target independent samples per window (window_rule="bartlett").
     quantile : which per-signal decorrelation time defines the system
         scale (1.0 = slowest signal, 0.5 = median signal).
     min_window, max_window_frac : window is clipped to
@@ -135,7 +156,14 @@ def adaptive_params(
     tau_sys = float(np.quantile(tau_c, quantile))
 
     hi = max(min_window, int(max_window_frac * T))
-    L = int(np.clip(round(cycles * max(tau_sys, 1.0)), min_window, hi))
+    bart = np.array([bartlett_factor(s) for s in sigs])
+    if window_rule == "decorr":
+        L_raw = round(cycles * max(tau_sys, 1.0))
+    elif window_rule == "bartlett":
+        L_raw = round(n_eff * float(np.quantile(bart, quantile)))
+    else:
+        raise ValueError("window_rule must be 'decorr' or 'bartlett'")
+    L = int(np.clip(L_raw, min_window, hi))
     step = max(1, L // 2)
     max_lag = (L - 1) // 2
     detected = [p for p in periods if p is not None]
@@ -148,10 +176,12 @@ def adaptive_params(
         "tau_c": tau_c.tolist(),
         "periods": periods,
         "tau_sys": tau_sys,
+        "bartlett": bart.tolist(),
+        "window_rule": window_rule,
         "window": L,
         "step": step,
         "max_lag": max_lag,
-        "window_clipped": L in (min_window, hi) and round(cycles * tau_sys) != L,
+        "window_clipped": L != L_raw,
     }
 
     if tolerance == "fixed":
