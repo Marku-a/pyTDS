@@ -216,6 +216,9 @@ def adaptive_params(
             break  # null score is monotone in tolerance
     params = replace(params, tolerance=chosen)
     info["tolerance"] = chosen
+    # Even tolerance 0 exceeds the chance budget: the false-positive target
+    # cannot be met with this window, so the result must not be called calibrated.
+    info["calibration_failed"] = null_by_tol[0] > 100.0 * alpha_stab
     info["null_score_by_tolerance"] = null_by_tol
     return params, info
 
