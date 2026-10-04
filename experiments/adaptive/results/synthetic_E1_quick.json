@@ -1,0 +1,1205 @@
+{
+ "conditions": [
+  {
+   "condition": "r=1,c=0.3",
+   "true_tau": -5,
+   "variants": {
+    "fixed_default": {
+     "auc": 1.0,
+     "coupled_mean": 6.206206206206206,
+     "coupled_sd": 0.10010010010010006,
+     "uncoupled_mean": 1.1511511511511512,
+     "uncoupled_sd": 0.35035035035035034,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      6.106106106106106,
+      6.306306306306306
+     ],
+     "uncoupled_scores": [
+      0.8008008008008007,
+      1.5015015015015014
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      -5.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 0.5,
+     "coupled_mean": 8.772515010006671,
+     "coupled_sd": 1.0673782521681123,
+     "uncoupled_mean": 8.872581721147432,
+     "uncoupled_sd": 0.13342228152101399,
+     "hit_rate": 0.5,
+     "median_rel_err": 0.30000000000000004,
+     "coupled_scores": [
+      9.839893262174783,
+      7.705136757838559
+     ],
+     "uncoupled_scores": [
+      9.006004002668446,
+      8.739159439626418
+     ],
+     "coupled_median_tau": [
+      -3.0,
+      -4.0
+     ],
+     "params": {
+      "window": 21,
+      "step": 10,
+      "max_lag": 10,
+      "tolerance": 1,
+      "tau_sys": 2.0907840720825734
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 1.0006671114076051,
+     "coupled_sd": 0.4336224149432955,
+     "uncoupled_mean": 0.26684456304202797,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      1.4342895263509006,
+      0.5670446964643095
+     ],
+     "uncoupled_scores": [
+      0.26684456304202797,
+      0.26684456304202797
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      -5.0
+     ],
+     "params": {
+      "window": 21,
+      "step": 10,
+      "max_lag": 10,
+      "tolerance": 0,
+      "tau_sys": 2.0907840720825734
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      -5.0
+     ],
+     "params": {
+      "window": 960,
+      "step": 480,
+      "max_lag": 479,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 1,
+   "c": 0.3
+  },
+  {
+   "condition": "r=2,c=0.3",
+   "true_tau": -10,
+   "variants": {
+    "fixed_default": {
+     "auc": 1.0,
+     "coupled_mean": 1.2512512512512513,
+     "coupled_sd": 0.4504504504504505,
+     "uncoupled_mean": 0.20020020020020018,
+     "uncoupled_sd": 0.20020020020020018,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.05,
+     "coupled_scores": [
+      1.7017017017017018,
+      0.8008008008008007
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.40040040040040037
+     ],
+     "coupled_median_tau": [
+      -10.0,
+      -9.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 0.875,
+     "coupled_mean": 2.3826208829712687,
+     "coupled_sd": 0.7007708479327259,
+     "uncoupled_mean": 1.401541695865452,
+     "uncoupled_sd": 0.2803083391730905,
+     "hit_rate": 0.5,
+     "median_rel_err": 0.25,
+     "coupled_scores": [
+      1.6818500350385426,
+      3.0833917309039944
+     ],
+     "uncoupled_scores": [
+      1.1212333566923616,
+      1.6818500350385426
+     ],
+     "coupled_median_tau": [
+      -6.0,
+      -9.0
+     ],
+     "params": {
+      "window": 42,
+      "step": 21,
+      "max_lag": 20,
+      "tolerance": 1,
+      "tau_sys": 4.166470779663381
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 0.875,
+     "coupled_mean": 2.3826208829712687,
+     "coupled_sd": 0.7007708479327259,
+     "uncoupled_mean": 1.401541695865452,
+     "uncoupled_sd": 0.2803083391730905,
+     "hit_rate": 0.5,
+     "median_rel_err": 0.25,
+     "coupled_scores": [
+      1.6818500350385426,
+      3.0833917309039944
+     ],
+     "uncoupled_scores": [
+      1.1212333566923616,
+      1.6818500350385426
+     ],
+     "coupled_median_tau": [
+      -6.0,
+      -9.0
+     ],
+     "params": {
+      "window": 42,
+      "step": 21,
+      "max_lag": 20,
+      "tolerance": 1,
+      "tau_sys": 4.166470779663381
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -10.0,
+      -10.0
+     ],
+     "params": {
+      "window": 1920,
+      "step": 960,
+      "max_lag": 959,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 2,
+   "c": 0.3
+  },
+  {
+   "condition": "r=4,c=0.3",
+   "true_tau": -20,
+   "variants": {
+    "fixed_default": {
+     "auc": 0.0,
+     "coupled_mean": 0.45045045045045046,
+     "coupled_sd": 0.45045045045045046,
+     "uncoupled_mean": 1.1011011011011012,
+     "uncoupled_sd": 0.10010010010010006,
+     "hit_rate": 0.0,
+     "median_rel_err": 1.9,
+     "coupled_scores": [
+      0.9009009009009009,
+      0.0
+     ],
+     "uncoupled_scores": [
+      1.001001001001001,
+      1.2012012012012012
+     ],
+     "coupled_median_tau": [
+      18.0,
+      NaN
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 0.625,
+     "coupled_mean": 0.7012622720897616,
+     "coupled_sd": 0.7012622720897616,
+     "uncoupled_mean": 0.2805049088359046,
+     "uncoupled_sd": 0.2805049088359046,
+     "hit_rate": 0.0,
+     "median_rel_err": 0.75,
+     "coupled_scores": [
+      1.402524544179523,
+      0.0
+     ],
+     "uncoupled_scores": [
+      0.5610098176718092,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      NaN
+     ],
+     "params": {
+      "window": 85,
+      "step": 42,
+      "max_lag": 42,
+      "tolerance": 1,
+      "tau_sys": 8.529018517151874
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 0.25,
+     "coupled_mean": 4.417952314165498,
+     "coupled_sd": 0.21037868162692863,
+     "uncoupled_mean": 4.768583450210379,
+     "uncoupled_sd": 0.28050490883590484,
+     "hit_rate": 0.5,
+     "median_rel_err": 0.1,
+     "coupled_scores": [
+      4.628330995792426,
+      4.207573632538569
+     ],
+     "uncoupled_scores": [
+      5.049088359046284,
+      4.488078541374474
+     ],
+     "coupled_median_tau": [
+      -16.0,
+      -20.0
+     ],
+     "params": {
+      "window": 85,
+      "step": 42,
+      "max_lag": 42,
+      "tolerance": 4,
+      "tau_sys": 8.529018517151874
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 90.0,
+     "coupled_sd": 3.3333333333333286,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      86.66666666666667,
+      93.33333333333333
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -20.0,
+      -20.0
+     ],
+     "params": {
+      "window": 1920,
+      "step": 960,
+      "max_lag": 959,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 4,
+   "c": 0.3
+  },
+  {
+   "condition": "r=8,c=0.3",
+   "true_tau": -40,
+   "variants": {
+    "fixed_default": {
+     "auc": 0.25,
+     "coupled_mean": 0.6006006006006006,
+     "coupled_sd": 0.20020020020020018,
+     "uncoupled_mean": 0.8008008008008007,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 0.0,
+     "median_rel_err": 1.09375,
+     "coupled_scores": [
+      0.40040040040040037,
+      0.8008008008008007
+     ],
+     "uncoupled_scores": [
+      0.8008008008008007,
+      0.8008008008008007
+     ],
+     "coupled_median_tau": [
+      -0.5,
+      8.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 0.5,
+     "coupled_mean": 0.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 0.0,
+     "median_rel_err": NaN,
+     "coupled_scores": [
+      0.0,
+      0.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      NaN,
+      NaN
+     ],
+     "params": {
+      "window": 167,
+      "step": 83,
+      "max_lag": 83,
+      "tolerance": 1,
+      "tau_sys": 16.722179285906297
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 0.0,
+     "coupled_mean": 3.8888888888888884,
+     "coupled_sd": 0.2777777777777777,
+     "uncoupled_mean": 7.222222222222222,
+     "uncoupled_sd": 2.7777777777777777,
+     "hit_rate": 0.0,
+     "median_rel_err": 0.325,
+     "coupled_scores": [
+      3.6111111111111107,
+      4.166666666666666
+     ],
+     "uncoupled_scores": [
+      4.444444444444445,
+      10.0
+     ],
+     "coupled_median_tau": [
+      -60.0,
+      -34.0
+     ],
+     "params": {
+      "window": 167,
+      "step": 83,
+      "max_lag": 83,
+      "tolerance": 9,
+      "tau_sys": 16.722179285906297
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 53.33333333333333,
+     "coupled_sd": 9.999999999999996,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      43.333333333333336,
+      63.33333333333333
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -40.0,
+      -40.0
+     ],
+     "params": {
+      "window": 1920,
+      "step": 960,
+      "max_lag": 959,
+      "tolerance": 2
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 8,
+   "c": 0.3
+  },
+  {
+   "condition": "r=16,c=0.3",
+   "true_tau": -80,
+   "variants": {
+    "fixed_default": {
+     "auc": 0.5,
+     "coupled_mean": 1.0510510510510511,
+     "coupled_sd": 0.2502502502502503,
+     "uncoupled_mean": 1.3513513513513513,
+     "uncoupled_sd": 0.9509509509509511,
+     "hit_rate": 0.0,
+     "median_rel_err": 0.9125,
+     "coupled_scores": [
+      0.8008008008008007,
+      1.3013013013013013
+     ],
+     "uncoupled_scores": [
+      2.3023023023023024,
+      0.40040040040040037
+     ],
+     "coupled_median_tau": [
+      0.0,
+      -14.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 0.5,
+     "coupled_mean": 0.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 0.0,
+     "median_rel_err": NaN,
+     "coupled_scores": [
+      0.0,
+      0.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      NaN,
+      NaN
+     ],
+     "params": {
+      "window": 366,
+      "step": 183,
+      "max_lag": 182,
+      "tolerance": 1,
+      "tau_sys": 36.60366154486821
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 0.5,
+     "coupled_mean": 3.7037037037037033,
+     "coupled_sd": 3.7037037037037033,
+     "uncoupled_mean": 3.7037037037037033,
+     "uncoupled_sd": 1.2345679012345678,
+     "hit_rate": 0.5,
+     "median_rel_err": 0.0625,
+     "coupled_scores": [
+      0.0,
+      7.4074074074074066
+     ],
+     "uncoupled_scores": [
+      4.938271604938271,
+      2.4691358024691357
+     ],
+     "coupled_median_tau": [
+      NaN,
+      -75.0
+     ],
+     "params": {
+      "window": 366,
+      "step": 183,
+      "max_lag": 182,
+      "tolerance": 20,
+      "tau_sys": 36.60366154486821
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 21.666666666666664,
+     "coupled_sd": 5.000000000000002,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      16.666666666666664,
+      26.666666666666668
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -80.0,
+      -80.0
+     ],
+     "params": {
+      "window": 1920,
+      "step": 960,
+      "max_lag": 959,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 16,
+   "c": 0.3
+  },
+  {
+   "condition": "r=1,c=0.6",
+   "true_tau": -5,
+   "variants": {
+    "fixed_default": {
+     "auc": 1.0,
+     "coupled_mean": 80.68068068068067,
+     "coupled_sd": 2.3023023023023015,
+     "uncoupled_mean": 0.6006006006006006,
+     "uncoupled_sd": 0.20020020020020018,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      78.37837837837837,
+      82.98298298298297
+     ],
+     "uncoupled_scores": [
+      0.40040040040040037,
+      0.8008008008008007
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      -5.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 1.0,
+     "coupled_mean": 22.17405801933978,
+     "coupled_sd": 1.0003334444814946,
+     "uncoupled_mean": 8.602867622540847,
+     "uncoupled_sd": 1.133711237079026,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      21.173724574858284,
+      23.174391463821273
+     ],
+     "uncoupled_scores": [
+      7.4691563854618215,
+      9.736578859619874
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      -5.0
+     ],
+     "params": {
+      "window": 20,
+      "step": 10,
+      "max_lag": 9,
+      "tolerance": 1,
+      "tau_sys": 2.042506350504859
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 11.170390130043348,
+     "coupled_sd": 1.2004001333777925,
+     "uncoupled_mean": 0.20006668889629875,
+     "uncoupled_sd": 0.06668889629876625,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      9.969989996665555,
+      12.37079026342114
+     ],
+     "uncoupled_scores": [
+      0.266755585195065,
+      0.1333777925975325
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      -5.0
+     ],
+     "params": {
+      "window": 20,
+      "step": 10,
+      "max_lag": 9,
+      "tolerance": 0,
+      "tau_sys": 2.042506350504859
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -5.0,
+      -5.0
+     ],
+     "params": {
+      "window": 240,
+      "step": 120,
+      "max_lag": 119,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 1,
+   "c": 0.6
+  },
+  {
+   "condition": "r=2,c=0.6",
+   "true_tau": -10,
+   "variants": {
+    "fixed_default": {
+     "auc": 1.0,
+     "coupled_mean": 40.69069069069069,
+     "coupled_sd": 0.05005005005005003,
+     "uncoupled_mean": 0.20020020020020018,
+     "uncoupled_sd": 0.20020020020020018,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      40.64064064064064,
+      40.74074074074074
+     ],
+     "uncoupled_scores": [
+      0.40040040040040037,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -10.0,
+      -10.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 1.0,
+     "coupled_mean": 21.40854940434478,
+     "coupled_sd": 1.5767344078486332,
+     "uncoupled_mean": 1.9271198318149965,
+     "uncoupled_sd": 0.5255781359495446,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      22.985283812193412,
+      19.831814996496146
+     ],
+     "uncoupled_scores": [
+      1.4015416958654519,
+      2.452697967764541
+     ],
+     "coupled_median_tau": [
+      -10.0,
+      -10.0
+     ],
+     "params": {
+      "window": 42,
+      "step": 21,
+      "max_lag": 20,
+      "tolerance": 1,
+      "tau_sys": 4.183349878138612
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 21.40854940434478,
+     "coupled_sd": 1.5767344078486332,
+     "uncoupled_mean": 1.9271198318149965,
+     "uncoupled_sd": 0.5255781359495446,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      22.985283812193412,
+      19.831814996496146
+     ],
+     "uncoupled_scores": [
+      1.4015416958654519,
+      2.452697967764541
+     ],
+     "coupled_median_tau": [
+      -10.0,
+      -10.0
+     ],
+     "params": {
+      "window": 42,
+      "step": 21,
+      "max_lag": 20,
+      "tolerance": 1,
+      "tau_sys": 4.183349878138612
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -10.0,
+      -10.0
+     ],
+     "params": {
+      "window": 480,
+      "step": 240,
+      "max_lag": 239,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 2,
+   "c": 0.6
+  },
+  {
+   "condition": "r=4,c=0.6",
+   "true_tau": -20,
+   "variants": {
+    "fixed_default": {
+     "auc": 1.0,
+     "coupled_mean": 6.056056056056056,
+     "coupled_sd": 0.05005005005005003,
+     "uncoupled_mean": 0.9009009009009008,
+     "uncoupled_sd": 0.5005005005005004,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      6.106106106106106,
+      6.006006006006006
+     ],
+     "uncoupled_scores": [
+      0.40040040040040037,
+      1.4014014014014013
+     ],
+     "coupled_median_tau": [
+      -20.0,
+      -20.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 1.0,
+     "coupled_mean": 20.833333333333332,
+     "coupled_sd": 0.5747126436781613,
+     "uncoupled_mean": 0.28735632183908044,
+     "uncoupled_sd": 0.28735632183908044,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      20.25862068965517,
+      21.408045977011493
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.5747126436781609
+     ],
+     "coupled_median_tau": [
+      -20.0,
+      -20.0
+     ],
+     "params": {
+      "window": 86,
+      "step": 43,
+      "max_lag": 42,
+      "tolerance": 1,
+      "tau_sys": 8.614877537776877
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 26.939655172413797,
+     "coupled_sd": 1.652298850574713,
+     "uncoupled_mean": 3.8793103448275863,
+     "uncoupled_sd": 1.0057471264367817,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      25.287356321839084,
+      28.59195402298851
+     ],
+     "uncoupled_scores": [
+      2.8735632183908044,
+      4.885057471264368
+     ],
+     "coupled_median_tau": [
+      -20.0,
+      -20.0
+     ],
+     "params": {
+      "window": 86,
+      "step": 43,
+      "max_lag": 42,
+      "tolerance": 4,
+      "tau_sys": 8.614877537776877
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -20.0,
+      -20.0
+     ],
+     "params": {
+      "window": 960,
+      "step": 480,
+      "max_lag": 479,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 4,
+   "c": 0.6
+  },
+  {
+   "condition": "r=8,c=0.6",
+   "true_tau": -40,
+   "variants": {
+    "fixed_default": {
+     "auc": 0.625,
+     "coupled_mean": 0.40040040040040037,
+     "coupled_sd": 0.40040040040040037,
+     "uncoupled_mean": 0.20020020020020018,
+     "uncoupled_sd": 0.20020020020020018,
+     "hit_rate": 0.0,
+     "median_rel_err": 1.175,
+     "coupled_scores": [
+      0.0,
+      0.8008008008008007
+     ],
+     "uncoupled_scores": [
+      0.40040040040040037,
+      0.0
+     ],
+     "coupled_median_tau": [
+      NaN,
+      7.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 1.0,
+     "coupled_mean": 27.988338192419825,
+     "coupled_sd": 4.373177842565596,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      23.61516034985423,
+      32.36151603498542
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -40.0,
+      -40.0
+     ],
+     "params": {
+      "window": 174,
+      "step": 87,
+      "max_lag": 86,
+      "tolerance": 1,
+      "tau_sys": 17.393778343914672
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 37.755102040816325,
+     "coupled_sd": 6.559766763848399,
+     "uncoupled_mean": 2.478134110787172,
+     "uncoupled_sd": 1.0204081632653061,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      31.195335276967928,
+      44.31486880466473
+     ],
+     "uncoupled_scores": [
+      1.4577259475218658,
+      3.498542274052478
+     ],
+     "coupled_median_tau": [
+      -40.0,
+      -40.0
+     ],
+     "params": {
+      "window": 174,
+      "step": 87,
+      "max_lag": 86,
+      "tolerance": 9,
+      "tau_sys": 17.393778343914672
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -40.0,
+      -40.0
+     ],
+     "params": {
+      "window": 1920,
+      "step": 960,
+      "max_lag": 959,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 8,
+   "c": 0.6
+  },
+  {
+   "condition": "r=16,c=0.6",
+   "true_tau": -80,
+   "variants": {
+    "fixed_default": {
+     "auc": 0.625,
+     "coupled_mean": 1.1511511511511512,
+     "coupled_sd": 0.35035035035035034,
+     "uncoupled_mean": 0.8508508508508508,
+     "uncoupled_sd": 0.05005005005005009,
+     "hit_rate": 0.0,
+     "median_rel_err": 0.978125,
+     "coupled_scores": [
+      0.8008008008008007,
+      1.5015015015015014
+     ],
+     "uncoupled_scores": [
+      0.8008008008008007,
+      0.9009009009009009
+     ],
+     "coupled_median_tau": [
+      -3.5,
+      0.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 1.0,
+     "coupled_mean": 9.217877094972067,
+     "coupled_sd": 0.2793296089385473,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      8.938547486033519,
+      9.497206703910614
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -80.0,
+      -80.0
+     ],
+     "params": {
+      "window": 333,
+      "step": 166,
+      "max_lag": 166,
+      "tolerance": 1,
+      "tau_sys": 33.28849852933459
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 18.71508379888268,
+     "coupled_sd": 1.3966480446927374,
+     "uncoupled_mean": 1.3966480446927374,
+     "uncoupled_sd": 1.3966480446927374,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      17.318435754189945,
+      20.11173184357542
+     ],
+     "uncoupled_scores": [
+      0.0,
+      2.793296089385475
+     ],
+     "coupled_median_tau": [
+      -80.0,
+      -80.0
+     ],
+     "params": {
+      "window": 333,
+      "step": 166,
+      "max_lag": 166,
+      "tolerance": 18,
+      "tau_sys": 33.28849852933459
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 98.33333333333334,
+     "coupled_sd": 1.6666666666666643,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0,
+     "coupled_scores": [
+      96.66666666666667,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      -80.0,
+      -80.0
+     ],
+     "params": {
+      "window": 1920,
+      "step": 960,
+      "max_lag": 959,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "r": 16,
+   "c": 0.6
+  }
+ ],
+ "note": "oracle = optimistic upper bound"
+}

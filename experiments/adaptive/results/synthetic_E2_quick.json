@@ -1,0 +1,363 @@
+{
+ "conditions": [
+  {
+   "condition": "delay=8",
+   "true_tau": 8,
+   "variants": {
+    "fixed_default": {
+     "auc": 1.0,
+     "coupled_mean": 45.47738693467337,
+     "coupled_sd": 0.7537688442211063,
+     "uncoupled_mean": 3.517587939698493,
+     "uncoupled_sd": 1.0050251256281408,
+     "hit_rate": 0.0,
+     "median_rel_err": 1.0,
+     "coupled_scores": [
+      46.231155778894475,
+      44.72361809045226
+     ],
+     "uncoupled_scores": [
+      4.522613065326634,
+      2.512562814070352
+     ],
+     "coupled_median_tau": [
+      0.0,
+      0.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 1.0,
+     "coupled_mean": 49.840764331210195,
+     "coupled_sd": 0.15923566878980822,
+     "uncoupled_mean": 34.71337579617834,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 0.0,
+     "median_rel_err": 1.0,
+     "coupled_scores": [
+      49.681528662420384,
+      50.0
+     ],
+     "uncoupled_scores": [
+      34.71337579617834,
+      34.71337579617834
+     ],
+     "coupled_median_tau": [
+      0.0,
+      0.0
+     ],
+     "params": {
+      "window": 38,
+      "step": 19,
+      "max_lag": 18,
+      "tolerance": 1,
+      "tau_sys": 3.7858386693970116
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 38.21656050955414,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 26.433121019108277,
+     "uncoupled_sd": 1.273885350318471,
+     "hit_rate": 0.0,
+     "median_rel_err": 1.0,
+     "coupled_scores": [
+      38.21656050955414,
+      38.21656050955414
+     ],
+     "uncoupled_scores": [
+      27.70700636942675,
+      25.159235668789808
+     ],
+     "coupled_median_tau": [
+      0.0,
+      0.0
+     ],
+     "params": {
+      "window": 38,
+      "step": 19,
+      "max_lag": 18,
+      "tolerance": 0,
+      "tau_sys": 3.7858386693970116
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 71.71717171717171,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 0.0,
+     "median_rel_err": 1.0,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      71.71717171717171,
+      71.71717171717171
+     ],
+     "coupled_median_tau": [
+      0.0,
+      0.0
+     ],
+     "params": {
+      "window": 120,
+      "step": 60,
+      "max_lag": 59,
+      "tolerance": 16
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "delay": 8
+  },
+  {
+   "condition": "delay=16",
+   "true_tau": 16,
+   "variants": {
+    "fixed_default": {
+     "auc": 1.0,
+     "coupled_mean": 19.597989949748744,
+     "coupled_sd": 1.0050251256281406,
+     "uncoupled_mean": 2.512562814070352,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.0625,
+     "coupled_scores": [
+      18.592964824120603,
+      20.603015075376884
+     ],
+     "uncoupled_scores": [
+      2.512562814070352,
+      2.512562814070352
+     ],
+     "coupled_median_tau": [
+      17.0,
+      17.0
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 1.0,
+     "coupled_mean": 54.69798657718121,
+     "coupled_sd": 0.33557046979865746,
+     "uncoupled_mean": 25.503355704697988,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 0.0,
+     "median_rel_err": 0.125,
+     "coupled_scores": [
+      54.36241610738255,
+      55.033557046979865
+     ],
+     "uncoupled_scores": [
+      25.503355704697988,
+      25.503355704697988
+     ],
+     "coupled_median_tau": [
+      18.0,
+      18.0
+     ],
+     "params": {
+      "window": 41,
+      "step": 20,
+      "max_lag": 20,
+      "tolerance": 1,
+      "tau_sys": 4.14269989998362
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 1.0,
+     "coupled_mean": 17.78523489932886,
+     "coupled_sd": 0.6711409395973149,
+     "uncoupled_mean": 14.429530201342281,
+     "uncoupled_sd": 0.6711409395973158,
+     "hit_rate": 0.0,
+     "median_rel_err": 0.1875,
+     "coupled_scores": [
+      18.456375838926174,
+      17.114093959731544
+     ],
+     "uncoupled_scores": [
+      13.758389261744966,
+      15.100671140939598
+     ],
+     "coupled_median_tau": [
+      19.0,
+      19.0
+     ],
+     "params": {
+      "window": 41,
+      "step": 20,
+      "max_lag": 20,
+      "tolerance": 0,
+      "tau_sys": 4.14269989998362
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 0.0,
+     "median_rel_err": 0.1875,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      19.0,
+      19.0
+     ],
+     "params": {
+      "window": 960,
+      "step": 480,
+      "max_lag": 479,
+      "tolerance": 1
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "delay": 16
+  },
+  {
+   "condition": "delay=32",
+   "true_tau": 32,
+   "variants": {
+    "fixed_default": {
+     "auc": 0.0,
+     "coupled_mean": 0.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 3.517587939698493,
+     "uncoupled_sd": 1.0050251256281408,
+     "hit_rate": 0.0,
+     "median_rel_err": NaN,
+     "coupled_scores": [
+      0.0,
+      0.0
+     ],
+     "uncoupled_scores": [
+      2.512562814070352,
+      4.522613065326634
+     ],
+     "coupled_median_tau": [
+      NaN,
+      NaN
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1,
+      "tau_sys": null
+     }
+    },
+    "adaptive_fixedtol": {
+     "auc": 0.0,
+     "coupled_mean": 0.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 38.704819277108435,
+     "uncoupled_sd": 0.15060240963855165,
+     "hit_rate": 0.0,
+     "median_rel_err": NaN,
+     "coupled_scores": [
+      0.0,
+      0.0
+     ],
+     "uncoupled_scores": [
+      38.855421686746986,
+      38.55421686746988
+     ],
+     "coupled_median_tau": [
+      NaN,
+      NaN
+     ],
+     "params": {
+      "window": 37,
+      "step": 18,
+      "max_lag": 18,
+      "tolerance": 1,
+      "tau_sys": 3.684668336204739
+     }
+    },
+    "adaptive_calibrated": {
+     "auc": 0.0,
+     "coupled_mean": 0.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 26.957831325301207,
+     "uncoupled_sd": 0.45180722891566205,
+     "hit_rate": 0.0,
+     "median_rel_err": NaN,
+     "coupled_scores": [
+      0.0,
+      0.0
+     ],
+     "uncoupled_scores": [
+      27.40963855421687,
+      26.506024096385545
+     ],
+     "coupled_median_tau": [
+      NaN,
+      NaN
+     ],
+     "params": {
+      "window": 37,
+      "step": 18,
+      "max_lag": 18,
+      "tolerance": 0,
+      "tau_sys": 3.684668336204739
+     }
+    },
+    "oracle": {
+     "auc": 1.0,
+     "coupled_mean": 100.0,
+     "coupled_sd": 0.0,
+     "uncoupled_mean": 0.0,
+     "uncoupled_sd": 0.0,
+     "hit_rate": 1.0,
+     "median_rel_err": 0.09375,
+     "coupled_scores": [
+      100.0,
+      100.0
+     ],
+     "uncoupled_scores": [
+      0.0,
+      0.0
+     ],
+     "coupled_median_tau": [
+      35.0,
+      35.0
+     ],
+     "params": {
+      "window": 1920,
+      "step": 960,
+      "max_lag": 959,
+      "tolerance": 0
+     },
+     "note": "OPTIMISTIC UPPER BOUND: grid param chosen using the labels"
+    }
+   },
+   "delay": 32
+  }
+ ],
+ "variation_method": "generator is deterministic; per-trial observation noise N(0, 0.01*std) added to x1,x2 with per-trial rng seed; true tau=+delay (verified empirically with default tds: delay 16 -> median stable tau +17)",
+ "note": "oracle = optimistic upper bound"
+}

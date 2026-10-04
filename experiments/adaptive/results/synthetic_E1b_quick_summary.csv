@@ -1,0 +1,6 @@
+exp,condition,variant,edge_auc_mean,edge_auc_sd,edge_hit_rate,params_seed0
+E1b,network,fixed_default,0.8978260869565218,0.019565217391304346,0.6,"[60, 30, 30, 1]"
+E1b,network,system_q1,0.9826086956521739,0.0,1.0,"[446, 223, 222, 24]"
+E1b,network,system_q05,0.8847826086956522,0.06304347826086953,0.7,"[188, 94, 93, 10]"
+E1b,network,perpair,0.9652173913043478,0.0,1.0,"""per-pair (see _perpair_params)"""
+E1b,network,grouped,0.9608695652173913,0.004347826086956497,1.0,"{""g0"": [21, 10, 10, 0], ""g1"": [446, 223, 222, 28]}"

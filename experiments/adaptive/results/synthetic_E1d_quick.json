@@ -1,0 +1,134 @@
+{
+ "conditions": [
+  {
+   "condition": "r=1",
+   "variants": {
+    "fixed_default": {
+     "balanced_acc_mean": 0.8707767142696141,
+     "balanced_acc_sd": 0.012520930270000452,
+     "score_mean": 35.13513513513513,
+     "score_sd": 0.7007007007006969,
+     "balanced_acc": [
+      0.8832976445396146,
+      0.8582557839996137
+     ],
+     "scores": [
+      35.83583583583583,
+      34.434434434434436
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1
+     }
+    },
+    "adaptive_fixedtol": {
+     "balanced_acc_mean": 0.5653496605020996,
+     "balanced_acc_sd": 0.0034127356383453766,
+     "score_mean": 15.638546182060686,
+     "score_sd": 1.1003667889296445,
+     "balanced_acc": [
+      0.5687623961404449,
+      0.5619369248637541
+     ],
+     "scores": [
+      16.73891297099033,
+      14.538179393131042
+     ],
+     "params": {
+      "window": 20,
+      "step": 10,
+      "max_lag": 9,
+      "tolerance": 1
+     }
+    },
+    "adaptive_calibrated": {
+     "balanced_acc_mean": 0.5621420754042705,
+     "balanced_acc_sd": 7.817385866415449e-07,
+     "score_mean": 6.052017339113037,
+     "score_sd": 0.25008336112037366,
+     "balanced_acc": [
+      0.5621428571428572,
+      0.5621412936656839
+     ],
+     "scores": [
+      5.801933977992664,
+      6.302100700233411
+     ],
+     "params": {
+      "window": 20,
+      "step": 10,
+      "max_lag": 9,
+      "tolerance": 0
+     }
+    }
+   }
+  },
+  {
+   "condition": "r=4",
+   "variants": {
+    "fixed_default": {
+     "balanced_acc_mean": 0.525487635040492,
+     "balanced_acc_sd": 0.0003391106245270725,
+     "score_mean": 2.8528528528528527,
+     "score_sd": 0.2502502502502504,
+     "balanced_acc": [
+      0.5251485244159649,
+      0.5258267456650191
+     ],
+     "scores": [
+      3.1031031031031033,
+      2.6026026026026026
+     ],
+     "params": {
+      "window": 60,
+      "step": 30,
+      "max_lag": 30,
+      "tolerance": 1
+     }
+    },
+    "adaptive_fixedtol": {
+     "balanced_acc_mean": 0.5831414657578493,
+     "balanced_acc_sd": 0.021721756126649172,
+     "score_mean": 8.405172413793103,
+     "score_sd": 1.5086206896551726,
+     "balanced_acc": [
+      0.6048632218844985,
+      0.5614197096312001
+     ],
+     "scores": [
+      9.913793103448276,
+      6.896551724137931
+     ],
+     "params": {
+      "window": 86,
+      "step": 43,
+      "max_lag": 42,
+      "tolerance": 1
+     }
+    },
+    "adaptive_calibrated": {
+     "balanced_acc_mean": 0.6074844918546003,
+     "balanced_acc_sd": 0.02169483945239059,
+     "score_mean": 12.068965517241379,
+     "score_sd": 0.14367816091954033,
+     "balanced_acc": [
+      0.6291793313069909,
+      0.5857896524022097
+     ],
+     "scores": [
+      12.21264367816092,
+      11.925287356321839
+     ],
+     "params": {
+      "window": 86,
+      "step": 43,
+      "max_lag": 42,
+      "tolerance": 4
+     }
+    }
+   }
+  }
+ ]
+}
