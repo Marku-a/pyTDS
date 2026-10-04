@@ -122,6 +122,7 @@
       "max_lag": 35,
       "window_clipped": false,
       "tolerance": 0,
+      "calibration_failed": false,
       "null_score_by_tolerance": {
        "0": 0.3197674418604651,
        "1": 5.658914728682172
@@ -212,6 +213,7 @@
       "max_lag": 35,
       "window_clipped": false,
       "tolerance": 1,
+      "calibration_failed": false,
       "null_score_by_tolerance": {
        "0": 0.15151515151515152,
        "1": 1.6666666666666667,
@@ -332,6 +334,7 @@
       "max_lag": 17,
       "window_clipped": false,
       "tolerance": 0,
+      "calibration_failed": false,
       "null_score_by_tolerance": {
        "0": 1.2887596899224807,
        "1": 19.544573643410853
@@ -422,6 +425,7 @@
       "max_lag": 17,
       "window_clipped": false,
       "tolerance": 0,
+      "calibration_failed": false,
       "null_score_by_tolerance": {
        "0": 0.6818181818181819,
        "1": 10.530303030303031
@@ -541,6 +545,7 @@
       "max_lag": 8,
       "window_clipped": false,
       "tolerance": 0,
+      "calibration_failed": true,
       "null_score_by_tolerance": {
        "0": 6.395131086142323
       }
@@ -630,6 +635,7 @@
       "max_lag": 8,
       "window_clipped": false,
       "tolerance": 0,
+      "calibration_failed": false,
       "null_score_by_tolerance": {
        "0": 3.75,
        "1": 31.09848484848485

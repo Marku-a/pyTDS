@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 from adaptive import adaptive_params, decorrelation_time  # noqa: E402
 from common import auc, delay_metrics, oracle_grid, variant_params  # noqa: E402
-from generators import ar1, coupled_pair  # noqa: E402
+from generators import ar1, coupled_pair, rulkov_pair  # noqa: E402
 from pyTDS.core import stable_label, tds_score, time_delay_interaction  # noqa: E402
 from pyTDS.params import TDSParams  # noqa: E402
 
@@ -57,10 +57,8 @@ def gen_trial(spec: dict, seed_key: list):
         return coupled_pair(spec["n"], spec["tc_x"], spec["tc_y"], spec["delay"],
                             spec["c"], rng, spec.get("block_len"))
     if spec["kind"] == "rulkov":
-        from rulkov_validation import coupled_rulkov_with_delay
-        x1, x2 = coupled_rulkov_with_delay(
-            spec["n"], 0.001, [4.5, 4.1], [0.01, -0.01], 1.0, 1.0, spec["g"], spec["delay"])
-        # Generator is deterministic -> trial variety via per-trial observation noise
+        # random initial conditions per trial + 1% observation noise
+        x1, x2 = rulkov_pair(spec["n"], spec["delay"], spec["g"], rng)
         x1 = x1 + rng.normal(0, 0.01 * x1.std(), len(x1))
         x2 = x2 + rng.normal(0, 0.01 * x2.std(), len(x2))
         return x1, x2, np.ones(len(x1))
@@ -75,7 +73,8 @@ def sys_signals(spec_c, spec_u, eid, ci):
     sig = []
     for flag, spec in ((1, spec_c), (0, spec_u)):
         for t in range(3):
-            x, y, _ = gen_trial(spec, seed_key(eid, ci, flag, t))
+            # separate seeds (trial index + 1000) from the evaluated trials
+            x, y, _ = gen_trial(spec, seed_key(eid, ci, flag, t + 1000))
             sig += [x, y]
     return sig
 
@@ -201,7 +200,7 @@ def run_detection(pool, eid, ci, cname, spec_c, spec_u, ntr, true_tau):
     for v in VARIANTS:
         p, info = variant_params(v, system)
         named.append((v, p))
-        infos[v] = {k: info.get(k) for k in ("window", "step", "max_lag", "tolerance", "tau_sys")}
+        infos[v] = {k: info.get(k) for k in ("window", "step", "max_lag", "tolerance", "tau_sys", "calibration_failed")}
     jobs = [(spec_c, seed_key(eid, ci, 1, t), named) for t in range(ntr)] + \
            [(spec_u, seed_key(eid, ci, 0, t), named) for t in range(ntr)]
     out = pool.map(worker_score, jobs, chunksize=1)
@@ -243,7 +242,8 @@ def rows_from(eid, conds):
                          "coupled_sd": s["coupled_sd"], "uncoupled_mean": s["uncoupled_mean"],
                          "uncoupled_sd": s["uncoupled_sd"], "hit_rate": s["hit_rate"],
                          "median_rel_err": s["median_rel_err"], "window": p["window"],
-                         "step": p["step"], "max_lag": p["max_lag"], "tolerance": p["tolerance"]})
+                         "step": p["step"], "max_lag": p["max_lag"], "tolerance": p["tolerance"],
+                         "calib_failed": p.get("calibration_failed")})
     return rows
 
 
@@ -354,17 +354,18 @@ def run_E1d(pool, quick):
         sc = dict(kind="ar", n=30000, tc_x=2 * r, tc_y=2 * r, delay=5 * r, c=0.6, block_len=2000)
         su = dict(sc, c=0.0)
         system = sys_signals(sc, su, "E1d", ci)
-        named, vs = [], {}
+        named, vs, cf = [], {}, {}
         for v in VARIANTS:
-            p, _ = variant_params(v, system)
+            p, info = variant_params(v, system)
             named.append((v, p))
+            cf[v] = info.get("calibration_failed")
         out = pool.map(worker_episode, [(sc, seed_key("E1d", ci, 1, t), named) for t in range(ntr)], chunksize=1)
         for v, p in named:
             bacc = [o[v][1] for o in out]
             sco = [o[v][0] for o in out]
             vs[v] = {"balanced_acc_mean": float(np.mean(bacc)), "balanced_acc_sd": float(np.std(bacc)),
                      "score_mean": float(np.mean(sco)), "score_sd": float(np.std(sco)),
-                     "balanced_acc": bacc, "scores": sco, "params": pdict(p)}
+                     "balanced_acc": bacc, "scores": sco, "params": {**pdict(p), "calibration_failed": cf[v]}}
         conds.append({"condition": f"r={r}", "variants": vs})
         print("  E1d", f"r={r}", flush=True)
     rows = []
@@ -372,7 +373,9 @@ def run_E1d(pool, quick):
         for v, s in c["variants"].items():
             rows.append({"exp": "E1d", "condition": c["condition"], "variant": v,
                          "balanced_acc_mean": s["balanced_acc_mean"], "balanced_acc_sd": s["balanced_acc_sd"],
-                         "score_mean": s["score_mean"], "score_sd": s["score_sd"], **s["params"]})
+                         "score_mean": s["score_mean"], "score_sd": s["score_sd"],
+                         **{k: q for k, q in s["params"].items() if k != "calibration_failed"},
+                         "calib_failed": s["params"]["calibration_failed"]})
     save("E1d", {"conditions": conds}, rows, quick)
     fig, ax = plt.subplots(figsize=(7, 4))
     bar_groups(ax, [c["condition"] for c in conds],
@@ -396,12 +399,19 @@ def run_E1b(pool, quick):
         for o in outs:
             sc = {k: val[0] for k, val in o["res"][v].items()}
             pos = [sc[f"{i}-{j}"] for (i, j) in NET_EDGES]
-            neg = [s for k, s in sc.items() if tuple(map(int, k.split("-"))) not in NET_EDGES]
+            neg = [s for k, s in sc.items()
+                   if tuple(map(int, k.split("-"))) not in NET_EDGES and k != "0-5"]
             aucs.append(auc(pos, neg))
             meds = [o["res"][v][f"{i}-{j}"][1] for (i, j) in NET_EDGES]
             hits += [float(abs(m - t) <= max(1.0, 0.1 * abs(t))) if not np.isnan(m) else 0.0
                      for m, t in zip(meds, NET_EDGES.values())]
-        summ[v] = {"edge_auc_mean": float(np.mean(aucs)), "edge_auc_sd": float(np.std(aucs)),
+        summ[v] = {"indirect_0_5": {"score_per_seed": [o["res"][v]["0-5"][0] for o in outs],
+                                    "median_tau_per_seed": [o["res"][v]["0-5"][1] for o in outs],
+                                    "score_mean": float(np.mean([o["res"][v]["0-5"][0] for o in outs])),
+                                    "median_tau_mean": float(np.nanmean([o["res"][v]["0-5"][1] for o in outs]))
+                                    if not all(np.isnan(o["res"][v]["0-5"][1]) for o in outs) else None,
+                                    "true_tau": -15},
+                   "edge_auc_mean": float(np.mean(aucs)), "edge_auc_sd": float(np.std(aucs)),
                    "edge_auc": aucs, "edge_hit_rate": float(np.mean(hits)),
                    "params_seed0": outs[0]["params"].get(v, "per-pair (see _perpair_params)")}
     pp = {k: v for k, v in outs[0]["res"].get("_perpair_params", {}).items()}
@@ -411,12 +421,14 @@ def run_E1b(pool, quick):
                  "perpair_params_seed0 [window,tol]": pp},
          [{"exp": "E1b", "condition": "network", "variant": v, "edge_auc_mean": s["edge_auc_mean"],
            "edge_auc_sd": s["edge_auc_sd"], "edge_hit_rate": s["edge_hit_rate"],
+           "indirect_0_5_score": s["indirect_0_5"]["score_mean"],
+           "indirect_0_5_median_tau": s["indirect_0_5"]["median_tau_mean"],
            "params_seed0": json.dumps(s["params_seed0"])} for v, s in summ.items()], quick)
     fig, ax = plt.subplots(figsize=(9, 4))
     ax.bar(variants, [summ[v]["edge_auc_mean"] for v in variants],
            yerr=[summ[v]["edge_auc_sd"] for v in variants], capsize=3,
            color=["tab:gray", "tab:blue", "tab:cyan", "tab:orange", "tab:green", "tab:purple", "tab:brown"], label="mean +- sd over seeds")
-    ax.set_ylabel("edge AUC (5 edges vs 23 non-edges)")
+    ax.set_ylabel("edge AUC (5 edges vs 22 non-edges)")
     ax.set_xlabel("variant")
     ax.tick_params(axis="x", labelsize=7, rotation=20)
     ax.set_title("E1b: mixed-scale network, edge detection")
@@ -458,11 +470,13 @@ def print_summary(eid, res):
     print(f"\n=== {eid} ===")
     if eid == "E1b":
         for v, s in res.items():
-            print(f"{v:14s} AUC {s['edge_auc_mean']:.3f}+-{s['edge_auc_sd']:.3f} hit {s['edge_hit_rate']:.2f} params {s['params_seed0']}")
+            print(f"{v:14s} ind0-5 score {s['indirect_0_5']['score_mean']:.1f} tau {s['indirect_0_5']['median_tau_mean']} | AUC {s['edge_auc_mean']:.3f}+-{s['edge_auc_sd']:.3f} hit {s['edge_hit_rate']:.2f} params {s['params_seed0']}")
         return
     for c in res:
         for v, s in c["variants"].items():
             p = s["params"]
+            if p.get("calibration_failed"):
+                print(f"CALIB_FAILED {eid} {c['condition']} {v}")
             ptxt = f"L={p['window']} step={p['step']} lag={p['max_lag']} tol={p['tolerance']}"
             if eid == "E1d":
                 print(f"{c['condition']:16s} {v:20s} bacc {s['balanced_acc_mean']:.3f} score {s['score_mean']:.1f} {ptxt}")

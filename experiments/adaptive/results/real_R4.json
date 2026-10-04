@@ -92,6 +92,7 @@
      "max_lag": 155,
      "window_clipped": false,
      "tolerance": 18,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
@@ -188,6 +189,7 @@
      "max_lag": 580,
      "window_clipped": false,
      "tolerance": 73,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
@@ -362,6 +364,7 @@
      "max_lag": 168,
      "window_clipped": false,
      "tolerance": 19,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
@@ -459,6 +462,7 @@
      "max_lag": 879,
      "window_clipped": false,
      "tolerance": 116,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
@@ -676,6 +680,7 @@
      "max_lag": 340,
      "window_clipped": false,
      "tolerance": 39,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
@@ -793,6 +798,7 @@
      "max_lag": 1788,
      "window_clipped": false,
      "tolerance": 269,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
@@ -1163,6 +1169,7 @@
      "max_lag": 681,
      "window_clipped": false,
      "tolerance": 80,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
@@ -1321,6 +1328,7 @@
      "max_lag": 3576,
      "window_clipped": false,
      "tolerance": 526,
+     "calibration_failed": false,
      "null_score_by_tolerance": {
       "0": 0.0,
       "1": 0.0,
