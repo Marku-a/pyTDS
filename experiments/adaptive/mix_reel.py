@@ -115,8 +115,6 @@ def main():
         mix = voice + mus
         pk = np.abs(mix).max()
         print(f"duck depth {depth:.1f} dB; stems peak: voice {20 * np.log10(np.abs(voice).max()):.1f} dBFS, mix {20 * np.log10(pk):.1f} dBFS")
-        wavfile.write(A / "voice_stem.wav", SR, voice.T.astype(np.float32))
-        wavfile.write(A / "music_stem.wav", SR, mus.T.astype(np.float32))
         pre = Path(td) / "pre.wav"
         wavfile.write(pre, SR, mix.T.astype(np.float32))
         for tp in (-1.5, -2.0, -3.0):  # AAC encode can overshoot; tighten the limiter if so

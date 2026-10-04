@@ -312,8 +312,8 @@ def scene_problem(c):
             T(c, x + bw / 2, base - hh - 56, f"{v}%", 44, bold=True, a=a, ha="center")
         T(c, x + bw / 2, base + 20, lb, 44, TX2, a=a, ha="center")
     c.ax.plot([60, 1020], [base, base], color=GRID, lw=2 * PT, alpha=fade(c, ts[0]))
-    T(c, 60, 1170, "Original TDS uses fixed sample counts (window = 60 samples).", 40, a=fade(c, S(c, 0)), maxw=960)
-    T(c, 60, 1275, "Change the recording device → different answer.", 40, TX, bold=True, a=fade(c, S(c, 3) + 1.2), maxw=960)
+    T(c, 60, 1160, "Original TDS uses fixed sample counts (window = 60 samples).", 40, a=fade(c, S(c, 0)), maxw=960)
+    T(c, 60, 1285, "Change the recording device → different answer.", 40, TX, bold=True, a=fade(c, S(c, 3) + 1.2), maxw=960)
 
 
 # ---------------------------------------------------------------- scene 4: how_intro
@@ -327,7 +327,7 @@ def scene_how_intro(c):
         T(c, x + 235, yy + 20, s, 44, TX, True, a=a, ha="center")
     py = y + 280
     a = fade(c, S(c, 1))
-    ax = plot_axes(c, 60, py, 960, 1385 - py - 20, a, (0, 110), (-0.05, 2.55))
+    ax = plot_axes(c, 60, py, 960, 1385 - py - 20, a, (0, 69), (-0.05, 2.55))
     if ax is not None:
         lo, hi = 432, 502
         rain, river = RAIN_Z[lo:hi], RIVER_Z[lo:hi]
@@ -362,8 +362,8 @@ def scene_step1(c):
         xs = np.arange(150)
         ax.plot(xs, v + 1.55, color=ORANGE, lw=4 * PT)
         ax.plot(xs + sh * ease(p), v + 0.0, color=GRAY, lw=4 * PT, ls=(0, (5, 3)))
-        at(ax, 0.01, 0.97, "river flow", 32, ORANGE, bold=True)
-        at(ax, 0.01, 0.50, "copy of itself, shifted", 32, TX2, bold=True)
+        at(ax, 0.99, 0.97, "river flow", 32, ORANGE, bold=True, ha="right")
+        at(ax, 0.99, 0.50, "copy of itself, shifted", 32, TX2, bold=True, ha="right")
     # ACF plot
     a = fade(c, S(c, 2) - 0.4)
     ax = plot_axes(c, 160, 700, 860, 560, a, (0, 240), (0, 1.02), xt=[0, 48, 96, 144, 192, 240], yt=[0, 0.5, 1],
@@ -389,13 +389,13 @@ def scene_step2(c):
     # sentence 1: 64 hourly points, neighbours are almost copies
     a1 = fade(c, S(c, 1))
     if a1 > 0:
-        T(c, 60, 470, "slow signal: neighbouring points ≈ copies", 36, TX2, a=a1, maxw=960)
+        T(c, 60, 360, "slow signal: neighbouring points ≈ copies", 36, TX2, a=a1, maxw=960)
     merge = ease(prog(c, S(c, 2), S(c, 2) + 1.2))
     for i in range(n):
         ai = fade(c, S(c, 1) + (E(c, 1) - S(c, 1)) * 0.8 * i / n, 0.15)
         if ai <= 0 or merge >= 1:
             continue
-        x0, y0 = 60 + i * pitch, 400
+        x0, y0 = 60 + i * pitch, 440
         x1, y1 = 465 + 150 * (i + 0.5) / n - sq / 2, 560 + 12 * ((i * 7) % 5)
         x, y = x0 + (x1 - x0) * merge, y0 + (y1 - y0) * merge
         c.ax.add_patch(Rectangle((x, y), sq, sq, fc=ORANGE, ec="none", alpha=ai))
@@ -499,9 +499,9 @@ def scene_step4(c):
         if c.t > S(c, 4):
             al = fade(c, S(c, 4), 0.4)
             ax.plot([TOL], [NULL[TOL]], "o", color=AQUA, ms=26 * PT, alpha=al, zorder=5)
-            ax.annotate(f"chosen: ±{round(TOL / 24)} days", xy=(TOL - 0.4, NULL[TOL] + 0.35), xytext=(50, 6.9),
+            ax.annotate(f"chosen: ±{round(TOL / 24)} days", xy=(TOL, NULL[TOL]), xytext=(50, 6.9),
                         color=AQUA, fontsize=44 * PT, fontweight="bold", alpha=al, ha="center", va="center",
-                        arrowprops=dict(arrowstyle="-|>", color=AQUA, lw=4 * PT, alpha=al, mutation_scale=28))
+                        arrowprops=dict(arrowstyle="-|>", color=AQUA, lw=4 * PT, alpha=al, mutation_scale=28, shrinkB=16))
 
 
 # ---------------------------------------------------------------- scene 9: step 5 you
@@ -583,7 +583,7 @@ def scene_field(c, key):
         extra.append(("⚠ calibration warning: fake stability > 5% even at tolerance 0", 28, "#c98500"))
     ch_h = 16 + 48 + 84 + 8 + sum(len(wrap(s, px, False, 925)) * px * 1.25 for s, px, _ in extra) + 12
     # bottom-up layout
-    vlines = wrap(verdict, 32, False, 880)
+    vlines = wrap(verdict, 32, False, 910)
     bad_h = 16 + 50 + len(vlines) * 40 + 10
     bad_y = BOTTOM - bad_h
     del_y = bad_y - 10 - 84
@@ -635,7 +635,7 @@ def scene_field(c, key):
     icon, col = STATUS[st]
     box(c, 60, bad_y, 960, bad_h, "#232322", col, a=a, lw=3)
     T(c, 90, bad_y + 14, f"{icon} {st}", 44, col, True, a=a)
-    T(c, 90, bad_y + 14 + 52, verdict, 32, TX, a=a, maxw=880, lh=1.25)
+    T(c, 90, bad_y + 14 + 52, verdict, 32, TX, a=a, maxw=910, lh=1.25)
 
 
 # ---------------------------------------------------------------- scoreboard / outro

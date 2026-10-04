@@ -8,9 +8,10 @@ MAX_CHARS are further split at commas/colons (0.15 s) so on-screen subtitles fit
 Writes reel_audio/voice_<NN>_<id>.wav (processed, ~-16 LUFS each), reel_audio/durations.json and
 reel_audio/sentences.json ({id: {dur, sentences: [{text, start, end, chunks: [{text, start, end}]}]}}).
   python make_voice.py          synthesise + process
-  python make_voice.py --eval   word error rate (pocketsphinx) of the processed WAVs vs the script
+  python make_voice.py --eval [dir]  word error rate (pocketsphinx) of the WAVs vs the script
 """
 import json
+import os
 import re
 import subprocess
 import sys
@@ -22,7 +23,7 @@ import numpy as np
 
 D = Path(__file__).resolve().parent
 A = D / "reel_audio"
-SPEAKER, LENGTH_SCALE = "4535", 1.45
+SPEAKER, LENGTH_SCALE = "6555", 1.3
 NOISE_SCALE, NOISE_W = 0.5, 0.6
 GAP_SENT, GAP_CLAUSE, MAX_CHARS = 0.45, 0.15, 80
 CHAIN = ("highpass=f=80,equalizer=f=3000:t=q:w=1:g=2.5,"
@@ -92,18 +93,17 @@ def synth_scene(voice, cfg, say, sr):
 
 
 def process(a, sr, tmp):
-    """highpass + presence boost + light compression, then gain to TARGET_LUFS (peak-safe)."""
+    """highpass + presence boost + light compression, then gain to TARGET_LUFS with a peak limiter."""
     raw, out = tmp / "raw.wav", tmp / "proc.wav"
     write_wav(raw, a * (0.89 / max(np.abs(a).max(), 1e-9)), sr)
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw), "-af", CHAIN, "-ar", str(sr), "-ac", "1",
                     "-c:a", "pcm_s16le", str(out)], check=True)
-    p, _ = read_wav(out)
-    g = 10 ** ((TARGET_LUFS - lufs(out)) / 20)
-    p = p * g
-    pk = np.abs(p).max()
-    if pk > 0.97:  # gentle peak safety (compressed speech rarely needs it)
-        p = p * (0.97 / pk)
-    return p
+    g = TARGET_LUFS - lufs(out)
+    final = tmp / "final.wav"  # gain to the target loudness, with a peak limiter so the gain is never lost to clipping
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(out), "-af",
+                    f"volume={g:.2f}dB,alimiter=limit=0.95:attack=3:release=60:level=disabled", "-c:a", "pcm_s16le",
+                    str(final)], check=True)
+    return read_wav(final)[0]
 
 
 def main():
@@ -112,10 +112,14 @@ def main():
     sr = voice.config.sample_rate
     sid = json.load(open(A / "en-us-libritts-high.onnx.json"))["speaker_id_map"][SPEAKER]
     cfg = SynthesisConfig(speaker_id=sid, length_scale=LENGTH_SCALE, noise_scale=NOISE_SCALE, noise_w_scale=NOISE_W)
+    for old in A.glob("voice_[0-9][0-9]_*.wav"):  # drop WAVs of earlier scene lists
+        old.unlink()
     durs, info = {}, {}
     with tempfile.TemporaryDirectory() as td:
         for i, s in enumerate(json.load(open(D / "reel_voiceover.json"))["scenes"]):
             a, sents = synth_scene(voice, cfg, s["say"], sr)
+            if os.environ.get("REEL_RAW_DIR"):  # optional: also keep the unprocessed WAVs (for WER comparison)
+                write_wav(Path(os.environ["REEL_RAW_DIR"]) / f"voice_{i:02d}_{s['id']}.wav", a * (0.89 / np.abs(a).max()), sr)
             p = process(a, sr, Path(td))
             write_wav(A / f"voice_{i:02d}_{s['id']}.wav", p, sr)
             durs[s["id"]] = len(p) / sr
@@ -126,15 +130,15 @@ def main():
     json.dump(info, open(A / "sentences.json", "w"), indent=1)
 
 
-def evaluate():
+def evaluate(folder=A):
     from pocketsphinx import Decoder
     from scipy.signal import resample_poly
-    dec = Decoder(samprate=16000)
     norm = lambda t: re.sub(r"[^a-z' ]", " ", t.lower()).split()
     rows = []
     for i, s in enumerate(json.load(open(D / "reel_voiceover.json"))["scenes"]):
-        a, sr = read_wav(next(A.glob(f"voice_{i:02d}_*.wav")))
+        a, sr = read_wav(next(Path(folder).glob(f"voice_{i:02d}_*.wav")))
         a16 = resample_poly(a, 16000, sr)
+        dec = Decoder(samprate=16000)  # fresh per utterance: a reused decoder degrades (CMN state)
         dec.start_utt()
         dec.process_raw((a16 * 32767).astype(np.int16).tobytes(), full_utt=True)
         dec.end_utt()
@@ -151,4 +155,4 @@ def evaluate():
 
 
 if __name__ == "__main__":
-    evaluate() if "--eval" in sys.argv else main()
+    evaluate(*sys.argv[2:3] or [A]) if "--eval" in sys.argv else main()

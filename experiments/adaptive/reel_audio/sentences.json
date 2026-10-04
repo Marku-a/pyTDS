@@ -1,6 +1,6 @@
 {
  "hook": {
-  "dur": 4.69922902494331,
+  "dur": 5.279727891156463,
   "sentences": [
    {
     "text": "Can an algorithm tune itself?",
@@ -9,27 +9,27 @@
      {
       "text": "Can an algorithm tune itself?",
       "start": 0.0,
-      "end": 1.7763265306122449
+      "end": 1.9388662131519274
      }
     ],
-    "end": 1.7763265306122449
+    "end": 1.9388662131519274
    },
    {
     "text": "We tested it on nine fields of science.",
-    "start": 2.2263038548752836,
+    "start": 2.388843537414966,
     "chunks": [
      {
       "text": "We tested it on nine fields of science.",
-      "start": 2.2263038548752836,
-      "end": 4.69922902494331
+      "start": 2.388843537414966,
+      "end": 5.279727891156463
      }
     ],
-    "end": 4.69922902494331
+    "end": 5.279727891156463
    }
   ]
  },
  "what": {
-  "dur": 15.546122448979592,
+  "dur": 18.843356009070295,
   "sentences": [
    {
     "text": "First, what does T D S do?",
@@ -38,63 +38,63 @@
      {
       "text": "First, what does T D S do?",
       "start": 0.0,
-      "end": 2.147845804988662
+      "end": 2.1710657596371883
      }
     ],
-    "end": 2.147845804988662
+    "end": 2.1710657596371883
    },
    {
     "text": "It slides a window along two signals.",
-    "start": 2.597823129251701,
+    "start": 2.6210430839002266,
     "chunks": [
      {
       "text": "It slides a window along two signals.",
-      "start": 2.597823129251701,
-      "end": 4.884988662131519
+      "start": 2.6210430839002266,
+      "end": 5.662857142857143
      }
     ],
-    "end": 4.884988662131519
+    "end": 5.662857142857143
    },
    {
     "text": "In each window, it finds the delay where the two signals match best.",
-    "start": 5.3349659863945575,
+    "start": 6.112834467120181,
     "chunks": [
      {
       "text": "In each window, it finds the delay where the two signals match best.",
-      "start": 5.3349659863945575,
-      "end": 9.630657596371883
+      "start": 6.112834467120181,
+      "end": 11.081904761904761
      }
     ],
-    "end": 9.630657596371883
+    "end": 11.081904761904761
    },
    {
     "text": "Then it counts how often that delay stays the same.",
-    "start": 10.080634920634921,
+    "start": 11.531882086167801,
     "chunks": [
      {
       "text": "Then it counts how often that delay stays the same.",
-      "start": 10.080634920634921,
-      "end": 12.890249433106575
+      "start": 11.531882086167801,
+      "end": 15.328344671201814
      }
     ],
-    "end": 12.890249433106575
+    "end": 15.328344671201814
    },
    {
     "text": "That share is the T D S score.",
-    "start": 13.340226757369615,
+    "start": 15.778321995464852,
     "chunks": [
      {
       "text": "That share is the T D S score.",
-      "start": 13.340226757369615,
-      "end": 15.546122448979592
+      "start": 15.778321995464852,
+      "end": 18.843356009070295
      }
     ],
-    "end": 15.546122448979592
+    "end": 18.843356009070295
    }
   ]
  },
  "problem": {
-  "dur": 15.756961451247166,
+  "dur": 19.042585034013605,
   "sentences": [
    {
     "text": "The original method uses fixed numbers: a window of sixty samples, for every kind of data.",
@@ -103,56 +103,56 @@
      {
       "text": "The original method uses fixed numbers: a window of sixty samples,",
       "start": 0.0,
-      "end": 4.388571428571429
+      "end": 5.6540589569161
      },
      {
       "text": "for every kind of data.",
-      "start": 4.538548752834467,
-      "end": 5.862086167800453
+      "start": 5.804036281179139,
+      "end": 7.3133333333333335
      }
     ],
-    "end": 5.862086167800453
+    "end": 7.3133333333333335
    },
    {
     "text": "Here is one night of sleep, recorded at different sampling rates.",
-    "start": 6.312063492063492,
+    "start": 7.763310657596372,
     "chunks": [
      {
       "text": "Here is one night of sleep, recorded at different sampling rates.",
-      "start": 6.312063492063492,
-      "end": 9.876326530612245
+      "start": 7.763310657596372,
+      "end": 11.95451247165533
      }
     ],
-    "end": 9.876326530612245
+    "end": 11.95451247165533
    },
    {
     "text": "Same brain.",
-    "start": 10.326303854875283,
+    "start": 12.404489795918368,
     "chunks": [
      {
       "text": "Same brain.",
-      "start": 10.326303854875283,
-      "end": 11.173832199546485
+      "start": 12.404489795918368,
+      "end": 13.507437641723357
      }
     ],
-    "end": 11.173832199546485
+    "end": 13.507437641723357
    },
    {
     "text": "But the score drops from seventy five, to twenty seven percent.",
-    "start": 11.623809523809523,
+    "start": 13.957414965986395,
     "chunks": [
      {
       "text": "But the score drops from seventy five, to twenty seven percent.",
-      "start": 11.623809523809523,
-      "end": 15.756961451247166
+      "start": 13.957414965986395,
+      "end": 19.042585034013605
      }
     ],
-    "end": 15.756961451247166
+    "end": 19.042585034013605
    }
   ]
  },
  "how_intro": {
-  "dur": 9.038548752834467,
+  "dur": 11.047074829931972,
   "sentences": [
    {
     "text": "So we let the algorithm choose its own settings, in four steps.",
@@ -161,39 +161,39 @@
      {
       "text": "So we let the algorithm choose its own settings, in four steps.",
       "start": 0.0,
-      "end": 3.564263038548753
+      "end": 4.35374149659864
      }
     ],
-    "end": 3.564263038548753
+    "end": 4.35374149659864
    },
    {
     "text": "Our example is a river.",
-    "start": 4.014240362811791,
+    "start": 4.803718820861678,
     "chunks": [
      {
       "text": "Our example is a river.",
-      "start": 4.014240362811791,
-      "end": 5.686077097505669
+      "start": 4.803718820861678,
+      "end": 6.5568253968253964
      }
     ],
-    "end": 5.686077097505669
+    "end": 6.5568253968253964
    },
    {
     "text": "Rain falls, and the river rises a few hours later.",
-    "start": 6.136054421768708,
+    "start": 7.006802721088436,
     "chunks": [
      {
       "text": "Rain falls, and the river rises a few hours later.",
-      "start": 6.136054421768708,
-      "end": 9.038548752834467
+      "start": 7.006802721088436,
+      "end": 11.047074829931972
      }
     ],
-    "end": 9.038548752834467
+    "end": 11.047074829931972
    }
   ]
  },
  "step1_memory": {
-  "dur": 15.406802721088436,
+  "dur": 16.614240362811792,
   "sentences": [
    {
     "text": "Step one: measure each signal's memory.",
@@ -202,63 +202,63 @@
      {
       "text": "Step one: measure each signal's memory.",
       "start": 0.0,
-      "end": 3.0650340136054424
+      "end": 3.5526530612244898
      }
     ],
-    "end": 3.0650340136054424
+    "end": 3.5526530612244898
    },
    {
     "text": "The algorithm compares each signal with a shifted copy of itself.",
-    "start": 3.5150113378684806,
+    "start": 4.002630385487528,
     "chunks": [
      {
       "text": "The algorithm compares each signal with a shifted copy of itself.",
-      "start": 3.5150113378684806,
-      "end": 7.833922902494331
+      "start": 4.002630385487528,
+      "end": 8.646621315192744
      }
     ],
-    "end": 7.833922902494331
+    "end": 8.646621315192744
    },
    {
     "text": "Rain forgets fast.",
-    "start": 8.28390022675737,
+    "start": 9.096598639455783,
     "chunks": [
      {
       "text": "Rain forgets fast.",
-      "start": 8.28390022675737,
-      "end": 9.909297052154194
+      "start": 9.096598639455783,
+      "end": 10.73360544217687
      }
     ],
-    "end": 9.909297052154194
+    "end": 10.73360544217687
    },
    {
     "text": "After a few hours, it is new weather.",
-    "start": 10.359274376417234,
+    "start": 11.18358276643991,
     "chunks": [
      {
       "text": "After a few hours, it is new weather.",
-      "start": 10.359274376417234,
-      "end": 12.971519274376417
+      "start": 11.18358276643991,
+      "end": 13.888707482993198
      }
     ],
-    "end": 12.971519274376417
+    "end": 13.888707482993198
    },
    {
     "text": "But the river remembers for days.",
-    "start": 13.421496598639456,
+    "start": 14.338684807256236,
     "chunks": [
      {
       "text": "But the river remembers for days.",
-      "start": 13.421496598639456,
-      "end": 15.406802721088436
+      "start": 14.338684807256236,
+      "end": 16.614240362811792
      }
     ],
-    "end": 15.406802721088436
+    "end": 16.614240362811792
    }
   ]
  },
  "step2_window": {
-  "dur": 19.121043083900226,
+  "dur": 23.532834467120182,
   "sentences": [
    {
     "text": "Step two: choose the window.",
@@ -267,68 +267,68 @@
      {
       "text": "Step two: choose the window.",
       "start": 0.0,
-      "end": 1.9620861678004535
+      "end": 2.7631746031746034
      }
     ],
-    "end": 1.9620861678004535
+    "end": 2.7631746031746034
    },
    {
     "text": "In a slow signal, neighbouring points are almost copies of each other.",
-    "start": 2.412063492063492,
+    "start": 3.2131519274376417,
     "chunks": [
      {
       "text": "In a slow signal, neighbouring points are almost copies of each other.",
-      "start": 2.412063492063492,
-      "end": 6.289795918367347
+      "start": 3.2131519274376417,
+      "end": 7.938412698412699
      }
     ],
-    "end": 6.289795918367347
+    "end": 7.938412698412699
    },
    {
     "text": "For this river, about sixty four hourly points hold the information of just one new point.",
-    "start": 6.739773242630386,
+    "start": 8.388390022675736,
     "chunks": [
      {
       "text": "For this river,",
-      "start": 6.739773242630386,
-      "end": 7.680181405895691
+      "start": 8.388390022675736,
+      "end": 9.526167800453514
      },
      {
       "text": "about sixty four hourly points hold the information of just one new point.",
-      "start": 7.83015873015873,
-      "end": 11.963310657596372
+      "start": 9.676145124716554,
+      "end": 14.471065759637188
      }
     ],
-    "end": 11.963310657596372
+    "end": 14.471065759637188
    },
    {
     "text": "To hold thirty new points, the window must be thirty times sixty four hours.",
-    "start": 12.41328798185941,
+    "start": 14.921043083900226,
     "chunks": [
      {
       "text": "To hold thirty new points, the window must be thirty times sixty four hours.",
-      "start": 12.41328798185941,
-      "end": 16.906349206349205
+      "start": 14.921043083900226,
+      "end": 21.28331065759637
      }
     ],
-    "end": 16.906349206349205
+    "end": 21.28331065759637
    },
    {
     "text": "That is about eighty days.",
-    "start": 17.356326530612243,
+    "start": 21.73328798185941,
     "chunks": [
      {
       "text": "That is about eighty days.",
-      "start": 17.356326530612243,
-      "end": 19.121043083900226
+      "start": 21.73328798185941,
+      "end": 23.532834467120182
      }
     ],
-    "end": 19.121043083900226
+    "end": 23.532834467120182
    }
   ]
  },
  "step3_delay": {
-  "dur": 13.10108843537415,
+  "dur": 16.526031746031745,
   "sentences": [
    {
     "text": "Step three: the longest delay to search is half the window.",
@@ -337,44 +337,44 @@
      {
       "text": "Step three: the longest delay to search is half the window.",
       "start": 0.0,
-      "end": 3.3436734693877552
+      "end": 5.027120181405896
      }
     ],
-    "end": 3.3436734693877552
+    "end": 5.027120181405896
    },
    {
     "text": "Here, that is forty days.",
-    "start": 3.7936507936507935,
+    "start": 5.477097505668934,
     "chunks": [
      {
       "text": "Here, that is forty days.",
-      "start": 3.7936507936507935,
-      "end": 5.430657596371882
+      "start": 5.477097505668934,
+      "end": 7.915192743764172
      }
     ],
-    "end": 5.430657596371882
+    "end": 7.915192743764172
    },
    {
     "text": "If a signal has a rhythm, like a heartbeat, it stops at half a beat, because longer delays would look exactly the same.",
-    "start": 5.880634920634921,
+    "start": 8.365170068027211,
     "chunks": [
      {
       "text": "If a signal has a rhythm, like a heartbeat, it stops at half a beat,",
-      "start": 5.880634920634921,
-      "end": 10.071836734693878
+      "start": 8.365170068027211,
+      "end": 13.10204081632653
      },
      {
       "text": "because longer delays would look exactly the same.",
-      "start": 10.221814058956916,
-      "end": 13.10108843537415
+      "start": 13.25201814058957,
+      "end": 16.526031746031745
      }
     ],
-    "end": 13.10108843537415
+    "end": 16.526031746031745
    }
   ]
  },
  "step4_tolerance": {
-  "dur": 21.209886621315192,
+  "dur": 24.71609977324263,
   "sentences": [
    {
     "text": "Step four: decide how strict to be.",
@@ -383,73 +383,73 @@
      {
       "text": "Step four: decide how strict to be.",
       "start": 0.0,
-      "end": 2.8444444444444446
+      "end": 3.1463038548752835
      }
     ],
-    "end": 2.8444444444444446
+    "end": 3.1463038548752835
    },
    {
     "text": "The algorithm slides the river far away in time, so it no longer matches the rain.",
-    "start": 3.294421768707483,
+    "start": 3.596281179138322,
     "chunks": [
      {
       "text": "The algorithm slides the river far away in time,",
-      "start": 3.294421768707483,
-      "end": 6.278185941043084
+      "start": 3.596281179138322,
+      "end": 6.905124716553288
      },
      {
       "text": "so it no longer matches the rain.",
-      "start": 6.4281632653061225,
-      "end": 8.262539682539682
+      "start": 7.055102040816327,
+      "end": 9.226167800453515
      }
     ],
-    "end": 8.262539682539682
+    "end": 9.226167800453515
    },
    {
     "text": "Any stability it still finds is fake.",
-    "start": 8.71251700680272,
+    "start": 9.676145124716554,
     "chunks": [
      {
       "text": "Any stability it still finds is fake.",
-      "start": 8.71251700680272,
-      "end": 11.429251700680272
+      "start": 9.676145124716554,
+      "end": 12.973378684807257
      }
     ],
-    "end": 11.429251700680272
+    "end": 12.973378684807257
    },
    {
     "text": "It loosens the tolerance step by step, and stops just before fake stability passes five percent.",
-    "start": 11.87922902494331,
+    "start": 13.423356009070295,
     "chunks": [
      {
       "text": "It loosens the tolerance step by step,",
-      "start": 11.87922902494331,
-      "end": 14.352154195011337
+      "start": 13.423356009070295,
+      "end": 16.23297052154195
      },
      {
       "text": "and stops just before fake stability passes five percent.",
-      "start": 14.502131519274377,
-      "end": 18.22893424036281
+      "start": 16.38294784580499,
+      "end": 20.527709750566892
      }
     ],
-    "end": 18.22893424036281
+    "end": 20.527709750566892
    },
    {
     "text": "For the river, that is plus or minus three days.",
-    "start": 18.67891156462585,
+    "start": 20.97768707482993,
     "chunks": [
      {
       "text": "For the river, that is plus or minus three days.",
-      "start": 18.67891156462585,
-      "end": 21.209886621315192
+      "start": 20.97768707482993,
+      "end": 24.71609977324263
      }
     ],
-    "end": 21.209886621315192
+    "end": 24.71609977324263
    }
   ]
  },
  "step5_you": {
-  "dur": 9.145850340136054,
+  "dur": 10.840907029478458,
   "sentences": [
    {
     "text": "Only one choice stays with you: how sharp your timing must be.",
@@ -458,27 +458,27 @@
      {
       "text": "Only one choice stays with you: how sharp your timing must be.",
       "start": 0.0,
-      "end": 4.342131519274377
+      "end": 4.655600907029479
      }
     ],
-    "end": 4.342131519274377
+    "end": 4.655600907029479
    },
    {
     "text": "Longer windows find links more reliably, but they blur when the link happens.",
-    "start": 4.792108843537415,
+    "start": 5.105578231292517,
     "chunks": [
      {
       "text": "Longer windows find links more reliably, but they blur when the link happens.",
-      "start": 4.792108843537415,
-      "end": 9.145850340136054
+      "start": 5.105578231292517,
+      "end": 10.840907029478458
      }
     ],
-    "end": 9.145850340136054
+    "end": 10.840907029478458
    }
   ]
  },
  "hydrology_hourly": {
-  "dur": 9.456507936507936,
+  "dur": 11.26766439909297,
   "sentences": [
    {
     "text": "Rain to river.",
@@ -487,39 +487,39 @@
      {
       "text": "Rain to river.",
       "start": 0.0,
-      "end": 0.9868480725623583
+      "end": 1.172607709750567
      }
     ],
-    "end": 0.9868480725623583
+    "end": 1.172607709750567
    },
    {
     "text": "With these settings, the link is found far above chance, with a ten hour delay.",
-    "start": 1.4368253968253968,
+    "start": 1.6225850340136054,
     "chunks": [
      {
       "text": "With these settings, the link is found far above chance, with a ten hour delay.",
-      "start": 1.4368253968253968,
-      "end": 5.8021768707482995
+      "start": 1.6225850340136054,
+      "end": 7.3927437641723355
      }
     ],
-    "end": 5.8021768707482995
+    "end": 7.3927437641723355
    },
    {
     "text": "The fixed version could not tell it apart from chance.",
-    "start": 6.252154195011338,
+    "start": 7.842721088435374,
     "chunks": [
      {
       "text": "The fixed version could not tell it apart from chance.",
-      "start": 6.252154195011338,
-      "end": 9.456507936507936
+      "start": 7.842721088435374,
+      "end": 11.26766439909297
      }
     ],
-    "end": 9.456507936507936
+    "end": 11.26766439909297
    }
   ]
  },
  "energy_vic_summer": {
-  "dur": 12.192698412698412,
+  "dur": 13.585895691609977,
   "sentences": [
    {
     "text": "Heat to electricity demand.",
@@ -528,56 +528,56 @@
      {
       "text": "Heat to electricity demand.",
       "start": 0.0,
-      "end": 1.8692063492063493
+      "end": 2.066575963718821
      }
     ],
-    "end": 1.8692063492063493
+    "end": 2.066575963718821
    },
    {
     "text": "Demand remembers about a day and a half, so the window becomes twenty seven days.",
-    "start": 2.3191836734693876,
+    "start": 2.5165532879818593,
     "chunks": [
      {
       "text": "Demand remembers about a day and a half,",
-      "start": 2.3191836734693876,
-      "end": 4.478639455782313
+      "start": 2.5165532879818593,
+      "end": 4.873378684807256
      },
      {
       "text": "so the window becomes twenty seven days.",
-      "start": 4.628616780045351,
-      "end": 7.171201814058957
+      "start": 5.0233560090702944,
+      "end": 8.204489795918366
      }
     ],
-    "end": 7.171201814058957
+    "end": 8.204489795918366
    },
    {
     "text": "Adaptive finds the one hour delay.",
-    "start": 7.621179138321995,
+    "start": 8.654467120181407,
     "chunks": [
      {
       "text": "Adaptive finds the one hour delay.",
-      "start": 7.621179138321995,
-      "end": 9.78063492063492
+      "start": 8.654467120181407,
+      "end": 11.104172335600907
      }
     ],
-    "end": 9.78063492063492
+    "end": 11.104172335600907
    },
    {
     "text": "The fixed version says zero.",
-    "start": 10.230612244897959,
+    "start": 11.554149659863945,
     "chunks": [
      {
       "text": "The fixed version says zero.",
-      "start": 10.230612244897959,
-      "end": 12.192698412698412
+      "start": 11.554149659863945,
+      "end": 13.585895691609977
      }
     ],
-    "end": 12.192698412698412
+    "end": 13.585895691609977
    }
   ]
  },
  "climate_nino34_gistemp": {
-  "dur": 14.061904761904762,
+  "dur": 16.58126984126984,
   "sentences": [
    {
     "text": "El Nino to global temperature.",
@@ -586,56 +586,56 @@
      {
       "text": "El Nino to global temperature.",
       "start": 0.0,
-      "end": 1.787936507936508
+      "end": 2.2871655328798184
      }
     ],
-    "end": 1.787936507936508
+    "end": 2.2871655328798184
    },
    {
     "text": "El Nino remembers about seven months, so the window grows to thirteen years.",
-    "start": 2.2379138321995464,
+    "start": 2.737142857142857,
     "chunks": [
      {
       "text": "El Nino remembers about seven months, so the window grows to thirteen years.",
-      "start": 2.2379138321995464,
-      "end": 6.963174603174603
+      "start": 2.737142857142857,
+      "end": 8.356371882086167
      }
     ],
-    "end": 6.963174603174603
+    "end": 8.356371882086167
    },
    {
     "text": "The link is detected more strongly, but the delay comes out as one month, not about three.",
-    "start": 7.413151927437641,
+    "start": 8.806349206349207,
     "chunks": [
      {
       "text": "The link is detected more strongly, but the delay comes out as one month,",
-      "start": 7.413151927437641,
-      "end": 11.348934240362812
+      "start": 8.806349206349207,
+      "end": 13.461950113378684
      },
      {
       "text": "not about three.",
-      "start": 11.49891156462585,
-      "end": 12.590249433106576
+      "start": 13.611927437641723,
+      "end": 14.807755102040817
      }
     ],
-    "end": 12.590249433106576
+    "end": 14.807755102040817
    },
    {
     "text": "A mixed result.",
-    "start": 13.040226757369615,
+    "start": 15.257732426303855,
     "chunks": [
      {
       "text": "A mixed result.",
-      "start": 13.040226757369615,
-      "end": 14.061904761904762
+      "start": 15.257732426303855,
+      "end": 16.58126984126984
      }
     ],
-    "end": 14.061904761904762
+    "end": 16.58126984126984
    }
   ]
  },
  "beijing_pm25": {
-  "dur": 9.235918367346938,
+  "dur": 10.826485260770975,
   "sentences": [
    {
     "text": "Wind to air pollution in Beijing.",
@@ -644,39 +644,39 @@
      {
       "text": "Wind to air pollution in Beijing.",
       "start": 0.0,
-      "end": 1.9853061224489796
+      "end": 2.5193650793650795
      }
     ],
-    "end": 1.9853061224489796
+    "end": 2.5193650793650795
    },
    {
     "text": "Wind remembers almost a day, so the window is twenty six days.",
-    "start": 2.435283446712018,
+    "start": 2.9693424036281177,
     "chunks": [
      {
       "text": "Wind remembers almost a day, so the window is twenty six days.",
-      "start": 2.435283446712018,
-      "end": 6.672925170068027
+      "start": 2.9693424036281177,
+      "end": 7.950022675736961
      }
     ],
-    "end": 6.672925170068027
+    "end": 7.950022675736961
    },
    {
     "text": "The link is found far above chance.",
-    "start": 7.122902494331066,
+    "start": 8.4,
     "chunks": [
      {
       "text": "The link is found far above chance.",
-      "start": 7.122902494331066,
-      "end": 9.235918367346938
+      "start": 8.4,
+      "end": 10.826485260770975
      }
     ],
-    "end": 9.235918367346938
+    "end": 10.826485260770975
    }
   ]
  },
  "gas_furnace": {
-  "dur": 8.96888888888889,
+  "dur": 11.11673469387755,
   "sentences": [
    {
     "text": "A gas furnace, with only two hundred ninety six data points.",
@@ -685,39 +685,39 @@
      {
       "text": "A gas furnace, with only two hundred ninety six data points.",
       "start": 0.0,
-      "end": 3.866122448979592
+      "end": 4.539501133786848
      }
     ],
-    "end": 3.866122448979592
+    "end": 4.539501133786848
    },
    {
     "text": "The window it wants is longer than the data allows.",
-    "start": 4.31609977324263,
+    "start": 4.989478458049887,
     "chunks": [
      {
       "text": "The window it wants is longer than the data allows.",
-      "start": 4.31609977324263,
-      "end": 6.7890249433106575
+      "start": 4.989478458049887,
+      "end": 8.449251700680271
      }
     ],
-    "end": 6.7890249433106575
+    "end": 8.449251700680271
    },
    {
     "text": "Here, the fixed settings win.",
-    "start": 7.239002267573696,
+    "start": 8.899229024943311,
     "chunks": [
      {
       "text": "Here, the fixed settings win.",
-      "start": 7.239002267573696,
-      "end": 8.96888888888889
+      "start": 8.899229024943311,
+      "end": 11.11673469387755
      }
     ],
-    "end": 8.96888888888889
+    "end": 11.11673469387755
    }
   ]
  },
  "gasoline_weekly_diff": {
-  "dur": 8.144580498866214,
+  "dur": 9.340408163265305,
   "sentences": [
    {
     "text": "Crude oil to petrol prices.",
@@ -726,39 +726,39 @@
      {
       "text": "Crude oil to petrol prices.",
       "start": 0.0,
-      "end": 2.0085260770975055
+      "end": 2.2407256235827666
      }
     ],
-    "end": 2.0085260770975055
+    "end": 2.2407256235827666
    },
    {
     "text": "Both versions detect the link.",
-    "start": 2.4585034013605442,
+    "start": 2.690702947845805,
     "chunks": [
      {
       "text": "Both versions detect the link.",
-      "start": 2.4585034013605442,
-      "end": 4.281269841269841
+      "start": 2.690702947845805,
+      "end": 4.873378684807256
      }
     ],
-    "end": 4.281269841269841
+    "end": 4.873378684807256
    },
    {
     "text": "But weekly data is too coarse to see the one to two week lag.",
-    "start": 4.73124716553288,
+    "start": 5.323356009070295,
     "chunks": [
      {
       "text": "But weekly data is too coarse to see the one to two week lag.",
-      "start": 4.73124716553288,
-      "end": 8.144580498866214
+      "start": 5.323356009070295,
+      "end": 9.340408163265305
      }
     ],
-    "end": 8.144580498866214
+    "end": 9.340408163265305
    }
   ]
  },
  "jena_T_rh": {
-  "dur": 10.663945578231292,
+  "dur": 12.300952380952381,
   "sentences": [
    {
     "text": "Temperature and humidity: a control, with zero delay.",
@@ -767,39 +767,39 @@
      {
       "text": "Temperature and humidity: a control, with zero delay.",
       "start": 0.0,
-      "end": 3.8080725623582765
+      "end": 4.284081632653061
      }
     ],
-    "end": 3.8080725623582765
+    "end": 4.284081632653061
    },
    {
     "text": "Both versions find zero.",
-    "start": 4.258049886621315,
+    "start": 4.734058956916099,
     "chunks": [
      {
       "text": "Both versions find zero.",
-      "start": 4.258049886621315,
-      "end": 6.115646258503402
+      "start": 4.734058956916099,
+      "end": 6.742585034013605
      }
     ],
-    "end": 6.115646258503402
+    "end": 6.742585034013605
    },
    {
     "text": "The yearly cycle makes fake stability high, and adaptive warns about it.",
-    "start": 6.56562358276644,
+    "start": 7.192562358276644,
     "chunks": [
      {
       "text": "The yearly cycle makes fake stability high, and adaptive warns about it.",
-      "start": 6.56562358276644,
-      "end": 10.663945578231292
+      "start": 7.192562358276644,
+      "end": 12.300952380952381
      }
     ],
-    "end": 10.663945578231292
+    "end": 12.300952380952381
    }
   ]
  },
  "sleep_eeg_delta_sigma": {
-  "dur": 7.101541950113378,
+  "dur": 8.169659863945578,
   "sentences": [
    {
     "text": "Sleep E E G.",
@@ -808,32 +808,32 @@
      {
       "text": "Sleep E E G.",
       "start": 0.0,
-      "end": 1.3699773242630386
+      "end": 1.3815873015873017
      }
     ],
-    "end": 1.3699773242630386
+    "end": 1.3815873015873017
    },
    {
     "text": "Capped at five minutes for good timing, adaptive gives the same answer at any sampling rate.",
-    "start": 1.8199546485260771,
+    "start": 1.8315646258503402,
     "chunks": [
      {
       "text": "Capped at five minutes for good timing,",
-      "start": 1.8199546485260771,
-      "end": 4.002630385487528
+      "start": 1.8315646258503402,
+      "end": 4.2116099773242635
      },
      {
       "text": "adaptive gives the same answer at any sampling rate.",
-      "start": 4.1526077097505665,
-      "end": 7.101541950113378
+      "start": 4.361587301587302,
+      "end": 8.169659863945578
      }
     ],
-    "end": 7.101541950113378
+    "end": 8.169659863945578
    }
   ]
  },
  "neurokit_hr_rsp": {
-  "dur": 8.425079365079364,
+  "dur": 10.015646258503402,
   "sentences": [
    {
     "text": "Heart rate and breathing.",
@@ -842,32 +842,32 @@
      {
       "text": "Heart rate and breathing.",
       "start": 0.0,
-      "end": 1.486077097505669
+      "end": 1.9620861678004535
      }
     ],
-    "end": 1.486077097505669
+    "end": 1.9620861678004535
    },
    {
     "text": "The breathing rhythm caps the delay, and the settings end up close to the original ones, because those already fit.",
-    "start": 1.9360544217687075,
+    "start": 2.412063492063492,
     "chunks": [
      {
       "text": "The breathing rhythm caps the delay,",
-      "start": 1.9360544217687075,
-      "end": 3.921360544217687
+      "start": 2.412063492063492,
+      "end": 4.676009070294785
      },
      {
       "text": "and the settings end up close to the original ones, because those already fit.",
-      "start": 4.071337868480725,
-      "end": 8.425079365079364
+      "start": 4.825986394557823,
+      "end": 10.015646258503402
      }
     ],
-    "end": 8.425079365079364
+    "end": 10.015646258503402
    }
   ]
  },
  "board": {
-  "dur": 5.808163265306122,
+  "dur": 6.516371882086168,
   "sentences": [
    {
     "text": "Nine fields.",
@@ -876,51 +876,51 @@
      {
       "text": "Nine fields.",
       "start": 0.0,
-      "end": 1.1261678004535147
+      "end": 1.3931972789115645
      }
     ],
-    "end": 1.1261678004535147
+    "end": 1.3931972789115645
    },
    {
     "text": "Four better.",
-    "start": 1.5761451247165532,
+    "start": 1.8431746031746032,
     "chunks": [
      {
       "text": "Four better.",
-      "start": 1.5761451247165532,
-      "end": 2.388843537414966
+      "start": 1.8431746031746032,
+      "end": 2.760362811791383
      }
     ],
-    "end": 2.388843537414966
+    "end": 2.760362811791383
    },
    {
     "text": "Four ties or mixed.",
-    "start": 2.8388208616780046,
+    "start": 3.210340136054422,
     "chunks": [
      {
       "text": "Four ties or mixed.",
-      "start": 2.8388208616780046,
-      "end": 4.185578231292517
+      "start": 3.210340136054422,
+      "end": 4.626757369614513
      }
     ],
-    "end": 4.185578231292517
+    "end": 4.626757369614513
    },
    {
     "text": "And one worse.",
-    "start": 4.635555555555555,
+    "start": 5.076734693877551,
     "chunks": [
      {
       "text": "And one worse.",
-      "start": 4.635555555555555,
-      "end": 5.808163265306122
+      "start": 5.076734693877551,
+      "end": 6.516371882086168
      }
     ],
-    "end": 5.808163265306122
+    "end": 6.516371882086168
    }
   ]
  },
  "outro": {
-  "dur": 9.630657596371883,
+  "dur": 11.848163265306123,
   "sentences": [
    {
     "text": "Use the original settings for very short data.",
@@ -929,34 +929,34 @@
      {
       "text": "Use the original settings for very short data.",
       "start": 0.0,
-      "end": 2.705124716553288
+      "end": 3.1463038548752835
      }
     ],
-    "end": 2.705124716553288
+    "end": 3.1463038548752835
    },
    {
     "text": "Choose your time resolution.",
-    "start": 3.1551020408163266,
+    "start": 3.596281179138322,
     "chunks": [
      {
       "text": "Choose your time resolution.",
-      "start": 3.1551020408163266,
-      "end": 4.641179138321996
+      "start": 3.596281179138322,
+      "end": 5.268117913832199
      }
     ],
-    "end": 4.641179138321996
+    "end": 5.268117913832199
    },
    {
     "text": "And remember: for rhythmic signals, delays are limited to half a cycle.",
-    "start": 5.091156462585034,
+    "start": 5.718095238095238,
     "chunks": [
      {
       "text": "And remember: for rhythmic signals, delays are limited to half a cycle.",
-      "start": 5.091156462585034,
-      "end": 9.630657596371883
+      "start": 5.718095238095238,
+      "end": 11.848163265306123
      }
     ],
-    "end": 9.630657596371883
+    "end": 11.848163265306123
    }
   ]
  }
