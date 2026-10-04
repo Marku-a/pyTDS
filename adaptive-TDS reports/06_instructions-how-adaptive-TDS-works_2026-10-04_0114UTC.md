@@ -46,14 +46,11 @@ Slow signals get a wider tolerance; fast signals a narrower one.
 
 **Safety rule:** nothing in steps 1–4 looks at the real coupling. The rule cannot be "tuned to find what you hope to find".
 
-## 4. The one setting that stays yours: `max_window`
+## 4. Fully automatic: you only give it the signals
 
-Longer windows always give smoother, more stable-looking delays. But they blur *when* the coupling happens. Only you know the time resolution you need. For example:
+You don't have to choose anything. `adaptive_params([s1, s2])` sets the window, the step, the max delay and the tolerance by itself. A built-in safety limit keeps the window at most 10% of the recording, so there are always enough windows. All nine field results (Report 7) were produced this way, except that the sleep EEG there was capped at 5 min; uncapped, it chooses 29 min and gives 100% against a chance level of 24%.
 
-- Sleep EEG: sleep stages change over minutes, so cap the window at a few minutes.
-- Climate: maybe several years.
-
-Our EEG test showed what happens. Uncapped, the rule chose 29 minutes and the score saturated at 100%. Capped at 2/5/10 minutes it gave 79/90/94%, always with only ~5% chance stability. **All of these are statistically valid; they answer different time-resolution questions.**
+**Optional override, `max_window`:** use it only if you need to know *when* the coupling happens at a finer time scale than the automatic window. For example, on 8 h of sleep EEG the automatic window is 29 min. That is fine for "are these signals coupled?", but too coarse for "in which sleep stage?". Capping it at 2/5/10 min gave 79/90/94%, with chance still about 5%. If you don't have that question, ignore this option.
 
 ## 5. How to run it
 
@@ -67,7 +64,7 @@ params, info = adaptive_params(
     [s1, s2, s3],
     window_rule="bartlett",     # the v2 rule (recommended)
     tolerance="calibrated",     # 5% fake-stability budget
-    max_window=300,             # YOUR time resolution, in samples (optional)
+    # max_window=300,           # OPTIONAL: only for finer timing (samples)
 )
 result = tds(s1, s2, params)   # use the SAME params for every pair
 print(params)                   # window, overlap(=step), max_lag, tolerance

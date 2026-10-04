@@ -1,55 +1,143 @@
 {
-  "_note": "Narration v2 per reel scene, in order. 'say' is fed to TTS verbatim (spelled for pronunciation). 'show' describes the visual for make_reel.py. Numbers come from results/fields.json (hydrology_hourly adaptive info) and Report 2.",
-  "scenes": [
-    {"id": "hook", "say": "Can an algorithm tune itself? We tested it on nine fields of science.",
-     "show": "Title 'Can an algorithm tune itself?' + 'Adaptive TDS · tested on 9 fields of science'."},
-
-    {"id": "what", "say": "First, what does T D S do? It slides a window along two signals. In each window, it finds the delay where the two signals match best. Then it counts how often that delay stays the same. That share is the T D S score.",
-     "show": "Existing scene 2 (sliding window, live delay readout, stable/unstable dots); captions follow the sentences."},
-
-    {"id": "problem", "say": "The original method uses fixed numbers: a window of sixty samples, for every kind of data. Here is one night of sleep, recorded at different sampling rates. Same brain. But the score drops from seventy five, to twenty seven percent.",
-     "show": "Existing scene 3 bars 74.7/58.1/41.3/26.8; bars appear one by one in sync with the narration."},
-
-    {"id": "how_intro", "say": "So we let the algorithm choose its own settings, in four steps. Our example is a river. Rain falls, and the river rises a few hours later.",
-     "show": "Title 'How it tunes itself — 4 steps'. Excerpt of hydrology rain (blue) and river flow (orange) from fields_excerpts.json, with an arrow 'rain → river'. A step list 1 Memory · 2 Window · 3 Max delay · 4 Tolerance appears."},
-
-    {"id": "step1_memory", "say": "Step one: measure each signal's memory. The algorithm compares each signal with a shifted copy of itself. Rain forgets fast. After a few hours, it is new weather. But the river remembers for days.",
-     "show": "Header 'STEP 1 · Memory'. Plot of the real autocorrelation (self-similarity, 0..1) vs shift in hours (0..240 h) for rain (blue) and river flow (orange), computed from the hydrology hourly data with adaptive.acf. Labels: 'rain forgets in hours', 'river remembers for days'. Y label 'similarity to itself', x label 'shift (hours)'."},
-
-    {"id": "step2_window", "say": "Step two: choose the window. In a slow signal, neighbouring points are almost copies of each other. For this river, about sixty four hourly points hold the information of just one new point. To hold thirty new points, the window must be thirty times sixty four hours. That is about eighty days.",
-     "show": "Header 'STEP 2 · Window'. Row of 64 tiny squares merging into ONE block labelled '1 new point = 64 h'. Then 30 such blocks in a bar, labelled '30 new points = 30 × 64 h ≈ 80 days'. Under it, for comparison, the fixed window as a tiny sliver: 'fixed: 60 h'. Use the real values B=63.8, window 79.8 days."},
-
-    {"id": "step3_delay", "say": "Step three: the longest delay to search is half the window. Here, that is forty days. If a signal has a rhythm, like a heartbeat, it stops at half a beat, because longer delays would look exactly the same.",
-     "show": "Header 'STEP 3 · Max delay'. The 80-day window bar with a double arrow covering half of it: 'max delay = ½ window ≈ 40 days'. Small inset: a repeating pulse wave and a copy shifted by one full beat lying exactly on top: 'rhythm: shift by 1 beat looks identical → stop at ½ beat'."},
-
-    {"id": "step4_tolerance", "say": "Step four: decide how strict to be. The algorithm slides the river far away in time, so it no longer matches the rain. Any stability it still finds is fake. It loosens the tolerance step by step, and stops just before fake stability passes five percent. For the river, that is plus or minus three days.",
-     "show": "Header 'STEP 4 · Tolerance'. Animation: the orange river signal slides far to the right (label 'shifted → no real link'). Then a line chart: x = tolerance (hours, 0..72), y = fake stability (%), real values from fields.json hydrology_hourly adaptive info.null_score_by_tolerance; dashed 5% line; the chosen point (71 h ≈ ±3 days) highlighted in aqua with label 'chosen: ±3 days'."},
-
-    {"id": "step5_you", "say": "Only one choice stays with you: how sharp your timing must be. Longer windows find links more reliably, but they blur when the link happens.",
-     "show": "Header 'Your one choice: time resolution'. Two small cards: 'long window → reliable, blurry timing' and 'short window → sharp timing, noisier'."},
-
-    {"id": "hydrology_hourly", "say": "Rain to river. With these settings, the link is found far above chance, with a ten hour delay. The fixed version could not tell it apart from chance.",
-     "show": "Existing field scene."},
-    {"id": "energy_vic_summer", "say": "Heat to electricity demand. Demand remembers about a day and a half, so the window becomes twenty seven days. Adaptive finds the one hour delay. The fixed version says zero.",
-     "show": "Existing field scene."},
-    {"id": "climate_nino34_gistemp", "say": "El Nino to global temperature. El Nino remembers about seven months, so the window grows to thirteen years. The link is detected more strongly, but the delay comes out as one month, not about three. A mixed result.",
-     "show": "Existing field scene."},
-    {"id": "beijing_pm25", "say": "Wind to air pollution in Beijing. Wind remembers almost a day, so the window is twenty six days. The link is found far above chance.",
-     "show": "Existing field scene."},
-    {"id": "gas_furnace", "say": "A gas furnace, with only two hundred ninety six data points. The window it wants is longer than the data allows. Here, the fixed settings win.",
-     "show": "Existing field scene."},
-    {"id": "gasoline_weekly_diff", "say": "Crude oil to petrol prices. Both versions detect the link. But weekly data is too coarse to see the one to two week lag.",
-     "show": "Existing field scene."},
-    {"id": "jena_T_rh", "say": "Temperature and humidity: a control, with zero delay. Both versions find zero. The yearly cycle makes fake stability high, and adaptive warns about it.",
-     "show": "Existing field scene."},
-    {"id": "sleep_eeg_delta_sigma", "say": "Sleep E E G. Capped at five minutes for good timing, adaptive gives the same answer at any sampling rate.",
-     "show": "Existing field scene."},
-    {"id": "neurokit_hr_rsp", "say": "Heart rate and breathing. The breathing rhythm caps the delay, and the settings end up close to the original ones, because those already fit.",
-     "show": "Existing field scene."},
-
-    {"id": "board", "say": "Nine fields. Four better. Four ties or mixed. And one worse.",
-     "show": "Existing scoreboard."},
-    {"id": "outro", "say": "Use the original settings for very short data. Choose your time resolution. And remember: for rhythmic signals, delays are limited to half a cycle.",
-     "show": "Existing outro."}
+ "_note": "Narration v2 per reel scene, in order. 'say' is fed to TTS verbatim (spelled for pronunciation). 'show' describes the visual for make_reel.py. Numbers come from results/fields.json (hydrology_hourly adaptive info) and Report 2.",
+ "scenes": [
+  {
+   "id": "hook",
+   "say": "How can an algorithm tune itself? Part one: how adaptive T D S works.",
+   "show": "Title 'Can an algorithm tune itself?' + 'Part 1 · How adaptive TDS works'."
+  },
+  {
+   "id": "what",
+   "say": "First, what does T D S do? It slides a window along two signals. In each window, it finds the delay where the two signals match best. Then it counts how often that delay stays the same. That share is the T D S score.",
+   "show": "Existing scene 2 (sliding window, live delay readout, stable/unstable dots); captions follow the sentences."
+  },
+  {
+   "id": "problem",
+   "say": "The original method uses fixed numbers: a window of sixty samples, for every kind of data. Here is one night of sleep, recorded at different sampling rates. Same brain. But the score drops from seventy five, to twenty seven percent.",
+   "show": "Existing scene 3 bars 74.7/58.1/41.3/26.8; bars appear one by one in sync with the narration."
+  },
+  {
+   "id": "how_intro",
+   "say": "So we let the algorithm choose its own settings, in four steps. Our example is a river. Rain falls, and the river rises a few hours later.",
+   "show": "Title 'How it tunes itself — 4 steps'. Excerpt of hydrology rain (blue) and river flow (orange) from fields_excerpts.json, with an arrow 'rain → river'. A step list 1 Memory · 2 Window · 3 Max delay · 4 Tolerance appears."
+  },
+  {
+   "id": "step1_memory",
+   "say": "Step one: measure each signal's memory. The algorithm compares each signal with a shifted copy of itself. Rain forgets fast. After a few hours, it is new weather. But the river remembers for days.",
+   "show": "Header 'STEP 1 · Memory'. Plot of the real autocorrelation (self-similarity, 0..1) vs shift in hours (0..240 h) for rain (blue) and river flow (orange), computed from the hydrology hourly data with adaptive.acf. Labels: 'rain forgets in hours', 'river remembers for days'. Y label 'similarity to itself', x label 'shift (hours)'."
+  },
+  {
+   "id": "step2_window",
+   "say": "Step two: choose the window. In a slow signal, neighbouring points are almost copies of each other. For this river, about sixty four hourly points hold the information of just one new point. To hold thirty new points, the window must be thirty times sixty four hours. That is about eighty days.",
+   "show": "Header 'STEP 2 · Window'. Row of 64 tiny squares merging into ONE block labelled '1 new point = 64 h'. Then 30 such blocks in a bar, labelled '30 new points = 30 × 64 h ≈ 80 days'. Under it, for comparison, the fixed window as a tiny sliver: 'fixed: 60 h'. Use the real values B=63.8, window 79.8 days."
+  },
+  {
+   "id": "step3_delay",
+   "say": "Step three: the longest delay to search is half the window. Here, that is forty days. If a signal has a rhythm, like a heartbeat, it stops at half a beat, because longer delays would look exactly the same.",
+   "show": "Header 'STEP 3 · Max delay'. The 80-day window bar with a double arrow covering half of it: 'max delay = ½ window ≈ 40 days'. Small inset: a repeating pulse wave and a copy shifted by one full beat lying exactly on top: 'rhythm: shift by 1 beat looks identical → stop at ½ beat'."
+  },
+  {
+   "id": "step4_tolerance",
+   "say": "Step four: decide how strict to be. The algorithm slides the river far away in time, so it no longer matches the rain. Any stability it still finds is fake. It loosens the tolerance step by step, and stops just before fake stability passes five percent. For the river, that is plus or minus three days.",
+   "show": "Header 'STEP 4 · Tolerance'. Animation: the orange river signal slides far to the right (label 'shifted → no real link'). Then a line chart: x = tolerance (hours, 0..72), y = fake stability (%), real values from fields.json hydrology_hourly adaptive info.null_score_by_tolerance; dashed 5% line; the chosen point (71 h ≈ ±3 days) highlighted in aqua with label 'chosen: ±3 days'."
+  },
+  {
+   "id": "step5_you",
+   "say": "And that's it. You give it two signals, and it sets the window, the delay range and the tolerance by itself. Only if you need minute by minute timing, you can optionally make the window shorter.",
+   "show": "Header 'Fully automatic'. Big card: 'two signals in → window · max delay · tolerance out'. Smaller, secondary card below: 'Optional: need sharper timing? cap the window'."
+  },
+  {
+   "id": "part1_outro",
+   "say": "In part two, we test it on nine fields of science.",
+   "show": "End card: 'Part 2 → 9 fields of science' + 'pyTDS · adaptive branch (experimental)'."
+  },
+  {
+   "id": "hook2",
+   "say": "Can an algorithm tune itself? Part two: nine fields of science. Each time, we give it only two signals, and it picks every setting by itself.",
+   "show": "Title 'Can an algorithm tune itself?' + 'Part 2 · 9 fields of science' + small line 'two signals in → all settings chosen automatically'."
+  },
+  {
+   "id": "hydrology_hourly",
+   "say": "Rain to river. With these settings, the link is found far above chance, with a ten hour delay. The fixed version could not tell it apart from chance.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "energy_vic_summer",
+   "say": "Heat to electricity demand. Demand remembers about a day and a half, so the window becomes twenty seven days. Adaptive finds the one hour delay. The fixed version says zero.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "climate_nino34_gistemp",
+   "say": "El Nino to global temperature. El Nino remembers about seven months, so the window grows to thirteen years. The link is detected more strongly, but the delay comes out as one month, not about three. A mixed result.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "beijing_pm25",
+   "say": "Wind to air pollution in Beijing. Wind remembers almost a day, so the window is twenty six days. The link is found far above chance.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "gas_furnace",
+   "say": "A gas furnace, with only two hundred ninety six data points. The window it wants is longer than the data allows. Here, the fixed settings win.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "gasoline_weekly_diff",
+   "say": "Crude oil to petrol prices. Both versions detect the link. But weekly data is too coarse to see the one to two week lag.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "jena_T_rh",
+   "say": "Temperature and humidity: a control, with zero delay. Both versions find zero. The yearly cycle makes fake stability high, and adaptive warns about it.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "sleep_eeg_delta_sigma",
+   "say": "Sleep E E G. Fully automatic, the window becomes twenty nine minutes, and the answer stays the same at any sampling rate.",
+   "show": "Existing field scene, but use the fully automatic 'adaptive' variant (NOT adaptive_cap5min) and drop the 'with 5-min time resolution' note."
+  },
+  {
+   "id": "neurokit_hr_rsp",
+   "say": "Heart rate and breathing. The breathing rhythm caps the delay, and the settings end up close to the original ones, because those already fit.",
+   "show": "Existing field scene."
+  },
+  {
+   "id": "board",
+   "say": "Nine fields. Four better. Four ties or mixed. And one worse.",
+   "show": "Existing scoreboard."
+  },
+  {
+   "id": "outro",
+   "say": "Use the original settings for very short data. Choose your time resolution. And remember: for rhythmic signals, delays are limited to half a cycle.",
+   "show": "Existing outro."
+  }
+ ],
+ "parts": {
+  "part1": [
+   "hook",
+   "what",
+   "problem",
+   "how_intro",
+   "step1_memory",
+   "step2_window",
+   "step3_delay",
+   "step4_tolerance",
+   "step5_you",
+   "part1_outro"
+  ],
+  "part2": [
+   "hook2",
+   "hydrology_hourly",
+   "energy_vic_summer",
+   "climate_nino34_gistemp",
+   "beijing_pm25",
+   "gas_furnace",
+   "gasoline_weekly_diff",
+   "jena_T_rh",
+   "sleep_eeg_delta_sigma",
+   "neurokit_hr_rsp",
+   "board",
+   "outro"
   ]
+ }
 }
