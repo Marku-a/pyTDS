@@ -1,4 +1,4 @@
-"""Render the adaptive-TDS Instagram reel (1080x1920, 30 fps, H.264, no audio).
+"""Render the adaptive-TDS Instagram reel (1080x1920, 30 fps, H.264, no audio; scene lengths follow reel_audio/durations.json if present).
 
 Run from anywhere:  python experiments/adaptive/make_reel.py
 Output: "adaptive-TDS reports/adaptive_TDS_reel.mp4" plus one still PNG per scene
@@ -372,6 +372,13 @@ SCENES += [(f"05_{i + 1}_{o[0]}", (lambda c, k=o[0]: scene_field(c, k)), FIELD_D
 SCENES += [("06_board", scene_board, 7, 4.9), ("07_outro", scene_outro, 7, 4.7)]
 
 
+def scene_durations():
+    """Scene durations: max(base, narration + 0.8 s); narration starts 0.3 s into each scene."""
+    nar = json.load(open(ROOT / "experiments/adaptive/reel_audio/durations.json"))
+    ids = [s["id"] for s in json.load(open(ROOT / "experiments/adaptive/reel_voiceover.json"))["scenes"]]
+    return [max(sc[2], nar[i] + 0.3 + 0.5) for sc, i in zip(SCENES, ids)]
+
+
 def main():
     FRAMES.mkdir(parents=True, exist_ok=True)
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -392,7 +399,9 @@ def main():
         return np.ascontiguousarray(np.asarray(fig.canvas.buffer_rgba())[..., :3])
 
     t0 = 0.0
-    for name, fn, dur, settle in SCENES:
+    durs = scene_durations()
+    json.dump(durs, open(ROOT / "experiments/adaptive/reel_audio/scene_durations.json", "w"))
+    for (name, fn, _, settle), dur in zip(SCENES, durs):
         n, last = int(round(dur * FPS)), None
         for f in range(n):
             sec = f / FPS

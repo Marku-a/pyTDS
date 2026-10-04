@@ -2,3 +2,5 @@ data_external/
 __pycache__/
 data_fields/*
 !data_fields/MANIFEST.json
+*.wav
+reel_audio/*.onnx*
