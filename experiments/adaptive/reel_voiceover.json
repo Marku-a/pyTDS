@@ -1,0 +1,20 @@
+{
+  "_note": "Narration per reel scene. 'say' is fed to TTS (spelled for pronunciation); scene ids match make_reel.py order.",
+  "scenes": [
+    {"id": "hook", "say": "Can an algorithm tune itself? We tested it on nine fields of science."},
+    {"id": "what", "say": "Time Delay Stability slides a window along two signals, finds the delay where they match best, and counts how often that delay stays stable."},
+    {"id": "problem", "say": "But the original uses fixed sample counts. Same night of sleep, only the sampling rate changed, and the answer changes completely."},
+    {"id": "how", "say": "Adaptive TDS measures how long each signal remembers itself, and sizes the window to hold thirty independent samples. The maximum delay follows the window. The tolerance is set so that fake stability stays under five percent. You choose only one thing: your time resolution."},
+    {"id": "hydrology_hourly", "say": "Rain to river flow. The fixed version can't beat chance. Adaptive picks an eighty day window, and finds the ten hour delay."},
+    {"id": "energy_vic_summer", "say": "Heat to electricity demand. Adaptive finds the one hour delay. The fixed version reports zero."},
+    {"id": "climate_nino34_gistemp", "say": "El Nino to global temperature. Stronger detection, but a one month delay instead of about three. Mixed."},
+    {"id": "beijing_pm25", "say": "Wind to air pollution. Much stronger detection, far above chance."},
+    {"id": "gas_furnace", "say": "A gas furnace, with only two hundred ninety six data points. Too short. Here, the fixed settings win."},
+    {"id": "gasoline_weekly_diff", "say": "Crude oil to petrol prices. Both detect it, but neither resolves the one to two week lag."},
+    {"id": "jena_T_rh", "say": "Temperature and humidity, a zero delay control. Both find zero, and adaptive flags its own limit."},
+    {"id": "sleep_eeg_delta_sigma", "say": "Sleep E E G. With a five minute time resolution, it gives the same answer at any sampling rate."},
+    {"id": "neurokit_hr_rsp", "say": "Heart rate and breathing. Adaptive picks almost the original settings, because they already fit."},
+    {"id": "board", "say": "Nine fields. Four better, four ties or mixed, and one worse."},
+    {"id": "outro", "say": "Keep fixed settings for very short data. Set your time resolution. And for rhythmic waveforms, the delay is limited to half a cycle."}
+  ]
+}
