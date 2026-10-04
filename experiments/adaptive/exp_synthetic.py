@@ -41,11 +41,12 @@ from pyTDS.params import TDSParams  # noqa: E402
 
 RES_DIR = os.path.join(HERE, "results")
 FIG_DIR = os.path.join(ROOT, "adaptive-TDS reports", "figures")
-VARIANTS = ["fixed_default", "adaptive_fixedtol", "adaptive_calibrated"]
+VARIANTS = ["fixed_default", "adaptive_fixedtol", "adaptive_calibrated", "v2_fixedtol", "v2_calibrated"]
 EXP_ID = {"E1": 1, "E1c": 2, "E1d": 3, "E1b": 4, "E2": 5}
 GRID = oracle_grid()
 COLORS = {"fixed_default": "tab:gray", "adaptive_fixedtol": "tab:blue",
-          "adaptive_calibrated": "tab:green", "oracle": "tab:red"}
+          "adaptive_calibrated": "tab:green", "v2_fixedtol": "tab:purple",
+          "v2_calibrated": "tab:orange", "oracle": "tab:red"}
 
 
 # ---------------------------------------------------------------- generation
@@ -145,22 +146,29 @@ def worker_network(seed):
     kw = dict(tolerance="calibrated", n_shifts=5, max_pairs=20)
     p_q1, info_q1 = adaptive_params(sig, quantile=1.0, **kw)
     p_q05, _ = adaptive_params(sig, quantile=0.5, **kw)
+    p_q1_v2, _ = adaptive_params(sig, quantile=1.0, window_rule="bartlett", **kw)
     tc = np.array(info_q1["tau_c"])
     gm = float(np.sqrt(tc.min() * tc.max()))
     groups = [[i for i in range(8) if tc[i] <= gm], [i for i in range(8) if tc[i] > gm]]
-    gparams = {}
+    gparams, gparams_v2 = {}, {}
     for g, idx in enumerate(groups):
         gparams[g] = adaptive_params([sig[i] for i in idx], **kw)[0] if len(idx) >= 2 else p_q1
+        gparams_v2[g] = (adaptive_params([sig[i] for i in idx], window_rule="bartlett", **kw)[0]
+                         if len(idx) >= 2 else p_q1_v2)
     grp_of = {i: g for g, idx in enumerate(groups) for i in idx}
     from pyTDS.core import tds
-    variants = ["fixed_default", "system_q1", "system_q05", "perpair", "grouped"]
+    variants = ["fixed_default", "system_q1", "system_q05", "perpair", "grouped",
+                "system_q1_v2", "grouped_v2"]
     res = {v: {} for v in variants}
     used = {"fixed_default": TDSParams(), "system_q1": p_q1, "system_q05": p_q05,
-            "grouped": {f"g{g}": gparams[g] for g in gparams}}
+            "grouped": {f"g{g}": gparams[g] for g in gparams},
+            "system_q1_v2": p_q1_v2, "grouped_v2": {f"g{g}": gparams_v2[g] for g in gparams_v2}}
     for (i, j) in pairs:
         pp = {"fixed_default": TDSParams(), "system_q1": p_q1, "system_q05": p_q05,
               "perpair": adaptive_params([sig[i], sig[j]], tolerance="calibrated", n_shifts=5)[0],
-              "grouped": gparams[grp_of[i]] if grp_of[i] == grp_of[j] else p_q1}
+              "grouped": gparams[grp_of[i]] if grp_of[i] == grp_of[j] else p_q1,
+              "system_q1_v2": p_q1_v2,
+              "grouped_v2": gparams_v2[grp_of[i]] if grp_of[i] == grp_of[j] else p_q1_v2}
         for v in variants:
             r = tds(sig[i], sig[j], pp[v])
             st = r["stable_taus"]
@@ -380,7 +388,8 @@ def run_E1d(pool, quick):
 def run_E1b(pool, quick):
     nseed = 2 if quick else 10
     outs = pool.map(worker_network, range(nseed), chunksize=1)
-    variants = ["fixed_default", "system_q1", "system_q05", "perpair", "grouped"]
+    variants = ["fixed_default", "system_q1", "system_q05", "perpair", "grouped",
+                "system_q1_v2", "grouped_v2"]
     summ = {}
     for v in variants:
         aucs, hits = [], []
@@ -403,12 +412,13 @@ def run_E1b(pool, quick):
          [{"exp": "E1b", "condition": "network", "variant": v, "edge_auc_mean": s["edge_auc_mean"],
            "edge_auc_sd": s["edge_auc_sd"], "edge_hit_rate": s["edge_hit_rate"],
            "params_seed0": json.dumps(s["params_seed0"])} for v, s in summ.items()], quick)
-    fig, ax = plt.subplots(figsize=(7, 4))
+    fig, ax = plt.subplots(figsize=(9, 4))
     ax.bar(variants, [summ[v]["edge_auc_mean"] for v in variants],
            yerr=[summ[v]["edge_auc_sd"] for v in variants], capsize=3,
-           color=["tab:gray", "tab:blue", "tab:cyan", "tab:orange", "tab:green"], label="mean +- sd over seeds")
+           color=["tab:gray", "tab:blue", "tab:cyan", "tab:orange", "tab:green", "tab:purple", "tab:brown"], label="mean +- sd over seeds")
     ax.set_ylabel("edge AUC (5 edges vs 23 non-edges)")
     ax.set_xlabel("variant")
+    ax.tick_params(axis="x", labelsize=7, rotation=20)
     ax.set_title("E1b: mixed-scale network, edge detection")
     ax.legend(fontsize=8)
     savefig(fig, "E1b_edge_auc", quick)

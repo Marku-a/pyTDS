@@ -34,6 +34,11 @@ def variant_params(name: str, system):
         return adaptive_params(system, tolerance="fixed")
     if name == "adaptive_calibrated":
         return adaptive_params(system, tolerance="calibrated", n_shifts=5, max_pairs=20)
+    if name == "v2_fixedtol":
+        return adaptive_params(system, window_rule="bartlett", tolerance="fixed")
+    if name == "v2_calibrated":
+        return adaptive_params(system, window_rule="bartlett", tolerance="calibrated",
+                               n_shifts=5, max_pairs=20)
     raise ValueError(name)
 
 

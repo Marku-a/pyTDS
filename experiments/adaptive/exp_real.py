@@ -33,8 +33,9 @@ EXT = os.path.join(HERE, "data_external")
 RES = os.path.join(HERE, "results")
 FIG = os.path.join(ROOT, "adaptive-TDS reports", "figures")
 N_NULL = 200
-VARIANTS = ["fixed_default", "adaptive_fixedtol", "adaptive_calibrated"]
-COLORS = {"fixed_default": "tab:gray", "adaptive_fixedtol": "tab:blue", "adaptive_calibrated": "tab:red"}
+VARIANTS = ["fixed_default", "adaptive_fixedtol", "adaptive_calibrated", "v2_fixedtol", "v2_calibrated"]
+COLORS = {"fixed_default": "tab:gray", "adaptive_fixedtol": "tab:blue", "adaptive_calibrated": "tab:red",
+          "v2_fixedtol": "tab:purple", "v2_calibrated": "tab:orange"}
 RECS = {"resting5": "bio_resting_5min_100hz.csv", "resting8": "bio_resting_8min_100hz.csv",
         "event": "bio_eventrelated_100hz.csv"}
 
@@ -52,7 +53,9 @@ def make_params(system, variant, **kw):
     if variant == "fixed_default":
         p = TDSParams()
         return p, {"window": p.window, "step": p.overlap, "max_lag": p.max_lag, "tolerance": p.tolerance}
-    tol = "fixed" if variant == "adaptive_fixedtol" else "calibrated"
+    tol = "fixed" if variant in ("adaptive_fixedtol", "v2_fixedtol") else "calibrated"
+    if variant.startswith("v2_"):
+        return adaptive_params(system, window_rule="bartlett", tolerance=tol, **kw)
     return adaptive_params(system, tolerance=tol, **kw)
 
 
@@ -251,7 +254,7 @@ def exp_R2():
     table(rows, ["fs", "variant", "score", "null_p95", "p_emp", "median_stable_tau_ms",
                  "frac_within_50ms_of_-PAT", "window", "step", "max_lag", "tolerance"])
     plt = plt_()
-    fig, axs = plt.subplots(3, 1, figsize=(10, 9), sharex=True)
+    fig, axs = plt.subplots(len(VARIANTS), 1, figsize=(10, 3 * len(VARIANTS)), sharex=True)
     for ax, v in zip(axs, VARIANTS):
         t, tau, _ = perwin[v]
         ax.plot(t, tau, ".", ms=3, color=COLORS[v], label="per-window tau")
@@ -340,7 +343,7 @@ def exp_R3():
     table([r for r in rows if r["pair"].startswith("true")],
           ["variant", "pair", "score", "null_p95", "p_emp", "median_stable_tau_s", "window", "step", "max_lag", "tolerance"])
     plt = plt_()
-    fig, ax = plt.subplots(figsize=(9, 4.5))
+    fig, ax = plt.subplots(figsize=(11, 4.5))
     x = np.arange(len(VARIANTS))
     for i, n in enumerate(names):
         ax.bar(x + (i - 1) * 0.12 - 0.2, [out["variants"][v]["true"][n]["score"] for v in VARIANTS], 0.12,
