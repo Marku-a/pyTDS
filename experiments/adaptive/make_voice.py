@@ -107,16 +107,29 @@ def process(a, sr, tmp):
 
 
 def main():
+    global LENGTH_SCALE
+    if "--length-scale" in sys.argv:  # override of the default 1.3
+        LENGTH_SCALE = float(sys.argv[sys.argv.index("--length-scale") + 1])
     from piper import PiperVoice, SynthesisConfig
     voice = PiperVoice.load(str(A / "en-us-libritts-high.onnx"))
     sr = voice.config.sample_rate
     sid = json.load(open(A / "en-us-libritts-high.onnx.json"))["speaker_id_map"][SPEAKER]
     cfg = SynthesisConfig(speaker_id=sid, length_scale=LENGTH_SCALE, noise_scale=NOISE_SCALE, noise_w_scale=NOISE_W)
+    scenes = json.load(open(D / "reel_voiceover.json"))["scenes"]
+    # reuse earlier WAVs of scenes whose text is unchanged (TTS is deterministic per settings), keyed by scene id
+    old_info = json.load(open(A / "sentences.json")) if (A / "sentences.json").exists() else {}
+    old_wav = {re.sub(r"^voice_\d+_", "", f.stem): f.read_bytes() for f in A.glob("voice_[0-9][0-9]_*.wav")}
     for old in A.glob("voice_[0-9][0-9]_*.wav"):  # drop WAVs of earlier scene lists
         old.unlink()
     durs, info = {}, {}
     with tempfile.TemporaryDirectory() as td:
-        for i, s in enumerate(json.load(open(D / "reel_voiceover.json"))["scenes"]):
+        for i, s in enumerate(scenes):
+            prev = old_info.get(s["id"])
+            if prev and s["id"] in old_wav and [x["text"] for x in prev["sentences"]] == split_sentences(s["say"]):
+                (A / f"voice_{i:02d}_{s['id']}.wav").write_bytes(old_wav[s["id"]])
+                durs[s["id"]], info[s["id"]] = prev["dur"], prev
+                print(f"{s['id']}: reused", flush=True)
+                continue
             a, sents = synth_scene(voice, cfg, s["say"], sr)
             if os.environ.get("REEL_RAW_DIR"):  # optional: also keep the unprocessed WAVs (for WER comparison)
                 write_wav(Path(os.environ["REEL_RAW_DIR"]) / f"voice_{i:02d}_{s['id']}.wav", a * (0.89 / np.abs(a).max()), sr)

@@ -1,6 +1,6 @@
 """Mix narration + music with numpy/ffmpeg and mux with the re-timed silent reel.
 
-Output: "adaptive-TDS reports/adaptive_TDS_reel_voice.mp4" (AAC 192k, 44.1 kHz stereo, -14 LUFS, TP -1.5 dB).
+Output (python mix_reel.py --part 1|2): "adaptive-TDS reports/adaptive_TDS_reel_part1_how_it_works.mp4" / ..._part2_nine_fields.mp4 (AAC 192k, 44.1 kHz stereo, -14 LUFS, TP -1.5 dB).
 Run after make_voice.py, make_reel.py, make_music.py.
 
 Loudness targets (measured on the separate stems, before the final loudnorm):
@@ -12,6 +12,7 @@ Final mix: ffmpeg loudnorm (two pass, linear) to -14 LUFS integrated, true peak 
 import json
 import re
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -23,8 +24,10 @@ from make_voice import lufs, read_wav
 
 ROOT = Path(__file__).resolve().parents[2]
 A = ROOT / "experiments/adaptive/reel_audio"
-VIDEO = ROOT / "adaptive-TDS reports/adaptive_TDS_reel.mp4"
-OUT = ROOT / "adaptive-TDS reports/adaptive_TDS_reel_voice.mp4"
+PART = int(sys.argv[sys.argv.index("--part") + 1]) if "--part" in sys.argv else 1
+VIDEO = A / f"silent_part{PART}.mp4"
+OUT = ROOT / ("adaptive-TDS reports/adaptive_TDS_reel_part1_how_it_works.mp4" if PART == 1
+              else "adaptive-TDS reports/adaptive_TDS_reel_part2_nine_fields.mp4")
 SR = 44100
 LEAD = 0.3
 VOICE_LUFS, GAP_LUFS, SPEECH_LUFS = -16.0, -23.0, -27.0
@@ -78,8 +81,9 @@ def final_stats(path):
 
 def main():
     sc = json.load(open(A / "sentences.json"))
-    ids = [s["id"] for s in json.load(open(ROOT / "experiments/adaptive/reel_voiceover.json"))["scenes"]]
-    durs = json.load(open(A / "scene_durations.json"))
+    allids = [s["id"] for s in json.load(open(ROOT / "experiments/adaptive/reel_voiceover.json"))["scenes"]]
+    ids = json.load(open(ROOT / "experiments/adaptive/reel_voiceover.json"))["parts"][f"part{PART}"]
+    durs = json.load(open(A / f"scene_durations_part{PART}.json"))
     starts, t0 = [], 0.0
     for d in durs:
         starts.append(t0)
@@ -89,7 +93,7 @@ def main():
     voice = np.zeros(n)
     intervals = []
     for i, sid in enumerate(ids):
-        a, sr = read_wav(next(A.glob(f"voice_{i:02d}_*.wav")))
+        a, sr = read_wav(A / f"voice_{allids.index(sid):02d}_{sid}.wav")
         a = resample_poly(a, SR, sr)
         k = int(round((starts[i] + LEAD) * SR))
         voice[k:k + len(a)] += a[: n - k]
@@ -97,7 +101,7 @@ def main():
         # speech span of this scene's narration (speech to speech incl. pauses between sentences)
         intervals.append((starts[i] + LEAD + s[0]["start"], starts[i] + LEAD + s[-1]["end"]))
     voice = np.stack([voice, voice])
-    music = wavfile.read(A / "music.wav")[1].T.astype(np.float64) / 32768
+    music = wavfile.read(A / f"music_part{PART}.wav")[1].T.astype(np.float64) / 32768
     music = music[:, :n] if music.shape[1] >= n else np.pad(music, ((0, 0), (0, n - music.shape[1])))
     with tempfile.TemporaryDirectory() as td:
         voice *= 10 ** ((VOICE_LUFS - measure(voice, td)) / 20)

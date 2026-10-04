@@ -1,30 +1,30 @@
 {
  "hook": {
-  "dur": 5.279727891156463,
+  "dur": 6.487165532879819,
   "sentences": [
    {
-    "text": "Can an algorithm tune itself?",
+    "text": "How can an algorithm tune itself?",
     "start": 0.0,
     "chunks": [
      {
-      "text": "Can an algorithm tune itself?",
+      "text": "How can an algorithm tune itself?",
       "start": 0.0,
-      "end": 1.9388662131519274
+      "end": 2.3103854875283445
      }
     ],
-    "end": 1.9388662131519274
+    "end": 2.3103854875283445
    },
    {
-    "text": "We tested it on nine fields of science.",
-    "start": 2.388843537414966,
+    "text": "Part one: how adaptive T D S works.",
+    "start": 2.760362811791383,
     "chunks": [
      {
-      "text": "We tested it on nine fields of science.",
-      "start": 2.388843537414966,
-      "end": 5.279727891156463
+      "text": "Part one: how adaptive T D S works.",
+      "start": 2.760362811791383,
+      "end": 6.487165532879819
      }
     ],
-    "end": 5.279727891156463
+    "end": 6.487165532879819
    }
   ]
  },
@@ -449,31 +449,111 @@
   ]
  },
  "step5_you": {
-  "dur": 10.840907029478458,
+  "dur": 13.843174603174603,
   "sentences": [
    {
-    "text": "Only one choice stays with you: how sharp your timing must be.",
+    "text": "And that's it.",
     "start": 0.0,
     "chunks": [
      {
-      "text": "Only one choice stays with you: how sharp your timing must be.",
+      "text": "And that's it.",
       "start": 0.0,
-      "end": 4.655600907029479
+      "end": 1.1261678004535147
      }
     ],
-    "end": 4.655600907029479
+    "end": 1.1261678004535147
    },
    {
-    "text": "Longer windows find links more reliably, but they blur when the link happens.",
-    "start": 5.105578231292517,
+    "text": "You give it two signals, and it sets the window, the delay range and the tolerance by itself.",
+    "start": 1.5761451247165532,
     "chunks": [
      {
-      "text": "Longer windows find links more reliably, but they blur when the link happens.",
-      "start": 5.105578231292517,
-      "end": 10.840907029478458
+      "text": "You give it two signals, and it sets the window,",
+      "start": 1.5761451247165532,
+      "end": 4.246439909297052
+     },
+     {
+      "text": "the delay range and the tolerance by itself.",
+      "start": 4.396417233560091,
+      "end": 7.2640816326530615
      }
     ],
-    "end": 10.840907029478458
+    "end": 7.2640816326530615
+   },
+   {
+    "text": "Only if you need minute by minute timing, you can optionally make the window shorter.",
+    "start": 7.7140589569161,
+    "chunks": [
+     {
+      "text": "Only if you need minute by minute timing,",
+      "start": 7.7140589569161,
+      "end": 11.08095238095238
+     },
+     {
+      "text": "you can optionally make the window shorter.",
+      "start": 11.23092970521542,
+      "end": 13.843174603174603
+     }
+    ],
+    "end": 13.843174603174603
+   }
+  ]
+ },
+ "part1_outro": {
+  "dur": 4.3769614512471655,
+  "sentences": [
+   {
+    "text": "In part two, we test it on nine fields of science.",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "In part two, we test it on nine fields of science.",
+      "start": 0.0,
+      "end": 4.3769614512471655
+     }
+    ],
+    "end": 4.3769614512471655
+   }
+  ]
+ },
+ "hook2": {
+  "dur": 12.266122448979592,
+  "sentences": [
+   {
+    "text": "Can an algorithm tune itself?",
+    "start": 0.0,
+    "chunks": [
+     {
+      "text": "Can an algorithm tune itself?",
+      "start": 0.0,
+      "end": 1.9620861678004535
+     }
+    ],
+    "end": 1.9620861678004535
+   },
+   {
+    "text": "Part two: nine fields of science.",
+    "start": 2.412063492063492,
+    "chunks": [
+     {
+      "text": "Part two: nine fields of science.",
+      "start": 2.412063492063492,
+      "end": 5.8021768707482995
+     }
+    ],
+    "end": 5.8021768707482995
+   },
+   {
+    "text": "Each time, we give it only two signals, and it picks every setting by itself.",
+    "start": 6.252154195011338,
+    "chunks": [
+     {
+      "text": "Each time, we give it only two signals, and it picks every setting by itself.",
+      "start": 6.252154195011338,
+      "end": 12.266122448979592
+     }
+    ],
+    "end": 12.266122448979592
    }
   ]
  },
@@ -799,7 +879,7 @@
   ]
  },
  "sleep_eeg_delta_sigma": {
-  "dur": 8.169659863945578,
+  "dur": 9.945986394557822,
   "sentences": [
    {
     "text": "Sleep E E G.",
@@ -808,27 +888,27 @@
      {
       "text": "Sleep E E G.",
       "start": 0.0,
-      "end": 1.3815873015873017
+      "end": 1.5325170068027212
      }
     ],
-    "end": 1.3815873015873017
+    "end": 1.5325170068027212
    },
    {
-    "text": "Capped at five minutes for good timing, adaptive gives the same answer at any sampling rate.",
-    "start": 1.8315646258503402,
+    "text": "Fully automatic, the window becomes twenty nine minutes, and the answer stays the same at any sampling rate.",
+    "start": 1.9824943310657597,
     "chunks": [
      {
-      "text": "Capped at five minutes for good timing,",
-      "start": 1.8315646258503402,
-      "end": 4.2116099773242635
+      "text": "Fully automatic, the window becomes twenty nine minutes,",
+      "start": 1.9824943310657597,
+      "end": 6.266575963718821
      },
      {
-      "text": "adaptive gives the same answer at any sampling rate.",
-      "start": 4.361587301587302,
-      "end": 8.169659863945578
+      "text": "and the answer stays the same at any sampling rate.",
+      "start": 6.416553287981859,
+      "end": 9.945986394557822
      }
     ],
-    "end": 8.169659863945578
+    "end": 9.945986394557822
    }
   ]
  },

@@ -5,11 +5,13 @@ Built to be audible on phone speakers: nearly all energy sits above 250 Hz.
   * electric-piano style FM arpeggio (chord tones 220-1000 Hz, slight stereo spread)
   * warm pad (content 300-1500 Hz)
   * soft kick (with a mid-range click so phones reproduce it) and closed hat from ~4 s
-Output: reel_audio/music.wav (44.1 kHz stereo 16-bit, length = video length, peak -3 dBFS).
-Length is the sum of reel_audio/scene_durations.json (written by make_reel.py).
+Output: reel_audio/music_part<N>.wav (44.1 kHz stereo 16-bit, length = that part's video length, peak -3 dBFS).
+Length is the sum of reel_audio/scene_durations_part<N>.json (written by make_reel.py).
+  python make_music.py --part 1|2
 Levels in the final mix are set by mix_reel.py (LUFS targets), not here.
 """
 import json
+import sys
 import wave
 from pathlib import Path
 
@@ -18,6 +20,7 @@ from scipy.signal import butter, sosfilt
 
 SR, BPM = 44100, 86
 A = Path(__file__).resolve().parent / "reel_audio"
+PART = int(sys.argv[sys.argv.index("--part") + 1]) if "--part" in sys.argv else 1
 rng = np.random.default_rng(7)
 BEAT = 60 / BPM
 BAR = 4 * BEAT
@@ -55,7 +58,7 @@ def add(buf, x, k, pan):
 
 
 def main():
-    durs = json.load(open(A / "scene_durations.json"))
+    durs = json.load(open(A / f"scene_durations_part{PART}.json"))
     total = round(sum(round(d * 30) / 30 for d in durs), 3)
     n = int(total * SR)
     t = np.arange(n) / SR
@@ -125,7 +128,7 @@ def main():
     mix = np.tanh(mix * 1.1) / 1.1
     mix *= 10 ** (-3 / 20) / np.abs(mix).max()
     pcm = (mix.T * 32767).astype(np.int16)
-    with wave.open(str(A / "music.wav"), "wb") as w:
+    with wave.open(str(A / f"music_part{PART}.wav"), "wb") as w:
         w.setnchannels(2)
         w.setsampwidth(2)
         w.setframerate(SR)
@@ -134,7 +137,7 @@ def main():
     X = np.abs(np.fft.rfft(mono)) ** 2
     fr = np.fft.rfftfreq(n, 1 / SR)
     frac = X[fr > 250].sum() / X.sum()
-    print(f"music.wav {total:.2f}s peak {20 * np.log10(np.abs(mix).max()):.1f} dBFS; energy above 250 Hz: {100 * frac:.1f}%")
+    print(f"music_part{PART}.wav {total:.2f}s peak {20 * np.log10(np.abs(mix).max()):.1f} dBFS; energy above 250 Hz: {100 * frac:.1f}%")
 
 
 if __name__ == "__main__":

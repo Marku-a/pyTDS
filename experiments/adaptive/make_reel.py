@@ -1,11 +1,11 @@
 """Render the adaptive-TDS Instagram reel (1080x1920, 30 fps, H.264, no audio).
 
-Scene length = narration + 0.3 s lead-in + 0.9 s tail (min 4 s); visuals and subtitles are synchronised to the
+Scene length = narration + LEAD lead-in + TAIL tail (min 4 s); visuals and subtitles are synchronised to the
 sentence times in reel_audio/sentences.json (written by make_voice.py).
 
-Run from anywhere:  python experiments/adaptive/make_reel.py
-Output: "adaptive-TDS reports/adaptive_TDS_reel.mp4" plus one still PNG per scene
-in "adaptive-TDS reports/figures/reel_frames/".
+Two reels (scene lists in reel_voiceover.json "parts"):  python experiments/adaptive/make_reel.py --part 1|2
+Output: silent reel_audio/silent_part<N>.mp4 (mix_reel.py adds the audio) plus one still PNG per scene
+in "adaptive-TDS reports/figures/reel_frames/part<N>/".
 """
 import json
 import subprocess
@@ -31,12 +31,13 @@ import exp_fields as EF  # noqa: E402
 from adaptive import acf  # noqa: E402
 
 RES = ROOT / "experiments/adaptive/results"
-OUT = ROOT / "adaptive-TDS reports/adaptive_TDS_reel.mp4"
-FRAMES = ROOT / "adaptive-TDS reports/figures/reel_frames"
+PART = int(sys.argv[sys.argv.index("--part") + 1]) if "--part" in sys.argv else 1
+OUT = ROOT / f"experiments/adaptive/reel_audio/silent_part{PART}.mp4"
+FRAMES = ROOT / f"adaptive-TDS reports/figures/reel_frames/part{PART}"
 FIELDS = json.load(open(RES / "fields.json"))
 EXC = json.load(open(RES / "fields_excerpts.json"))
 SENT = json.load(open(ROOT / "experiments/adaptive/reel_audio/sentences.json"))
-LEAD, TAIL = 0.3, 0.9  # narration starts 0.3 s into each scene; 0.9 s hold after it
+LEAD, TAIL = 0.3, 0.9  # narration starts LEAD s into each scene; TAIL s hold after it
 
 W, H, FPS = 1080, 1920, 30
 BG, TX, TX2, GRID = "#1a1a19", "#ffffff", "#c3c2b7", "#3a3a38"
@@ -235,7 +236,7 @@ def band(x, top):
 # ---------------------------------------------------------------- scene 1
 def scene_hook(c):
     T(c, W / 2, 560, "Can an algorithm tune itself?", 84, bold=True, a=fade(c, 0.3), ha="center", maxw=960, lh=1.2)
-    T(c, W / 2, 800, "Adaptive TDS · tested on 9 fields of science", 40, TX2, a=fade(c, S(c, 1)), ha="center", maxw=960)
+    T(c, W / 2, 800, "Part 1 · How adaptive TDS works", 48, TX2, a=fade(c, S(c, 1)), ha="center", maxw=960)
     ax = sub_axes(c, 60, 1100, 960, 260, 0)
     for sp in ax.spines.values():
         sp.set_visible(False)
@@ -506,22 +507,30 @@ def scene_step4(c):
 
 # ---------------------------------------------------------------- scene 9: step 5 you
 def scene_step5(c):
-    y = hdr(c, "Your one choice:\ntime resolution", S(c, 0))
-    cards = [("long window", "reliable, blurry timing", 560, S(c, 1)),
-             ("short window", "sharp timing, noisier", 190, S(c, 1) + 0.5 * (E(c, 1) - S(c, 1)))]
-    for i, (name, txt, wbar, t0) in enumerate(cards):
-        a = fade(c, t0)
-        yy = y + 40 + i * 400
-        box(c, 60, yy, 960, 370, "#232322", GRID, a=a)
-        T(c, 95, yy + 25, f"{name} →", 52, AQUA, True, a=a)
-        T(c, 95, yy + 100, txt, 46, TX, a=a, maxw=890)
-        ly = yy + 280
-        if a > 0:
-            c.ax.plot([95, 985], [ly, ly], color=GRID, lw=3 * PT, alpha=a)
-            box(c, 540 - wbar / 2, ly - 28, wbar, 56, AQUA, a=0.55 * a, r=10)
-            c.ax.add_patch(Circle((540, ly), 11, fc=ORANGE, ec="none", alpha=a))
-        T(c, 95, ly + 38, "window", 28, TX2, a=a)
-        T(c, 985, ly + 38, "when the link happens", 28, TX2, a=a, ha="right")
+    y = hdr(c, "Fully automatic", S(c, 0))
+    a = fade(c, S(c, 1))
+    yy = y + 60
+    box(c, 60, yy, 960, 520, "#232322", AQUA, a=a, lw=3)
+    T(c, 540, yy + 60, "two signals in", 64, TX, True, a=a, ha="center", maxw=880)
+    T(c, 540, yy + 170, "↓", 80, AQUA, True, a=a, ha="center")
+    T(c, 540, yy + 300, "window · max delay · tolerance out", 56, AQUA, True, a=a, ha="center", maxw=860, lh=1.2)
+    a = fade(c, S(c, 2))
+    yy += 520 + 70
+    box(c, 60, yy, 960, 230, "#1f1f1e", GRID, a=a)
+    T(c, 95, yy + 28, "Optional: need sharper timing?", 38, TX2, True, a=a, maxw=890)
+    T(c, 95, yy + 100, "cap the window", 38, TX2, a=a, maxw=890)
+
+
+def scene_part1_outro(c):
+    T(c, W / 2, 620, "Part 2 →", 84, AQUA, True, a=fade(c, 0.2), ha="center")
+    T(c, W / 2, 740, "9 fields of science", 72, TX, True, a=fade(c, 0.2), ha="center", maxw=960, lh=1.2)
+    T(c, W / 2, 1100, "pyTDS · adaptive branch (experimental)", 40, TX2, a=fade(c, 0.8), ha="center", maxw=960)
+
+
+def scene_hook2(c):
+    T(c, W / 2, 520, "Can an algorithm tune itself?", 84, bold=True, a=fade(c, 0.3), ha="center", maxw=960, lh=1.2)
+    T(c, W / 2, 800, "Part 2 · 9 fields of science", 52, AQUA, True, a=fade(c, S(c, 1)), ha="center", maxw=960)
+    T(c, W / 2, 920, "two signals in → all settings chosen automatically", 38, TX2, a=fade(c, S(c, 2)), ha="center", maxw=900)
 
 
 # ---------------------------------------------------------------- field scenes
@@ -533,7 +542,7 @@ ORDER = [
     ("gas_furnace", "Engineering", "gas feed → CO₂ (furnace)", "worse", "Only 296 points — too short for adaptive windows"),
     ("gasoline_weekly_diff", "Economics", "crude oil → petrol price", "tie", "Both detect it; neither resolves the 1–2 week lag"),
     ("jena_T_rh", "Weather", "temperature ↔ humidity (control)", "tie", "Both find 0 delay; adaptive flags its own calibration limit"),
-    ("sleep_eeg_delta_sigma", "Neuroscience", "sleep EEG delta ↔ sigma", "better", "Same answer at any sampling rate (see scene 3)"),
+    ("sleep_eeg_delta_sigma", "Neuroscience", "sleep EEG delta ↔ sigma", "better", "Same answer at any sampling rate"),
     ("neurokit_hr_rsp", "Physiology", "heart rate ↔ breathing", "tie", "Adaptive picks near-original settings when they already fit"),
 ]
 BOTTOM = 1400  # field-scene content stays above the subtitle box (y >= 1418)
@@ -551,8 +560,7 @@ def expected_text(d):
 def scene_field(c, key):
     _, dom, rest, st, verdict = next(o for o in ORDER if o[0] == key)
     d, ex = FIELDS[key], EXC[key]
-    cap = key == "sleep_eeg_delta_sigma"
-    va = d["variants"]["adaptive_cap5min" if cap else "adaptive"]
+    va = d["variants"]["adaptive"]
     vf = d["variants"]["fixed_default"]
     info, pp, dt = va["info"], va["params_phys"], d["sampling_interval_s"]
     T(c, 60, 250, dom, 64, bold=True, a=fade(c, 0))
@@ -569,11 +577,8 @@ def scene_field(c, key):
     cols = [("Window", pp["window"]), ("Max delay", pp["max_lag"]), ("Tolerance", f"±{pp['tolerance']}")]
     bmax = max(info["bartlett"])
     win_txt = pp["window"]
-    why = (f"Slowest signal ≈ 1 independent sample per {readable(bmax * dt)} → 30 of them = "
-           f"{d['variants']['adaptive']['params_phys']['window'] if cap else win_txt}")
-    if cap:
-        why += f", capped to {win_txt}"
-    elif info.get("window_clipped"):
+    why = f"Slowest signal ≈ 1 independent sample per {readable(bmax * dt)} → 30 of them = {win_txt}"
+    if info.get("window_clipped"):
         why += " (clipped)"
     extra = [(why, 28, TX2)]
     pers = [p for p in info["periods"] if p]
@@ -602,8 +607,6 @@ def scene_field(c, key):
     a = fade(c, 0.6)
     box(c, 60, ch_y, 960, ch_h, "#232322", GRID, a=a)
     T(c, 90, ch_y + 16, "Adaptive chose:", 40, AQUA, True, a=a)
-    if cap:
-        T(c, 90 + _w("Adaptive chose:", 40, True) + 20, ch_y + 24, "with 5-min time resolution", 28, TX2, a=a)
     for i, (lab, val) in enumerate(cols):
         T(c, 90 + i * 300, ch_y + 16 + 48, lab, 26, TX2, a=a)
         T(c, 90 + i * 300, ch_y + 16 + 48 + 32, val, 36, TX, True, a=a)
@@ -674,13 +677,14 @@ def scene_outro(c):
 # ---------------------------------------------------------------- render
 FUNCS = {"hook": scene_hook, "what": scene_what, "problem": scene_problem, "how_intro": scene_how_intro,
          "step1_memory": scene_step1, "step2_window": scene_step2, "step3_delay": scene_step3,
-         "step4_tolerance": scene_step4, "step5_you": scene_step5, "board": scene_board, "outro": scene_outro}
-IDS = [s["id"] for s in json.load(open(ROOT / "experiments/adaptive/reel_voiceover.json"))["scenes"]]
+         "step4_tolerance": scene_step4, "step5_you": scene_step5, "part1_outro": scene_part1_outro, "hook2": scene_hook2, "board": scene_board, "outro": scene_outro}
+_VO = json.load(open(ROOT / "experiments/adaptive/reel_voiceover.json"))
+IDS = _VO["parts"][f"part{PART}"]
 SCENES = [(f"{i + 1:02d}_{sid}", FUNCS.get(sid) or (lambda c, k=sid: scene_field(c, k)), sid) for i, sid in enumerate(IDS)]
 
 
 def scene_durations():
-    """Scene duration = narration + 0.3 s lead-in + 0.9 s tail, minimum 4 s."""
+    """Scene duration = narration + LEAD lead-in + TAIL tail, minimum 4 s."""
     nar = json.load(open(ROOT / "experiments/adaptive/reel_audio/durations.json"))
     return [max(4.0, nar[sid] + LEAD + TAIL) for _, _, sid in SCENES]
 
@@ -726,7 +730,7 @@ def main():
     for old in FRAMES.glob("*.png"):
         old.unlink()
     durs = scene_durations()
-    json.dump(durs, open(ROOT / "experiments/adaptive/reel_audio/scene_durations.json", "w"))
+    json.dump(durs, open(ROOT / f"experiments/adaptive/reel_audio/scene_durations_part{PART}.json", "w"))
     jobs, reps = [], []
     for si, ((_, _, sid), dur) in enumerate(zip(SCENES, durs)):
         n, st, frozen = int(round(dur * FPS)), settle_time(sid, dur), False
