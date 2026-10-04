@@ -2,6 +2,9 @@
 
 *Published 2026-10-04 00:30 UTC. Code: `experiments/adaptive/exp_synthetic.py`, `generators.py`. Numbers: `experiments/adaptive/results/synthetic_*.csv`. Figures: `figures/E*.png`.*
 
+> **Note added 00:53 UTC:** a later code review corrected some numbers in this report (mainly the network test and the Rulkov tests). The conclusions did not change. The corrected numbers are in Report 5.
+
+
 ## Why synthetic data
 
 In synthetic data I **build the coupling myself**, so I know:

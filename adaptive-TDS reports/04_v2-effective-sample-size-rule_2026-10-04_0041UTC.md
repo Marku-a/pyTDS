@@ -2,6 +2,9 @@
 
 *Published 2026-10-04 00:41 UTC. Same experiments as Reports 2 and 3, re-run with two new variants. Numbers: `experiments/adaptive/results/`. Figures: `figures/`.*
 
+> **Note added 00:53 UTC:** a later code review corrected some numbers in this report (mainly the network test and the Rulkov tests). The conclusions did not change. The corrected numbers are in Report 5.
+
+
 ## What changed from v1 and why
 
 - **v1:** window = 10 × the slowest signal's decorrelation time. Report 3 showed this is too short for fast and spiky signals.
