@@ -1,0 +1,138 @@
+[
+  {
+    "field": "engineering",
+    "name": "Box-Jenkins gas furnace (series J)",
+    "file": "engineering_gas_furnace.csv",
+    "source_url": "https://raw.githubusercontent.com/usnistgov/dataplot/master/lib/data/GAS_FURNACE.DAT",
+    "license_or_terms": "US Government work (NIST), public domain; original data Box, Jenkins & Reinsel",
+    "sampling_interval": "9 seconds",
+    "n_samples": 296,
+    "columns_to_use": [
+      "gas_rate",
+      "co2_pct"
+    ],
+    "expected_relation": "Methane feed rate (input) drives CO2 concentration (output) through a transfer function with a pure dead time; correlation is NEGATIVE (more gas -> less CO2 %).",
+    "expected_delay": "dead time b=3 samples (27 s); cross-correlation peak at lag 5 samples (45 s) in our check (r=-0.95)",
+    "reference": "Box, Jenkins & Reinsel (1994) Time Series Analysis, 3rd ed., ch. 11 (series J, transfer model b=3); NIST/SEMATECH e-Handbook section 6.4.5.1 (pmc451)",
+    "preprocessing_notes": "BELOW the 500-sample minimum (296). CSV parsed from NIST .dat (original kept as engineering_gas_furnace.dat, 25-line header). No time column: t_index * 9 s. No NaNs. gas_rate in ft3/min (centered), co2_pct in %."
+  },
+  {
+    "field": "climate",
+    "name": "Nino3.4 SST anomaly vs GISTEMP global land-ocean temperature",
+    "file": "climate_nino34_gistemp.csv",
+    "source_url": "https://raw.githubusercontent.com/skeydan/nao/master/data/ONI_NINO34_1854-2022.txt ; https://raw.githubusercontent.com/vincentarelbundock/Rdatasets/master/csv/stevedata/LOTI.csv",
+    "license_or_terms": "NOAA ERSSTv5 (table by B. McNoldy) and NASA GISTEMP v4: US Government data, public domain",
+    "sampling_interval": "1 month",
+    "n_samples": 1716,
+    "columns_to_use": [
+      "NINO34_ANOM",
+      "gistemp_loti"
+    ],
+    "expected_relation": "El Nino warming in the central Pacific is followed by global-mean surface warming (positive correlation).",
+    "expected_delay": "~3 months (temperature lags ENSO by 2-4 months); our check on 10-yr-detrended LOTI: peak at +3 months, r=0.46",
+    "reference": "Trenberth, Caron, Stepaniak & Worley (2002) JGR 107(D8):4065 doi:10.1029/2000JD000298; Foster & Rahmstorf (2011) Environ. Res. Lett. 6:044022",
+    "preprocessing_notes": "Inner join on month start (1880-01..2022-12). date parses as datetime. -99.99 converted to NaN: NINO34_ANOM has 1 NaN (2022-12), ONI 2 NaN. LOTI is anomaly in degC with strong warming trend - detrend (e.g. subtract 10-yr running mean) before TDS. NINO34_ANOM uses 30-yr sliding climatology."
+  },
+  {
+    "field": "hydrology",
+    "name": "airGR catchment L0123003, hourly rainfall-runoff",
+    "file": "hydrology_airgr_L0123003_hourly.csv",
+    "source_url": "https://raw.githubusercontent.com/cran/airGR/master/data/L0123003.rda",
+    "license_or_terms": "GPL-2 (airGR R package, INRAE); real French catchment data with anonymised code",
+    "sampling_interval": "1 hour",
+    "n_samples": 43848,
+    "columns_to_use": [
+      "precip_mm",
+      "q_mm"
+    ],
+    "expected_relation": "Catchment precipitation produces a delayed, smoothed streamflow response (unit hydrograph); positive correlation.",
+    "expected_delay": "positive, several hours (catchment response time); our check: xcorr peak at +8 h (r=0.50)",
+    "reference": "Coron et al. (2017) Environ. Model. Softw. 94:166-171 (airGR); rainfall-runoff lag concept: Beven (2012) Rainfall-Runoff Modelling, 2nd ed.",
+    "preprocessing_notes": "2004-01-01 00:00 to 2008-12-31 23:00; datetime parses. No NaN in precip/q; temp_c entirely NaN (ignore). precip is intermittent (many zeros) - consider smoothing/log. q_ls = discharge in L/s, q_mm = depth over catchment."
+  },
+  {
+    "field": "hydrology",
+    "name": "airGR catchment L0123001, daily rainfall-runoff",
+    "file": "hydrology_airgr_L0123001_daily.csv",
+    "source_url": "https://raw.githubusercontent.com/cran/airGR/master/data/L0123001.rda",
+    "license_or_terms": "GPL-2 (airGR R package, INRAE)",
+    "sampling_interval": "1 day",
+    "n_samples": 10593,
+    "columns_to_use": [
+      "precip_mm",
+      "q_mm"
+    ],
+    "expected_relation": "Daily basin rainfall leads daily streamflow (positive).",
+    "expected_delay": "0-3 days; our check: xcorr peak at +2 days (r=0.32)",
+    "reference": "Coron et al. (2017) Environ. Model. Softw. 94:166-171",
+    "preprocessing_notes": "1984-01-01..2012-12-31; q_mm has 802 NaN (q_ls 772) - interpolate or segment. Also has temp_c and pet_mm."
+  },
+  {
+    "field": "energy",
+    "name": "Victoria (Australia) half-hourly electricity demand vs Melbourne temperature",
+    "file": "energy_vic_elec.csv",
+    "source_url": "https://raw.githubusercontent.com/vincentarelbundock/Rdatasets/master/csv/tsibbledata/vic_elec.csv",
+    "license_or_terms": "tsibbledata R package (GPL-3); data from AEMO and Australian BoM",
+    "sampling_interval": "30 minutes",
+    "n_samples": 52608,
+    "columns_to_use": [
+      "Temperature",
+      "Demand"
+    ],
+    "expected_relation": "Temperature drives demand via heating/cooling (U-shaped); in summer heat drives air-conditioning load with lag from building thermal inertia (positive).",
+    "expected_delay": "~0.5-1 h in summer after removing the mean diurnal profile (our check DJF: peak +2 samples = 1 h, r=0.68); multi-day cumulative heat effects also documented",
+    "reference": "Hyndman & Fan (2010) IEEE Trans. Power Systems 25(2):1142-1153; Hyndman & Athanasopoulos, Forecasting: Principles and Practice 3rd ed. (vic_elec)",
+    "preprocessing_notes": "2012-01-01..2014-12-31 local; Time is UTC ISO string. No NaNs, regular 30-min. Relation is nonlinear: use summer months (Dec-Feb) or |T-18C|, and remove diurnal/weekly cycles first, otherwise raw xcorr peaks at a spurious -1 h."
+  },
+  {
+    "field": "atmospheric",
+    "name": "Beijing US-Embassy PM2.5 with weather (hourly)",
+    "file": "atmosphere_beijing_pm25.csv",
+    "source_url": "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pollution.csv",
+    "license_or_terms": "UCI ML Repository \"Beijing PM2.5 Data\", CC BY 4.0",
+    "sampling_interval": "1 hour",
+    "n_samples": 43824,
+    "columns_to_use": [
+      "Iws",
+      "pm2.5"
+    ],
+    "expected_relation": "Sustained (northerly) wind ventilates the basin and lowers PM2.5 (negative); humid stagnant air (high DEWP) accompanies accumulation.",
+    "expected_delay": "unknown sign only: negative, wind leads by ~0-several hours (our check: peak +1 h, r=-0.25)",
+    "reference": "Liang et al. (2015) Proc. R. Soc. A 471:20150257 doi:10.1098/rspa.2015.0257",
+    "preprocessing_notes": "2010-01-01..2014-12-31; time from year/month/day/hour columns (no single datetime). pm2.5 has 2067 NaN (incl. first 24 h). Iws is CUMULATED wind speed (m/s, resets when direction cbwd changes) - consider using diff or log. PM2.5 ug/m3, heavy-tailed: log-transform."
+  },
+  {
+    "field": "weather",
+    "name": "Jena climate (MPI-BGC) hourly",
+    "file": "weather_jena_climate_hourly.csv",
+    "source_url": "https://storage.googleapis.com/tensorflow/tf-keras-datasets/jena_climate_2009_2016.csv.zip",
+    "license_or_terms": "Max Planck Institute for Biogeochemistry Jena weather station; distributed by Keras/TensorFlow for research/education",
+    "sampling_interval": "1 hour (subsampled every 6th 10-min record)",
+    "n_samples": 70091,
+    "columns_to_use": [
+      "T (degC)",
+      "rh (%)"
+    ],
+    "expected_relation": "Relative humidity moves opposite to air temperature at fixed vapour content (Clausius-Clapeyron), strongly on the diurnal cycle (negative).",
+    "expected_delay": "~0 h (near-instantaneous; useful as a zero-lag control); our check: peak 0 h, r=-0.57",
+    "reference": "Clausius-Clapeyron / diurnal RH cycle: Wallace & Hobbs (2006) Atmospheric Science, 2nd ed.; dataset: Chollet, Deep Learning with Python (Jena climate)",
+    "preprocessing_notes": "2009-01-01..2016-12-31; \"Date Time\" parses with format %d.%m.%Y %H:%M:%S; a few irregular steps (8 gaps of 70-80 min). No NaNs but wv/max. wv contain -9999 sentinels (3 rows in hourly file). Columns: p (mbar), T (degC), Tdew, rh (%), VPdef etc."
+  },
+  {
+    "field": "economics",
+    "name": "WTI crude spot vs US regular retail gasoline (weekly)",
+    "file": "economics_wti_vs_us_retail_gasoline_weekly.csv",
+    "source_url": "https://raw.githubusercontent.com/datasets/oil-prices/main/data/wti-weekly.csv ; https://raw.githubusercontent.com/mihirpat98/Gas-Price-Prediction-Time-Series/13bdd4671572326737b484b1570bec37b9921877/data_raw/Retail.csv (verbatim EIA export, series EMM_EPMR_PTE_NUS_DPG)",
+    "license_or_terms": "EIA data, US Government public domain; datasets/oil-prices ODC-PDDL",
+    "sampling_interval": "1 week",
+    "n_samples": 1747,
+    "columns_to_use": [
+      "wti_usd_bbl",
+      "retail_gasoline_usd_gal"
+    ],
+    "expected_relation": "Crude oil price changes pass through to retail gasoline prices with a lag (asymmetric \"rockets and feathers\"); positive.",
+    "expected_delay": "~1-2 weeks for the main response, full pass-through 4-8 weeks; our check on weekly differences: lag0 r=0.55 (includes 3-day Fri->Mon offset), lag+1 r=0.39 vs reverse lag r=0.18",
+    "reference": "Borenstein, Cameron & Gilbert (1997) Q. J. Econ. 112(1):305-339",
+    "preprocessing_notes": "1990-08-20..2024-02-05 Monday retail dates; WTI is the weekly average for the week ending the preceding Friday (merge_asof backward, 3-day offset; 13 rows 10 days because of missing WTI weeks). retail has 6 NaN (1990-12-10..1991-01-14). Prices non-stationary: use log-differences. Retail source is a personal GitHub repo holding an unmodified EIA download (header rows retained) - EIA itself is blocked."
+  }
+]
