@@ -1,0 +1,1318 @@
+{
+ "gas_furnace": {
+  "n": 296,
+  "sampling_interval_s": 9.0,
+  "leader": "gas feed rate",
+  "follower": "CO2",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 3
+  },
+  "preprocessing": "As is (n=296, below the 500-sample minimum, so small and noisy).",
+  "variants": {
+   "fixed_default": {
+    "score": 100.0,
+    "n_windows": 8,
+    "n_stable": 8,
+    "null_mean": 0.0,
+    "null95": 0.0,
+    "p": 0.004975124378109453,
+    "z": null,
+    "n_null": 200,
+    "median_stable_tau_samples": -4.5,
+    "median_stable_tau_phys": "-40.5 s",
+    "median_stable_tau_seconds": -40.5,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "9 min",
+     "step": "4.5 min",
+     "max_lag": "4.5 min",
+     "tolerance": "9 s"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 55.00000000000001,
+    "n_windows": 20,
+    "n_stable": 11,
+    "null_mean": 4.325,
+    "null95": 25.0,
+    "p": 0.004975124378109453,
+    "z": 5.601978214923142,
+    "n_null": 200,
+    "median_stable_tau_samples": -5.0,
+    "median_stable_tau_phys": "-45 s",
+    "median_stable_tau_seconds": -45.0,
+    "match": false,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 29,
+     "step": 14,
+     "max_lag": 14,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "4.35 min",
+     "step": "2.1 min",
+     "max_lag": "2.1 min",
+     "tolerance": "9 s"
+    },
+    "info": {
+     "bartlett": [
+      7.219832532989863,
+      9.996867155315318
+     ],
+     "tau_c": [
+      5.443696573976832,
+      7.954983739487592
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": true,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 2.0,
+      "1": 4.0,
+      "2": 11.0
+     },
+     "T": 296
+    },
+    "why": "Slowest signal: CO2, 1 independent sample per 1.5 min (B=10) -> window = 30x1.5 min = 45 min, clipped to 4.35 min (29 samples); no rhythm detected -> max lag = half window = 2.1 min; tolerance +-9 s keeps fake stability <= 5%."
+   }
+  }
+ },
+ "climate_nino34_gistemp": {
+  "n": 1595,
+  "sampling_interval_s": 2629800.0,
+  "leader": "Nino3.4",
+  "follower": "global temperature",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 3
+  },
+  "preprocessing": "Dropped the 1 NaN month; subtracted a centred 121-month moving average from each series (removes trend) and dropped the 120 edge months.",
+  "variants": {
+   "fixed_default": {
+    "score": 36.53846153846153,
+    "n_windows": 52,
+    "n_stable": 19,
+    "null_mean": 1.4807692307692308,
+    "null95": 7.6923076923076925,
+    "p": 0.004975124378109453,
+    "z": 11.176685615541201,
+    "n_null": 200,
+    "median_stable_tau_samples": -3.0,
+    "median_stable_tau_phys": "-3 months",
+    "median_stable_tau_seconds": -7889400.0,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "5 years",
+     "step": "2.5 years",
+     "max_lag": "2.5 years",
+     "tolerance": "1 months"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 68.42105263157895,
+    "n_windows": 19,
+    "n_stable": 13,
+    "null_mean": 5.052631578947368,
+    "null95": 26.31578947368421,
+    "p": 0.004975124378109453,
+    "z": 6.170354463519039,
+    "n_null": 200,
+    "median_stable_tau_samples": -1.0,
+    "median_stable_tau_phys": "-1 months",
+    "median_stable_tau_seconds": -2629800.0,
+    "match": false,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 159,
+     "step": 79,
+     "max_lag": 79,
+     "tolerance": 10
+    },
+    "params_phys": {
+     "window": "13.2 years",
+     "step": "6.58 years",
+     "max_lag": "6.58 years",
+     "tolerance": "10 months"
+    },
+    "info": {
+     "bartlett": [
+      7.154614811914666,
+      3.46918851603433
+     ],
+     "tau_c": [
+      6.2396661053231695,
+      3.931963065841103
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": true,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 1.0526315789473684,
+      "3": 1.0526315789473684,
+      "4": 1.0526315789473684,
+      "5": 2.3684210526315788,
+      "6": 2.3684210526315788,
+      "7": 3.4210526315789473,
+      "8": 3.4210526315789473,
+      "9": 3.4210526315789473,
+      "10": 3.9473684210526314,
+      "11": 6.052631578947368
+     },
+     "T": 1595
+    },
+    "why": "Slowest signal: Nino3.4, 1 independent sample per 7.15 months (B=7.15) -> window = 30x7.15 months = 17.9 years, clipped to 13.2 years (159 samples); no rhythm detected -> max lag = half window = 6.58 years; tolerance +-10 months keeps fake stability <= 5%."
+   }
+  }
+ },
+ "hydrology_hourly": {
+  "n": 43848,
+  "sampling_interval_s": 3600.0,
+  "leader": "precipitation",
+  "follower": "river flow",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 8
+  },
+  "preprocessing": "Precip and flow as is; NaNs filled linearly (none present).",
+  "variants": {
+   "fixed_default": {
+    "score": 1.2328767123287672,
+    "n_windows": 1460,
+    "n_stable": 18,
+    "null_mean": 0.42226027397260274,
+    "null95": 1.095890410958904,
+    "p": 0.01990049751243781,
+    "z": 2.3725971084214454,
+    "n_null": 200,
+    "median_stable_tau_samples": -9.0,
+    "median_stable_tau_phys": "-9 h",
+    "median_stable_tau_seconds": -32400.0,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "2.5 days",
+     "step": "1.25 days",
+     "max_lag": "1.25 days",
+     "tolerance": "1 h"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 81.81818181818183,
+    "n_windows": 44,
+    "n_stable": 36,
+    "null_mean": 4.193181818181818,
+    "null95": 13.636363636363635,
+    "p": 0.004975124378109453,
+    "z": 13.311066680843654,
+    "n_null": 200,
+    "median_stable_tau_samples": -10.0,
+    "median_stable_tau_phys": "-10 h",
+    "median_stable_tau_seconds": -36000.0,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 1914,
+     "step": 957,
+     "max_lag": 956,
+     "tolerance": 71
+    },
+    "params_phys": {
+     "window": "79.8 days",
+     "step": "39.9 days",
+     "max_lag": "39.8 days",
+     "tolerance": "2.96 days"
+    },
+    "info": {
+     "bartlett": [
+      5.988033626314437,
+      63.801527328773425
+     ],
+     "tau_c": [
+      5.455534103087553,
+      61.95337009958596
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": false,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0,
+      "5": 0.0,
+      "6": 0.0,
+      "7": 0.0,
+      "8": 0.0,
+      "9": 0.0,
+      "10": 0.0,
+      "11": 0.0,
+      "12": 0.0,
+      "13": 0.0,
+      "14": 0.0,
+      "15": 0.0,
+      "16": 0.0,
+      "17": 0.9090909090909092,
+      "18": 0.9090909090909092,
+      "19": 0.9090909090909092,
+      "20": 0.9090909090909092,
+      "21": 0.9090909090909092,
+      "22": 0.9090909090909092,
+      "23": 0.9090909090909092,
+      "24": 0.9090909090909092,
+      "25": 0.9090909090909092,
+      "26": 0.9090909090909092,
+      "27": 0.9090909090909092,
+      "28": 0.9090909090909092,
+      "29": 0.9090909090909092,
+      "30": 1.3636363636363638,
+      "31": 1.3636363636363638,
+      "32": 1.3636363636363638,
+      "33": 1.3636363636363638,
+      "34": 1.3636363636363638,
+      "35": 1.3636363636363638,
+      "36": 1.8181818181818183,
+      "37": 1.8181818181818183,
+      "38": 1.8181818181818183,
+      "39": 2.2727272727272725,
+      "40": 2.2727272727272725,
+      "41": 2.2727272727272725,
+      "42": 2.7272727272727275,
+      "43": 2.7272727272727275,
+      "44": 3.181818181818182,
+      "45": 3.181818181818182,
+      "46": 3.181818181818182,
+      "47": 3.2954545454545454,
+      "48": 3.2954545454545454,
+      "49": 3.2954545454545454,
+      "50": 3.2954545454545454,
+      "51": 3.2954545454545454,
+      "52": 3.2954545454545454,
+      "53": 3.2954545454545454,
+      "54": 3.2954545454545454,
+      "55": 3.2954545454545454,
+      "56": 3.2954545454545454,
+      "57": 3.2954545454545454,
+      "58": 3.2954545454545454,
+      "59": 3.2954545454545454,
+      "60": 3.75,
+      "61": 3.75,
+      "62": 3.75,
+      "63": 3.75,
+      "64": 4.204545454545455,
+      "65": 4.204545454545455,
+      "66": 4.204545454545455,
+      "67": 4.204545454545455,
+      "68": 4.204545454545455,
+      "69": 4.659090909090909,
+      "70": 4.659090909090909,
+      "71": 4.659090909090909,
+      "72": 5.113636363636364
+     },
+     "T": 43848
+    },
+    "why": "Slowest signal: river flow, 1 independent sample per 2.66 days (B=63.8) -> window = 30x2.66 days = 79.8 days; no rhythm detected -> max lag = half window = 39.8 days; tolerance +-2.96 days keeps fake stability <= 5%."
+   }
+  }
+ },
+ "hydrology_daily": {
+  "n": 10593,
+  "sampling_interval_s": 86400.0,
+  "leader": "precipitation",
+  "follower": "river flow",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 2
+  },
+  "preprocessing": "Precip and flow as is; 802 NaNs in flow filled linearly.",
+  "variants": {
+   "fixed_default": {
+    "score": 59.09090909090909,
+    "n_windows": 352,
+    "n_stable": 208,
+    "null_mean": 0.9829545454545456,
+    "null95": 2.5710227272727226,
+    "p": 0.004975124378109453,
+    "z": 56.87579968616925,
+    "n_null": 200,
+    "median_stable_tau_samples": -1.0,
+    "median_stable_tau_phys": "-1 days",
+    "median_stable_tau_seconds": -86400.0,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 days",
+     "step": "30 days",
+     "max_lag": "30 days",
+     "tolerance": "1 days"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 97.5609756097561,
+    "n_windows": 41,
+    "n_stable": 40,
+    "null_mean": 5.48780487804878,
+    "null95": 19.51219512195122,
+    "p": 0.004975124378109453,
+    "z": 12.250957860926137,
+    "n_null": 200,
+    "median_stable_tau_samples": -2.0,
+    "median_stable_tau_phys": "-2 days",
+    "median_stable_tau_seconds": -172800.0,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 501,
+     "step": 250,
+     "max_lag": 250,
+     "tolerance": 24
+    },
+    "params_phys": {
+     "window": "501 days",
+     "step": "250 days",
+     "max_lag": "250 days",
+     "tolerance": "24 days"
+    },
+    "info": {
+     "bartlett": [
+      1.1241367653461878,
+      16.695947317994772
+     ],
+     "tau_c": [
+      0.8166249865763388,
+      14.497491255148363
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": false,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.4878048780487805,
+      "4": 0.4878048780487805,
+      "5": 0.4878048780487805,
+      "6": 0.4878048780487805,
+      "7": 0.4878048780487805,
+      "8": 0.4878048780487805,
+      "9": 0.4878048780487805,
+      "10": 0.4878048780487805,
+      "11": 0.975609756097561,
+      "12": 0.975609756097561,
+      "13": 0.975609756097561,
+      "14": 0.975609756097561,
+      "15": 0.975609756097561,
+      "16": 0.975609756097561,
+      "17": 0.975609756097561,
+      "18": 0.975609756097561,
+      "19": 0.975609756097561,
+      "20": 1.4634146341463414,
+      "21": 2.926829268292683,
+      "22": 3.414634146341464,
+      "23": 4.390243902439025,
+      "24": 5.0,
+      "25": 5.487804878048781
+     },
+     "T": 10593
+    },
+    "why": "Slowest signal: river flow, 1 independent sample per 16.7 days (B=16.7) -> window = 30x16.7 days = 501 days; no rhythm detected -> max lag = half window = 250 days; tolerance +-24 days keeps fake stability <= 5%."
+   }
+  }
+ },
+ "energy_vic_summer": {
+  "n": 13008,
+  "sampling_interval_s": 1800.0,
+  "leader": "temperature",
+  "follower": "electricity demand",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 2
+  },
+  "preprocessing": "Kept Dec/Jan/Feb only (local Melbourne time); subtracted the mean profile by (weekday/weekend, half-hour of day) from both. The summers are concatenated into one series (TDS needs a contiguous series), so there are 2 artificial junctions (Feb->Dec) and 1 jump at the record start.",
+  "variants": {
+   "fixed_default": {
+    "score": 11.805555555555555,
+    "n_windows": 432,
+    "n_stable": 51,
+    "null_mean": 0.9537037037037037,
+    "null95": 3.020833333333329,
+    "p": 0.004975124378109453,
+    "z": 10.374909492268822,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": false,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "1.25 days",
+     "step": "15 h",
+     "max_lag": "15 h",
+     "tolerance": "30 min"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 100.0,
+    "n_windows": 19,
+    "n_stable": 19,
+    "null_mean": 4.999999999999999,
+    "null95": 26.31578947368421,
+    "p": 0.004975124378109453,
+    "z": 9.696982440708165,
+    "n_null": 200,
+    "median_stable_tau_samples": -2.0,
+    "median_stable_tau_phys": "-1 h",
+    "median_stable_tau_seconds": -3600.0,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 1300,
+     "step": 650,
+     "max_lag": 649,
+     "tolerance": 89
+    },
+    "params_phys": {
+     "window": "27.1 days",
+     "step": "13.5 days",
+     "max_lag": "13.5 days",
+     "tolerance": "1.85 days"
+    },
+    "info": {
+     "bartlett": [
+      51.6322063901898,
+      77.64895780434894
+     ],
+     "tau_c": [
+      50.46596406043108,
+      62.773915632284364
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": true,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0,
+      "5": 0.0,
+      "6": 0.0,
+      "7": 0.0,
+      "8": 0.0,
+      "9": 0.0,
+      "10": 0.0,
+      "11": 0.0,
+      "12": 0.0,
+      "13": 0.0,
+      "14": 0.0,
+      "15": 0.0,
+      "16": 0.0,
+      "17": 0.0,
+      "18": 0.0,
+      "19": 0.0,
+      "20": 0.0,
+      "21": 0.0,
+      "22": 0.0,
+      "23": 0.0,
+      "24": 0.0,
+      "25": 0.0,
+      "26": 0.0,
+      "27": 0.0,
+      "28": 0.0,
+      "29": 0.0,
+      "30": 0.0,
+      "31": 0.0,
+      "32": 0.0,
+      "33": 0.0,
+      "34": 0.0,
+      "35": 0.0,
+      "36": 0.0,
+      "37": 0.0,
+      "38": 0.0,
+      "39": 0.0,
+      "40": 0.0,
+      "41": 0.0,
+      "42": 0.0,
+      "43": 0.0,
+      "44": 0.0,
+      "45": 0.0,
+      "46": 1.0526315789473684,
+      "47": 1.0526315789473684,
+      "48": 1.0526315789473684,
+      "49": 1.0526315789473684,
+      "50": 2.1052631578947367,
+      "51": 2.1052631578947367,
+      "52": 2.1052631578947367,
+      "53": 2.1052631578947367,
+      "54": 2.1052631578947367,
+      "55": 3.4210526315789473,
+      "56": 4.473684210526315,
+      "57": 4.473684210526315,
+      "58": 4.473684210526315,
+      "59": 4.473684210526315,
+      "60": 4.473684210526315,
+      "61": 4.473684210526315,
+      "62": 4.473684210526315,
+      "63": 4.473684210526315,
+      "64": 4.473684210526315,
+      "65": 4.473684210526315,
+      "66": 4.473684210526315,
+      "67": 4.473684210526315,
+      "68": 4.473684210526315,
+      "69": 4.473684210526315,
+      "70": 4.473684210526315,
+      "71": 4.473684210526315,
+      "72": 4.473684210526315,
+      "73": 4.473684210526315,
+      "74": 4.473684210526315,
+      "75": 4.473684210526315,
+      "76": 4.473684210526315,
+      "77": 4.473684210526315,
+      "78": 4.473684210526315,
+      "79": 4.473684210526315,
+      "80": 4.473684210526315,
+      "81": 4.473684210526315,
+      "82": 4.473684210526315,
+      "83": 4.473684210526315,
+      "84": 4.473684210526315,
+      "85": 4.473684210526315,
+      "86": 4.473684210526315,
+      "87": 4.473684210526315,
+      "88": 4.473684210526315,
+      "89": 4.473684210526315,
+      "90": 5.526315789473683
+     },
+     "T": 13008
+    },
+    "why": "Slowest signal: electricity demand, 1 independent sample per 1.62 days (B=77.6) -> window = 30x1.62 days = 48.5 days, clipped to 27.1 days (1300 samples); no rhythm detected -> max lag = half window = 13.5 days; tolerance +-1.85 days keeps fake stability <= 5%."
+   }
+  }
+ },
+ "beijing_pm25": {
+  "n": 43824,
+  "sampling_interval_s": 3600.0,
+  "leader": "cumulated wind speed",
+  "follower": "log PM2.5",
+  "expected": {
+   "kind": "sign",
+   "value_samples": null
+  },
+  "preprocessing": "2067 PM2.5 NaNs interpolated linearly (leading ones back-filled); follower = log1p(PM2.5), leader = Iws (cumulated wind speed).",
+  "variants": {
+   "fixed_default": {
+    "score": 5.414667580534613,
+    "n_windows": 1459,
+    "n_stable": 79,
+    "null_mean": 0.6699794379712131,
+    "null95": 1.644962302947224,
+    "p": 0.004975124378109453,
+    "z": 10.379977185781074,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": null,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "2.5 days",
+     "step": "1.25 days",
+     "max_lag": "1.25 days",
+     "tolerance": "1 h"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 57.2463768115942,
+    "n_windows": 138,
+    "n_stable": 79,
+    "null_mean": 5.213768115942028,
+    "null95": 12.318840579710146,
+    "p": 0.004975124378109453,
+    "z": 14.266119632013138,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": null,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 629,
+     "step": 314,
+     "max_lag": 314,
+     "tolerance": 38
+    },
+    "params_phys": {
+     "window": "26.2 days",
+     "step": "13.1 days",
+     "max_lag": "13.1 days",
+     "tolerance": "1.58 days"
+    },
+    "info": {
+     "bartlett": [
+      20.982219464153342,
+      20.756123387143752
+     ],
+     "tau_c": [
+      16.611467644822067,
+      22.34888271257782
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": false,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.14492753623188406,
+      "3": 0.2898550724637681,
+      "4": 0.2898550724637681,
+      "5": 0.43478260869565216,
+      "6": 0.43478260869565216,
+      "7": 0.43478260869565216,
+      "8": 0.43478260869565216,
+      "9": 0.43478260869565216,
+      "10": 0.43478260869565216,
+      "11": 0.43478260869565216,
+      "12": 0.43478260869565216,
+      "13": 0.43478260869565216,
+      "14": 0.43478260869565216,
+      "15": 0.5797101449275363,
+      "16": 0.5797101449275363,
+      "17": 0.7246376811594203,
+      "18": 0.7246376811594203,
+      "19": 0.7246376811594203,
+      "20": 0.8695652173913043,
+      "21": 1.0144927536231882,
+      "22": 1.0144927536231882,
+      "23": 1.1594202898550725,
+      "24": 1.3043478260869565,
+      "25": 1.8840579710144927,
+      "26": 2.0289855072463765,
+      "27": 2.3550724637681157,
+      "28": 2.6811594202898545,
+      "29": 2.7173913043478257,
+      "30": 3.007246376811594,
+      "31": 3.2971014492753623,
+      "32": 3.6231884057971016,
+      "33": 3.6231884057971016,
+      "34": 3.768115942028986,
+      "35": 4.202898550724638,
+      "36": 4.239130434782608,
+      "37": 4.710144927536232,
+      "38": 4.746376811594203,
+      "39": 5.253623188405797
+     },
+     "T": 43824
+    },
+    "why": "Slowest signal: cumulated wind speed, 1 independent sample per 21 h (B=21) -> window = 30x21 h = 26.2 days; no rhythm detected -> max lag = half window = 13.1 days; tolerance +-1.58 days keeps fake stability <= 5%."
+   }
+  }
+ },
+ "jena_T_rh": {
+  "n": 70091,
+  "sampling_interval_s": 3600.0,
+  "leader": "temperature",
+  "follower": "relative humidity",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 0
+  },
+  "preprocessing": "T vs rh as is (zero-lag control, strong daily rhythm).",
+  "variants": {
+   "fixed_default": {
+    "score": 68.69379014989293,
+    "n_windows": 2335,
+    "n_stable": 1604,
+    "null_mean": 13.858672376873663,
+    "null95": 18.809421841541756,
+    "p": 0.009900990099009901,
+    "z": 18.846298726575302,
+    "n_null": 100,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": true,
+    "sign_ok": null,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "2.5 days",
+     "step": "1.25 days",
+     "max_lag": "1.25 days",
+     "tolerance": "1 h"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 100.0,
+    "n_windows": 19,
+    "n_stable": 19,
+    "null_mean": 13.89473684210526,
+    "null95": 42.10526315789473,
+    "p": 0.009900990099009901,
+    "z": 5.854636195342964,
+    "n_null": 100,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": true,
+    "sign_ok": null,
+    "params_samples": {
+     "window": 7009,
+     "step": 3504,
+     "max_lag": 24,
+     "tolerance": 0
+    },
+    "params_phys": {
+     "window": "292 days",
+     "step": "146 days",
+     "max_lag": "1 days",
+     "tolerance": "0"
+    },
+    "info": {
+     "bartlett": [
+      932.9496079175926,
+      16.35217134612329
+     ],
+     "tau_c": [
+      1090.422031699413,
+      7.125034673043072
+     ],
+     "periods": [
+      8377,
+      48
+     ],
+     "window_clipped": true,
+     "calibration_failed": true,
+     "null_score_by_tolerance": {
+      "0": 12.631578947368421
+     },
+     "T": 70091
+    },
+    "why": "Slowest signal: temperature, 1 independent sample per 38.9 days (B=933) -> window = 30x38.9 days = 1.17e+03 days, clipped to 292 days (7009 samples); rhythm detected (2 days) -> max lag capped at 1 days; tolerance +-0: even tolerance 0 gives fake stability above 5% (calibration failed, null 12.6%)."
+   }
+  }
+ },
+ "gasoline_weekly_diff": {
+  "n": 1746,
+  "sampling_interval_s": 604800.0,
+  "leader": "crude oil price",
+  "follower": "retail gasoline price",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 1.5
+  },
+  "preprocessing": "Weekly first differences of both prices (6 NaN retail weeks interpolated linearly before differencing).",
+  "variants": {
+   "fixed_default": {
+    "score": 85.96491228070175,
+    "n_windows": 57,
+    "n_stable": 49,
+    "null_mean": 0.9210526315789473,
+    "null95": 7.017543859649122,
+    "p": 0.004975124378109453,
+    "z": 35.556324974483964,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": false,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 weeks",
+     "step": "30 weeks",
+     "max_lag": "30 weeks",
+     "tolerance": "1 weeks"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 94.33962264150944,
+    "n_windows": 53,
+    "n_stable": 50,
+    "null_mean": 6.8113207547169825,
+    "null95": 18.867924528301888,
+    "p": 0.004975124378109453,
+    "z": 12.530319996915507,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": false,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 64,
+     "step": 32,
+     "max_lag": 31,
+     "tolerance": 4
+    },
+    "params_phys": {
+     "window": "64 weeks",
+     "step": "32 weeks",
+     "max_lag": "31 weeks",
+     "tolerance": "4 weeks"
+    },
+    "info": {
+     "bartlett": [
+      1.080516954241892,
+      2.121296762908817
+     ],
+     "tau_c": [
+      0.731769767397813,
+      1.9075396741200148
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": false,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.4716981132075472,
+      "2": 0.8490566037735849,
+      "3": 2.0754716981132075,
+      "4": 3.867924528301887,
+      "5": 8.773584905660375
+     },
+     "T": 1746
+    },
+    "why": "Slowest signal: retail gasoline price, 1 independent sample per 2.12 weeks (B=2.12) -> window = 30x2.12 weeks = 63.6 weeks; no rhythm detected -> max lag = half window = 31 weeks; tolerance +-4 weeks keeps fake stability <= 5%."
+   }
+  }
+ },
+ "sleep_eeg_delta_sigma": {
+  "n": 29941,
+  "sampling_interval_s": 1.0,
+  "leader": "delta power",
+  "follower": "sigma power",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 0
+  },
+  "preprocessing": "Sleep EEG delta and sigma band series as is (column 1 of data-*.txt, 1 s); leader unknown, expected tau 0 (sign not assessed).",
+  "variants": {
+   "fixed_default": {
+    "score": 58.07422266800402,
+    "n_windows": 997,
+    "n_stable": 579,
+    "null_mean": 1.2818455366098294,
+    "null95": 2.507522567703109,
+    "p": 0.004975124378109453,
+    "z": 80.52880815956566,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": true,
+    "sign_ok": null,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "1 min",
+     "step": "30 s",
+     "max_lag": "30 s",
+     "tolerance": "1 s"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 100.0,
+    "n_windows": 33,
+    "n_stable": 33,
+    "null_mean": 6.015151515151515,
+    "null95": 24.242424242424242,
+    "p": 0.004975124378109453,
+    "z": 11.300665660227295,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": true,
+    "sign_ok": null,
+    "params_samples": {
+     "window": 1760,
+     "step": 880,
+     "max_lag": 879,
+     "tolerance": 116
+    },
+    "params_phys": {
+     "window": "29.3 min",
+     "step": "14.7 min",
+     "max_lag": "14.7 min",
+     "tolerance": "1.93 min"
+    },
+    "info": {
+     "bartlett": [
+      58.65267680531182,
+      14.631286659772943
+     ],
+     "tau_c": [
+      33.65321119699291,
+      2.8304548564479712
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": false,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0,
+      "5": 0.0,
+      "6": 0.0,
+      "7": 0.0,
+      "8": 0.0,
+      "9": 0.0,
+      "10": 0.0,
+      "11": 0.0,
+      "12": 0.0,
+      "13": 0.0,
+      "14": 0.0,
+      "15": 0.0,
+      "16": 0.0,
+      "17": 0.0,
+      "18": 0.0,
+      "19": 0.0,
+      "20": 0.0,
+      "21": 0.0,
+      "22": 0.0,
+      "23": 0.0,
+      "24": 0.0,
+      "25": 0.0,
+      "26": 0.0,
+      "27": 0.0,
+      "28": 0.0,
+      "29": 0.0,
+      "30": 0.6060606060606061,
+      "31": 0.6060606060606061,
+      "32": 0.6060606060606061,
+      "33": 0.6060606060606061,
+      "34": 0.6060606060606061,
+      "35": 0.6060606060606061,
+      "36": 0.6060606060606061,
+      "37": 0.6060606060606061,
+      "38": 0.6060606060606061,
+      "39": 0.6060606060606061,
+      "40": 0.6060606060606061,
+      "41": 0.6060606060606061,
+      "42": 0.6060606060606061,
+      "43": 0.6060606060606061,
+      "44": 1.818181818181818,
+      "45": 1.818181818181818,
+      "46": 1.818181818181818,
+      "47": 1.818181818181818,
+      "48": 1.818181818181818,
+      "49": 1.818181818181818,
+      "50": 1.818181818181818,
+      "51": 1.818181818181818,
+      "52": 1.818181818181818,
+      "53": 1.818181818181818,
+      "54": 1.818181818181818,
+      "55": 1.9696969696969695,
+      "56": 1.9696969696969695,
+      "57": 1.9696969696969695,
+      "58": 1.9696969696969695,
+      "59": 1.9696969696969695,
+      "60": 1.9696969696969695,
+      "61": 1.9696969696969695,
+      "62": 1.9696969696969695,
+      "63": 1.9696969696969695,
+      "64": 1.9696969696969695,
+      "65": 1.9696969696969695,
+      "66": 1.9696969696969695,
+      "67": 1.9696969696969695,
+      "68": 1.9696969696969695,
+      "69": 1.9696969696969695,
+      "70": 1.9696969696969695,
+      "71": 1.9696969696969695,
+      "72": 1.9696969696969695,
+      "73": 1.9696969696969695,
+      "74": 1.9696969696969695,
+      "75": 1.9696969696969695,
+      "76": 1.9696969696969695,
+      "77": 1.9696969696969695,
+      "78": 1.9696969696969695,
+      "79": 1.9696969696969695,
+      "80": 1.9696969696969695,
+      "81": 1.9696969696969695,
+      "82": 1.9696969696969695,
+      "83": 1.9696969696969695,
+      "84": 1.9696969696969695,
+      "85": 1.9696969696969695,
+      "86": 1.9696969696969695,
+      "87": 1.9696969696969695,
+      "88": 1.9696969696969695,
+      "89": 1.9696969696969695,
+      "90": 1.9696969696969695,
+      "91": 1.9696969696969695,
+      "92": 1.9696969696969695,
+      "93": 1.9696969696969695,
+      "94": 1.9696969696969695,
+      "95": 1.9696969696969695,
+      "96": 1.9696969696969695,
+      "97": 1.9696969696969695,
+      "98": 1.9696969696969695,
+      "99": 1.9696969696969695,
+      "100": 1.9696969696969695,
+      "101": 2.5757575757575757,
+      "102": 2.5757575757575757,
+      "103": 2.5757575757575757,
+      "104": 3.181818181818182,
+      "105": 3.181818181818182,
+      "106": 3.181818181818182,
+      "107": 3.181818181818182,
+      "108": 3.7878787878787876,
+      "109": 3.7878787878787876,
+      "110": 3.7878787878787876,
+      "111": 3.7878787878787876,
+      "112": 4.393939393939394,
+      "113": 5.0,
+      "114": 5.0,
+      "115": 5.0,
+      "116": 5.0,
+      "117": 5.151515151515151
+     },
+     "T": 29941
+    },
+    "why": "Slowest signal: delta power, 1 independent sample per 0.978 min (B=58.7) -> window = 30x0.978 min = 29.3 min; no rhythm detected -> max lag = half window = 14.7 min; tolerance +-1.93 min keeps fake stability <= 5%."
+   },
+   "adaptive_cap5min": {
+    "score": 89.8989898989899,
+    "n_windows": 198,
+    "n_stable": 178,
+    "null_mean": 4.684343434343435,
+    "null95": 10.126262626262617,
+    "p": 0.004975124378109453,
+    "z": 28.762594788559127,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": true,
+    "sign_ok": null,
+    "params_samples": {
+     "window": 300,
+     "step": 150,
+     "max_lag": 149,
+     "tolerance": 14
+    },
+    "params_phys": {
+     "window": "5 min",
+     "step": "2.5 min",
+     "max_lag": "2.48 min",
+     "tolerance": "14 s"
+    },
+    "info": {
+     "bartlett": [
+      58.65267680531182,
+      14.631286659772943
+     ],
+     "tau_c": [
+      33.65321119699291,
+      2.8304548564479712
+     ],
+     "periods": [
+      null,
+      null
+     ],
+     "window_clipped": true,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.4040404040404041,
+      "5": 0.505050505050505,
+      "6": 0.9595959595959597,
+      "7": 1.1616161616161615,
+      "8": 1.2626262626262625,
+      "9": 1.8181818181818183,
+      "10": 2.2474747474747474,
+      "11": 2.676767676767677,
+      "12": 3.282828282828283,
+      "13": 3.9898989898989896,
+      "14": 4.722222222222222,
+      "15": 5.303030303030303
+     },
+     "T": 29941
+    },
+    "why": "Slowest signal: delta power, 1 independent sample per 0.978 min (B=58.7) -> window = 30x0.978 min = 29.3 min, clipped to 5 min (300 samples); no rhythm detected -> max lag = half window = 2.48 min; tolerance +-14 s keeps fake stability <= 5%."
+   }
+  }
+ },
+ "neurokit_hr_rsp": {
+  "n": 2019,
+  "sampling_interval_s": 0.25,
+  "leader": "heart rate",
+  "follower": "respiration",
+  "expected": {
+   "kind": "unknown",
+   "value_samples": null
+  },
+  "preprocessing": "NeuroKit resting 8 min recording: R3 preprocessing from exp_real (ECG band-pass, R-peak HR cubic-interpolated to 4 Hz, RSP low-passed and decimated to 4 Hz), z-scored; s1=HR, s2=RSP.",
+  "variants": {
+   "fixed_default": {
+    "score": 65.15151515151516,
+    "n_windows": 66,
+    "n_stable": 43,
+    "null_mean": 0.9318181818181818,
+    "null95": 6.0606060606060606,
+    "p": 0.004975124378109453,
+    "z": 27.776773585373288,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": null,
+    "sign_ok": null,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "15 s",
+     "step": "7.5 s",
+     "max_lag": "7.5 s",
+     "tolerance": "0.25 s"
+    },
+    "why": "Fixed default TDSParams (window=60, step=30, max_lag=30, tolerance=1 sample), independent of the signals."
+   },
+   "adaptive": {
+    "score": 78.94736842105263,
+    "n_windows": 19,
+    "n_stable": 15,
+    "null_mean": 2.4473684210526314,
+    "null95": 21.052631578947366,
+    "p": 0.004975124378109453,
+    "z": 10.439646481042478,
+    "n_null": 200,
+    "median_stable_tau_samples": 0.0,
+    "median_stable_tau_phys": "0 s",
+    "median_stable_tau_seconds": 0.0,
+    "match": null,
+    "sign_ok": null,
+    "params_samples": {
+     "window": 201,
+     "step": 100,
+     "max_lag": 15,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "50.2 s",
+     "step": "25 s",
+     "max_lag": "3.75 s",
+     "tolerance": "0.25 s"
+    },
+    "info": {
+     "bartlett": [
+      9.930627735605018,
+      6.3774496657423025
+     ],
+     "tau_c": [
+      4.699836751980784,
+      5.070038626137544
+     ],
+     "periods": [
+      null,
+      30
+     ],
+     "window_clipped": true,
+     "calibration_failed": false,
+     "null_score_by_tolerance": {
+      "0": 0.0,
+      "1": 2.1052631578947367,
+      "2": 8.68421052631579
+     },
+     "T": 2019
+    },
+    "why": "Slowest signal: heart rate, 1 independent sample per 2.48 s (B=9.93) -> window = 30x2.48 s = 1.24 min, clipped to 50.2 s (201 samples); rhythm detected (7.5 s) -> max lag capped at 3.75 s; tolerance +-0.25 s keeps fake stability <= 5%."
+   }
+  }
+ }
+}
