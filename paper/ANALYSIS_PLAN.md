@@ -16,10 +16,15 @@ No raw or per-subject data are committed (pyTDS is public). Extracted arrays liv
 Committed results are aggregates (per-link/stage means, effect sizes), plus per-subject summary
 numbers under anonymous indices only.
 
+## Facts from the approved thesis PDF (`WirtingThesis/Thesis-Asaf Markuza_מאושר להדפסה.pdf`; English text identical to `Thesis-Asaf Markuza.pdf`)
+- D1 "was taken from the same patient[s] used in [7]" = Bashan et al. 2012 Nat Commun (thesis p.22, Fig 11 caption).
+- Thesis Fig 12 text: threshold 9 % TDS on D1 (2000 surrogates); stored `thres` = 8.6 (105/140 links significant).
+- Apnea cohort: 7.8 % threshold (sleep-stage surrogates, Fig 17), 14 + 14 subjects (p.13).
+
 ## Pilot already done
 `scripts/thesis_port.py` (faithful port of the MATLAB TDS: linear `xcorr(..,30,'coeff')`, max |xc|,
 60/30 windows, `NL=floor(2N/L-1)`, ±1 / 4-of-5, window time = sample (k-1)*30+30) reproduces
-`real_links` of subjects 1-3 **exactly** (max |diff| = 0.0 over 140 values each).
+`real_links` of **all 35 subjects exactly** (4900 values, max |diff| = 0.0; `scripts/r1_replicate_real.py`, `results/r1_real_links_check.json`).
 
 ## R1 Thesis replication on D1 (thesis setting)
 1. `real_links` for all 35 subjects with the port; report max |diff| vs D1-ref.

@@ -1,0 +1,8 @@
+{
+ "subjects": 35,
+ "values": 4900,
+ "max_abs_diff": 0.0,
+ "n_diff_gt_1e-9": 0,
+ "nan_mine": 0,
+ "nan_ref": 0
+}
