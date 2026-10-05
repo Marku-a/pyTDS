@@ -3,6 +3,13 @@
 Branch `claude/new-session-1at9bf` (from `claude/pytds-adaptive-parameters-760t3h`, dc2efdb).
 Hypotheses H*/E* below are fixed before running; results are reported whatever they show.
 
+## IMPORTANT framing (author, 2026-10-05)
+Everything in the thesis repo's `01 repreduce NCOM` folder (D1 data, port target, surrogates, 8.6 % threshold) is
+the author's **learning reproduction of Bashan et al. 2012**, not the thesis research; the thesis research is the
+Charité sleep-apnea cohort (D2). In the paper: R1 = "replication of the author's reproduction of Bashan 2012",
+R2 = "TDS vs aTDS on the Bashan 2012 cohort"; only R3 is called thesis results. (The approved thesis shows the
+reproduction once, as an illustration of the surrogate method: Fig 11-12, p.22-23.)
+
 ## Data actually available (checked 2026-10-05)
 
 | id | what | source | status |

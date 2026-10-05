@@ -83,3 +83,18 @@ def links_strength(X, stages):
             out[li, k] = 100 * lbl[m].mean() if m.any() else np.nan
     return out
 
+
+
+def links_counts(X, stages):
+    """Like links_strength but returns 35 x 4 x 2: (sum of stable labels, n windows) per link x stage, for pooling
+    over subjects as makeDataForReconFig2.m ('Divide to sleep stages') does (centre-sample stage rule)."""
+    stages = np.asarray(stages)
+    out = np.zeros((35, 4, 2))
+    for li, (i, j) in enumerate(_order(_good())):
+        tau, t = time_delay_interaction(X[:, i], X[:, j])
+        lbl = stable_label(tau)
+        st_at = stages[t - 1]
+        for k, s in enumerate(STAGES):
+            m = st_at == s
+            out[li, k] = (lbl[m].sum(), m.sum())
+    return out

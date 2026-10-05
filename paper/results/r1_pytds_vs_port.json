@@ -1,0 +1,43 @@
+{
+ "setting": "window=60, overlap=30, max_lag=30, tolerance=1",
+ "real_links": {
+  "any": {
+   "n": 4900,
+   "mean_diff_pytds_minus_port": -3.310481712727903,
+   "mean_abs_diff": 3.7811369440886766,
+   "pearson_r": 0.949690564611763,
+   "max_abs_diff": 50.0,
+   "nan_pytds": 0,
+   "nan_port": 0,
+   "per_stage_mean_diff": {
+    "DS": -3.0160568280013886,
+    "LS": -3.7266617906499833,
+    "REM": -3.0526826919071954,
+    "awake": -3.446525540353046
+   }
+  },
+  "end": {
+   "n": 4900,
+   "mean_diff_pytds_minus_port": -7.432423722939785,
+   "mean_abs_diff": 7.482566229633561,
+   "pearson_r": 0.9051988936307811,
+   "max_abs_diff": 83.33333333333334,
+   "nan_pytds": 0,
+   "nan_port": 0,
+   "per_stage_mean_diff": {
+    "DS": -5.866991097887234,
+    "LS": -8.460942427902426,
+    "REM": -6.938536366115913,
+    "awake": -8.463224999853567
+   }
+  }
+ },
+ "benchmark": {
+  "n_samples": 29941,
+  "port_score": 61.785356068204614,
+  "pytds_any": 58.07422266800402,
+  "pytds_end": 43.53059177532598,
+  "pytds_default_params": 58.07422266800402,
+  "original_matlab": 43.6
+ }
+}
