@@ -1,0 +1,219 @@
+{
+ "n_links": 105,
+ "ranks_vs_stage_cells_max_abs_diff": {
+  "sick": 0.0,
+  "healthy": 0.0
+ },
+ "sick_vs_healthy": {
+  "REM": {
+   "thesis_signrank_p": 6.498003214761444e-10,
+   "thesis_ks_p": 0.06409463149747963,
+   "median_sick_pct": 10.11139674378749,
+   "median_healthy_pct": 7.55580995993131,
+   "supp_link_matched_signrank_p": 8.145844880223975e-05,
+   "supp_link_matched_frac_sick_gt_healthy": 0.6571428571428571
+  },
+  "DS": {
+   "thesis_signrank_p": 6.651543233318482e-16,
+   "thesis_ks_p": 0.17493172445038746,
+   "median_sick_pct": 6.903765690376569,
+   "median_healthy_pct": 5.4945054945054945,
+   "supp_link_matched_signrank_p": 7.794991077625626e-06,
+   "supp_link_matched_frac_sick_gt_healthy": 0.7047619047619048
+  },
+  "LS": {
+   "thesis_signrank_p": 0.1489191792716725,
+   "thesis_ks_p": 0.7302873720079128,
+   "median_sick_pct": 11.353517364203029,
+   "median_healthy_pct": 10.459555001039718,
+   "supp_link_matched_signrank_p": 0.38193992365593166,
+   "supp_link_matched_frac_sick_gt_healthy": 0.6
+  },
+  "awake": {
+   "thesis_signrank_p": 3.22296206831677e-18,
+   "thesis_ks_p": 0.06409463149747963,
+   "median_sick_pct": 13.378839590443686,
+   "median_healthy_pct": 10.309801929913661,
+   "supp_link_matched_signrank_p": 3.3165787599041807e-11,
+   "supp_link_matched_frac_sick_gt_healthy": 0.8095238095238095
+  }
+ },
+ "between_stages": {
+  "sick": {
+   "REM|DS": {
+    "signrank_p": 0.37329678607260885,
+    "ks_p": 0.09134843873337047
+   },
+   "REM|LS": {
+    "signrank_p": 5.195663510916682e-18,
+    "ks_p": 0.04409789879607817
+   },
+   "REM|awake": {
+    "signrank_p": 3.606364510890059e-18,
+    "ks_p": 0.005053348387694498
+   },
+   "DS|LS": {
+    "signrank_p": 1.9087625979161704e-12,
+    "ks_p": 0.02974875192578505
+   },
+   "DS|awake": {
+    "signrank_p": 1.355813873080143e-16,
+    "ks_p": 5.5212458869324366e-05
+   },
+   "LS|awake": {
+    "signrank_p": 4.49914401310007e-15,
+    "ks_p": 0.3983074626092783
+   }
+  },
+  "healthy": {
+   "REM|DS": {
+    "signrank_p": 0.12530683864505363,
+    "ks_p": 0.06409463149747963
+   },
+   "REM|LS": {
+    "signrank_p": 7.705288008502205e-17,
+    "ks_p": 0.06409463149747963
+   },
+   "REM|awake": {
+    "signrank_p": 1.217847184742903e-16,
+    "ks_p": 0.12766166925925324
+   },
+   "DS|LS": {
+    "signrank_p": 7.136042711057262e-19,
+    "ks_p": 5.5212458869324366e-05
+   },
+   "DS|awake": {
+    "signrank_p": 1.7250842420706323e-16,
+    "ks_p": 0.00019323338529865036
+   },
+   "LS|awake": {
+    "signrank_p": 0.0005520239099710167,
+    "ks_p": 0.9227045602777051
+   }
+  }
+ },
+ "full_night": {
+  "n_patients": 28,
+  "n_ahi_gt_10": 14,
+  "n_ahi_le_10": 14,
+  "threshold_pct": 7.8,
+  "spearman_links_vs_ahi": 0.5187727533863336,
+  "spearman_p": 0.004677205198064934,
+  "median_links_sick": 58.0,
+  "median_links_healthy": 47.5,
+  "per_patient_ahi_links": [
+   [
+    0.0,
+    48
+   ],
+   [
+    0.2,
+    39
+   ],
+   [
+    0.6,
+    61
+   ],
+   [
+    0.7,
+    50
+   ],
+   [
+    1.8,
+    29
+   ],
+   [
+    2.5,
+    53
+   ],
+   [
+    2.7,
+    45
+   ],
+   [
+    2.9,
+    46
+   ],
+   [
+    3.0,
+    53
+   ],
+   [
+    3.8,
+    36
+   ],
+   [
+    4.6,
+    51
+   ],
+   [
+    5.2,
+    47
+   ],
+   [
+    6.2,
+    29
+   ],
+   [
+    6.6,
+    69
+   ],
+   [
+    20.9,
+    47
+   ],
+   [
+    22.2,
+    67
+   ],
+   [
+    26.2,
+    48
+   ],
+   [
+    27.0,
+    56
+   ],
+   [
+    29.1,
+    53
+   ],
+   [
+    33.2,
+    69
+   ],
+   [
+    35.3,
+    63
+   ],
+   [
+    37.8,
+    35
+   ],
+   [
+    50.3,
+    62
+   ],
+   [
+    55.1,
+    67
+   ],
+   [
+    59.6,
+    54
+   ],
+   [
+    79.7,
+    71
+   ],
+   [
+    87.3,
+    54
+   ],
+   [
+    110.0,
+    60
+   ]
+  ]
+ }
+}
