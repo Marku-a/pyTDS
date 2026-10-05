@@ -112,3 +112,16 @@ Note: this is the same data the previous session used (export up to 2026-10-03),
 ## Out of scope / labelled untested
 Public apnea cohort (e.g. PhysioNet `ucddb`, reachable on the AWS mirror) — not run (author's decision 2026-10-05: NCOM data only); future work.
 aTDS on the Charité apnea cohort — impossible here (inputs unavailable).
+
+## R5 Worked examples on actual signals (added 2026-10-05 at the author's request)
+Shows step by step how TDS and aTDS process the same real signals. Example choice is rule-based, not
+picked for looks, and the rule is fixed here:
+- Sleep (D1): the subject whose v2_calibrated − published gain in LS−DS connectivity (strict rule, excess)
+  is closest to the cohort median; within it the thesis link (of the 35) whose per-link LS−DS excess
+  gain is closest to that subject's median; displayed span = the first ≥ 40-min stretch containing an
+  LS→DS transition. Panels: raw signals with 60-s and 300-s windows; cross-correlation in 3 windows with
+  τ₀; τ₀(t) with ±1 vs ±14 bands and stable/unstable marks; per-stage TDS % vs circular-shift chance;
+  aTDS derivation (ACF, Bartlett factor vs 300-s cap, null score vs tolerance curve).
+- Garmin (D3): among runs where frozen and v2_calibrated disagree on speed→HR detection, the one with the
+  median run length; same panels, frozen 120/40/±2 vs aTDS 240/119/±14.
+Only short traces of an anonymous subject index are shown; raw data stay out of git.
