@@ -362,7 +362,7 @@ function hideTip() { tip.hidden = true; }
 function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag);
   for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
 function legend(id, items) { const L = document.getElementById(id); if (!L) return; L.innerHTML = items.map(it =>
-  `<span><i class="${it.kind || ""}" style="background:${css(it.color)}"></i>${it.label}</span>`).join(""); }
+  `<span><i class="${it.kind || ""}" style="background:${css(it.color)};opacity:${it.op ?? 1}"></i>${it.label}</span>`).join(""); }
 function scale(d0, d1, r0, r1, log) { if (log) { const a = Math.log10(d0), b = Math.log10(d1);
   return v => r0 + (Math.log10(Math.max(v, 1e-9)) - a) / (b - a) * (r1 - r0); }
   return v => r0 + (v - d0) / (d1 - d0) * (r1 - r0); }
@@ -532,13 +532,13 @@ function fig4() {
   const vars = [["published", "TDS (published)", "--s1"], ["tol_only", "tol_only (60 s, calibrated tol.)", "--s3"], ["v2_calibrated", "aTDS (cap 300)", "--s2"], ["win_only", "win_only (300 s, ±1 s)", "--null"]];
   const hyps = ["H1", "H2", "H3", "H4"], hname = { H1: "LS > DS", H2: "wake > DS", H3: "LS > REM", H4: "wake > REM" };
   const rows = D.effects.effects.filter(r => r.rule === "strict");
-  const g = frame(document.getElementById("fig4b"), { x: [0, 4.5], y: [0, hyps.length * (vars.length + 1)], height: 320, xlabel: "dz (paired effect size)", margin: { l: 82 }, yticks: [] });
+  const g = frame(document.getElementById("fig4b"), { x: [0, 6.2], y: [0, hyps.length * (vars.length + 1)], height: 320, xlabel: "dz (paired effect size)", margin: { l: 82 }, yticks: [] });
   hyps.forEach((h, hi) => { const base = hi * (vars.length + 1); const lab = el("text", { x: g.m.l - 6, y: g.y(base + vars.length / 2) + 4, "text-anchor": "end" }, g.svg); lab.textContent = hname[h];
     vars.forEach(([v, name, col], vi) => { const r = rows.find(z => z.variant === v && z.hyp === h); if (!r) return; const yy = g.y(base + vi + 0.5);
-      const hi_ = Math.min(4.5, r.dz_ci_hi);
+      const hi_ = Math.min(6.2, r.dz_ci_hi);
       el("line", { x1: g.x(Math.max(0, r.dz_ci_lo)), x2: g.x(hi_), y1: yy, y2: yy, stroke: css(col), "stroke-width": 2 }, g.g);
-      el("circle", { cx: g.x(Math.min(4.5, r.dz)), cy: yy, r: 4, fill: css(col) }, g.g);
-      hitDot(g.g, g.x(Math.min(4.5, r.dz)), yy, 4, () => `<b>${name}</b>, ${hname[h]}<br>dz ${fmt(r.dz)} [${fmt(r.dz_ci_lo)}, ${fmt(r.dz_ci_hi)}]<br>n = ${r.n} · Holm p ${(+r.p_holm).toPrecision(2)}`); }); });
+      el("circle", { cx: g.x(Math.min(6.2, r.dz)), cy: yy, r: 4, fill: css(col) }, g.g);
+      hitDot(g.g, g.x(Math.min(6.2, r.dz)), yy, 4, () => `<b>${name}</b>, ${hname[h]}<br>dz ${fmt(r.dz)} [${fmt(r.dz_ci_lo)}, ${fmt(r.dz_ci_hi)}]<br>n = ${r.n} · Holm p ${(+r.p_holm).toPrecision(2)}`); }); });
   legend("leg4b", vars.map(([, name, col]) => ({ label: name, color: col, kind: "dot" })));
 }
 
@@ -554,15 +554,15 @@ function fig5() {
       const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0.5) - f.m.t, fill: "transparent" }, f.g);
       hover(hb, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>mean AUC ${fmt(r.mean_auc, 3)}<br>${r.n_sig} of 35 links significant`); }); });
   legend("leg5", vars.map(([, name, col]) => ({ label: name, color: col, kind: "box" })));
-  const nd = D.mechanism.n_defined, vv = [["published", "TDS", "--s1"], ["v2_cap120", "aTDS cap 120", "--s3"], ["v2_calibrated", "aTDS cap 300", "--s2"], ["v2_cap600", "aTDS cap 600", "--null"]];
+  const nd = D.mechanism.n_defined, vv = [["published", "TDS", "--s1", 1], ["v2_cap120", "aTDS cap 120 s", "--s2", .45], ["v2_calibrated", "aTDS cap 300 s", "--s2", 1], ["v2_cap600", "aTDS cap 600 s", "--null", 1]];
   f = frame(document.getElementById("fig5b"), { xband: true, y: [0, 35], height: 260, ylabel: "subjects (strict rule)", yticks: [0, 10, 20, 30, 35] });
   bw = (f.W - f.m.l - f.m.r) / order.length;
   order.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
-    vv.forEach(([v, name, col], j) => { const n = nd[`${v}|strict|${s}`]; const w = bw * 0.8 / vv.length, x0 = f.m.l + k * bw + bw * 0.1 + j * w;
-      el("rect", { x: x0 + 1, y: f.y(n), width: w - 2, height: f.y(0) - f.y(n), rx: 3, fill: css(col) }, f.g);
+    vv.forEach(([v, name, col, op], j) => { const n = nd[`${v}|strict|${s}`]; const w = bw * 0.8 / vv.length, x0 = f.m.l + k * bw + bw * 0.1 + j * w;
+      el("rect", { x: x0 + 1, y: f.y(n), width: w - 2, height: f.y(0) - f.y(n), rx: 3, fill: css(col), "fill-opacity": op }, f.g);
       const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0) - f.m.t, fill: "transparent" }, f.g);
       hover(hb, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>${n} of 35 subjects defined<br>(80 % rule: ${nd[`${v}|p80|${s}`]})`); }); });
-  legend("leg5b", vv.map(([, name, col]) => ({ label: name, color: col, kind: "box" })));
+  legend("leg5b", vv.map(([, name, col, op]) => ({ label: name, color: col, kind: "box", op })));
 }
 
 /* ---------- Fig 6 ---------- */

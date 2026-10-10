@@ -1,0 +1,214 @@
+<main>
+<header class="paper">
+  <div class="kicker">All aTDS reports in one place · 10 October 2026</div>
+  <h1>aTDS evidence: does adaptive TDS do better, and where?</h1>
+  <div class="byline">For Asaf Markuza · compiled from pyTDS reports 01–07, the ground-truth study, the GarminTDS comparison and the aTDS paper draft. Every chart is redrawn from the committed result files.</div>
+  <div class="abstract">
+    <div class="kicker">How to read this</div>
+    <p><b>Order.</b> Part 1 tests both methods on a result everyone agrees on (Bashan et al. 2012: the sleep network is weakest in deep sleep). Part 2 uses other data where the right answer is known. Part 3 uses data where the answer is only approximately known, and asks who did better. Part 4 is the scoreboard.</p>
+    <p><b>Colours, everywhere on this page:</b> <span class="sw" style="--c:var(--s1)"></span>blue = TDS with fixed settings (the published 60 s / 30 s / ±30 s / ±1 setting, or the fixed default in samples); <span class="sw" style="--c:var(--s2)"></span>orange = aTDS (adaptive window, calibrated tolerance); <span class="sw dash" style="--c:var(--null)"></span>dashed gray = “oracle”, the best setting found by looking at the answer (only possible on synthetic data); <span class="sw" style="--c:var(--s3)"></span>aqua = a third series where needed (named in the legend). Hover any mark for its value.</p>
+    <p><b>Two words used throughout.</b> <i>AUC</i>: how well a method separates coupled from uncoupled signals (1 = perfectly, 0.5 = guessing). <i>dz</i>: paired effect size of a known difference across people (bigger = the known effect stands out more clearly).</p>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th class="l">source</th><th class="l">what it tested</th><th class="l">where</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Reports 01–06</td><td class="l">the method; synthetic ground truth; sleep EEG, ECG→pulse, heart rate–breathing</td><td class="l">pyTDS <code>claude/practical-mccarthy-n2mec6</code></td></tr>
+      <tr><td class="l">Report 07</td><td class="l">nine fields of real data (hydrology, climate, energy …)</td><td class="l">same branch</td></tr>
+      <tr><td class="l">Ground-truth study</td><td class="l">Sleep-EDF (20 nights), Fantasia (40 people), treadmill (197 tests)</td><td class="l">pyTDS <code>experiments/adaptive_groundtruth</code></td></tr>
+      <tr><td class="l">Garmin comparison</td><td class="l">your 30 + 4 runs, speed → heart rate</td><td class="l">GarminTDS <code>experiments/adaptive_compare</code></td></tr>
+      <tr><td class="l">aTDS paper draft</td><td class="l">Bashan-2012 cohort (35 people), thesis apnea outputs, worked examples</td><td class="l">pyTDS <code>paper/</code>, branch <code>claude/new-session-1at9bf</code></td></tr>
+    </tbody></table></div>
+</header>
+
+<section id="p1">
+<div class="col">
+<h2><span class="part">Part 1</span> A known result: Bashan's sleep network</h2>
+<p>Bashan et al. (2012) found that the network linking brain, heart, breathing, eyes and muscles has the fewest links in deep sleep, more in REM, and the most in light sleep and wake. Your NCOM folder holds their 35 subjects (10 signals at 1 Hz). If a method is sound, it must give this same ordering on this same data.</p>
+<h3>1.1 Are we using the data the same way you did?</h3>
+<p>Yes, exactly. A Python port of your MATLAB code reproduces all 4 900 stored link strengths with zero difference, and new surrogate subjects match your stored ones (Fig. 1.1). Your significance threshold, 8.6 %, comes out the same.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 1.1 · Link strength by rank, real people vs surrogates (your method, ported)</div><div class="legend" id="leg1a"></div><div class="chart" id="fig1a"></div></div></div>
+  <figcaption>Mean strength of each of the 35 links, ranked, per stage. Blue: the 35 real people. Gray dashed: your 2 000 stored surrogates. Aqua: 2 000 new surrogates from the ported code. The two surrogate curves lie on top of each other; real links are far above them. Log scale.</figcaption>
+</figure>
+<div class="col">
+<h3>1.2 Do TDS and aTDS give Bashan's ordering?</h3>
+<p><b>Both do.</b> Ranked by mean connectivity, both methods give deep sleep lowest, then REM, with light sleep and wake highest (Fig. 1.2). Each method is shown on its own scale: aTDS's numbers are bigger because its windows and tolerance are larger, so only the ordering and the spread can be compared, not the height.</p>
+</div>
+<figure>
+  <div class="legend" id="leg12"></div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.2a · TDS (published setting)</div><div class="chart" id="fig12a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.2b · aTDS</div><div class="chart" id="fig12b"></div></div>
+  </div>
+  <figcaption>Mean connectivity per stage (mean excess over chance across the 35 links, percentage points) with 95 % CI across people; dots are individual people. Stages sorted as Bashan reports them, from most to least connected. Strict stage rule (a window counts only if its whole stability run lies in one stage). n per stage in the tooltip; aTDS has fewer people in wake and deep sleep because its 300-s windows need long uninterrupted stages.</figcaption>
+</figure>
+<div class="col">
+<h3>1.3 Does aTDS make the known differences clearer?</h3>
+<p><b>No.</b> The effect sizes for the four stage differences are about the same for TDS and aTDS (Fig. 1.3). aTDS looks higher for the two wake contrasts, but those rest on 6 and 9 people; with the looser 80 % stage rule all four gains are slightly negative and none is significant. The pre-registered verdict is <i>inconclusive</i>. Calibrating only the tolerance at the normal 60-s window (aqua) gave the clearest wake differences, an exploratory finding.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 1.3 · Effect size dz of the four known differences, 95 % CI</div><div class="legend" id="leg4b"></div><div class="chart" id="fig4b"></div></div></div>
+  <figcaption>Paired dz across people, strict stage rule, 10 000 bootstrap resamples. Gray: aTDS window with the old ±1-s tolerance, the worst variant. n per contrast in the tooltip.</figcaption>
+</figure>
+<div class="col">
+<h3>1.4 One night up close</h3>
+<p>Subject #29, breathing vs EEG θ, chosen by a fixed rule (the person and link closest to the median aTDS–TDS difference). The 40 minutes shown cross from light into deep sleep. TDS (60-s windows) finds a few stable windows; aTDS (300-s windows, ±15-s tolerance) finds none in this stretch. Over the whole night both score this pair higher in REM and light sleep than in deep sleep.</p>
+</div>
+<figure id="fig2">
+  <div class="legend" id="leg2"></div>
+  <div class="panels" style="grid-template-columns: 1fr;">
+    <div class="panel"><div class="ptitle">Fig. 1.4a · The two signals and the sleep stage</div><div class="chart" id="fig2a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.4b · Delay τ₀ in every window; filled = stable</div><div class="chart" id="fig2b"></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.4c · Cross-correlation in three windows</div><div class="chart" id="fig2c"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.4d · Whole night: score per stage vs chance</div><div class="chart" id="fig2d"></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.4e · How aTDS chose its tolerance</div><div class="chart" id="fig2e"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.4f · Memory of each signal</div><div class="chart" id="fig2f"></div></div>
+  </div>
+  <figcaption>a: signals (z-scored) around the light → deep transition. b: τ₀ per window; dotted boxes are each method's lag search range. c: C(τ) in the windows nearest 23, 28 and 38 min; dot = τ₀. d: whole-night score per stage (bars) with the chance score (black tick); n/a = fewer than 5 windows. e: chance score against tolerance; aTDS takes the widest tolerance with chance ≤ 5 %. f: window each signal would need for 30 independent samples (log scale); the slowest decides, capped at 300 s.</figcaption>
+</figure>
+<div class="col">
+<h3>1.5 What aTDS gains and what it pays here</h3>
+<p>Gain: against its own chance level, aTDS separates real from fake coupling better (mean AUC 0.778 vs 0.736), mostly in wake and deep sleep. Cost: at 300 s, wake is too short to score in most people (Fig. 1.5, right).</p>
+</div>
+<figure>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.5a · Separation from chance (mean AUC) per stage</div><div class="legend" id="leg5"></div><div class="chart" id="fig5a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.5b · People with enough windows to score (of 35)</div><div class="legend" id="leg5b"></div><div class="chart" id="fig5b"></div></div>
+  </div>
+  <figcaption>Left: 0.5 would be no better than chance. Right: strict stage rule; light orange = aTDS capped at 120 s, full orange = 300 s, gray = 600 s.</figcaption>
+</figure>
+<div class="verdict col"><div class="kicker">Part 1 verdict</div>
+<p><b>Same answer as Bashan for both methods.</b> aTDS does not sharpen the known stage differences on this data, separates real coupling from chance a little better, and loses short stages. This is the data the published parameters were designed for, so TDS has a home advantage here.</p></div>
+</section>
+
+<section id="p2">
+<div class="col">
+<h2><span class="part">Part 2</span> Other data where the right answer is known</h2>
+<h3>2.1 Synthetic signals that get slower (Report 05)</h3>
+<p>Two signals with a known weak coupling and known delay. Step by step the signals are made 1, 2, 4, 8 and 16 times slower (longer memory), at the same 1-Hz sampling. Fixed TDS loses the coupling from 4× on; aTDS keeps it up to 8× and stays closer to the oracle (Fig. 2.1).</p>
+</div>
+<figure>
+  <div class="legend" id="leg21"></div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 2.1a · Separating coupled from uncoupled (AUC)</div><div class="chart" id="fig21a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 2.1b · Correct delay found (% of coupled pairs)</div><div class="chart" id="fig21b"></div></div>
+  </div>
+  <figcaption>x: how much slower the signals are than in the base case (log scale); dotted line: chance (AUC 0.5). Oracle = best window/tolerance chosen by looking at the answer. Source: <code>synthetic_E1_summary.csv</code>, coupling strength 0.3, 20 trials per condition.</figcaption>
+</figure>
+<div class="col">
+<h3>2.2 Rulkov model neurons (Report 05)</h3>
+<p>Chaotic model neurons coupled with a known delay of 8, 16 or 32 steps. At delay 32 the fixed ±30 search cannot reach the delay; aTDS finds it every time. At delay 16 fixed TDS found the exact delay in 20 % of trials and aTDS in none (it reports 19–20, as does the oracle): the bursts repeat every ~41 steps, and delays near half that period are ambiguous. This is the one ground-truth test aTDS lost.</p>
+</div>
+<figure>
+  <div class="legend" id="leg22"></div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 2.2a · AUC by true delay</div><div class="chart" id="fig22a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 2.2b · Correct delay found (%)</div><div class="chart" id="fig22b"></div></div>
+  </div>
+  <figcaption>In panel b, aTDS (orange) and the oracle (gray) have the same values and lie on top of each other. At delay 8 no setting, not even the oracle, reported the exact delay; the reports do not explain why, so it is left as found. Source: <code>synthetic_E2_summary.csv</code>.</figcaption>
+</figure>
+<div class="col">
+<h3>2.3 Two more synthetic checks</h3>
+<div class="tw"><table><thead><tr><th class="l">test (Report 05)</th><th>fixed TDS</th><th>aTDS</th><th>oracle</th><th class="l">better</th></tr></thead><tbody id="t23"></tbody></table></div>
+<h3>2.4 The same recording at four sampling rates (Report 02)</h3>
+<p>The δ–σ EEG pair from pyTDS's benchmark, resampled to 0.5×, 1×, 2× and 4×. The physiology is identical, so the answer should not change. Fixed TDS falls from 75 % to 27 % because “60 samples” and “±1 sample” mean different things at each rate. aTDS gives 100 % at every rate. That 100 % is saturation (no window cap, windows of 19–119 min); with a 5-min cap the score at 1× is 90 % with chance about 5 %.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 2.4 · TDS score of one pair at four sampling rates</div><div class="legend" id="leg24"></div><div class="chart" id="fig24"></div></div></div>
+  <figcaption>Source: <code>real_R4_summary.csv</code>. x: sampling rate relative to the original 1 Hz (log scale).</figcaption>
+</figure>
+<div class="col">
+<h3>2.5 Sleep-EDF: 20 more nights, known deep-sleep effect (ground-truth study)</h3>
+<p>A different public sleep database, EEG band powers only. Here aTDS made two of the three known differences much clearer (light > deep and REM > deep; for REM > deep the fixed setting was not even significant). Wake > deep was slightly weaker with aTDS (not significant).</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 2.5 · Sleep-EDF: effect size of known differences, 95 % CI</div><div class="legend" id="leg25"></div><div class="chart" id="fig25"></div></div></div>
+  <figcaption>Source: <code>experiments/adaptive_groundtruth/results/effects_bootstrap.csv</code> (18 nights with all stages, 5 000 bootstraps).</figcaption>
+</figure>
+<div class="col">
+<h3>2.6 Fantasia: breathing–heart coupling is known to weaken with age</h3>
+<p>20 young and 20 elderly people. Both methods detect breathing → heart-rate coupling in all 40. aTDS separates young from elderly a little more (d 1.54 vs 1.25, gain not significant) and gives fewer false links when breathing of one person is paired with the heart rate of another (1/40 vs 4/40).</p>
+</div>
+<figure>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 2.6a · Young > elderly, effect size d, 95 % CI</div><div class="legend" id="leg26"></div><div class="chart" id="fig26a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 2.6b · False links between different people (of 40)</div><div class="chart" id="fig26b"></div></div>
+  </div>
+  <figcaption>Source: ground-truth study, <code>effects_bootstrap.csv</code> and <code>fantasia_summary.csv</code>.</figcaption>
+</figure>
+<div class="col">
+<h3>2.7 Where neither method can win</h3>
+<ul>
+<li><b>ECG → finger pulse (Report 02).</b> The true delay is 430 ms (measured on 430 beats). Every variant reports about −80 ms. The heart beats every ~690 ms, so delays beyond half a beat cannot be told apart by any correlation method. Use beat-to-beat series instead of raw waveforms.</li>
+<li><b>Heart rate ↔ breathing at 4 Hz (Report 02).</b> The data already fit the fixed setting: aTDS picked a 59-sample window by itself and gave the same scores (31.6–75 % vs 32.5–75 %).</li>
+<li><b>Treadmill tests (ground-truth study).</b> Uninformative by design: the 120-s high-pass removed the graded ramp, so every method sat at the false-positive level. No conclusion.</li>
+</ul>
+</div>
+<div class="verdict col"><div class="kicker">Part 2 verdict</div>
+<p><b>When the signals are slower than the fixed window assumes, aTDS wins clearly and stays close to the oracle.</b> When the data already fit the fixed setting, they tie. aTDS lost one delay-accuracy test (Rulkov, delay near half a burst period). Rhythmic raw waveforms defeat both.</p></div>
+</section>
+
+<section id="p3">
+<div class="col">
+<h2><span class="part">Part 3</span> Data where the answer is only roughly known</h2>
+<h3>3.1 Nine science fields (Report 07)</h3>
+<p>Public data in which one signal is known to drive another, with delays known only approximately from the literature. Each result is compared with its own chance level (200 time-shifted copies). Counting the two hydrology rows as one field: aTDS better in 4, tie or mixed in 4, worse in 1.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 3.1 · Score above chance (score − 95th percentile of chance), percentage points</div><div class="legend" id="leg31"></div><div class="chart" id="fig31"></div></div></div>
+  <figcaption>Each row is one dataset. The small text after the dots gives the delay found by TDS / aTDS; ✓ or ✗ = matches or misses the literature value (no mark: no reliable reference). Hover for score, chance and window. Sleep EEG uses aTDS with the 5-min cap, as in Report 07. Source: <code>fields_summary.csv</code>; verdicts from Report 07.</figcaption>
+</figure>
+<div class="col">
+<h3>3.2 Your Garmin runs</h3>
+<p>Speed → heart rate, 30 runs, each tested against 100 chance copies. aTDS found the link in 8 runs, the app's fixed setting in 4 (6 only by aTDS, 2 only by the fixed setting; McNemar p = 0.29). False links between different runs: 1/30 vs 0/30. On 4 later runs that were not used for any choice: 2/4 vs 0/4. The gain needs the wide lag search: the same window and tolerance with the lag limited to 80 s found only 4/30.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 3.2 · Runs with a detected speed → HR link (of 30), by setting</div><div class="legend" id="leg8"></div><div class="chart" id="fig8a"></div></div></div>
+  <figcaption>Settings named window / lag / tolerance in seconds. Held-out result (of 4) after each bar.</figcaption>
+</figure>
+<figure id="fig9">
+  <div class="legend" id="leg9"></div>
+  <div class="panels" style="grid-template-columns: 1fr;">
+    <div class="panel"><div class="ptitle">Fig. 3.3a · One 27-minute run: heart rate and speed after the 120-s high-pass</div><div class="chart" id="fig9a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 3.3b · Lag per window (positive = speed leads); filled = stable</div><div class="chart" id="fig9b"></div></div>
+  </div>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 3.3c · Real score vs 100 chance scores</div><div class="chart" id="fig9c"></div></div></div>
+  <figcaption>The median-length run among the 8 where the two settings disagree. aTDS finds five stable windows at a 12–18-s lag; the fixed setting finds none. With only about a dozen 240-s windows, every chance score is 0, so one stable stretch is enough for p ≈ 0.01: a real limitation on short runs.</figcaption>
+</figure>
+<div class="verdict col"><div class="kicker">Part 3 verdict</div>
+<p><b>aTDS is better or equal in 8 of 9 fields and on your runs, worse only on very short data</b> (296 samples). Its price is delay precision: with a wide tolerance the El Niño delay came out at 1 month instead of about 3, and the spread of running lags widened from 1.9 to 7 s.</p></div>
+</section>
+
+<section id="p4">
+<div class="col">
+<h2><span class="part">Part 4</span> Scoreboard</h2>
+</div>
+<div class="tw"><table class="score">
+<thead><tr><th class="l">data</th><th class="l">answer known?</th><th class="l">what “better” means</th><th class="l">who did better</th><th class="l">note</th></tr></thead>
+<tbody id="tscore"></tbody></table></div>
+<div class="col">
+<h3>What this adds up to</h3>
+<p>aTDS is not uniformly better. Where the published parameters were designed (Bashan's own cohort) it gives the same answer and adds only a better separation from chance. Where the fixed window is too short for the signals' memory (slow synthetic coupling, Sleep-EDF EEG, rivers, electricity demand, running), it detects known couplings that fixed TDS misses, and on synthetic data it stays close to the best possible setting without knowing the answer. It costs time resolution, delay precision and short records.</p>
+<p><b>Still open:</b> a direct test of “how close to the best possible setting” on real data (a grid of fixed settings on the Bashan cohort, a train/test split, and the same nights resampled to other rates). Proposed, not run.</p>
+</div>
+</section>
+
+<section id="app">
+<div class="col">
+<h2><span class="part">Appendix</span> Thesis sleep-apnea results (stored outputs only)</h2>
+<p>The input signals of the 28 Charité patients are not available, so aTDS could not be run on them. The thesis's own statistics recompute correctly from the stored outputs: apnea patients have stronger links in wake, REM and deep sleep but not in light sleep, and more full-night links with higher AHI (Spearman ρ = 0.52, p = 0.005).</p>
+</div>
+<figure>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. A.1 · Ranked link strength, apnea vs control</div><div class="legend" id="leg7a"></div><div class="chart" id="fig7a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. A.2 · Full-night links vs AHI</div><div class="legend" id="leg7b"></div><div class="chart" id="fig7b"></div></div>
+  </div>
+  <figcaption>Left: thesis Fig. 20 redrawn; buttons change stage; dashed line = 7.8 % threshold. Right: dashed line = AHI 10. Here blue and aqua mean the two patient groups, not methods: every value is TDS.</figcaption>
+</figure>
+</section>
+</main>

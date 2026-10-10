@@ -1,0 +1,758 @@
+<meta charset="utf-8">
+<title>aTDS Evidence Reader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with figures allowed to run wider, like a journal preprint. */
+:root {
+  --bg: #fbfbf9; --paper: #ffffff; --ink: #16181d; --ink-2: #4b4f58; --ink-3: #7a7e87;
+  --rule: #dfe1e4; --grid: #eceef0; --tint: #f2f4f6; --accent: #1c5cab;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --null: #9aa0a8;
+  --st-awake: #f1f3f5; --st-rem: #e3e9f1; --st-ls: #d2dbe7; --st-ds: #b4c3d6;
+  --good: #1f7a3f; --bad: #b3261e;
+  --f-body: "Literata", Georgia, "Times New Roman", serif;
+  --f-ui: "IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141517; --paper: #1a1a19; --ink: #eceae4; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+  --rule: #34353a; --grid: #2a2b2f; --tint: #222327; --accent: #86b6ef;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --null: #77797f;
+  --st-awake: #202226; --st-rem: #252c36; --st-ls: #2b3542; --st-ds: #34445a;
+  --good: #5cc98a; --bad: #ff8a80; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #141517; --paper: #1a1a19; --ink: #eceae4; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+  --rule: #34353a; --grid: #2a2b2f; --tint: #222327; --accent: #86b6ef;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --null: #77797f;
+  --st-awake: #202226; --st-rem: #252c36; --st-ls: #2b3542; --st-ds: #34445a;
+  --good: #5cc98a; --bad: #ff8a80; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font: 16.5px/1.62 var(--f-body); }
+main { max-width: 980px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 80px; }
+.col { max-width: 68ch; }
+header.paper { border-bottom: 1px solid var(--rule); padding-bottom: 28px; margin-bottom: 8px; }
+.kicker { font: 500 12.5px/1.3 var(--f-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+h1 { font: 600 clamp(28px, 4.2vw, 40px)/1.15 var(--f-body); margin: 10px 0 12px; text-wrap: balance; max-width: 26ch; }
+h2 { font: 600 23px/1.25 var(--f-body); margin: 46px 0 10px; text-wrap: balance; }
+h3 { font: 600 17.5px/1.3 var(--f-body); margin: 30px 0 6px; }
+h4 { font: 600 13px/1.3 var(--f-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin: 22px 0 4px; }
+p, li { margin: 0 0 12px; }
+.byline { font: 400 15px/1.5 var(--f-ui); color: var(--ink-2); }
+.abstract { background: var(--tint); border-radius: 6px; padding: 18px 22px; margin: 22px 0 6px; }
+.abstract p { margin-bottom: 10px; } .abstract p:last-child { margin: 0; }
+.abstract .kicker { margin-bottom: 6px; }
+a { color: var(--accent); }
+code, .mono { font: 13.5px/1.5 var(--f-mono); }
+code { background: var(--tint); padding: 1px 4px; border-radius: 3px; overflow-wrap: anywhere; }
+pre { font: 12.5px/1.55 var(--f-mono); background: var(--tint); padding: 12px 14px; border-radius: 6px; overflow-x: auto; }
+.tw { overflow-x: auto; margin: 14px 0 18px; }
+table { border-collapse: collapse; font: 14px/1.4 var(--f-ui); font-variant-numeric: tabular-nums; min-width: 100%; }
+th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: top; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-weight: 600; color: var(--ink-2); border-bottom: 1.5px solid var(--ink-3); }
+td.l, th.l { text-align: left; }
+.pos { color: var(--good); font-weight: 600; } .neg { color: var(--bad); font-weight: 600; }
+figure { margin: 26px 0 30px; }
+figure .panels { display: grid; gap: 18px 22px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+figure .panel { min-width: 0; }
+figure .ptitle { font: 600 13px/1.3 var(--f-ui); color: var(--ink-2); margin: 0 0 4px; }
+figcaption { font: 14.5px/1.5 var(--f-body); color: var(--ink-2); margin-top: 10px; max-width: 80ch; }
+figcaption b { color: var(--ink); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font: 11.5px var(--f-ui); fill: var(--ink-2); }
+.chart .axis line, .chart .axis path { stroke: var(--ink-3); }
+.chart .gridl { stroke: var(--grid); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 13px/1.3 var(--f-ui); color: var(--ink-2); margin: 2px 0 6px; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+.legend i.box { width: 12px; height: 10px; border-radius: 2px; }
+.tip { position: fixed; pointer-events: none; z-index: 10; background: var(--paper); color: var(--ink); border: 1px solid var(--rule);
+  border-radius: 5px; padding: 6px 9px; font: 12.5px/1.4 var(--f-ui); box-shadow: 0 4px 14px rgba(0,0,0,.12); max-width: 280px; }
+.callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 16px 0; color: var(--ink-2); }
+.status { font: 600 12px/1 var(--f-ui); letter-spacing: .05em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+.toc { font: 14px/1.7 var(--f-ui); columns: 2 220px; margin: 16px 0 0; padding-left: 18px; color: var(--ink-2); }
+ol.refs li { margin-bottom: 8px; font-size: 15px; }
+.note { font: 13px/1.45 var(--f-ui); color: var(--ink-3); }
+.loading { font: 13px var(--f-ui); color: var(--ink-3); padding: 18px 0; }
+@media (max-width: 560px) { body { font-size: 15.5px; } main { padding-inline: 16px; } th, td { padding: 5px 7px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.sw { display: inline-block; width: 16px; height: 4px; border-radius: 2px; background: var(--c); vertical-align: middle; margin: 0 5px 0 2px; }
+.sw.dash { background: repeating-linear-gradient(90deg, var(--c) 0 5px, transparent 5px 8px); }
+.part { display: inline-block; font: 600 12px/1 var(--f-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 4px 7px; margin-right: 10px; vertical-align: 4px; }
+.verdict { background: var(--tint); border-radius: 6px; padding: 14px 18px; margin: 10px 0 20px; }
+.verdict p { margin: 4px 0 0; }
+table.score td { font-size: 13.5px; }
+</style>
+<main>
+<header class="paper">
+  <div class="kicker">All aTDS reports in one place · 10 October 2026</div>
+  <h1>aTDS evidence: does adaptive TDS do better, and where?</h1>
+  <div class="byline">For Asaf Markuza · compiled from pyTDS reports 01–07, the ground-truth study, the GarminTDS comparison and the aTDS paper draft. Every chart is redrawn from the committed result files.</div>
+  <div class="abstract">
+    <div class="kicker">How to read this</div>
+    <p><b>Order.</b> Part 1 tests both methods on a result everyone agrees on (Bashan et al. 2012: the sleep network is weakest in deep sleep). Part 2 uses other data where the right answer is known. Part 3 uses data where the answer is only approximately known, and asks who did better. Part 4 is the scoreboard.</p>
+    <p><b>Colours, everywhere on this page:</b> <span class="sw" style="--c:var(--s1)"></span>blue = TDS with fixed settings (the published 60 s / 30 s / ±30 s / ±1 setting, or the fixed default in samples); <span class="sw" style="--c:var(--s2)"></span>orange = aTDS (adaptive window, calibrated tolerance); <span class="sw dash" style="--c:var(--null)"></span>dashed gray = “oracle”, the best setting found by looking at the answer (only possible on synthetic data); <span class="sw" style="--c:var(--s3)"></span>aqua = a third series where needed (named in the legend). Hover any mark for its value.</p>
+    <p><b>Two words used throughout.</b> <i>AUC</i>: how well a method separates coupled from uncoupled signals (1 = perfectly, 0.5 = guessing). <i>dz</i>: paired effect size of a known difference across people (bigger = the known effect stands out more clearly).</p>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th class="l">source</th><th class="l">what it tested</th><th class="l">where</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Reports 01–06</td><td class="l">the method; synthetic ground truth; sleep EEG, ECG→pulse, heart rate–breathing</td><td class="l">pyTDS <code>claude/practical-mccarthy-n2mec6</code></td></tr>
+      <tr><td class="l">Report 07</td><td class="l">nine fields of real data (hydrology, climate, energy …)</td><td class="l">same branch</td></tr>
+      <tr><td class="l">Ground-truth study</td><td class="l">Sleep-EDF (20 nights), Fantasia (40 people), treadmill (197 tests)</td><td class="l">pyTDS <code>experiments/adaptive_groundtruth</code></td></tr>
+      <tr><td class="l">Garmin comparison</td><td class="l">your 30 + 4 runs, speed → heart rate</td><td class="l">GarminTDS <code>experiments/adaptive_compare</code></td></tr>
+      <tr><td class="l">aTDS paper draft</td><td class="l">Bashan-2012 cohort (35 people), thesis apnea outputs, worked examples</td><td class="l">pyTDS <code>paper/</code>, branch <code>claude/new-session-1at9bf</code></td></tr>
+    </tbody></table></div>
+</header>
+
+<section id="p1">
+<div class="col">
+<h2><span class="part">Part 1</span> A known result: Bashan's sleep network</h2>
+<p>Bashan et al. (2012) found that the network linking brain, heart, breathing, eyes and muscles has the fewest links in deep sleep, more in REM, and the most in light sleep and wake. Your NCOM folder holds their 35 subjects (10 signals at 1 Hz). If a method is sound, it must give this same ordering on this same data.</p>
+<h3>1.1 Are we using the data the same way you did?</h3>
+<p>Yes, exactly. A Python port of your MATLAB code reproduces all 4 900 stored link strengths with zero difference, and new surrogate subjects match your stored ones (Fig. 1.1). Your significance threshold, 8.6 %, comes out the same.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 1.1 · Link strength by rank, real people vs surrogates (your method, ported)</div><div class="legend" id="leg1a"></div><div class="chart" id="fig1a"></div></div></div>
+  <figcaption>Mean strength of each of the 35 links, ranked, per stage. Blue: the 35 real people. Gray dashed: your 2 000 stored surrogates. Aqua: 2 000 new surrogates from the ported code. The two surrogate curves lie on top of each other; real links are far above them. Log scale.</figcaption>
+</figure>
+<div class="col">
+<h3>1.2 Do TDS and aTDS give Bashan's ordering?</h3>
+<p><b>Both do.</b> Ranked by mean connectivity, both methods give deep sleep lowest, then REM, with light sleep and wake highest (Fig. 1.2). Each method is shown on its own scale: aTDS's numbers are bigger because its windows and tolerance are larger, so only the ordering and the spread can be compared, not the height.</p>
+</div>
+<figure>
+  <div class="legend" id="leg12"></div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.2a · TDS (published setting)</div><div class="chart" id="fig12a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.2b · aTDS</div><div class="chart" id="fig12b"></div></div>
+  </div>
+  <figcaption>Mean connectivity per stage (mean excess over chance across the 35 links, percentage points) with 95 % CI across people; dots are individual people. Stages sorted as Bashan reports them, from most to least connected. Strict stage rule (a window counts only if its whole stability run lies in one stage). n per stage in the tooltip; aTDS has fewer people in wake and deep sleep because its 300-s windows need long uninterrupted stages.</figcaption>
+</figure>
+<div class="col">
+<h3>1.3 Does aTDS make the known differences clearer?</h3>
+<p><b>No.</b> The effect sizes for the four stage differences are about the same for TDS and aTDS (Fig. 1.3). aTDS looks higher for the two wake contrasts, but those rest on 6 and 9 people; with the looser 80 % stage rule all four gains are slightly negative and none is significant. The pre-registered verdict is <i>inconclusive</i>. Calibrating only the tolerance at the normal 60-s window (aqua) gave the clearest wake differences, an exploratory finding.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 1.3 · Effect size dz of the four known differences, 95 % CI</div><div class="legend" id="leg4b"></div><div class="chart" id="fig4b"></div></div></div>
+  <figcaption>Paired dz across people, strict stage rule, 10 000 bootstrap resamples. Gray: aTDS window with the old ±1-s tolerance, the worst variant. n per contrast in the tooltip.</figcaption>
+</figure>
+<div class="col">
+<h3>1.4 One night up close</h3>
+<p>Subject #29, breathing vs EEG θ, chosen by a fixed rule (the person and link closest to the median aTDS–TDS difference). The 40 minutes shown cross from light into deep sleep. TDS (60-s windows) finds a few stable windows; aTDS (300-s windows, ±15-s tolerance) finds none in this stretch. Over the whole night both score this pair higher in REM and light sleep than in deep sleep.</p>
+</div>
+<figure id="fig2">
+  <div class="legend" id="leg2"></div>
+  <div class="panels" style="grid-template-columns: 1fr;">
+    <div class="panel"><div class="ptitle">Fig. 1.4a · The two signals and the sleep stage</div><div class="chart" id="fig2a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.4b · Delay τ₀ in every window; filled = stable</div><div class="chart" id="fig2b"></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.4c · Cross-correlation in three windows</div><div class="chart" id="fig2c"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.4d · Whole night: score per stage vs chance</div><div class="chart" id="fig2d"></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.4e · How aTDS chose its tolerance</div><div class="chart" id="fig2e"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.4f · Memory of each signal</div><div class="chart" id="fig2f"></div></div>
+  </div>
+  <figcaption>a: signals (z-scored) around the light → deep transition. b: τ₀ per window; dotted boxes are each method's lag search range. c: C(τ) in the windows nearest 23, 28 and 38 min; dot = τ₀. d: whole-night score per stage (bars) with the chance score (black tick); n/a = fewer than 5 windows. e: chance score against tolerance; aTDS takes the widest tolerance with chance ≤ 5 %. f: window each signal would need for 30 independent samples (log scale); the slowest decides, capped at 300 s.</figcaption>
+</figure>
+<div class="col">
+<h3>1.5 What aTDS gains and what it pays here</h3>
+<p>Gain: against its own chance level, aTDS separates real from fake coupling better (mean AUC 0.778 vs 0.736), mostly in wake and deep sleep. Cost: at 300 s, wake is too short to score in most people (Fig. 1.5, right).</p>
+</div>
+<figure>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 1.5a · Separation from chance (mean AUC) per stage</div><div class="legend" id="leg5"></div><div class="chart" id="fig5a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 1.5b · People with enough windows to score (of 35)</div><div class="legend" id="leg5b"></div><div class="chart" id="fig5b"></div></div>
+  </div>
+  <figcaption>Left: 0.5 would be no better than chance. Right: strict stage rule; light orange = aTDS capped at 120 s, full orange = 300 s, gray = 600 s.</figcaption>
+</figure>
+<div class="verdict col"><div class="kicker">Part 1 verdict</div>
+<p><b>Same answer as Bashan for both methods.</b> aTDS does not sharpen the known stage differences on this data, separates real coupling from chance a little better, and loses short stages. This is the data the published parameters were designed for, so TDS has a home advantage here.</p></div>
+</section>
+
+<section id="p2">
+<div class="col">
+<h2><span class="part">Part 2</span> Other data where the right answer is known</h2>
+<h3>2.1 Synthetic signals that get slower (Report 05)</h3>
+<p>Two signals with a known weak coupling and known delay. Step by step the signals are made 1, 2, 4, 8 and 16 times slower (longer memory), at the same 1-Hz sampling. Fixed TDS loses the coupling from 4× on; aTDS keeps it up to 8× and stays closer to the oracle (Fig. 2.1).</p>
+</div>
+<figure>
+  <div class="legend" id="leg21"></div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 2.1a · Separating coupled from uncoupled (AUC)</div><div class="chart" id="fig21a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 2.1b · Correct delay found (% of coupled pairs)</div><div class="chart" id="fig21b"></div></div>
+  </div>
+  <figcaption>x: how much slower the signals are than in the base case (log scale); dotted line: chance (AUC 0.5). Oracle = best window/tolerance chosen by looking at the answer. Source: <code>synthetic_E1_summary.csv</code>, coupling strength 0.3, 20 trials per condition.</figcaption>
+</figure>
+<div class="col">
+<h3>2.2 Rulkov model neurons (Report 05)</h3>
+<p>Chaotic model neurons coupled with a known delay of 8, 16 or 32 steps. At delay 32 the fixed ±30 search cannot reach the delay; aTDS finds it every time. At delay 16 fixed TDS found the exact delay in 20 % of trials and aTDS in none (it reports 19–20, as does the oracle): the bursts repeat every ~41 steps, and delays near half that period are ambiguous. This is the one ground-truth test aTDS lost.</p>
+</div>
+<figure>
+  <div class="legend" id="leg22"></div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 2.2a · AUC by true delay</div><div class="chart" id="fig22a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 2.2b · Correct delay found (%)</div><div class="chart" id="fig22b"></div></div>
+  </div>
+  <figcaption>In panel b, aTDS (orange) and the oracle (gray) have the same values and lie on top of each other. At delay 8 no setting, not even the oracle, reported the exact delay; the reports do not explain why, so it is left as found. Source: <code>synthetic_E2_summary.csv</code>.</figcaption>
+</figure>
+<div class="col">
+<h3>2.3 Two more synthetic checks</h3>
+<div class="tw"><table><thead><tr><th class="l">test (Report 05)</th><th>fixed TDS</th><th>aTDS</th><th>oracle</th><th class="l">better</th></tr></thead><tbody id="t23"></tbody></table></div>
+<h3>2.4 The same recording at four sampling rates (Report 02)</h3>
+<p>The δ–σ EEG pair from pyTDS's benchmark, resampled to 0.5×, 1×, 2× and 4×. The physiology is identical, so the answer should not change. Fixed TDS falls from 75 % to 27 % because “60 samples” and “±1 sample” mean different things at each rate. aTDS gives 100 % at every rate. That 100 % is saturation (no window cap, windows of 19–119 min); with a 5-min cap the score at 1× is 90 % with chance about 5 %.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 2.4 · TDS score of one pair at four sampling rates</div><div class="legend" id="leg24"></div><div class="chart" id="fig24"></div></div></div>
+  <figcaption>Source: <code>real_R4_summary.csv</code>. x: sampling rate relative to the original 1 Hz (log scale).</figcaption>
+</figure>
+<div class="col">
+<h3>2.5 Sleep-EDF: 20 more nights, known deep-sleep effect (ground-truth study)</h3>
+<p>A different public sleep database, EEG band powers only. Here aTDS made two of the three known differences much clearer (light > deep and REM > deep; for REM > deep the fixed setting was not even significant). Wake > deep was slightly weaker with aTDS (not significant).</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 2.5 · Sleep-EDF: effect size of known differences, 95 % CI</div><div class="legend" id="leg25"></div><div class="chart" id="fig25"></div></div></div>
+  <figcaption>Source: <code>experiments/adaptive_groundtruth/results/effects_bootstrap.csv</code> (18 nights with all stages, 5 000 bootstraps).</figcaption>
+</figure>
+<div class="col">
+<h3>2.6 Fantasia: breathing–heart coupling is known to weaken with age</h3>
+<p>20 young and 20 elderly people. Both methods detect breathing → heart-rate coupling in all 40. aTDS separates young from elderly a little more (d 1.54 vs 1.25, gain not significant) and gives fewer false links when breathing of one person is paired with the heart rate of another (1/40 vs 4/40).</p>
+</div>
+<figure>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. 2.6a · Young > elderly, effect size d, 95 % CI</div><div class="legend" id="leg26"></div><div class="chart" id="fig26a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 2.6b · False links between different people (of 40)</div><div class="chart" id="fig26b"></div></div>
+  </div>
+  <figcaption>Source: ground-truth study, <code>effects_bootstrap.csv</code> and <code>fantasia_summary.csv</code>.</figcaption>
+</figure>
+<div class="col">
+<h3>2.7 Where neither method can win</h3>
+<ul>
+<li><b>ECG → finger pulse (Report 02).</b> The true delay is 430 ms (measured on 430 beats). Every variant reports about −80 ms. The heart beats every ~690 ms, so delays beyond half a beat cannot be told apart by any correlation method. Use beat-to-beat series instead of raw waveforms.</li>
+<li><b>Heart rate ↔ breathing at 4 Hz (Report 02).</b> The data already fit the fixed setting: aTDS picked a 59-sample window by itself and gave the same scores (31.6–75 % vs 32.5–75 %).</li>
+<li><b>Treadmill tests (ground-truth study).</b> Uninformative by design: the 120-s high-pass removed the graded ramp, so every method sat at the false-positive level. No conclusion.</li>
+</ul>
+</div>
+<div class="verdict col"><div class="kicker">Part 2 verdict</div>
+<p><b>When the signals are slower than the fixed window assumes, aTDS wins clearly and stays close to the oracle.</b> When the data already fit the fixed setting, they tie. aTDS lost one delay-accuracy test (Rulkov, delay near half a burst period). Rhythmic raw waveforms defeat both.</p></div>
+</section>
+
+<section id="p3">
+<div class="col">
+<h2><span class="part">Part 3</span> Data where the answer is only roughly known</h2>
+<h3>3.1 Nine science fields (Report 07)</h3>
+<p>Public data in which one signal is known to drive another, with delays known only approximately from the literature. Each result is compared with its own chance level (200 time-shifted copies). Counting the two hydrology rows as one field: aTDS better in 4, tie or mixed in 4, worse in 1.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 3.1 · Score above chance (score − 95th percentile of chance), percentage points</div><div class="legend" id="leg31"></div><div class="chart" id="fig31"></div></div></div>
+  <figcaption>Each row is one dataset. The small text after the dots gives the delay found by TDS / aTDS; ✓ or ✗ = matches or misses the literature value (no mark: no reliable reference). Hover for score, chance and window. Sleep EEG uses aTDS with the 5-min cap, as in Report 07. Source: <code>fields_summary.csv</code>; verdicts from Report 07.</figcaption>
+</figure>
+<div class="col">
+<h3>3.2 Your Garmin runs</h3>
+<p>Speed → heart rate, 30 runs, each tested against 100 chance copies. aTDS found the link in 8 runs, the app's fixed setting in 4 (6 only by aTDS, 2 only by the fixed setting; McNemar p = 0.29). False links between different runs: 1/30 vs 0/30. On 4 later runs that were not used for any choice: 2/4 vs 0/4. The gain needs the wide lag search: the same window and tolerance with the lag limited to 80 s found only 4/30.</p>
+</div>
+<figure>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 3.2 · Runs with a detected speed → HR link (of 30), by setting</div><div class="legend" id="leg8"></div><div class="chart" id="fig8a"></div></div></div>
+  <figcaption>Settings named window / lag / tolerance in seconds. Held-out result (of 4) after each bar.</figcaption>
+</figure>
+<figure id="fig9">
+  <div class="legend" id="leg9"></div>
+  <div class="panels" style="grid-template-columns: 1fr;">
+    <div class="panel"><div class="ptitle">Fig. 3.3a · One 27-minute run: heart rate and speed after the 120-s high-pass</div><div class="chart" id="fig9a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. 3.3b · Lag per window (positive = speed leads); filled = stable</div><div class="chart" id="fig9b"></div></div>
+  </div>
+  <div class="panels"><div class="panel"><div class="ptitle">Fig. 3.3c · Real score vs 100 chance scores</div><div class="chart" id="fig9c"></div></div></div>
+  <figcaption>The median-length run among the 8 where the two settings disagree. aTDS finds five stable windows at a 12–18-s lag; the fixed setting finds none. With only about a dozen 240-s windows, every chance score is 0, so one stable stretch is enough for p ≈ 0.01: a real limitation on short runs.</figcaption>
+</figure>
+<div class="verdict col"><div class="kicker">Part 3 verdict</div>
+<p><b>aTDS is better or equal in 8 of 9 fields and on your runs, worse only on very short data</b> (296 samples). Its price is delay precision: with a wide tolerance the El Niño delay came out at 1 month instead of about 3, and the spread of running lags widened from 1.9 to 7 s.</p></div>
+</section>
+
+<section id="p4">
+<div class="col">
+<h2><span class="part">Part 4</span> Scoreboard</h2>
+</div>
+<div class="tw"><table class="score">
+<thead><tr><th class="l">data</th><th class="l">answer known?</th><th class="l">what “better” means</th><th class="l">who did better</th><th class="l">note</th></tr></thead>
+<tbody id="tscore"></tbody></table></div>
+<div class="col">
+<h3>What this adds up to</h3>
+<p>aTDS is not uniformly better. Where the published parameters were designed (Bashan's own cohort) it gives the same answer and adds only a better separation from chance. Where the fixed window is too short for the signals' memory (slow synthetic coupling, Sleep-EDF EEG, rivers, electricity demand, running), it detects known couplings that fixed TDS misses, and on synthetic data it stays close to the best possible setting without knowing the answer. It costs time resolution, delay precision and short records.</p>
+<p><b>Still open:</b> a direct test of “how close to the best possible setting” on real data (a grid of fixed settings on the Bashan cohort, a train/test split, and the same nights resampled to other rates). Proposed, not run.</p>
+</div>
+</section>
+
+<section id="app">
+<div class="col">
+<h2><span class="part">Appendix</span> Thesis sleep-apnea results (stored outputs only)</h2>
+<p>The input signals of the 28 Charité patients are not available, so aTDS could not be run on them. The thesis's own statistics recompute correctly from the stored outputs: apnea patients have stronger links in wake, REM and deep sleep but not in light sleep, and more full-night links with higher AHI (Spearman ρ = 0.52, p = 0.005).</p>
+</div>
+<figure>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Fig. A.1 · Ranked link strength, apnea vs control</div><div class="legend" id="leg7a"></div><div class="chart" id="fig7a"></div></div>
+    <div class="panel"><div class="ptitle">Fig. A.2 · Full-night links vs AHI</div><div class="legend" id="leg7b"></div><div class="chart" id="fig7b"></div></div>
+  </div>
+  <figcaption>Left: thesis Fig. 20 redrawn; buttons change stage; dashed line = 7.8 % threshold. Right: dashed line = AHI 10. Here blue and aqua mean the two patient groups, not methods: every value is TDS.</figcaption>
+</figure>
+</section>
+</main>
+
+<div hidden><div id="fig1b"></div><div id="leg1b"></div><div id="fig4a"></div><div id="leg4a"></div></div>
+<div class="tip" id="tip" hidden></div>
+<script>
+(function () {
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const tip = document.getElementById("tip");
+const fmt = (v, d = 2) => v == null || !isFinite(v) ? "–" : (+v).toFixed(d);
+function showTip(ev, html) { tip.innerHTML = html; tip.hidden = false;
+  const w = tip.offsetWidth, h = tip.offsetHeight; let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + w > innerWidth - 8) x = ev.clientX - w - 14; if (y + h > innerHeight - 8) y = ev.clientY - h - 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px"; }
+function hideTip() { tip.hidden = true; }
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function legend(id, items) { const L = document.getElementById(id); if (!L) return; L.innerHTML = items.map(it =>
+  `<span><i class="${it.kind || ""}" style="background:${css(it.color)};opacity:${it.op ?? 1}"></i>${it.label}</span>`).join(""); }
+function scale(d0, d1, r0, r1, log) { if (log) { const a = Math.log10(d0), b = Math.log10(d1);
+  return v => r0 + (Math.log10(Math.max(v, 1e-9)) - a) / (b - a) * (r1 - r0); }
+  return v => r0 + (v - d0) / (d1 - d0) * (r1 - r0); }
+function niceTicks(a, b, n = 5) { const span = b - a, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+  const t = []; for (let v = Math.ceil(a / step) * step; v <= b + 1e-9; v += step) t.push(+v.toFixed(10)); return t; }
+
+/* Generic xy frame: returns {g, x, y, W, H} after drawing axes and grid. */
+function frame(host, o) {
+  host.innerHTML = ""; const W = o.width || Math.max(300, Math.round(host.clientWidth || 640)), H = o.height || 260, m = Object.assign({ t: 10, r: 14, b: 38, l: 48 }, o.margin || {});
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": o.aria || "" }, host);
+  const x = o.xband ? null : scale(o.x[0], o.x[1], m.l, W - m.r, o.xlog), y = scale(o.y[0], o.y[1], H - m.b, m.t, o.ylog);
+  const g = el("g", {}, svg), ax = el("g", { class: "axis" }, svg);
+  const yt = o.yticks || (o.ylog ? [] : niceTicks(o.y[0], o.y[1], o.yn || 5));
+  yt.forEach(v => { el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: "gridl" }, g);
+    const t = el("text", { x: m.l - 6, y: y(v) + 4, "text-anchor": "end" }, ax); t.textContent = o.yfmt ? o.yfmt(v) : v; });
+  if (x) { const xt = o.xticks || niceTicks(o.x[0], o.x[1], o.xn || 6);
+    xt.forEach(v => { el("line", { x1: x(v), x2: x(v), y1: H - m.b, y2: H - m.b + 4 }, ax);
+      const t = el("text", { x: x(v), y: H - m.b + 16, "text-anchor": "middle" }, ax); t.textContent = o.xfmt ? o.xfmt(v) : v; }); }
+  el("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b }, ax);
+  if (o.xlabel) { const t = el("text", { x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle" }, ax); t.textContent = o.xlabel; }
+  if (o.ylabel) { const t = el("text", { x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})` }, ax); t.textContent = o.ylabel; }
+  return { svg, g, x, y, W, H, m };
+}
+function path(g, pts, color, w = 2, dash) { const d = pts.filter(p => p[1] != null && isFinite(p[1])).map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join("");
+  return el("path", { d, fill: "none", stroke: color, "stroke-width": w, "stroke-linejoin": "round", "stroke-dasharray": dash || "" }, g); }
+function hover(target, html) { target.addEventListener("mousemove", ev => showTip(ev, html())); target.addEventListener("mouseleave", hideTip); }
+function hitDot(g, cx, cy, r, html) { const c = el("circle", { cx, cy, r: Math.max(r, 7), fill: "transparent" }, g); hover(c, html); return c; }
+
+let D, E;
+const STAGE_COL = { LS: "--st-ls", DS: "--st-ds", REM: "--st-rem", awake: "--st-awake" };
+const STAGE_NAME = { LS: "light sleep", DS: "deep sleep", REM: "REM", awake: "wake" };
+
+/* ---------- Fig 1 ---------- */
+function fig1() {
+  const R = D.replication, host = document.getElementById("fig1a");
+  const stages = R.stage_order; const all = stages.flatMap(s => R.rank_curves[s].real);
+  const f = frame(host, { x: [0, 4 * 36], y: [0.5, 100], ylog: true, yticks: [1, 2, 5, 10, 20, 50, 100], xticks: [], height: 280,
+    ylabel: "mean link strength (TDS %)", aria: "Ranked link strength per stage" });
+  stages.forEach((s, k) => { const off = k * 36; const c = R.rank_curves[s];
+    const lab = el("text", { x: f.x(off + 17.5), y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); lab.textContent = STAGE_NAME[s];
+    [["stored_sur", "--null"], ["port_sur", "--s3"], ["real", "--s1"]].forEach(([key, col]) => {
+      const pts = c[key].map((v, i) => [f.x(off + i + 0.5), f.y(Math.max(v, 0.5))]);
+      path(f.g, pts, css(col), key === "real" ? 2 : 1.6, key === "stored_sur" ? "4 3" : "");
+      if (key === "real") c[key].forEach((v, i) => { el("circle", { cx: f.x(off + i + 0.5), cy: f.y(Math.max(v, .5)), r: 2.4, fill: css(col) }, f.g);
+        hitDot(f.g, f.x(off + i + 0.5), f.y(Math.max(v, .5)), 3, () => `<b>${STAGE_NAME[s]}, rank ${i + 1}</b><br>real ${fmt(v, 1)} %<br>surrogate p95 (stored / ours) ${fmt(c.stored_sur_p95[i], 1)} / ${fmt(c.port_sur_p95[i], 1)} %`); }); }); });
+  legend("leg1a", [{ label: "real subjects (35)", color: "--s1" }, { label: "surrogates, stored (2 000)", color: "--null" }, { label: "surrogates, ported (2 000)", color: "--s3" }]);
+  const T = R.threshold_curves, h2 = document.getElementById("fig1b");
+  const g2 = frame(h2, { x: [1, 20], y: [40, 102], height: 280, xlabel: "TDS threshold (%)", ylabel: "significant links above threshold (%)", yticks: [40, 60, 80, 100] });
+  [["stored", "--null", "4 3"], ["port_surrogates_all_data_clean", "--s3", ""]].forEach(([k, col, dash]) =>
+    path(g2.g, T.grid.map((t, i) => [g2.x(t), T[k][i] == null ? null : g2.y(T[k][i])]), css(col), 2, dash));
+  [[R.thresholds.stored, "8.6 % stored"], [R.thresholds.all_data_clean_pooling, "7.1 %"]].forEach(([t, lab], k) => {
+    el("line", { x1: g2.x(t), x2: g2.x(t), y1: g2.y(40), y2: g2.y(102), stroke: css("--ink-3"), "stroke-dasharray": "2 3" }, g2.g);
+    const tx = el("text", { x: g2.x(t) + 4, y: g2.y(46 + k * 8) }, g2.svg); tx.textContent = lab; });
+  const ov = el("rect", { x: g2.m.l, y: g2.m.t, width: g2.W - g2.m.l - g2.m.r, height: g2.H - g2.m.t - g2.m.b, fill: "transparent" }, g2.svg);
+  ov.addEventListener("mousemove", ev => { const bb = g2.svg.getBoundingClientRect(); const px = (ev.clientX - bb.left) / bb.width * g2.W;
+    const t = 1 + (px - g2.m.l) / (g2.W - g2.m.l - g2.m.r) * 19; const i = Math.max(0, Math.min(T.grid.length - 1, Math.round((t - 1) * 10)));
+    showTip(ev, `<b>threshold ${fmt(T.grid[i], 1)} %</b><br>stored ${fmt(T.stored[i], 1)} %<br>ours ${fmt(T.port_surrogates_all_data_clean[i], 1)} %`); });
+  ov.addEventListener("mouseleave", hideTip);
+  legend("leg1b", [{ label: "stored (reproduction)", color: "--null" }, { label: "ours (ported surrogates)", color: "--s3" }]);
+}
+
+/* ---------- Fig 2 (sleep worked example) ---------- */
+function stageBands(f, t0, t1, stage, dt) { for (let i = 0; i < stage.length; ) { let j = i; while (j < stage.length && stage[j] === stage[i]) j++;
+  const a = t0 + i * dt, b = t0 + j * dt; if (STAGE_COL[stage[i]]) { const r = el("rect", { x: f.x(a), y: f.m.t, width: Math.max(0, f.x(b) - f.x(a)), height: f.H - f.m.t - f.m.b, fill: css(STAGE_COL[stage[i]]) }, f.g);
+    const s = stage[i]; hover(r, () => `${STAGE_NAME[s]}, ${Math.round(a / 60)}–${Math.round(b / 60)} min`); }
+  i = j; } }
+function zs(a) { const m = a.reduce((s, v) => s + v, 0) / a.length, sd = Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / a.length) || 1; return a.map(v => (v - m) / sd); }
+function fig2() {
+  const S = E.sleep, [t0, t1] = S.span, M = S.methods; const mk = { TDS: "--s1", aTDS: "--s2" };
+  document.querySelectorAll("[data-x]").forEach(n => { const k = n.dataset.x;
+    n.textContent = k === "ex.subject" ? "#" + S.subject : k === "ex.pair" ? S.pair.join(" – ") : k === "ex.tol" ? M.aTDS.params.tolerance :
+      k === "ex.rawmax" ? Math.max(...Object.values(S.atds_derivation.raw_window_by_signal)) + " s" : ""; });
+  legend("leg2", [{ label: "TDS (60 / 30 / ±30 / ±1 s)", color: "--s1" }, { label: `aTDS (${M.aTDS.params.window} / ${M.aTDS.params.step} / ±${M.aTDS.params.max_lag} / ±${M.aTDS.params.tolerance} s)`, color: "--s2" },
+    { label: "light sleep", color: "--st-ls", kind: "box" }, { label: "deep sleep", color: "--st-ds", kind: "box" }, { label: "chance score (D)", color: "--ink" }]);
+  const xm = v => (v / 60).toFixed(0);
+  let f = frame(document.getElementById("fig2a"), { x: [t0, t1], y: [-8, 8], height: 230, xfmt: xm, xlabel: "time in recording (min)", yticks: [] });
+  stageBands(f, t0, t1, S.stage, 1);
+  const zx = zs(S.x), zy = zs(S.y);
+  path(f.g, zx.map((v, i) => [f.x(t0 + i), f.y(4 + Math.max(-3.8, Math.min(3.8, v)))]), css("--ink-2"), 1);
+  path(f.g, zy.map((v, i) => [f.x(t0 + i), f.y(-4 + Math.max(-3.8, Math.min(3.8, v)))]), css("--s3"), 1);
+  el("line", { x1: f.x(S.transition), x2: f.x(S.transition), y1: f.m.t, y2: f.H - f.m.b, stroke: css("--ink"), "stroke-dasharray": "3 3" }, f.g);
+  const lab = (txt, col, y) => { const t = el("text", { x: f.x(t0) + 6, y }, f.svg); t.textContent = txt; t.style.fill = css(col); };
+  lab(S.pair[0] + " (gray)", "--ink-2", f.y(7.4)); lab(S.pair[1] + " (aqua)", "--ink-2", f.y(-0.6));
+  const tl = el("text", { x: f.x(S.transition) + 4, y: f.H - f.m.b - 6 }, f.svg); tl.textContent = "LS → DS";
+  // B: tau per window
+  const lagmax = M.aTDS.params.max_lag;
+  f = frame(document.getElementById("fig2b"), { x: [t0, t1], y: [-lagmax - 5, lagmax + 5], height: 230, xfmt: xm, xlabel: "window centre (min)", ylabel: "τ₀ (s)", yticks: [-150, -100, -50, 0, 50, 100, 150] });
+  stageBands(f, t0, t1, S.stage, 1);
+  ["TDS", "aTDS"].forEach(k => { const m = M[k]; const col = css(mk[k]);
+    el("rect", { x: f.m.l, y: f.y(m.params.max_lag), width: f.W - f.m.l - f.m.r, height: f.y(-m.params.max_lag) - f.y(m.params.max_lag), fill: "none", stroke: col, "stroke-dasharray": "2 4", "stroke-width": 1 }, f.g);
+    m.centre.forEach((c, i) => { const st = m.stable[i] === 1, cx = f.x(c), cy = f.y(m.tau[i]);
+      el("circle", { cx, cy, r: k === "aTDS" ? 5 : 3.5, fill: st ? col : css("--paper"), stroke: col, "stroke-width": 1.6 }, f.g);
+      hitDot(f.g, cx, cy, 4, () => `<b>${k}</b> window at ${(c / 60).toFixed(1)} min<br>τ₀ = ${m.tau[i]} s · ${st ? "stable" : "not stable"}<br>search ±${m.params.max_lag} s, tolerance ±${m.params.tolerance} s`); }); });
+  // C: xcorr curves
+  const xc = document.getElementById("fig2c"); f = frame(xc, { x: [-lagmax, lagmax], y: [-1, 1], height: 240, xlabel: "lag τ (s)", ylabel: "C(τ)", yticks: [-1, -0.5, 0, 0.5, 1] });
+  ["TDS", "aTDS"].forEach(k => M[k].xcorr.forEach((w, n) => { const col = css(mk[k]);
+    const p = path(f.g, w.lags.map((l, i) => [f.x(l), f.y(w.C[i])]), col, 1.6, ["", "5 3", "1.5 3"][n]);
+    let b = 0; w.C.forEach((v, i) => { if (Math.abs(v) > Math.abs(w.C[b])) b = i; });
+    el("circle", { cx: f.x(w.lags[b]), cy: f.y(w.C[b]), r: 4, fill: col }, f.g);
+    hitDot(f.g, f.x(w.lags[b]), f.y(w.C[b]), 4, () => `<b>${k}</b>, window at ${(w.centre / 60).toFixed(1)} min<br>τ₀ = ${w.lags[b]} s, C = ${fmt(w.C[b])}`); }));
+  const note = el("text", { x: f.m.l + 4, y: f.m.t + 12 }, f.svg); note.textContent = "solid / dashed / dotted: " + M.TDS.xcorr.map(w => (w.centre / 60).toFixed(0) + " min").join(", ");
+  // D: stage scores
+  const order = ["awake", "REM", "LS", "DS"]; f = frame(document.getElementById("fig2d"), { xband: true, y: [0, 40], height: 240, ylabel: "TDS % (whole night)" });
+  const bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const x0 = f.m.l + k * bw; const t = el("text", { x: x0 + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
+    ["TDS", "aTDS"].forEach((mth, j) => { const r = M[mth].stage_scores.find(z => z.stage === s); const bx = x0 + bw * (0.18 + j * 0.34), w = bw * 0.28;
+      if (r && r.real != null) { el("rect", { x: bx, y: f.y(Math.min(r.real, 40)), width: w, height: f.y(0) - f.y(Math.min(r.real, 40)), rx: 3, fill: css(mk[mth]) }, f.g);
+        if (r.chance != null) el("line", { x1: bx - 2, x2: bx + w + 2, y1: f.y(r.chance), y2: f.y(r.chance), stroke: css("--ink"), "stroke-width": 2 }, f.g);
+        const hb = el("rect", { x: bx, y: f.m.t, width: w, height: f.y(0) - f.m.t, fill: "transparent" }, f.g);
+        hover(hb, () => `<b>${mth}, ${STAGE_NAME[s]}</b><br>real ${fmt(r.real, 1)} % · chance ${fmt(r.chance, 1)} %<br>excess ${fmt(r.excess, 1)} · ${r.n_windows} windows`); }
+      else { const tt = el("text", { x: bx + w / 2, y: f.y(0) - 4, "text-anchor": "middle" }, f.svg); tt.textContent = "n/a"; } }); });
+  // E: tolerance calibration
+  const NS_ = S.atds_derivation.null_score_by_tolerance, tols = Object.keys(NS_).map(Number);
+  f = frame(document.getElementById("fig2e"), { x: [0, Math.max(...tols)], y: [0, 7], height: 220, xlabel: "tolerance (± s)", ylabel: "null TDS score (%)" });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(5), y2: f.y(5), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+  const l5 = el("text", { x: f.m.l + 4, y: f.y(5) - 5 }, f.svg); l5.textContent = "5 % chance budget";
+  path(f.g, tols.map(t => [f.x(t), f.y(NS_[t])]), css("--s2"), 2);
+  tols.forEach(t => { el("circle", { cx: f.x(t), cy: f.y(NS_[t]), r: t === S.atds_derivation.chosen_tolerance ? 6 : 3, fill: css("--s2") }, f.g);
+    hitDot(f.g, f.x(t), f.y(NS_[t]), 3, () => `tolerance ±${t} s → null score ${fmt(NS_[t])} %${t === S.atds_derivation.chosen_tolerance ? "<br><b>chosen</b>" : ""}`); });
+  // F: raw Bartlett windows
+  const RW = S.atds_derivation.raw_window_by_signal, sigs = Object.keys(RW).sort((a, b) => RW[b] - RW[a]);
+  f = frame(document.getElementById("fig2f"), { xband: true, y: [30, 10000], ylog: true, yticks: [60, 300, 1000, 3000, 10000], height: 230, ylabel: "window for 30 indep. samples (s)", margin: { b: 44, l: 56 } });
+  const bw2 = (f.W - f.m.l - f.m.r) / sigs.length;
+  sigs.forEach((s, k) => { const x0 = f.m.l + k * bw2 + bw2 * 0.2, w = bw2 * 0.6, inPair = S.pair.includes(s);
+    el("rect", { x: x0, y: f.y(RW[s]), width: w, height: f.y(30) - f.y(RW[s]), rx: 3, fill: css(inPair ? "--s2" : "--null") }, f.g);
+    const t = el("text", { x: x0 + w / 2, y: f.H - f.m.b + 14, "text-anchor": "middle" }, f.svg); t.textContent = s;
+    const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(30) - f.m.t, fill: "transparent" }, f.g); hover(hb, () => `<b>${s}</b>: ${RW[s]} s${inPair ? " (in this pair)" : ""}`); });
+  [[60, "60 s (TDS)"], [300, "300 s cap"]].forEach(([v, lab]) => { el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(v), y2: f.y(v), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+    const t = el("text", { x: f.m.l + 4, y: f.y(v) - 4 }, f.svg); t.textContent = lab; });
+}
+
+/* ---------- Fig 3 heatmaps ---------- */
+function fig3() {
+  const grid = document.getElementById("fig3grid"); grid.innerHTML = ""; const sig = D.signals;
+  const short = ["HR", "Rsp", "Chn", "Leg", "Eye", "δ", "θ", "α", "σ", "β"];
+  [["published", "TDS", "--s1"], ["v2_calibrated", "aTDS", "--s2"]].forEach(([v, name, col]) => {
+    const vals = D.stages.flatMap(s => D.stage_matrices[v][s].excess.flat()).filter(x => x != null); const vmax = Math.max(...vals.map(Math.abs));
+    D.stages.forEach(s => { const M = D.stage_matrices[v][s]; const div = document.createElement("div"); div.className = "panel";
+      div.innerHTML = `<div class="ptitle">${name} · ${STAGE_NAME[s]}</div><div class="chart"></div>`; grid.appendChild(div);
+      const host = div.querySelector(".chart"); const W = 230, H = 230, l = 30, t = 4, cs = (W - l - 4) / 10;
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${name} ${s} network` }, host);
+      for (let i = 0; i < 10; i++) { const a = el("text", { x: l - 4, y: t + i * cs + cs / 2 + 4, "text-anchor": "end" }, svg); a.textContent = short[i];
+        const b = el("text", { x: l + i * cs + cs / 2, y: t + 10 * cs + 13, "text-anchor": "middle", style: "font-size:9.5px" }, svg); b.textContent = short[i];
+        for (let j = 0; j < 10; j++) { const val = M.excess[i][j]; if (i === j || val == null) continue;
+          const a01 = Math.max(0, val) / vmax; const r = el("rect", { x: l + j * cs + 1, y: t + i * cs + 1, width: cs - 2, height: cs - 2, rx: 2, fill: css(col), "fill-opacity": (0.06 + 0.94 * a01).toFixed(3) }, svg);
+          hover(r, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>${sig[i]} – ${sig[j]}<br>excess ${fmt(val, 1)} pts · real ${fmt(M.real[i][j], 1)} %<br>${M.n_subjects} subjects`); } } }); });
+  legend("leg3", [{ label: "TDS: darker = more excess over chance", color: "--s1", kind: "box" }, { label: "aTDS (own scale)", color: "--s2", kind: "box" }]);
+}
+
+/* ---------- Fig 4 ---------- */
+function fig4() {
+  const order = ["awake", "REM", "LS", "DS"], C = D.connectivity; const vals = [];
+  ["published", "v2_calibrated"].forEach(v => order.forEach(s => C[v].strict[s].forEach(x => x != null && vals.push(x))));
+  const f = frame(document.getElementById("fig4a"), { xband: true, y: [Math.min(-2, Math.floor(Math.min(...vals))), Math.ceil(Math.max(...vals))], height: 300, ylabel: "connectivity (mean excess, pts)" });
+  const bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s]; });
+  [["published", "--s1", 0.3], ["v2_calibrated", "--s2", 0.7]].forEach(([v, col, pos]) => { const c = css(col);
+    for (let subj = 0; subj < 35; subj++) { const pts = order.map((s, k) => [f.m.l + k * bw + bw * pos, C[v].strict[s][subj] == null ? null : f.y(C[v].strict[s][subj])]);
+      let seg = []; pts.forEach(p => { if (p[1] == null) { if (seg.length > 1) path(f.g, seg, c, 0.6).setAttribute("stroke-opacity", .35); seg = []; } else seg.push(p); });
+      if (seg.length > 1) path(f.g, seg, c, 0.6).setAttribute("stroke-opacity", .35);
+      pts.forEach((p, k) => { if (p[1] == null) return; el("circle", { cx: p[0], cy: p[1], r: 2.6, fill: c, "fill-opacity": .8 }, f.g);
+        hitDot(f.g, p[0], p[1], 3, () => `<b>${v === "published" ? "TDS" : "aTDS"}</b>, subject ${subj}<br>${STAGE_NAME[order[k]]}: ${fmt(C[v].strict[order[k]][subj], 1)} pts`); }); } });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(0), y2: f.y(0), stroke: css("--ink-3") }, f.g);
+  legend("leg4a", [{ label: "TDS", color: "--s1", kind: "dot" }, { label: "aTDS", color: "--s2", kind: "dot" }]);
+  // B forest
+  const vars = [["published", "TDS (published)", "--s1"], ["tol_only", "tol_only (60 s, calibrated tol.)", "--s3"], ["v2_calibrated", "aTDS (cap 300)", "--s2"], ["win_only", "win_only (300 s, ±1 s)", "--null"]];
+  const hyps = ["H1", "H2", "H3", "H4"], hname = { H1: "LS > DS", H2: "wake > DS", H3: "LS > REM", H4: "wake > REM" };
+  const rows = D.effects.effects.filter(r => r.rule === "strict");
+  const g = frame(document.getElementById("fig4b"), { x: [0, 6.2], y: [0, hyps.length * (vars.length + 1)], height: 320, xlabel: "dz (paired effect size)", margin: { l: 82 }, yticks: [] });
+  hyps.forEach((h, hi) => { const base = hi * (vars.length + 1); const lab = el("text", { x: g.m.l - 6, y: g.y(base + vars.length / 2) + 4, "text-anchor": "end" }, g.svg); lab.textContent = hname[h];
+    vars.forEach(([v, name, col], vi) => { const r = rows.find(z => z.variant === v && z.hyp === h); if (!r) return; const yy = g.y(base + vi + 0.5);
+      const hi_ = Math.min(6.2, r.dz_ci_hi);
+      el("line", { x1: g.x(Math.max(0, r.dz_ci_lo)), x2: g.x(hi_), y1: yy, y2: yy, stroke: css(col), "stroke-width": 2 }, g.g);
+      el("circle", { cx: g.x(Math.min(6.2, r.dz)), cy: yy, r: 4, fill: css(col) }, g.g);
+      hitDot(g.g, g.x(Math.min(6.2, r.dz)), yy, 4, () => `<b>${name}</b>, ${hname[h]}<br>dz ${fmt(r.dz)} [${fmt(r.dz_ci_lo)}, ${fmt(r.dz_ci_hi)}]<br>n = ${r.n} · Holm p ${(+r.p_holm).toPrecision(2)}`); }); });
+  legend("leg4b", vars.map(([, name, col]) => ({ label: name, color: col, kind: "dot" })));
+}
+
+/* ---------- Fig 5 ---------- */
+function fig5() {
+  const vars = [["published", "TDS", "--s1"], ["tol_only", "tol_only", "--s3"], ["v2_calibrated", "aTDS", "--s2"], ["win_only", "win_only", "--null"]];
+  const order = ["awake", "REM", "LS", "DS"], N = D.network.by_stage;
+  let f = frame(document.getElementById("fig5a"), { xband: true, y: [0.5, 1], height: 260, ylabel: "mean AUC" });
+  let bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
+    vars.forEach(([v, name, col], j) => { const r = N.find(z => z.variant === v && z.stage === s); if (!r) return; const w = bw * 0.8 / vars.length, x0 = f.m.l + k * bw + bw * 0.1 + j * w;
+      el("rect", { x: x0 + 1, y: f.y(r.mean_auc), width: w - 2, height: f.y(0.5) - f.y(r.mean_auc), rx: 3, fill: css(col) }, f.g);
+      const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0.5) - f.m.t, fill: "transparent" }, f.g);
+      hover(hb, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>mean AUC ${fmt(r.mean_auc, 3)}<br>${r.n_sig} of 35 links significant`); }); });
+  legend("leg5", vars.map(([, name, col]) => ({ label: name, color: col, kind: "box" })));
+  const nd = D.mechanism.n_defined, vv = [["published", "TDS", "--s1", 1], ["v2_cap120", "aTDS cap 120 s", "--s2", .45], ["v2_calibrated", "aTDS cap 300 s", "--s2", 1], ["v2_cap600", "aTDS cap 600 s", "--null", 1]];
+  f = frame(document.getElementById("fig5b"), { xband: true, y: [0, 35], height: 260, ylabel: "subjects (strict rule)", yticks: [0, 10, 20, 30, 35] });
+  bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
+    vv.forEach(([v, name, col, op], j) => { const n = nd[`${v}|strict|${s}`]; const w = bw * 0.8 / vv.length, x0 = f.m.l + k * bw + bw * 0.1 + j * w;
+      el("rect", { x: x0 + 1, y: f.y(n), width: w - 2, height: f.y(0) - f.y(n), rx: 3, fill: css(col), "fill-opacity": op }, f.g);
+      const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0) - f.m.t, fill: "transparent" }, f.g);
+      hover(hb, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>${n} of 35 subjects defined<br>(80 % rule: ${nd[`${v}|p80|${s}`]})`); }); });
+  legend("leg5b", vv.map(([, name, col, op]) => ({ label: name, color: col, kind: "box", op })));
+}
+
+/* ---------- Fig 6 ---------- */
+function fig6() {
+  const I = D.mechanism.independent_samples_per_window, sigs = D.signals.slice().sort((a, b) => I["60"][a] - I["60"][b]);
+  const f = frame(document.getElementById("fig6a"), { xband: true, y: [0.1, 100], ylog: true, yticks: [0.1, 0.3, 1, 3, 10, 30, 100], height: 270, ylabel: "independent samples per window" });
+  const bw = (f.W - f.m.l - f.m.r) / sigs.length, Ls = [["60", "--s1", "60 s (TDS)"], ["120", "--s3", "120 s"], ["300", "--s2", "300 s (aTDS cap)"]];
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(1), y2: f.y(1), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+  sigs.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = s;
+    Ls.forEach(([L, col, name], j) => { const v = I[L][s], w = bw * 0.75 / 3, x0 = f.m.l + k * bw + bw * 0.125 + j * w;
+      el("rect", { x: x0 + 1, y: f.y(v), width: w - 2, height: f.y(0.1) - f.y(v), rx: 2, fill: css(col) }, f.g);
+      const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0.1) - f.m.t, fill: "transparent" }, f.g);
+      hover(hb, () => `<b>${s}</b>, ${name}<br>${fmt(v, 2)} independent samples<br>median Bartlett window ${D.mechanism.median_raw_bartlett_window[s]} s`); }); });
+  legend("leg6", Ls.map(([, col, name]) => ({ label: name, color: col, kind: "box" })));
+}
+
+/* ---------- Fig 7 apnea ---------- */
+let apStage = "awake";
+function fig7() {
+  const A = D.apnea, host = document.getElementById("fig7a");
+  if (!document.getElementById("ap-bar")) {
+    const bar = document.createElement("div"); bar.id = "ap-bar"; bar.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 6px";
+    A.stage_order.forEach(s => { const b = document.createElement("button"); b.type = "button"; b.textContent = STAGE_NAME[s]; b.id = "ap-" + s;
+      b.style.cssText = "font:500 12.5px var(--f-ui);padding:3px 9px;border-radius:4px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer";
+      b.onclick = () => { apStage = s; fig7(); }; bar.appendChild(b); });
+    host.parentElement.insertBefore(bar, document.getElementById("leg7a")); }
+  A.stage_order.forEach(s => { const b = document.getElementById("ap-" + s); b.style.background = css(s === apStage ? "--tint" : "--paper"); b.style.fontWeight = s === apStage ? 600 : 400; b.setAttribute("aria-pressed", s === apStage); });
+  const R = A.ranks[apStage]; const t = A.tests[apStage];
+  const f = frame(host, { x: [0, 105], y: [0, Math.max(30, Math.ceil(Math.max(...R.sick, ...R.healthy) / 5) * 5)], height: 270, xlabel: "link rank", ylabel: "group link strength (TDS %)" });
+  [["sick", "--s1"], ["healthy", "--s3"]].forEach(([k, col]) => { path(f.g, R[k].map((v, i) => [f.x(i + 1), f.y(v)]), css(col), 2);
+    R[k].forEach((v, i) => hitDot(f.g, f.x(i + 1), f.y(v), 2, () => `<b>${k === "sick" ? "AHI > 10" : "AHI ≤ 10"}</b>, rank ${i + 1}: ${fmt(v, 1)} %`)); });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(A.threshold), y2: f.y(A.threshold), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+  const tx = el("text", { x: f.W - f.m.r - 2, y: f.m.t + 12, "text-anchor": "end" }, f.svg);
+  tx.textContent = `${STAGE_NAME[apStage]} · signed-rank p ${(+t.thesis_signrank_p).toPrecision(2)} · KS p ${(+t.thesis_ks_p).toPrecision(2)}`;
+  legend("leg7a", [{ label: "AHI > 10 (14)", color: "--s1" }, { label: "AHI ≤ 10 (14)", color: "--s3" }]);
+  const P = A.full_night.per_patient_ahi_links;
+  const g = frame(document.getElementById("fig7b"), { x: [0, 115], y: [20, 75], height: 270, xlabel: "AHI (events per hour)", ylabel: "links above 7.8 %" });
+  el("line", { x1: g.x(10), x2: g.x(10), y1: g.m.t, y2: g.H - g.m.b, stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, g.g);
+  P.forEach(([a, n]) => { const col = css(a > 10 ? "--s1" : "--s3"); el("circle", { cx: g.x(a), cy: g.y(n), r: 4.5, fill: col, stroke: css("--paper"), "stroke-width": 1.5 }, g.g);
+    hitDot(g.g, g.x(a), g.y(n), 5, () => `AHI ${a} · ${n} links`); });
+  const tt = el("text", { x: g.W - g.m.r - 2, y: g.m.t + 12, "text-anchor": "end" }, g.svg); tt.textContent = `Spearman ρ = ${fmt(A.full_night.spearman_links_vs_ahi)}, p = ${fmt(A.full_night.spearman_p, 3)}`;
+  legend("leg7b", [{ label: "AHI > 10", color: "--s1", kind: "dot" }, { label: "AHI ≤ 10", color: "--s3", kind: "dot" }]);
+}
+
+/* ---------- Fig 8 Garmin ---------- */
+function fig8() {
+  const G = D.garmin, names = { frozen: "app 120/40/±2", pytds_default: "pyTDS default 60/30/±1", v1_fixedtol: "v1 rule ±2", v2_fixedtol: "aTDS window, ±2",
+    v2_calibrated: "aTDS (per run)", v2_calibrated_pooled: "aTDS pooled 240/119/±14", fixed_240_tol2: "240/80/±2", fixed_240_tol14: "240/80/±14", fixed_120_tol14: "120/40/±14", locked_240_119_tol14: "locked 240/119/±14" };
+  const main = G.main.filter(r => r.dataset === "real"), held = G.heldout.filter(r => r.dataset === "real");
+  const order = ["pytds_default", "v1_fixedtol", "fixed_240_tol2", "v2_fixedtol", "fixed_120_tol14", "frozen", "fixed_240_tol14", "v2_calibrated", "v2_calibrated_pooled", "locked_240_119_tol14"];
+  const f = frame(document.getElementById("fig8a"), { x: [0, 10], y: [0, order.length], height: 330, xlabel: "runs with a detected link (main set, of 30)", margin: { l: 168 }, yticks: [], xticks: [0, 2, 4, 6, 8, 10] });
+  order.forEach((v, i) => { const r = main.find(z => z.variant === v), h = held.find(z => z.variant === v); if (!r) return; const yy = f.y(order.length - i - 0.5);
+    const col = v === "frozen" ? "--s1" : v === "v2_calibrated" ? "--s2" : "--null";
+    const lab = el("text", { x: f.m.l - 6, y: yy + 4, "text-anchor": "end" }, f.svg); lab.textContent = names[v];
+    el("rect", { x: f.x(0), y: yy - 8, width: f.x(r.n_detect) - f.x(0), height: 16, rx: 3, fill: css(col) }, f.g);
+    const vt = el("text", { x: f.x(r.n_detect) + 5, y: yy + 4 }, f.svg); vt.textContent = `${r.n_detect}${h ? `  · held-out ${h.n_detect}/4` : ""}`;
+    const hb = el("rect", { x: f.m.l, y: yy - 10, width: f.W - f.m.l - f.m.r, height: 20, fill: "transparent" }, f.g);
+    hover(hb, () => `<b>${names[v]}</b><br>${r.n_detect}/30 detected · cross-run false positives ${r.n_xrun_fp}/${r.n_xrun}<br>median lag ${fmt(r.speed_hr_lag_median, 1)} s · window ${r.window_median} s · tol ±${r.tolerance_median} s${h ? `<br>held-out: ${h.n_detect}/4` : ""}`); });
+  legend("leg8", [{ label: "app setting (TDS)", color: "--s1", kind: "box" }, { label: "aTDS per run", color: "--s2", kind: "box" }, { label: "other settings", color: "--null", kind: "box" }]);
+}
+
+/* ---------- Fig 9 Garmin example ---------- */
+function fig9() {
+  const G = E.garmin, M = G.methods, keys = Object.keys(M), cols = ["--s1", "--s2"]; const n = G.hr.length;
+  legend("leg9", keys.map((k, i) => ({ label: `${k}: ${M[k].params.window} / ${M[k].params.step} / ±${M[k].params.max_lag} / ±${M[k].params.tolerance} s`, color: cols[i] })));
+  const hp = (a, w) => a.map((v, i) => { let s = 0, c = 0; for (let j = Math.max(0, i - (w >> 1)); j < Math.min(a.length, i + (w >> 1)); j++) { s += a[j]; c++; } return v - s / c; });
+  let f = frame(document.getElementById("fig9a"), { x: [0, n], y: [-3.5, 3.5], height: 200, xfmt: v => (v / 60).toFixed(0), xlabel: "time (min)" });
+  path(f.g, zs(hp(G.hr, 120)).map((v, i) => [f.x(i), f.y(Math.max(-3.5, Math.min(3.5, v)))]), css("--ink-2"), 1);
+  path(f.g, zs(hp(G.speed, 120)).map((v, i) => [f.x(i), f.y(Math.max(-3.5, Math.min(3.5, v)))]), css("--s3"), 1);
+  const a = el("text", { x: f.m.l + 6, y: f.m.t + 12 }, f.svg); a.textContent = "heart rate (gray) · speed (aqua)";
+  const lm = Math.max(...keys.map(k => M[k].params.max_lag));
+  f = frame(document.getElementById("fig9b"), { x: [0, n], y: [-lm - 5, lm + 5], height: 230, xfmt: v => (v / 60).toFixed(0), xlabel: "window centre (min)", ylabel: "lag (s)" });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(0), y2: f.y(0), stroke: css("--ink-3") }, f.g);
+  keys.forEach((k, i) => { const m = M[k], c = css(cols[i]);
+    m.centre.forEach((t, j) => { const lag = -m.lag_hr_leads_speed_s[j]; const st = m.stable[j] === 1;
+      el("circle", { cx: f.x(t), cy: f.y(lag), r: i ? 5 : 3.5, fill: st ? c : css("--paper"), stroke: c, "stroke-width": 1.6 }, f.g);
+      hitDot(f.g, f.x(t), f.y(lag), 4, () => `<b>${k}</b> at ${(t / 60).toFixed(1)} min<br>speed leads HR by ${lag} s · ${st ? "stable" : "not stable"}`); }); });
+  f = frame(document.getElementById("fig9c"), { x: [0, 50], y: [0, keys.length], height: 150, xlabel: "TDS score (%)", margin: { l: 120 }, yticks: [] });
+  keys.forEach((k, i) => { const m = M[k], yy = f.y(keys.length - i - 0.5), c = css(cols[i]);
+    const lab = el("text", { x: f.m.l - 6, y: yy + 4, "text-anchor": "end" }, f.svg); lab.textContent = k;
+    m.null_scores.forEach(v => el("line", { x1: f.x(v), x2: f.x(v), y1: yy - 7, y2: yy + 7, stroke: css("--null"), "stroke-opacity": .5 }, f.g));
+    el("circle", { cx: f.x(m.score), cy: yy, r: 7, fill: c, stroke: css("--paper"), "stroke-width": 2 }, f.g);
+    hitDot(f.g, f.x(m.score), yy, 7, () => `<b>${k}</b><br>score ${fmt(m.score, 1)} % · chance 95th pct ${fmt(m.chance95, 1)} %<br>p = ${fmt(m.p, 3)} · ${m.detected ? "detected" : "not detected"}${m.lag_s != null ? ` · lag ${-m.lag_s} s` : ""}`); });
+}
+
+let R;
+/* Reader-only figures. Uses frame/path/el/hover/hitDot/legend/css/fmt from the paper's chart code. */
+const ORDER_B = ["LS", "awake", "REM", "DS"];   // Bashan: most → least connected
+function meanCI(a) { const x = a.filter(v => v != null && isFinite(v)); const n = x.length; if (!n) return [NaN, NaN, NaN, 0];
+  const m = x.reduce((s, v) => s + v, 0) / n, sd = Math.sqrt(x.reduce((s, v) => s + (v - m) ** 2, 0) / Math.max(1, n - 1));
+  const h = 1.96 * sd / Math.sqrt(n); return [m, m - h, m + h, n]; }
+
+function fig12() {
+  [["published", "fig12a", "--s1", "TDS"], ["v2_calibrated", "fig12b", "--s2", "aTDS"]].forEach(([v, id, col, name]) => {
+    const C = D.connectivity[v].strict; const all = ORDER_B.flatMap(s => C[s].filter(x => x != null));
+    const hi = Math.ceil(Math.max(...all) / 5) * 5, lo = Math.min(0, Math.floor(Math.min(...all)));
+    const f = frame(document.getElementById(id), { xband: true, y: [lo, hi], height: 270, ylabel: "connectivity (pts above chance)" });
+    const bw = (f.W - f.m.l - f.m.r) / ORDER_B.length;
+    ORDER_B.forEach((s, k) => { const cx = f.m.l + k * bw + bw / 2, [m, a, b, n] = meanCI(C[s]);
+      const t = el("text", { x: cx, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
+      C[s].forEach((x, i) => { if (x == null) return; const jx = cx - bw * 0.22 + ((i * 37) % 100) / 100 * bw * 0.16;
+        el("circle", { cx: jx, cy: f.y(x), r: 2.2, fill: css(col), "fill-opacity": .35 }, f.g); });
+      el("line", { x1: cx + bw * 0.08, x2: cx + bw * 0.08, y1: f.y(a), y2: f.y(b), stroke: css(col), "stroke-width": 2.5 }, f.g);
+      el("circle", { cx: cx + bw * 0.08, cy: f.y(m), r: 6, fill: css(col), stroke: css("--paper"), "stroke-width": 2 }, f.g);
+      hitDot(f.g, cx + bw * 0.08, f.y(m), 8, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>mean ${fmt(m, 1)} pts [${fmt(a, 1)}, ${fmt(b, 1)}]<br>${n} of 35 people scored`); });
+    if (lo < 0) el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(0), y2: f.y(0), stroke: css("--ink-3") }, f.g); });
+  legend("leg12", [{ label: "TDS", color: "--s1", kind: "dot" }, { label: "aTDS", color: "--s2", kind: "dot" }, { label: "large dot = mean, bar = 95 % CI, small dots = people", color: "--ink-3", kind: "dot" }]);
+}
+
+function linePanel(id, xs, series, o) {
+  const f = frame(document.getElementById(id), Object.assign({ height: 250 }, o));
+  if (o.hline != null) { el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(o.hline), y2: f.y(o.hline), stroke: css("--ink-3"), "stroke-dasharray": "2 4" }, f.g);
+    const t = el("text", { x: f.W - f.m.r - 2, y: f.y(o.hline) - 4, "text-anchor": "end" }, f.svg); t.textContent = o.hlabel || ""; }
+  series.forEach(s => { const pts = xs.map((x, i) => [f.x(x), s.y[i] == null ? null : f.y(s.y[i])]);
+    path(f.g, pts, css(s.col), s.dash ? 1.8 : 2.2, s.dash ? "5 4" : "");
+    pts.forEach((p, i) => { if (p[1] == null) return; el("circle", { cx: p[0], cy: p[1], r: s.dash ? 3 : 4.5, fill: s.dash ? css("--paper") : css(s.col), stroke: css(s.col), "stroke-width": 1.6 }, f.g);
+      hitDot(f.g, p[0], p[1], 5, () => `<b>${s.name}</b><br>${o.xname} ${xs[i]}: ${o.fmtv(s.y[i])}${s.extra ? "<br>" + s.extra(i) : ""}`); }); });
+  return f;
+}
+const KEY3 = [{ label: "TDS (fixed default)", color: "--s1" }, { label: "aTDS", color: "--s2" }, { label: "oracle (best, found with the answer)", color: "--null" }];
+
+function fig21() {
+  const E = R.synthetic.E1_weak_coupling_vs_slowness, xs = E.fixed_default.r;
+  const mk = (key, scale) => [["fixed_default", "TDS", "--s1"], ["v2_calibrated", "aTDS", "--s2"], ["oracle", "oracle", "--null", true]].map(([v, name, col, dash]) =>
+    ({ name, col, dash, y: E[v][key].map(x => x * scale), extra: i => `window ${E[v].window[i]}, tolerance ±${E[v].tolerance[i]}` }));
+  linePanel("fig21a", xs, mk("auc", 1), { x: [0.8, 20], xlog: true, xticks: xs, y: [0, 1], yticks: [0, 0.25, 0.5, 0.75, 1], hline: 0.5, hlabel: "chance", xlabel: "signals slower by ×", ylabel: "AUC", xname: "×", fmtv: v => fmt(v, 2) });
+  linePanel("fig21b", xs, mk("hit_rate", 100), { x: [0.8, 20], xlog: true, xticks: xs, y: [0, 100], xlabel: "signals slower by ×", ylabel: "% correct delay", xname: "×", fmtv: v => fmt(v, 0) + " %" });
+  legend("leg21", KEY3);
+}
+function fig22() {
+  const E = R.synthetic.E2_rulkov_vs_delay, xs = E.fixed_default.delay;
+  const mk = (key, scale) => [["fixed_default", "TDS", "--s1"], ["v2_calibrated", "aTDS", "--s2"], ["oracle", "oracle", "--null", true]].map(([v, name, col, dash]) =>
+    ({ name, col, dash, y: E[v][key].map(x => x * scale), extra: i => `window ${E[v].window[i]}, tolerance ±${E[v].tolerance[i]}` }));
+  linePanel("fig22a", xs, mk("auc", 1), { x: [6, 40], xlog: true, xticks: xs, y: [0, 1], yticks: [0, 0.25, 0.5, 0.75, 1], hline: 0.5, hlabel: "chance", xlabel: "true delay (steps)", ylabel: "AUC", xname: "delay", fmtv: v => fmt(v, 2) });
+  linePanel("fig22b", xs, mk("hit_rate", 100), { x: [6, 40], xlog: true, xticks: xs, y: [0, 100], xlabel: "true delay (steps)", ylabel: "% correct delay", xname: "delay", fmtv: v => fmt(v, 0) + " %" });
+  legend("leg22", KEY3);
+}
+function tab23() {
+  const S = R.synthetic, g = (arr, cond, v, k) => (arr.find(z => z.condition === cond && z.variant === v) || {})[k];
+  const conds = S.E1c_mixed_speeds.map(z => z.condition).filter((c, i, a) => a.indexOf(c) === i);
+  const worst = v => Math.min(...conds.map(c => g(S.E1c_mixed_speeds, c, v, "auc")));
+  const rows = [["Signals of different speeds, worst of 4 combinations (AUC)", worst("fixed_default"), worst("v2_calibrated"), worst("oracle"), "aTDS"],
+    ["Coupling switching on/off, fast signals (balanced accuracy)", g(S.E1d_on_off, "r=1", "fixed_default", "balanced_acc_mean"), g(S.E1d_on_off, "r=1", "v2_calibrated", "balanced_acc_mean"), null, "tie"],
+    ["Coupling switching on/off, 4× slower (balanced accuracy)", g(S.E1d_on_off, "r=4", "fixed_default", "balanced_acc_mean"), g(S.E1d_on_off, "r=4", "v2_calibrated", "balanced_acc_mean"), null, "aTDS"]];
+  document.getElementById("t23").innerHTML = rows.map(r => `<tr><td class="l">${r[0]}</td><td>${fmt(r[1])}</td><td>${fmt(r[2])}</td><td>${r[3] == null ? "–" : fmt(r[3])}</td><td class="l">${pill(r[4])}</td></tr>`).join("");
+}
+function fig24() {
+  const E = R.synthetic.R4_sampling_rate, xs = E.fixed_default.factor;
+  linePanel("fig24", xs, [["fixed_default", "TDS", "--s1"], ["v2_calibrated", "aTDS (no cap)", "--s2"]].map(([v, name, col]) =>
+    ({ name, col, y: E[v].score, extra: i => `window ${E[v].window[i]} samples, tolerance ±${E[v].tolerance[i]}` })),
+    { x: [0.4, 5], xlog: true, xticks: xs, y: [0, 100], xlabel: "sampling rate (× original 1 Hz)", ylabel: "TDS score (%)", xname: "rate ×", fmtv: v => fmt(v, 1) + " %", height: 260 });
+  legend("leg24", [{ label: "TDS (60 samples / ±1 sample)", color: "--s1" }, { label: "aTDS, no window cap (saturates at 100 %)", color: "--s2" }]);
+}
+function forest(id, rows, o) {
+  const g = frame(document.getElementById(id), { x: o.x, y: [0, rows.length], height: 34 + rows.length * 24 + 30, xlabel: o.xlabel, margin: { l: o.ml || 110 }, yticks: [] });
+  rows.forEach((r, i) => { const yy = g.y(rows.length - i - 0.5);
+    if (r.label) { const t = el("text", { x: g.m.l - 6, y: yy + 4, "text-anchor": "end" }, g.svg); t.textContent = r.label; }
+    el("line", { x1: g.x(Math.max(o.x[0], r.lo)), x2: g.x(Math.min(o.x[1], r.hi)), y1: yy, y2: yy, stroke: css(r.col), "stroke-width": 2.2 }, g.g);
+    el("circle", { cx: g.x(r.est), cy: yy, r: 5, fill: css(r.col) }, g.g);
+    hitDot(g.g, g.x(r.est), yy, 6, () => r.tip); });
+  if (o.x[0] < 0) el("line", { x1: g.x(0), x2: g.x(0), y1: g.m.t, y2: g.H - g.m.b, stroke: css("--ink-3") }, g.g);
+}
+function fig25() {
+  const E = R.groundtruth.effects.filter(z => z.dataset === "sleep_edf"), effs = ["LS>DS dz", "REM>DS dz", "W>DS dz"], nm = { "LS>DS dz": "light > deep", "REM>DS dz": "REM > deep", "W>DS dz": "wake > deep" };
+  const rows = []; effs.forEach(e => [["published", "TDS", "--s1"], ["v2_calibrated", "aTDS", "--s2"]].forEach(([v, name, col], j) => {
+    const z = E.find(q => q.effect === e && q.variant === v);
+    rows.push({ label: j ? "" : nm[e], est: z.estimate, lo: z.ci_lo, hi: z.ci_hi, col, tip: `<b>${name}, ${nm[e]}</b><br>dz ${fmt(z.estimate)} [${fmt(z.ci_lo)}, ${fmt(z.ci_hi)}]${v !== "published" ? `<br>gain ${fmt(z.diff_vs_published)} [${fmt(z.diff_ci_lo)}, ${fmt(z.diff_ci_hi)}]` : ""}` }); }));
+  forest("fig25", rows, { x: [-0.2, 6.2], xlabel: "dz (paired effect size)" });
+  legend("leg25", [{ label: "TDS (published)", color: "--s1", kind: "dot" }, { label: "aTDS", color: "--s2", kind: "dot" }]);
+}
+function fig26() {
+  const E = R.groundtruth.effects.filter(z => z.dataset === "fantasia");
+  const rows = [["published", "TDS", "--s1"], ["v2_calibrated", "aTDS", "--s2"]].map(([v, name, col]) => { const z = E.find(q => q.variant === v);
+    return { label: name, est: z.estimate, lo: z.ci_lo, hi: z.ci_hi, col, tip: `<b>${name}</b><br>d ${fmt(z.estimate)} [${fmt(z.ci_lo)}, ${fmt(z.ci_hi)}]` }; });
+  forest("fig26a", rows, { x: [0, 2.6], xlabel: "d (young > elderly)", ml: 60 });
+  legend("leg26", [{ label: "TDS", color: "--s1", kind: "dot" }, { label: "aTDS", color: "--s2", kind: "dot" }]);
+  const F = R.groundtruth.fantasia; const f = frame(document.getElementById("fig26b"), { x: [0, 10], y: [0, 2], height: 130, xlabel: "false links (of 40 cross-person pairs)", margin: { l: 60 }, yticks: [], xticks: [0, 2, 4, 6, 8, 10] });
+  [["published", "TDS", "--s1"], ["v2_calibrated", "aTDS", "--s2"]].forEach(([v, name, col], i) => { const z = F.find(q => q.variant === v), n = Math.round(z.xsubj_fpr * 40), yy = f.y(2 - i - 0.5);
+    const t = el("text", { x: f.m.l - 6, y: yy + 4, "text-anchor": "end" }, f.svg); t.textContent = name;
+    el("rect", { x: f.x(0), y: yy - 9, width: Math.max(2, f.x(n) - f.x(0)), height: 18, rx: 3, fill: css(col) }, f.g);
+    const vt = el("text", { x: f.x(n) + 5, y: yy + 4 }, f.svg); vt.textContent = `${n}/40`; });
+}
+const FIELD_NAME = { hydrology_hourly: "Rain → river flow (hourly)", hydrology_daily: "Rain → river flow (daily)", energy_vic_summer: "Heat → electricity demand", beijing_pm25: "Wind → PM2.5 pollution",
+  climate_nino34_gistemp: "El Niño → global temperature", gas_furnace: "Gas feed → CO₂ (296 samples)", gasoline_weekly_diff: "Crude → petrol price", jena_T_rh: "Temperature ↔ humidity (control)",
+  sleep_eeg_delta_sigma: "Sleep EEG δ ↔ σ", neurokit_hr_rsp: "Heart rate ↔ breathing" };
+const FIELD_VERDICT = { hydrology_hourly: "aTDS", hydrology_daily: "tie", energy_vic_summer: "aTDS", beijing_pm25: "aTDS", climate_nino34_gistemp: "mixed", gas_furnace: "TDS",
+  gasoline_weekly_diff: "tie", jena_T_rh: "tie", sleep_eeg_delta_sigma: "aTDS", neurokit_hr_rsp: "tie" };
+function fig31() {
+  const F = R.fields, ds = Object.keys(FIELD_NAME);
+  const f = frame(document.getElementById("fig31"), { x: [-10, 100], y: [0, ds.length], height: 40 + ds.length * 30 + 30, xlabel: "score minus chance (pts)", margin: { l: 196, r: 90 }, yticks: [], xticks: [0, 20, 40, 60, 80, 100] });
+  el("line", { x1: f.x(0), x2: f.x(0), y1: f.m.t, y2: f.H - f.m.b, stroke: css("--ink-3") }, f.g);
+  ds.forEach((d, i) => { const yy = f.y(ds.length - i - 0.5);
+    const t = el("text", { x: f.m.l - 6, y: yy + 4, "text-anchor": "end" }, f.svg); t.textContent = FIELD_NAME[d];
+    const a = F.find(z => z.dataset === d && z.variant === "fixed_default"), b = F.find(z => z.dataset === d && z.variant === "adaptive");
+    const ea = a.score - a.null95, eb = b.score - b.null95, mk = z => z.match === true ? " ✓" : z.match === false ? " ✗" : "";
+    const right = Math.max(ea, eb) < 75, dl = el("text", { x: right ? f.x(Math.max(ea, eb)) + 10 : f.x(Math.min(ea, eb)) - 10, y: yy + 4, "text-anchor": right ? "start" : "end" }, f.svg);
+    dl.textContent = `${a.tau_phys}${mk(a)} / ${b.tau_phys}${mk(b)}`; dl.style.fontSize = "10.5px";
+    el("line", { x1: f.x(ea), x2: f.x(eb), y1: yy, y2: yy, stroke: css("--rule"), "stroke-width": 3 }, f.g);
+    [[a, ea, "--s1", "TDS"], [b, eb, "--s2", "aTDS"]].forEach(([z, e, col, name]) => { el("circle", { cx: f.x(e), cy: yy, r: 6, fill: css(col), stroke: css("--paper"), "stroke-width": 1.5 }, f.g);
+      hitDot(f.g, f.x(e), yy, 7, () => `<b>${name}: ${FIELD_NAME[d]}</b><br>score ${fmt(z.score, 1)} % · chance ${fmt(z.null95, 1)} %<br>delay ${z.tau_phys}${z.match === true ? " ✓" : z.match === false ? " ✗" : ""}<br>window ${z.window_phys}, tolerance ±${z.tolerance_phys}${z.calibration_failed === true ? "<br>calibration warning" : ""}`); });
+    const v = el("text", { x: f.W - f.m.r + 8, y: yy + 4 }, f.svg); v.textContent = { aTDS: "aTDS better", TDS: "TDS better", tie: "tie", mixed: "mixed" }[FIELD_VERDICT[d]];
+    v.style.fill = css(FIELD_VERDICT[d] === "aTDS" ? "--s2" : FIELD_VERDICT[d] === "TDS" ? "--s1" : "--ink-3"); v.style.fontWeight = 600; });
+  legend("leg31", [{ label: "TDS (fixed default)", color: "--s1", kind: "dot" }, { label: "aTDS", color: "--s2", kind: "dot" }]);
+}
+function pill(w) { const map = { aTDS: ["aTDS", "--s2"], TDS: ["TDS", "--s1"], tie: ["tie", "--ink-3"], mixed: ["mixed", "--ink-3"], none: ["neither", "--ink-3"], na: ["no comparison", "--ink-3"] };
+  const [t, c] = map[w] || [w, "--ink-3"]; return `<span class="status" style="color:var(${c})">${t}</span>`; }
+const SCORE = [
+  ["Bashan-2012 cohort, 35 people (Part 1)", "yes (stage ordering)", "known stage differences stand out more", "tie", "same ordering; dz not sharper (inconclusive)"],
+  ["Bashan-2012 cohort, 35 people (Part 1)", "yes", "real coupling separated from chance (AUC)", "aTDS", "0.778 vs 0.736; loses wake in 25/35 people at 300 s"],
+  ["Synthetic, fast signals (2.1)", "yes", "AUC, correct delay", "tie", "both perfect"],
+  ["Synthetic, 4–16× slower (2.1)", "yes", "AUC, correct delay", "aTDS", "8×: 0.91 / 95 % vs 0.35 / 0 %; oracle 1.00"],
+  ["Mixed speeds, on/off coupling (2.3)", "yes", "AUC, accuracy", "aTDS", "worst case 1.00 vs 0.76"],
+  ["Rulkov neurons, delay 32 (2.2)", "yes", "correct delay", "aTDS", "100 % vs 0 % (fixed search too short)"],
+  ["Rulkov neurons, delay 16 (2.2)", "yes", "correct delay", "TDS", "20 % vs 0 %; delay near half a burst period"],
+  ["Same EEG at 4 sampling rates (2.4)", "yes (should not change)", "same answer at every rate", "aTDS", "fixed 75 → 27 %; aTDS 100 % (saturated, no cap)"],
+  ["Sleep-EDF, 18 nights (2.5)", "yes", "known stage differences", "aTDS", "LS>DS +1.30, REM>DS +0.72; W>DS −0.23 (n.s.)"],
+  ["Fantasia, 40 people (2.6)", "yes", "young vs elderly; false links", "tie", "d 1.54 vs 1.25 (n.s.); false links 1/40 vs 4/40"],
+  ["ECG → finger pulse (2.7)", "yes (430 ms)", "correct delay", "none", "both report −80 ms: half-beat limit"],
+  ["Heart rate ↔ breathing (2.7)", "yes", "score vs chance", "tie", "aTDS chose ~the default by itself"],
+  ["Treadmill CPET (2.7)", "yes", "speed → HR detection", "na", "design flaw: uninformative"],
+  ["Nine fields (3.1)", "roughly", "above chance, delay", "aTDS", "4 better, 4 tie/mixed, 1 worse (296 samples)"],
+  ["Garmin, 30 + 4 runs (3.2)", "roughly (HR follows speed)", "speed → HR detected", "aTDS", "8 vs 4 (p = 0.29); held-out 2/4 vs 0/4"],
+  ["Thesis apnea cohort (Appendix)", "–", "–", "na", "inputs unavailable; only TDS outputs"]];
+function tabScore() { document.getElementById("tscore").innerHTML = SCORE.map(r => `<tr><td class="l">${r[0]}</td><td class="l">${r[1]}</td><td class="l">${r[2]}</td><td class="l">${pill(r[3])}</td><td class="l">${r[4]}</td></tr>`).join(""); }
+
+function renderAll() {
+  [fig1, fig12, fig4, fig5, fig7, fig8, fig21, fig22, tab23, fig24, fig25, fig26, fig31, tabScore].forEach(fn => { try { fn(); } catch (e) { console.error(fn.name, e); } });
+  if (E) [fig2, fig9].forEach(fn => { try { fn(); } catch (e) { console.error(fn.name, e); } });
+}
+Promise.all([fetch("figures/figdata.json").then(r => r.json()), fetch("figures/reader.json").then(r => r.json()),
+             fetch("examples.json").then(r => r.ok ? r.json() : null).catch(() => null)])
+  .then(([d, rr, e]) => { D = d; R = rr; E = e;
+    if (!E) ["fig2a", "fig9a"].forEach(id => { const n = document.getElementById(id); if (n) n.innerHTML = '<div class="loading">Worked-example traces are not in the public repository; run paper/scripts/examples.py to generate examples.json.</div>'; });
+    renderAll();
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(renderAll, 150); });
+    const mq = matchMedia("(prefers-color-scheme: dark)"); (mq.addEventListener ? mq.addEventListener("change", renderAll) : mq.addListener(renderAll));
+    new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }); })
+  .catch(err => { document.querySelectorAll(".chart").forEach(n => n.innerHTML = '<div class="loading">Figure data could not be loaded.</div>'); console.error(err); });
+})();
+</script>
