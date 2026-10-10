@@ -1,0 +1,580 @@
+1
+00:00:00,000 --> 00:00:02,009
+Here's something you've felt without noticing.
+
+2
+00:00:02,359 --> 00:00:04,541
+Your heart and your breathing aren't independent.
+
+3
+00:00:04,891 --> 00:00:07,283
+Breathe in, and your heart speeds up a little.
+
+4
+00:00:07,633 --> 00:00:08,573
+But not instantly.
+
+5
+00:00:08,923 --> 00:00:10,990
+It happens a moment later, with a delay.
+
+6
+00:00:12,767 --> 00:00:16,845
+Physiologists want to know which systems in the body are linked like this,
+
+7
+00:00:16,845 --> 00:00:17,341
+and when.
+
+8
+00:00:17,691 --> 00:00:20,802
+One popular tool for that is called Time Delay Stability.
+
+9
+00:00:21,152 --> 00:00:22,639
+TDS, for short.
+
+10
+00:00:23,633 --> 00:00:26,803
+In this video, we'll look at a version that picks its own settings.
+
+11
+00:00:27,153 --> 00:00:29,579
+We'll call it adaptive TDS.
+
+12
+00:00:29,929 --> 00:00:33,958
+But to get there, we first need to see how TDS itself thinks.
+
+13
+00:00:38,733 --> 00:00:39,151
+Okay.
+
+14
+00:00:39,501 --> 00:00:41,812
+Take a one-minute piece of two signals.
+
+15
+00:00:42,162 --> 00:00:44,867
+Is the second one just a delayed copy of the first?
+
+16
+00:00:45,217 --> 00:00:46,285
+Well, let's find out.
+
+17
+00:00:46,635 --> 00:00:47,738
+We slide it in time.
+
+18
+00:00:48,733 --> 00:00:53,110
+At every shift, we multiply the two curves point by point, and add it all up.
+
+19
+00:00:53,460 --> 00:00:56,608
+When the shapes line up, most of those products are positive,
+
+20
+00:00:56,608 --> 00:00:57,640
+so the sum gets big.
+
+21
+00:00:57,990 --> 00:01:00,974
+This running score is called the cross-correlation.
+
+22
+00:01:01,967 --> 00:01:03,522
+And its peak tells us the delay.
+
+23
+00:01:03,872 --> 00:01:05,324
+We call it τ₀.
+
+24
+00:01:05,674 --> 00:01:09,319
+Here, the second signal follows the first by 6 seconds.
+
+25
+00:01:14,100 --> 00:01:15,644
+Now, let's do that again.
+
+26
+00:01:15,994 --> 00:01:16,575
+And again.
+
+27
+00:01:16,925 --> 00:01:19,386
+Window after window, along the whole recording.
+
+28
+00:01:19,736 --> 00:01:21,443
+Every window gives us one delay.
+
+29
+00:01:21,793 --> 00:01:22,443
+One dot.
+
+30
+00:01:23,433 --> 00:01:27,508
+If two systems really are coupled, the dots line up at the same delay.
+
+31
+00:01:27,858 --> 00:01:29,971
+If they're not, they just jump around.
+
+32
+00:01:30,967 --> 00:01:33,277
+TDS turns this into a simple rule.
+
+33
+00:01:33,627 --> 00:01:37,676
+A window counts as stable when at least four out of five neighbouring delays
+
+34
+00:01:37,676 --> 00:01:37,996
+agree,
+
+35
+00:01:37,996 --> 00:01:39,328
+within a small tolerance.
+
+36
+00:01:39,678 --> 00:01:43,242
+In the published method, that's ±1 second.
+
+37
+00:01:44,233 --> 00:01:46,056
+Let's fill in the stable windows.
+
+38
+00:01:46,406 --> 00:01:50,133
+The TDS score is just the share of windows that are stable.
+
+39
+00:01:54,900 --> 00:02:00,215
+Now, those settings, a 60-second window, a 30-second step, ±1 second,
+
+40
+00:02:00,215 --> 00:02:04,606
+were chosen for sleep recordings sampled once per second.
+
+41
+00:02:04,956 --> 00:02:06,767
+And they quietly assume something.
+
+42
+00:02:07,117 --> 00:02:10,763
+They assume that one-minute holds plenty of independent information.
+
+43
+00:02:12,333 --> 00:02:13,587
+Look at a fast signal.
+
+44
+00:02:13,937 --> 00:02:16,248
+Every few seconds, it's doing something new.
+
+45
+00:02:16,598 --> 00:02:18,072
+Now look at a slow one.
+
+46
+00:02:18,422 --> 00:02:21,150
+Neighbouring seconds have almost the same value.
+
+47
+00:02:21,500 --> 00:02:24,960
+So, sixty points, but really only a couple of facts.
+
+48
+00:02:26,533 --> 00:02:30,550
+And with that little information, the delay in each window is close to random.
+
+49
+00:02:30,900 --> 00:02:35,057
+Here are two slow signals that really are coupled, with a ten second delay.
+
+50
+00:02:35,407 --> 00:02:37,915
+Watch what classic TDS does.
+
+51
+00:02:38,265 --> 00:02:39,182
+The dots scatter.
+
+52
+00:02:39,532 --> 00:02:42,899
+Its score is under three percent, barely above chance.
+
+53
+00:02:47,667 --> 00:02:50,453
+So here's the idea behind adaptive TDS.
+
+54
+00:02:50,803 --> 00:02:53,009
+Before anything else, measure memory.
+
+55
+00:02:53,359 --> 00:02:57,445
+Put a signal next to a copy of itself, shifted by k seconds, and ask:
+
+56
+00:02:57,445 --> 00:02:58,688
+how similar are they?
+
+57
+00:02:59,667 --> 00:03:01,815
+With no shift, they match perfectly.
+
+58
+00:03:02,165 --> 00:03:03,593
+A correlation of one.
+
+59
+00:03:03,943 --> 00:03:06,021
+As the shift grows, the match fades.
+
+60
+00:03:06,371 --> 00:03:08,275
+That curve is the autocorrelation.
+
+61
+00:03:08,625 --> 00:03:11,806
+And notice, a fast signal forgets within seconds.
+
+62
+00:03:12,800 --> 00:03:15,965
+The Bartlett factor adds up the squared autocorrelation,
+
+63
+00:03:15,965 --> 00:03:17,943
+until the curve first crosses zero.
+
+64
+00:03:18,293 --> 00:03:21,474
+B equals one, plus twice the sum of r squared.
+
+65
+00:03:21,824 --> 00:03:26,178
+Think of it as: how many samples in a row are worth one independent sample?
+
+66
+00:03:27,167 --> 00:03:29,268
+For the fast signal, B is about 2.
+
+67
+00:03:29,618 --> 00:03:31,847
+For the slow one, it's about 31.
+
+68
+00:03:32,197 --> 00:03:36,774
+So 31 seconds of that slow signal carry roughly one second's worth of new
+
+69
+00:03:36,774 --> 00:03:37,526
+information.
+
+70
+00:03:42,300 --> 00:03:43,148
+Step two.
+
+71
+00:03:43,498 --> 00:03:46,969
+Make the window long enough to hold about thirty independent samples.
+
+72
+00:03:47,319 --> 00:03:49,594
+So the window is thirty times B.
+
+73
+00:03:49,944 --> 00:03:52,661
+And we take B from the slowest signal in the recording,
+
+74
+00:03:52,661 --> 00:03:55,181
+so that every pair is measured with the same ruler.
+
+75
+00:03:56,167 --> 00:03:59,220
+For our slow pair, that's a window of about 15 minutes.
+
+76
+00:03:59,570 --> 00:04:00,046
+Not one.
+
+77
+00:04:01,033 --> 00:04:03,704
+Of course, a longer window means coarser timing.
+
+78
+00:04:04,054 --> 00:04:07,339
+So you set a cap: the longest window you're willing to accept.
+
+79
+00:04:07,689 --> 00:04:10,058
+For the sleep data, we used five minutes.
+
+80
+00:04:14,833 --> 00:04:15,634
+Step three.
+
+81
+00:04:15,984 --> 00:04:18,188
+The window moves forward by half its length,
+
+82
+00:04:18,188 --> 00:04:21,093
+and the delay search grows with it, up to half the window.
+
+83
+00:04:21,443 --> 00:04:23,464
+Slow systems can have long delays,
+
+84
+00:04:23,464 --> 00:04:26,911
+and a fixed 30-second search would simply never find them.
+
+85
+00:04:28,500 --> 00:04:30,648
+There's one exception, and that's rhythms.
+
+86
+00:04:30,998 --> 00:04:33,259
+If a signal repeats every T seconds,
+
+87
+00:04:33,259 --> 00:04:37,970
+then a delay of just over half a period looks exactly like a negative delay
+
+88
+00:04:37,970 --> 00:04:39,729
+of just under half a period.
+
+89
+00:04:40,700 --> 00:04:40,979
+See?
+
+90
+00:04:41,329 --> 00:04:43,105
+The two overlays look the same.
+
+91
+00:04:43,455 --> 00:04:46,752
+So the search stops at half of the shortest rhythm in the data.
+
+92
+00:04:51,533 --> 00:04:53,310
+Step four is the subtle one.
+
+93
+00:04:53,660 --> 00:04:54,472
+The tolerance.
+
+94
+00:04:54,822 --> 00:04:58,211
+With a long window, ±1 second is way too strict,
+
+95
+00:04:58,211 --> 00:05:00,894
+because a real delay wanders a little.
+
+96
+00:05:01,244 --> 00:05:03,147
+But if you make the tolerance too loose,
+
+97
+00:05:03,147 --> 00:05:05,192
+chance alone starts to look like stability.
+
+98
+00:05:06,767 --> 00:05:09,553
+So, adaptive TDS asks the data.
+
+99
+00:05:09,903 --> 00:05:13,595
+It takes one signal and rotates it in time by a large random amount.
+
+100
+00:05:13,945 --> 00:05:16,569
+Whatever falls off the end wraps around to the start.
+
+101
+00:05:16,919 --> 00:05:19,345
+Each signal keeps its own shape and rhythm.
+
+102
+00:05:19,695 --> 00:05:21,948
+But any real coupling between them is gone.
+
+103
+00:05:23,533 --> 00:05:28,119
+Then it runs TDS on these fake pairs, while slowly widening the tolerance.
+
+104
+00:05:28,469 --> 00:05:32,215
+And it keeps the widest tolerance at which the fake pairs still look coupled
+
+105
+00:05:32,215 --> 00:05:34,089
+no more than five percent of the time.
+
+106
+00:05:35,067 --> 00:05:38,596
+For our slow pair, that's ±43 seconds.
+
+107
+00:05:38,946 --> 00:05:39,503
+That's wide.
+
+108
+00:05:39,853 --> 00:05:40,538
+But it's earned.
+
+109
+00:05:40,888 --> 00:05:43,686
+With it, chance stays at or below five percent.
+
+110
+00:05:48,467 --> 00:05:51,369
+Now let's put it all together, on that same slow pair.
+
+111
+00:05:51,719 --> 00:05:54,529
+Classic TDS, with one-minute windows.
+
+112
+00:05:54,879 --> 00:05:55,796
+The dots scatter.
+
+113
+00:05:56,146 --> 00:05:59,432
+Adaptive TDS, with 15 minute windows.
+
+114
+00:05:59,782 --> 00:06:02,858
+And now, the dots lock onto the true ten second delay.
+
+115
+00:06:03,208 --> 00:06:07,109
+Half of its windows are stable, against a chance level of zero.
+
+116
+00:06:08,700 --> 00:06:10,047
+That was just one example.
+
+117
+00:06:10,397 --> 00:06:14,002
+But in earlier tests, with pairs whose coupling and delay were known,
+
+118
+00:06:14,002 --> 00:06:14,890
+the pattern held.
+
+119
+00:06:15,240 --> 00:06:19,187
+As the signals get slower, classic TDS falls to chance.
+
+120
+00:06:19,537 --> 00:06:22,951
+Adaptive TDS stays close to the best possible setting.
+
+121
+00:06:23,301 --> 00:06:25,634
+That's the one you'd pick if you already knew the answer.
+
+122
+00:06:30,433 --> 00:06:31,734
+What about real data?
+
+123
+00:06:32,084 --> 00:06:35,963
+On sleep recordings from Bashan's study, thirty five people,
+
+124
+00:06:35,963 --> 00:06:38,225
+both methods find the known result.
+
+125
+00:06:38,575 --> 00:06:41,257
+The body's network is weakest in deep sleep.
+
+126
+00:06:41,607 --> 00:06:44,301
+Here, adaptive TDS doesn't add much.
+
+127
+00:06:44,651 --> 00:06:45,771
+And that makes sense,
+
+128
+00:06:45,771 --> 00:06:49,237
+because the classic settings were designed for exactly this data.
+
+129
+00:06:50,833 --> 00:06:52,258
+And on one of your runs,
+
+130
+00:06:52,258 --> 00:06:56,592
+the fixed app setting found no stable delay between speed and heart rate.
+
+131
+00:06:56,942 --> 00:06:59,464
+Adaptive TDS found 5 stable windows,
+
+132
+00:06:59,464 --> 00:07:03,107
+with heart rate following speed by about 16 seconds.
+
+133
+00:07:07,900 --> 00:07:09,572
+Of course, nothing is free.
+
+134
+00:07:09,922 --> 00:07:11,988
+A long window blurs short events.
+
+135
+00:07:12,338 --> 00:07:16,112
+A five-minute window can't isolate a two-minute stretch of being awake.
+
+136
+00:07:16,462 --> 00:07:18,935
+And a wide tolerance blurs the exact delay.
+
+137
+00:07:20,533 --> 00:07:21,845
+So, let's recap.
+
+138
+00:07:22,195 --> 00:07:24,842
+Adaptive TDS, in four steps.
+
+139
+00:07:25,192 --> 00:07:27,154
+One: measure each signal's memory.
+
+140
+00:07:27,504 --> 00:07:31,138
+Two: size the window to hold enough independent samples.
+
+141
+00:07:31,488 --> 00:07:33,590
+Three: let the delay search grow with it.
+
+142
+00:07:33,940 --> 00:07:37,806
+Four: calibrate the tolerance on pairs where the coupling has been destroyed.
+
+143
+00:07:38,156 --> 00:07:41,604
+And then, choose the cap that matches the time resolution you need.
+
+144
+00:07:42,600 --> 00:07:44,794
+And that's adaptive Time Delay Stability.
+
+145
+00:07:45,144 --> 00:07:46,050
+Thanks for watching.
+

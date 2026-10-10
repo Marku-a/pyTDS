@@ -9,7 +9,7 @@ import re
 import subprocess
 import sys
 
-DISPLAY = [(r"\badaptive T D S\b", "adaptive TDS"), (r"\bT D S\b", "TDS"), (r"tau zero", "τ₀"), (r"plus or minus ", "±"),
+DISPLAY = [(r"\badaptive T D S\b", "adaptive TDS"), (r"\bT D S\b", "TDS"), (r"tau zero", "τ₀"), (r"plus or minus one second", "±1 second"), (r"plus or minus ", "±"),
            (r"\bcross correlation\b", "cross-correlation"), (r"\bone minute\b", "one-minute"), (r"(\d+) second delay", r"\1-second delay"),
            (r"sixty second window", "60-second window"), (r"thirty second (step|search)", r"30-second \1"), (r"five minute window", "five-minute window"),
            (r"two minute stretch", "two-minute stretch")]
