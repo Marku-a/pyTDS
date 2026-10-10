@@ -15,7 +15,7 @@ import numpy as np
 from manim import *  # noqa: F403
 
 D = json.load(open(os.environ["VDATA"]))
-VOICE = os.environ["VOICE"]
+VOICE = os.environ.get("VOICE", "")
 CACHE = os.environ.get("VCACHE", "vo_cache")
 os.makedirs(CACHE, exist_ok=True)
 
@@ -26,15 +26,31 @@ Text.set_default(font="DejaVu Sans", color=INK)
 MathTex.set_default(color=INK)
 
 
-SENT_GAP, PARA_GAP, LENGTH_SCALE = 0.35, 1.0, 1.06
+SENT_GAP, PARA_GAP, LENGTH_SCALE = 0.3, 1.0, float(os.environ.get("LENGTH_SCALE", "1.0"))
+
+
+TTS = os.environ.get("TTS", "piper")          # "kokoro" (natural, default for the final video) or "piper"
+KOKORO_DIR = os.environ.get("KOKORO_DIR", "")
+KOKORO_VOICE = os.environ.get("KOKORO_VOICE", "af_heart")
+_KOKORO = None
 
 
 def _synth_sentence(text):
-    h = hashlib.md5((VOICE + str(LENGTH_SCALE) + text).encode()).hexdigest()[:14]
+    tag = f"kokoro:{KOKORO_VOICE}" if TTS == "kokoro" else VOICE
+    h = hashlib.md5((tag + str(LENGTH_SCALE) + text).encode()).hexdigest()[:14]
     p = os.path.join(CACHE, f"s_{h}.wav")
     if not os.path.exists(p):
-        subprocess.run(["/usr/bin/python3", "-m", "piper", "-m", VOICE, "-f", p, "--length-scale", str(LENGTH_SCALE)],
-                       input=text.encode(), check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if TTS == "kokoro":
+            global _KOKORO
+            import soundfile as sf
+            from kokoro_onnx import Kokoro
+            if _KOKORO is None:
+                _KOKORO = Kokoro(os.path.join(KOKORO_DIR, "kokoro-v1.0.onnx"), os.path.join(KOKORO_DIR, "voices-v1.0.bin"))
+            audio, sr = _KOKORO.create(text, voice=KOKORO_VOICE, speed=1.0 / LENGTH_SCALE, lang="en-us")
+            sf.write(p, audio, sr, subtype="PCM_16")
+        else:
+            subprocess.run(["/usr/bin/python3", "-m", "piper", "-m", VOICE, "-f", p, "--length-scale", str(LENGTH_SCALE)],
+                           input=text.encode(), check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     with wave.open(p) as w:
         return w.getparams(), w.readframes(w.getnframes())
 
@@ -43,7 +59,7 @@ def tts(text):
     """Synthesize sentence by sentence with SENT_GAP between them. Returns (wav path, duration, [(start, end, sentence)])."""
     import re
     sents = [x.strip() for x in re.split(r"(?<=[.!?])\s+", text) if x.strip()]
-    h = hashlib.md5((VOICE + str(LENGTH_SCALE) + str(SENT_GAP) + text).encode()).hexdigest()[:14]
+    h = hashlib.md5((TTS + KOKORO_VOICE + VOICE + str(LENGTH_SCALE) + str(SENT_GAP) + text).encode()).hexdigest()[:14]
     out = os.path.join(CACHE, f"b_{h}.wav")
     frames, cues, t, params = [], [], 0.0, None
     for i, snt in enumerate(sents):

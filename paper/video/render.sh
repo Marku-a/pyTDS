@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Render the 3Blue1Brown-style aTDS explainer, join the chapters, add subtitles.
-# usage: VDATA=video_data.json VOICE=en-us-ryan-high.onnx VCACHE=vo MANIM=<manim binary> ./render.sh <quality: l|m|h> <out base name>
+# usage: VDATA=video_data.json TTS=kokoro KOKORO_DIR=<dir with kokoro-v1.0.onnx, voices-v1.0.bin> KOKORO_VOICE=af_heart VCACHE=vo MANIM=<manim> ./render.sh <l|m|h> <out base>
+#   (or TTS=piper VOICE=<piper .onnx>)
 set -euo pipefail
 Q=${1:-m}; OUT=${2:-atds_3b1b}; MANIM=${MANIM:-manim}
 SCENES="S01Hook S02XCorr S03Stability S04Assumption S05Memory S06Window S07Lag S08Tolerance S09Example S10Real S11Recap"
