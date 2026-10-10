@@ -1,0 +1,661 @@
+<meta charset="utf-8">
+<title>Adaptive Time Delay Stability</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with figures allowed to run wider, like a journal preprint. */
+:root {
+  --bg: #fbfbf9; --paper: #ffffff; --ink: #16181d; --ink-2: #4b4f58; --ink-3: #7a7e87;
+  --rule: #dfe1e4; --grid: #eceef0; --tint: #f2f4f6; --accent: #1c5cab;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --null: #9aa0a8;
+  --st-awake: #f1f3f5; --st-rem: #e3e9f1; --st-ls: #d2dbe7; --st-ds: #b4c3d6;
+  --good: #1f7a3f; --bad: #b3261e;
+  --f-body: "Literata", Georgia, "Times New Roman", serif;
+  --f-ui: "IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141517; --paper: #1a1a19; --ink: #eceae4; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+  --rule: #34353a; --grid: #2a2b2f; --tint: #222327; --accent: #86b6ef;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --null: #77797f;
+  --st-awake: #202226; --st-rem: #252c36; --st-ls: #2b3542; --st-ds: #34445a;
+  --good: #5cc98a; --bad: #ff8a80; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #141517; --paper: #1a1a19; --ink: #eceae4; --ink-2: #c3c2b7; --ink-3: #8f8e86;
+  --rule: #34353a; --grid: #2a2b2f; --tint: #222327; --accent: #86b6ef;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --null: #77797f;
+  --st-awake: #202226; --st-rem: #252c36; --st-ls: #2b3542; --st-ds: #34445a;
+  --good: #5cc98a; --bad: #ff8a80; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font: 16.5px/1.62 var(--f-body); }
+main { max-width: 980px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 80px; }
+.col { max-width: 68ch; }
+header.paper { border-bottom: 1px solid var(--rule); padding-bottom: 28px; margin-bottom: 8px; }
+.kicker { font: 500 12.5px/1.3 var(--f-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+h1 { font: 600 clamp(28px, 4.2vw, 40px)/1.15 var(--f-body); margin: 10px 0 12px; text-wrap: balance; max-width: 26ch; }
+h2 { font: 600 23px/1.25 var(--f-body); margin: 46px 0 10px; text-wrap: balance; }
+h3 { font: 600 17.5px/1.3 var(--f-body); margin: 30px 0 6px; }
+h4 { font: 600 13px/1.3 var(--f-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin: 22px 0 4px; }
+p, li { margin: 0 0 12px; }
+.byline { font: 400 15px/1.5 var(--f-ui); color: var(--ink-2); }
+.abstract { background: var(--tint); border-radius: 6px; padding: 18px 22px; margin: 22px 0 6px; }
+.abstract p { margin-bottom: 10px; } .abstract p:last-child { margin: 0; }
+.abstract .kicker { margin-bottom: 6px; }
+a { color: var(--accent); }
+code, .mono { font: 13.5px/1.5 var(--f-mono); }
+code { background: var(--tint); padding: 1px 4px; border-radius: 3px; overflow-wrap: anywhere; }
+pre { font: 12.5px/1.55 var(--f-mono); background: var(--tint); padding: 12px 14px; border-radius: 6px; overflow-x: auto; }
+.tw { overflow-x: auto; margin: 14px 0 18px; }
+table { border-collapse: collapse; font: 14px/1.4 var(--f-ui); font-variant-numeric: tabular-nums; min-width: 100%; }
+th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: top; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-weight: 600; color: var(--ink-2); border-bottom: 1.5px solid var(--ink-3); }
+td.l, th.l { text-align: left; }
+.pos { color: var(--good); font-weight: 600; } .neg { color: var(--bad); font-weight: 600; }
+figure { margin: 26px 0 30px; }
+figure .panels { display: grid; gap: 18px 22px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+figure .panel { min-width: 0; }
+figure .ptitle { font: 600 13px/1.3 var(--f-ui); color: var(--ink-2); margin: 0 0 4px; }
+figcaption { font: 14.5px/1.5 var(--f-body); color: var(--ink-2); margin-top: 10px; max-width: 80ch; }
+figcaption b { color: var(--ink); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font: 11.5px var(--f-ui); fill: var(--ink-2); }
+.chart .axis line, .chart .axis path { stroke: var(--ink-3); }
+.chart .gridl { stroke: var(--grid); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 13px/1.3 var(--f-ui); color: var(--ink-2); margin: 2px 0 6px; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+.legend i.box { width: 12px; height: 10px; border-radius: 2px; }
+.tip { position: fixed; pointer-events: none; z-index: 10; background: var(--paper); color: var(--ink); border: 1px solid var(--rule);
+  border-radius: 5px; padding: 6px 9px; font: 12.5px/1.4 var(--f-ui); box-shadow: 0 4px 14px rgba(0,0,0,.12); max-width: 280px; }
+.callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 16px 0; color: var(--ink-2); }
+.status { font: 600 12px/1 var(--f-ui); letter-spacing: .05em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+.toc { font: 14px/1.7 var(--f-ui); columns: 2 220px; margin: 16px 0 0; padding-left: 18px; color: var(--ink-2); }
+ol.refs li { margin-bottom: 8px; font-size: 15px; }
+.note { font: 13px/1.45 var(--f-ui); color: var(--ink-3); }
+.loading { font: 13px var(--f-ui); color: var(--ink-3); padding: 18px 0; }
+@media (max-width: 560px) { body { font-size: 15.5px; } main { padding-inline: 16px; } th, td { padding: 5px 7px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+<header class="paper">
+  <div class="kicker">Preprint draft · network physiology methods · 10 October 2026</div>
+  <h1>Adaptive Time Delay Stability: what changes when TDS picks its own window and tolerance</h1>
+  <div class="byline">Asaf Markuza · analysis assisted by Claude (Anthropic) · code: <code>Marku-a/pyTDS</code>, branch <code>claude/new-session-1at9bf</code></div>
+  <div class="abstract">
+    <div class="kicker">Abstract</div>
+    <p>Time Delay Stability (TDS) links two physiological signals when the delay that maximises their cross-correlation stays constant over consecutive windows. The published setting (60-s windows, 30-s step, ±30-s lag search, ±1-s tolerance, 4 of 5 windows) was designed for 1-Hz sleep data and is used unchanged on very different signals. We test an adaptive variant, aTDS, that sets the window from each system's autocorrelation (about 30 independent samples per window, Bartlett factor), the lag range from the window, and the tolerance from a coupling-free circular-shift null (the widest tolerance whose chance score stays ≤ 5 %).</p>
+    <p>On the 35-subject sleep cohort of Bashan et al. (2012), taken from the author's own reproduction of that study, we first replicate the reproduction exactly: all 4 900 per-subject link strengths, the surrogate distributions (median KS 0.02) and the 8.6 % significance threshold. We then compare TDS and aTDS under pre-registered hypotheses. Both recover the known pattern (deep sleep and REM less connected than light sleep and wake). aTDS does <b>not</b> sharpen these sleep-stage contrasts (H5 inconclusive; with the 80 %-purity rule all four gain CIs include 0), but it separates real coupling from its own null better (mean AUC 0.778 vs 0.736; 114 vs 105 significant link-stage cells, most of the gain in deep sleep and wake). Here aTDS's window is set by the 300-s cap, not by the rule (for EEG δ power the rule asks for a median of 83 min), and the 300-s window leaves wake undefined in 25 of 35 subjects under the strict stage rule.</p>
+    <p>The thesis's sleep-apnea results can only be re-drawn from stored outputs (the input signals are not available), so aTDS could not be applied there. On 30 Garmin runs, aTDS detects speed → heart-rate coupling in 8 runs versus 4 for the app's fixed setting (McNemar p = 0.29), with 1/30 cross-run false positives; this reproduces an earlier analysis on the same data. aTDS helps when the fixed window holds less than one independent sample of the slowest signal and the recording is long enough to afford a longer window; it costs time resolution, delay precision and short states.</p>
+  </div>
+  <ol class="toc">
+    <li><a href="#intro">Introduction</a></li><li><a href="#methods">Methods</a></li>
+    <li><a href="#r-repl">Replication of the Bashan-2012 reproduction</a></li><li><a href="#r-example">Worked example: one night</a></li>
+    <li><a href="#r-stages">TDS vs aTDS across sleep stages</a></li><li><a href="#r-mech">Why: independent samples</a></li>
+    <li><a href="#r-synth">Ground-truth tests (earlier work)</a></li><li><a href="#r-apnea">Thesis sleep-apnea results</a></li>
+    <li><a href="#r-garmin">Garmin runs</a></li><li><a href="#discussion">Discussion</a></li>
+    <li><a href="#refs">References</a></li><li><a href="#repro">Reproducibility appendix</a></li>
+  </ol>
+</header>
+
+<section id="intro" class="col">
+<h2>1 Introduction</h2>
+<p>Network physiology treats organ systems as nodes and their interactions as links. Bashan et al. (2012) introduced Time Delay Stability to define those links from continuous recordings: two signals are coupled when the delay τ₀ at which their cross-correlation peaks stays nearly constant from one window to the next. Applied to 1-Hz signals from healthy sleepers (EEG band powers, heart rate, respiration, eye and muscle activity), the resulting network changed with sleep stage, with the fewest links in deep sleep, more in REM, and the most in light sleep and quiet wake (Bashan et al. 2012, Fig. 2). Bartsch et al. (2015) extended the same method, with the same parameters, to brain–organ networks.</p>
+<p>The parameters were set for that setting: windows of L = 60 s “which corresponds to the time resolution of the conventional sleep-stage-scoring epochs” with a 30-s overlap (Bashan et al. 2012, Methods), and a delay that stays within ±1 for at least four out of five consecutive segments (Bartsch et al. 2015, Methods). They are written in seconds and samples, not in units of the signals' own time scales. A signal whose memory spans minutes contributes less than one independent sample to a 60-s window; the delay found in each window is then mostly noise, and stability becomes a matter of chance.</p>
+<p>The author's MSc thesis (Markuza 2023) applied TDS to polysomnography from sleep-apnea patients. In earlier work on pyTDS, a Python implementation of TDS, we proposed and tested an adaptive version, aTDS (internal reports, see References). This paper asks: on real physiological data with a known answer, does aTDS change what TDS finds, why, and at what cost? It reports a replication, a pre-registered comparison, worked examples on actual signals, and every result that did not favour aTDS.</p>
+</section>
+
+<section id="methods" class="col">
+<h2>2 Methods</h2>
+<h3>2.1 Time Delay Stability (TDS)</h3>
+<p>Both signals are cut into windows of length L with step L/2. Each window is z-scored and the cross-correlation C(τ) is computed for |τ| ≤ τ<sub>max</sub>; τ₀ is the lag of the largest |C|. A window is labelled <i>stable</i> when, within a run of five consecutive windows, at least four τ₀ values lie within ±tol of one another. The TDS score is the percentage of stable windows. The published setting at 1 Hz is L = 60 s, step 30 s, τ<sub>max</sub> = 30 s, tol = ±1 s. pyTDS uses circular (periodic-boundary) cross-correlation; the thesis and its reproduction used MATLAB's linear <code>xcorr(…,30,'coeff')</code>. Section 3.1 quantifies the difference.</p>
+<h3>2.2 Adaptive TDS (aTDS)</h3>
+<p>aTDS derives one parameter set per system (all signals of one recording), using only per-signal properties and a coupling-free null, so it cannot be tuned toward the coupling being measured (<code>experiments/adaptive_groundtruth/adaptive.py: adaptive_params</code>, rule “v2”).</p>
+<ul>
+<li><b>Window.</b> For each signal, the Bartlett factor B = 1 + 2 Σ<sub>k</sub> r(k)², summed over the autocorrelation r(k) up to its first zero crossing, estimates how many samples one independent sample is worth. The raw window is 30·B of the slowest signal (about 30 independent samples), clipped to [20 s, cap]. The cap is a user choice that states the time resolution one accepts; 300 s here, as in the earlier sleep study, and 240 s for Garmin runs.</li>
+<li><b>Step and lag.</b> Step = L/2; τ<sub>max</sub> = (L−1)/2, further capped at half the shortest detected oscillation period.</li>
+<li><b>Tolerance.</b> One signal of each pair is circularly shifted by a random large amount, which keeps each signal's own structure but destroys coupling. The tolerance is the largest value whose mean null TDS score stays ≤ 5 %; if even tol = 0 exceeds 5 %, the result is flagged <code>calibration_failed</code>.</li>
+</ul>
+<p>Ablations isolate each change: <code>win_only</code> (adaptive window, tol ±1), <code>tol_only</code> (60-s window, calibrated tolerance), <code>v2_cal_lag3</code> (aTDS with τ<sub>max</sub> = L/3 and tolerance recalibrated), and caps of 120 s and 600 s.</p>
+<h3>2.3 Data</h3>
+<ul>
+<li><b>Bashan-2012 sleep cohort (inputs available).</b> 35 subjects, 10 signals at 1 Hz (HR, respiration, chin and leg EMG, eye movements, EEG δ θ α σ β band power), per-second sleep stage (LS, DS, REM, wake), about 272 h. These are the data of the author's learning reproduction of Bashan et al. (2012), stored in the thesis repository (<code>01 repreduce NCOM</code>). The thesis uses this reproduction only to illustrate the surrogate method (Fig. 11–12, p. 22–23: “taken from the same patient used in [7]”, i.e. Bashan et al.); it is not the thesis research. The MATLAB table objects were decoded with <code>paper/scripts/extract_ncom.py</code>.</li>
+<li><b>Thesis sleep-apnea cohort (outputs only).</b> 28 patients from Charité Berlin (2016–19), 14 with AHI > 10 and 14 with AHI ≤ 10, 15 signals at 1 Hz (thesis p. 13). Only stored outputs exist: per-patient full-night 15 × 15 TDS matrices, group-pooled stage maps and ranks. The 1-Hz inputs are not available, so aTDS could not be applied.</li>
+<li><b>Garmin runs (inputs available).</b> 41 of the author's runs, 5 channels at 1 Hz (heart rate, speed, cadence, power, climb), GPS-free export. 30 runs to 22 Sep 2026 are usable for the main comparison; 4 later runs form a held-out set.</li>
+</ul>
+<h3>2.4 Sleep-stage scoring and outcome</h3>
+<p>A window is <i>pure</i> for a stage when ≥ 80 % of its samples carry that stage. Because a stability label uses five consecutive windows (900 s at a 300-s window, 180 s at 60 s), the primary <b>strict</b> rule counts window i for a stage only if windows i−2…i+2 are all pure for it; the 80 %-only rule is a sensitivity analysis. A stage score needs ≥ 5 counted windows.</p>
+<p>Raw TDS percentages are not comparable across methods: a longer window and a wider tolerance change the chance level. The outcome is therefore <b>excess</b> = real score − chance score, where chance is the same pair with one signal circularly shifted (5 shifts), scored on the same windows. Per subject and stage, <b>connectivity</b> is the mean excess over the 35 links used in the reproduction (all pairs except EEG–EEG).</p>
+<h3>2.5 Hypotheses and statistics</h3>
+<p>The plan (<code>paper/ANALYSIS_PLAN.md</code>, commits d031557 and earlier) was written before the main runs and checked by an independent reviewer pass on a sample of the real data, which changed the design in six places (surrogate port, pooled threshold mean, the strict stage rule, a per-method null for the network test, same-subject comparisons, a decision rule for H5). Hypotheses, from the direction reported by Bashan et al. (2012): H1 LS > DS, H2 wake > DS, H3 LS > REM, H4 wake > REM. For the published setting these are a replication, not a blind test. H5 (the aTDS claim): the paired effect size dz is larger with aTDS; supported if the gain CI is above 0 in ≥ 3 of 4 contrasts, refuted if below 0 in ≥ 2, otherwise inconclusive. H6: aTDS separates real from null at least as well (mean AUC). Paired dz = mean/SD of within-subject differences; 95 % CIs from 10 000 subject bootstraps; Wilcoxon signed-rank tests with Holm correction over H1–H4. Gains are computed on subjects defined under both methods. Network level: per link and stage, AUC = P(real subject score > null score) against 50 circular-shift draws per subject; one-sided Mann–Whitney p < 10⁻³ marks a significant link-stage cell.</p>
+</section>
+
+<section id="r-repl">
+<div class="col">
+<h2>3 Results</h2>
+<h3>3.1 Replication of the Bashan-2012 reproduction</h3>
+<p>A line-by-line Python port of the reproduction's MATLAB TDS (<code>paper/scripts/thesis_port.py</code>) reproduces all 4 900 stored link strengths (35 subjects × 35 links × 4 stages) <b>exactly</b> (maximum absolute difference 0.0). The surrogate procedure (<code>GetSurPatient.m</code> with its second half-pass and <code>randomizeSurData.m</code>) was ported in full; 2 000 new surrogate subjects match the stored 2 000 in distribution (per link-stage KS statistic median 0.020, max 0.049; mean link strength 2.441 vs 2.442; Fig. 1A).</p>
+<p>The significance threshold (smallest TDS % above which every link is significant, t-test p < 10⁻³) is <b>8.6 %</b> in the stored output and 8.6 % again from our surrogates when the pooled link means are built from the reproduction's own <code>Stages_cell.mat</code>. The thesis text reports 9 % (Fig. 12), consistent with 8.6 % rounded. Pooling the means from <code>All_data_clean.mat</code> instead gives 7.1 %, because that file's stage alignment differs from the raw-file pipeline used for the means (Fig. 1B).</p>
+<p>pyTDS at the same setting does not equal the MATLAB code: across the 4 900 values r = 0.950 and pyTDS is 3.3 points lower on average (stability anchor “any”; r = 0.905, −7.4 points with the causal anchor “end”). The difference is circular versus linear cross-correlation. On the classic δ–σ benchmark in <code>pyTDS/data</code>, the reproduction's MATLAB port gives 61.8 %, pyTDS 58.1 % (default) and 43.5 % (anchor “end”); the 43.6 % figure in the pyTDS documentation is therefore matched only with anchor “end”.</p>
+</div>
+<figure id="fig1">
+  <div class="panels">
+    <div class="panel"><div class="ptitle">A · Link strength by rank, real vs surrogate</div><div class="legend" id="leg1a"></div><div class="chart" id="fig1a"></div></div>
+    <div class="panel"><div class="ptitle">B · Choosing the significance threshold</div><div class="legend" id="leg1b"></div><div class="chart" id="fig1b"></div></div>
+  </div>
+  <figcaption><b>Figure 1. The reproduction replicates.</b> A: mean link strength of the 35 links per stage, ranked, for the 35 real subjects (blue) and for 2 000 surrogate subjects built by the reproduction's own method: stored (gray, dashed) and newly ported (aqua); the two surrogate curves overlap almost everywhere. Real links sit far above surrogates in every stage (thesis Fig. 11 shows the same comparison). B: share of links that are statistically significant among links above a TDS threshold; the threshold is where this reaches 100 %. Stored curve (gray) and ours (aqua, pooled means from <code>All_data_clean.mat</code>); stored threshold 8.6 %, ours 7.1 % with that pooling and 8.6 % with the reproduction's own pooled means.</figcaption>
+</figure>
+</section>
+
+<section id="r-example">
+<div class="col">
+<h3>3.2 Worked example: how each method reads one night</h3>
+<p>The example was chosen by a rule fixed before it was computed (plan, section R5): the subject whose aTDS-minus-TDS gain in LS−DS connectivity is closest to the cohort median (subject <span data-x="ex.subject"></span>), and within it the link closest to that subject's median link gain (<span data-x="ex.pair"></span>). The displayed 40 minutes start 600 s before the first light → deep sleep transition. aTDS chose a 300-s window (the cap; the Bartlett rule asked for <span data-x="ex.rawmax"></span>), a ±149-s lag range and a ±<span data-x="ex.tol"></span>-s tolerance (Fig. 2E).</p>
+</div>
+<figure id="fig2">
+  <div class="legend" id="leg2"></div>
+  <div class="panels" style="grid-template-columns: 1fr;">
+    <div class="panel"><div class="ptitle">A · The two signals (z-scored, 1 Hz) and the sleep stage</div><div class="chart" id="fig2a"></div></div>
+    <div class="panel"><div class="ptitle">B · Delay τ₀ per window; filled = stable</div><div class="chart" id="fig2b"></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">C · Cross-correlation in three windows</div><div class="chart" id="fig2c"></div></div>
+    <div class="panel"><div class="ptitle">D · Whole night: TDS % per stage vs chance</div><div class="chart" id="fig2d"></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="ptitle">E · How aTDS chose its tolerance (null score)</div><div class="chart" id="fig2e"></div></div>
+    <div class="panel"><div class="ptitle">F · Memory of each signal (raw Bartlett window)</div><div class="chart" id="fig2f"></div></div>
+  </div>
+  <figcaption><b>Figure 2. One pair, one night, two methods.</b> A: the two signals around a light → deep sleep transition (shaded by stage). B: τ₀ in every window; TDS (blue, 60-s windows every 30 s, ±30-s search) and aTDS (orange, 300-s windows every 150 s, ±149-s search); filled markers are windows labelled stable. In this stretch, mostly deep sleep, TDS labels a few windows stable and aTDS none. C: cross-correlation curves C(τ) in the windows nearest three marked times; τ₀ is the peak of |C|. D: whole-night score per stage (bars) and the circular-shift chance score (black ticks) for this pair; aTDS's raw scores are higher but so is its chance level, which is why the comparisons use excess over chance. A missing bar means the stage had fewer than 5 counted windows. E: mean null TDS score against tolerance for this subject; aTDS takes the widest tolerance at or below 5 %. F: the Bartlett-based window each of the 10 signals would need for 30 independent samples (log scale); the slowest sets aTDS's window, here far beyond the 300-s cap.</figcaption>
+</figure>
+</section>
+
+<section id="r-stages">
+<div class="col">
+<h3>3.3 TDS vs aTDS across sleep stages (pre-registered)</h3>
+<p><b>Parameters.</b> In all 35 subjects aTDS took the 300-s cap, a ±149-s lag range and a tolerance of ±14 to ±17 s (median 15); calibration never failed. So on these data “aTDS” means a 300-s window with a calibrated tolerance; the Bartlett rule itself would ask for far longer windows (Section 3.4).</p>
+<p><b>H1–H4 hold for both methods</b> (Holm-adjusted Wilcoxon p &lt; 0.05 for every contrast, both stage rules; Fig. 4). With the published setting, under the strict rule: LS > DS dz 1.95 [1.59, 2.56], wake > DS 1.16 [0.85, 1.63], LS > REM 1.40 [1.09, 1.90], wake > REM 0.74 [0.38, 1.25]. Deep sleep is the least connected stage under both methods (Fig. 3).</p>
+<p><b>H5 is inconclusive.</b> On the same subjects, aTDS's dz is lower for LS > DS (gain −0.20 [−0.91, 0.45], n = 30) and LS > REM (−0.20 [−0.66, 0.36]) and higher for the two wake contrasts (+0.80 [0.08, 3.17], n = 6; +0.62 [0.09, 1.67], n = 9). The two positive gains rest on 6 and 9 subjects, because a 300-s window leaves too few pure wake windows in most nights. Under the 80 %-only rule (wake defined in 20–21 subjects), all four gains are negative and every CI includes 0 (−0.19 to −0.36). The pre-registered rule therefore gives “inconclusive”, and the honest reading is that aTDS does not sharpen the stage contrasts in this cohort.</p>
+<p><b>Exploratory, not pre-registered as a claim:</b> keeping the 60-s window and only calibrating the tolerance (<code>tol_only</code>, which chose ±2 s in every subject) raises the wake contrasts on 29–34 subjects: wake > DS gain +0.52 [0.25, 0.93] and wake > REM +0.44 [0.17, 0.78] under the strict rule, +0.60 and +0.52 under the 80 % rule. The long window with the published ±1-s tolerance (<code>win_only</code>) is the worst variant, as in the earlier sleep study.</p>
+<p><b>H6 holds.</b> Against each method's own circular-shift null, aTDS separates real coupling better: mean AUC over 140 link-stage cells 0.778 vs 0.736 (Fig. 5). The gain is largest in wake (0.808 vs 0.713) and deep sleep (0.655 vs 0.623; significant cells 17 vs 12 of 35). Significant cells: 114 vs 105 of 140. The lag-capped variant is similar (0.785); <code>win_only</code> is worse than published (0.673).</p>
+</div>
+<figure id="fig3">
+  <div class="legend" id="leg3"></div>
+  <div class="panels" id="fig3grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));"></div>
+  <figcaption><b>Figure 3. Stage networks, excess over chance.</b> Mean excess TDS (real − chance, percentage points) over subjects for each pair of the 10 signals, per stage (columns) and method (rows: TDS top, aTDS bottom), strict stage rule. The EEG–EEG block is shown but is not among the 35 links used for connectivity. One colour scale per method, because the scales differ: aTDS's excess is larger in absolute terms (wider tolerance) and its chance level higher. Hover a cell for the value and number of subjects.</figcaption>
+</figure>
+<figure id="fig4">
+  <div class="panels">
+    <div class="panel"><div class="ptitle">A · Connectivity per subject and stage</div><div class="legend" id="leg4a"></div><div class="chart" id="fig4a"></div></div>
+    <div class="panel"><div class="ptitle">B · Effect sizes dz with 95 % CI (strict rule)</div><div class="legend" id="leg4b"></div><div class="chart" id="fig4b"></div></div>
+  </div>
+  <figcaption><b>Figure 4. Stage contrasts.</b> A: connectivity (mean excess over the 35 links) of each subject in each stage; lines join a subject's stages; dots are subjects with a defined score. TDS left of each stage, aTDS right. B: paired dz for H1–H4, strict rule, with bootstrap 95 % CIs, for four variants; n per contrast in the tooltip. The lag-capped and 120/600-s-cap variants are in the tables. The full tables (both rules, gains) are in <code>paper/results/r2_effects.csv</code> and <code>r2_gain.csv</code>.</figcaption>
+</figure>
+<figure id="fig5">
+  <div class="panels">
+    <div class="panel"><div class="ptitle">Mean AUC, real vs own null, per stage</div><div class="legend" id="leg5"></div><div class="chart" id="fig5a"></div></div>
+    <div class="panel"><div class="ptitle">Subjects with a defined stage score (of 35)</div><div class="legend" id="leg5b"></div><div class="chart" id="fig5b"></div></div>
+  </div>
+  <figcaption><b>Figure 5. What aTDS gains and what it pays.</b> Left: mean AUC over the 35 links in each stage for four variants (aTDS with lag L/3: 0.785 overall, in the tables); 0.5 = no better than chance. Right: the cost of a longer window: subjects whose stage has at least 5 counted windows, strict rule. Wake, the stage with the shortest bouts, is lost first.</figcaption>
+</figure>
+</section>
+
+<section id="r-mech">
+<div class="col">
+<h3>3.4 Why: independent samples per window</h3>
+<p>The Bartlett factor turns each signal's memory into a count of independent samples. Median over the 35 subjects, a 60-s window holds 0.36 independent samples of EEG δ power, 0.82 of θ, 0.93 of heart rate, 2.0 of α, 2.4 of respiration, 4.4 of σ, 5.3 of β, 8.2 of eye movements, 10.9 of chin EMG and 16.4 of leg EMG (Fig. 6). For the slow signals the delay found in a 60-s window rests on less than one independent sample, so it is close to noise; for the muscle signals it does not. aTDS sizes the window for the slowest signal of the system, which here would mean windows far beyond 300 s (subject medians of the Bartlett window: δ 4 994 s ≈ 83 min, θ 2 192 s, HR 1 939 s). The 300-s cap therefore set every aTDS window, and the cap, not the rule, decided the trade-off between time resolution and reliability.</p>
+<p>That trade-off is visible in Fig. 5: at 300 s most wake bouts are too short to yield five pure windows in a row, and a 600-s cap leaves deep sleep defined in only 2 subjects (strict rule). A 120-s cap keeps more subjects and gives dz similar to the published setting (LS > DS 2.19, wake > DS 1.39); its network-level AUC was not computed.</p>
+</div>
+<figure id="fig6">
+  <div class="panels"><div class="panel"><div class="ptitle">Independent samples per window (median subject), by signal and window length</div><div class="legend" id="leg6"></div><div class="chart" id="fig6a"></div></div></div>
+  <figcaption><b>Figure 6. The mechanism.</b> Independent samples = L / (Bartlett window / 30) for window lengths 60, 120 and 300 s, using each signal's median Bartlett window over subjects. The dashed line marks one independent sample. Slow signals (δ, θ, heart rate) stay near or below one at 60 s.</figcaption>
+</figure>
+</section>
+
+<section id="r-synth" class="col">
+<h3>3.5 Ground-truth tests (earlier work, cited)</h3>
+<p>Synthetic data with known coupling were analysed before this paper (pyTDS branch <code>claude/practical-mccarthy-n2mec6</code>, <i>adaptive-TDS reports</i> 03–05; the numbers below are the corrected ones in Report 05). They are not re-run here.</p>
+<div class="tw"><table>
+<thead><tr><th>test (Report 05)</th><th>fixed defaults</th><th>aTDS (v2, calibrated)</th></tr></thead>
+<tbody>
+<tr><td>Weak coupling, signals 8× slower: AUC / delay found</td><td>0.35 / 0 %</td><td>0.91 / 95 %</td></tr>
+<tr><td>Rulkov neurons, delay 32: AUC / delay found</td><td>0.66 / 0 %</td><td>1.00 / 100 %</td></tr>
+<tr><td>Rulkov neurons, delay 16: AUC / delay found</td><td>1.00 / 20 %</td><td>0.94 / 0 %</td></tr>
+<tr><td>Sleep δ–σ pair resampled to 0.5× / 1× / 2× / 4×: TDS %</td><td>75 / 58 / 41 / 27</td><td>“a stable answer” (no single figure given); at 1×, window caps of 2 / 5 / 10 min give 79 / 90 / 94 % with chance near 5 %</td></tr>
+</tbody></table></div>
+<p>The Rulkov delay-16 case is the one ground-truth test aTDS lost: the bursts repeat about every 41 steps, the oscillation guard caps the lag search at 20, and every adaptive rule reports 19–20 instead of 16. The earlier multi-subject study on public data (pyTDS <code>experiments/adaptive_groundtruth/README.md</code>) found, on Sleep-EDF EEG networks, LS > DS dz 2.67 → 3.97 (gain +1.30 [0.52, 2.50]) and REM > DS 0.41 → 1.13, but wake > DS 1.40 → 1.18 (n.s.); on Fantasia, young > elderly breathing–heart coupling d 1.25 → 1.54 (n.s.). The present cohort, with mixed fast and slow signals, did not repeat the Sleep-EDF gain (Section 4).</p>
+</section>
+
+<section id="r-apnea">
+<div class="col">
+<h3>3.6 The thesis sleep-apnea results, re-drawn from stored outputs</h3>
+<p>These are the thesis's own results. Without input signals they cannot be recomputed with TDS or aTDS; what can be done is to recompute the statistics from the stored outputs and check them. The stored rank arrays match the stored group stage maps exactly (two copies of <code>ranks_sick&amp;healthy.mat</code> exist; the one in <code>TDS imp/</code>, where the analysis scripts run, matches, the other is an older version). Apnea patients' pooled link strengths are higher in wake, REM and deep sleep (thesis signed-rank p = 3.2·10⁻¹⁸, 6.5·10⁻¹⁰, 6.7·10⁻¹⁶) but not in light sleep (p = 0.15); KS tests on the same values are not significant in any stage (p 0.06–0.73).</p>
+<p>The thesis test sorts each group's 105 link strengths before pairing them, so it compares the k-th strongest link of one group with the k-th strongest of the other, not the same link. Pairing the <i>same</i> link instead (a check added here) gives the same picture: wake p = 3.3·10⁻¹¹ (81 % of links stronger in apnea), deep sleep 7.8·10⁻⁶ (70 %), REM 8.1·10⁻⁵ (66 %), light sleep 0.38 (60 %). Across the 28 patients, the number of full-night links at the 7.8 % threshold rises with AHI (Spearman ρ = 0.52, p = 0.005; median 58 vs 47.5 links). The thesis's own Fig. 27 uses stage-specific networks, which are not stored per patient; this full-night version is a stand-in, not a reproduction.</p>
+</div>
+<figure id="fig7">
+  <div class="panels">
+    <div class="panel"><div class="ptitle">A · Ranked link strength, apnea vs control</div><div class="legend" id="leg7a"></div><div class="chart" id="fig7a"></div></div>
+    <div class="panel"><div class="ptitle">B · Full-night links vs AHI (28 patients)</div><div class="legend" id="leg7b"></div><div class="chart" id="fig7b"></div></div>
+  </div>
+  <figcaption><b>Figure 7. Thesis apnea results from stored outputs.</b> A: the 105 group-pooled link strengths per stage, sorted (thesis Fig. 20), for patients with AHI > 10 (blue) and ≤ 10 (aqua); dashed line: the thesis's 7.8 % threshold. Use the buttons to change stage. B: number of links above 7.8 % in each patient's full-night network against AHI; dashed line: AHI = 10.</figcaption>
+</figure>
+</section>
+
+<section id="r-garmin">
+<div class="col">
+<h3>3.7 Garmin runs</h3>
+<p>Expectations were written before the run (plan, E1–E5) from the earlier analysis of the same data, so this section is a reproduction, not a new test. The comparison script was rerun unchanged (<code>GarminTDS/experiments/adaptive_compare/compare.py</code>; the empty run-list file of the latest export was rebuilt from the data keys) and gave the earlier numbers exactly. A detection is speed → HR coupling above 100 circular-shift chance scores (p < 0.05), speed leading, lag not at the edge of the search.</p>
+<ul>
+<li><b>E1 holds:</b> aTDS 8/30 vs the app's fixed 120 / 60 / ±40 / ±2 setting 4/30; 6 runs only by aTDS, 2 only by the app setting (exact McNemar p = 0.29).</li>
+<li><b>E2 holds:</b> cross-run false positives (speed of one run vs HR of another) 1/30 for aTDS, 0/30 for the app setting.</li>
+<li><b>E3 holds:</b> aTDS took the 240-s cap on all 30 runs and a tolerance of ±2 to ±28 s (median ±14); the spread of the lag across runs widened (IQR 1.9 → 7 s).</li>
+<li><b>E4 holds:</b> held-out runs 2/4 vs 0/4 (lags 15 and 21 s).</li>
+<li><b>E5 holds:</b> the same 240-s window and ±14-s tolerance with the lag limited to 80 s (window/3) detects 4/30, so the wide lag range carries the gain: with a loose tolerance, a wider search makes chance stability rarer.</li>
+</ul>
+<p>The worked example (Fig. 9) is the median-length run among the 8 where the methods disagree, chosen by the pre-set rule. It also shows the main caveat: a 240-s window on a 27-minute run gives only about a dozen windows, so all 100 chance scores are 0 and a single stable stretch makes p ≈ 0.01.</p>
+</div>
+<figure id="fig8">
+  <div class="panels"><div class="panel"><div class="ptitle">Speed → HR detections per setting</div><div class="legend" id="leg8"></div><div class="chart" id="fig8a"></div></div></div>
+  <figcaption><b>Figure 8. Garmin.</b> Runs with a detected speed → HR link, main set (30 runs, bars; held-out 4 runs as text after each bar); settings named window / lag / tolerance in seconds. “aTDS” is per run; “pooled” uses the median aTDS setting of the 30 runs (240 / 119 / ±14).</figcaption>
+</figure>
+<figure id="fig9">
+  <div class="legend" id="leg9"></div>
+  <div class="panels" style="grid-template-columns: 1fr;">
+    <div class="panel"><div class="ptitle">A · Heart rate and speed after the 120-s high-pass (z-scored)</div><div class="chart" id="fig9a"></div></div>
+    <div class="panel"><div class="ptitle">B · Lag per window (positive = speed leads HR); filled = stable</div><div class="chart" id="fig9b"></div></div>
+  </div>
+  <div class="panels"><div class="panel"><div class="ptitle">C · Real score vs 100 chance scores</div><div class="chart" id="fig9c"></div></div></div>
+  <figcaption><b>Figure 9. One run, two settings.</b> A 27-minute run. A: the series TDS sees. B: lag per window for the app setting (blue, 120-s windows, ±2-s tolerance) and aTDS (orange, 240-s windows, ±119-s search, ±12-s tolerance calibrated for this run); filled markers are stable windows. aTDS finds five stable windows near a 16-s lag (speed leading); the app setting finds none. C: each setting's real TDS score (large marker) against its 100 circular-shift chance scores (small gray marks).</figcaption>
+</figure>
+</section>
+
+<section id="discussion" class="col">
+<h2>4 Discussion</h2>
+<h3>What aTDS changes, and when it helps</h3>
+<p>aTDS replaces three fixed numbers with quantities measured on the signals: a window long enough to contain about 30 independent samples, a lag range that grows with it, and a tolerance set so that uncoupled signals score ≤ 5 % by chance. The evidence here and in the earlier work points to one mechanism: when the fixed window holds fewer than one or two independent samples of the slowest signal, τ₀ per window is mostly noise and stability is luck. A longer window fixes that, but only if the tolerance is widened to match; a long window with ±1 s is the worst variant on both sleep datasets. With a loose tolerance, a wide lag search also matters, because it makes chance stability rarer (Garmin, E5).</p>
+<p>Gains were large where the fixed window was much shorter than the system's memory and nothing else changed: synthetic slow coupling, the Sleep-EDF EEG network, the Garmin runs. On the Bashan-2012 cohort the picture is mixed. The network-level separation from chance improved, mostly in deep sleep and wake. The stage contrasts did not sharpen. Two features of this cohort explain much of that: it mixes fast signals (EMG, eye movements, which already have 8–16 independent samples per minute) with slow ones, so one system-wide window is too long for some pairs; and its sleep stages, especially wake, come in bouts that a 300-s window with a five-window stability rule cannot resolve.</p>
+<h3>When it hurts</h3>
+<ul>
+<li><b>Time resolution.</b> The cap sets it. At 300 s, wake was undefined in 25/35 subjects (strict rule); at 600 s deep sleep was defined in 2. Short states and short recordings suffer.</li>
+<li><b>Delay precision.</b> A ±14–15-s tolerance accepts delays that wander by that much: on the Garmin runs the lag IQR across runs widened from 1.9 to 7 s.</li>
+<li><b>Few windows.</b> On short records the chance distribution collapses to 0 and p-values rest on one stable stretch (Fig. 9).</li>
+<li><b>Oscillations.</b> Delays near half an oscillation period cannot be pinned down (Rulkov delay 16).</li>
+</ul>
+<h3>Limitations</h3>
+<ul>
+<li>The thesis's own question (apnea vs control) could not be tested with aTDS: the input signals are unavailable.</li>
+<li>One cohort of 35 subjects with mixed signal types; per-pair windows were not tried.</li>
+<li>The Garmin result is a reproduction on the same runs that suggested aTDS's Garmin settings; only 4 held-out runs exist.</li>
+<li>pyTDS's circular cross-correlation differs from the MATLAB code (r = 0.95); both methods in Section 3.3 use pyTDS, so the comparison is internally consistent but not identical to the MATLAB numbers.</li>
+<li>The strict stage rule removes more windows from aTDS than from TDS; the 80 %-only rule is reported alongside and leads to the same conclusion.</li>
+</ul>
+</section>
+
+<section id="conclusion" class="col">
+<h2>5 Conclusion</h2>
+<p>The author's reproduction of Bashan et al. (2012) replicates exactly, including its 8.6 % significance threshold. Measured against the known sleep-stage pattern, adaptive TDS is not uniformly better: it separates real coupling from chance more clearly, but it does not sharpen stage contrasts in this cohort, and its 300-s window costs short stages. Its benefit is largest when the fixed 60-s window holds less than one independent sample of the slowest signal and the recording is long, as for slow EEG networks and running data. The window cap should stay an explicit user choice that states the time resolution one needs. A tolerance calibrated on a coupling-free null is the part worth keeping on every dataset; here it alone improved the wake contrasts at the published window.</p>
+</section>
+
+<section id="refs" class="col">
+<h2>References</h2>
+<ol class="refs">
+<li>Bashan A, Bartsch RP, Kantelhardt JW, Havlin S, Ivanov PCh. Network physiology reveals relations between network topology and physiological function. <i>Nature Communications</i> 3:702 (2012). doi:10.1038/ncomms1705. Read from the PDF in the thesis repository (<code>refs/ncomms1705.pdf</code>).</li>
+<li>Bartsch RP, Liu KKL, Bashan A, Ivanov PCh. Network Physiology: How Organ Systems Dynamically Interact. <i>PLoS ONE</i> 10(11):e0142143 (2015). doi:10.1371/journal.pone.0142143. Read from <code>refs/PLOSONE-NetworkPhysiology-Published.pdf</code>.</li>
+<li>Markuza A. Identifying Physiological Network Topologies for Sleep-Apnea Patients Utilizing the Time Delay Stability Analysis. MSc thesis, Department of Physics, Bar-Ilan University (2023). Approved version: <code>WirtingThesis/Thesis-Asaf Markuza_מאושר להדפסה.pdf</code>.</li>
+<li>pyTDS adaptive-TDS reports 03–05 (internal), branch <code>claude/practical-mccarthy-n2mec6</code>, folder <code>adaptive-TDS reports/</code>, 4 Oct 2026.</li>
+<li>pyTDS ground-truth study (internal), branch <code>claude/pytds-adaptive-parameters-760t3h</code>, <code>experiments/adaptive_groundtruth/README.md</code> (commit dc2efdb).</li>
+<li>GarminTDS adaptive comparison (internal), <code>experiments/adaptive_compare/README.md</code>, branch <code>claude/pytds-adaptive-parameters-760t3h</code>.</li>
+</ol>
+<p class="note">Other sources mentioned in earlier sessions (e.g. Lin et al. 2020 on brain-wave networks across sleep stages; the Fantasia database description) could not be opened from this environment and are not cited.</p>
+</section>
+
+<section id="repro" class="col">
+<h2>Appendix A · Reproducibility</h2>
+<p>All scripts are in <code>Marku-a/pyTDS</code>, branch <code>claude/new-session-1at9bf</code>, folder <code>paper/</code>. No raw or per-subject signals are committed; subjects appear as indices 0–34. The thesis repository is private (GitLab <code>markuza2/msc-project</code>).</p>
+<div class="tw"><table>
+<thead><tr><th class="l">step</th><th class="l">script → output</th><th class="l">commit</th></tr></thead>
+<tbody>
+<tr><td class="l">Plan, hypotheses</td><td class="l"><code>ANALYSIS_PLAN.md</code></td><td class="l">7d255e2, d031557, e31abe8</td></tr>
+<tr><td class="l">Decode cohort</td><td class="l"><code>scripts/extract_ncom.py</code> → npz outside git</td><td class="l">7d255e2</td></tr>
+<tr><td class="l">R1 replication</td><td class="l"><code>thesis_port.py, r1_replicate_real.py, r1_surrogates.py, r1_threshold.py, r1_pytds_vs_port.py</code> → <code>results/r1_*</code></td><td class="l">18fee41, c8579b8</td></tr>
+<tr><td class="l">R2 TDS vs aTDS</td><td class="l"><code>r2_run.py</code> (1.8 h, 3 cores), <code>r2_stats.py</code> → <code>results/r2_*</code></td><td class="l">4135e98</td></tr>
+<tr><td class="l">R3 apnea (stored)</td><td class="l"><code>r3_apnea_stored.py</code> → <code>results/r3_apnea_stored.json</code></td><td class="l">192a1e6</td></tr>
+<tr><td class="l">R4 Garmin</td><td class="l">GarminTDS <code>compare.py</code>, <code>rebuild_json.py</code> → <code>results/garmin/</code></td><td class="l">eede0c7</td></tr>
+<tr><td class="l">Figures</td><td class="l"><code>figdata.py</code> → <code>figures/figdata.json</code>; <code>examples.py</code> → examples.json (outside git)</td><td class="l">d9bb2bc</td></tr>
+</tbody></table></div>
+<pre>python paper/scripts/extract_ncom.py &lt;msc-project&gt; ncom35.npz
+python paper/scripts/r1_replicate_real.py ncom35.npz &lt;msc-project&gt;
+python paper/scripts/r1_surrogates.py ncom35.npz 2000 1 paper/results/r1_sur_links_port.npy
+python paper/scripts/r1_threshold.py ncom35.npz &lt;msc-project&gt;
+python paper/scripts/r1_pytds_vs_port.py ncom35.npz
+NCOM35=ncom35.npz python paper/scripts/r2_run.py --workers 3 &amp;&amp; python paper/scripts/r2_stats.py
+python paper/scripts/r3_apnea_stored.py &lt;msc-project&gt;
+PYTHONPATH=&lt;pyTDS&gt; python GarminTDS/experiments/adaptive_compare/compare.py --npz runs.npz --n-null 100
+python paper/scripts/figdata.py --msc &lt;msc-project&gt; --agg-out paper/figures/figdata.json
+PYTHONPATH=&lt;pyTDS&gt; python paper/scripts/examples.py --ncom ncom35.npz --garmin-repo &lt;GarminTDS&gt; \
+    --garmin-npz runs.npz --garmin-rows rows_real.csv --out examples.json</pre>
+<h2>Appendix B · Discrepancies found and how they were resolved</h2>
+<ul>
+<li><b>Threshold 8.6 % vs 9 % vs 7.1 %.</b> 8.6 % is stored and reproduced; 9 % in the thesis text is consistent with rounding; 7.1 % arises only when the pooled means come from <code>All_data_clean.mat</code>.</li>
+<li><b>Stored p-values.</b> The stored per-link p-values are not exactly reproducible from the stored real and surrogate arrays in the same file (3 of 140 significance calls differ); they were probably computed on a different surrogate draw. The threshold is unaffected.</li>
+<li><b>Two rank files.</b> Only the copy in <code>TDS imp/</code> matches the stored stage maps; it is the one used.</li>
+<li><b>43.6 % benchmark.</b> Reached by pyTDS only with <code>stability_anchor="end"</code> (43.5 %); the default gives 58.1 %.</li>
+<li><b>Thesis cohort size.</b> The thesis text (p. 13) and the stored outputs (28 per-patient matrices, AHI in the file names) agree on 28 patients, 14 + 14.</li>
+</ul>
+</section>
+</main>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(function () {
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const tip = document.getElementById("tip");
+const fmt = (v, d = 2) => v == null || !isFinite(v) ? "–" : (+v).toFixed(d);
+function showTip(ev, html) { tip.innerHTML = html; tip.hidden = false;
+  const w = tip.offsetWidth, h = tip.offsetHeight; let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + w > innerWidth - 8) x = ev.clientX - w - 14; if (y + h > innerHeight - 8) y = ev.clientY - h - 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px"; }
+function hideTip() { tip.hidden = true; }
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function legend(id, items) { const L = document.getElementById(id); if (!L) return; L.innerHTML = items.map(it =>
+  `<span><i class="${it.kind || ""}" style="background:${css(it.color)}"></i>${it.label}</span>`).join(""); }
+function scale(d0, d1, r0, r1, log) { if (log) { const a = Math.log10(d0), b = Math.log10(d1);
+  return v => r0 + (Math.log10(Math.max(v, 1e-9)) - a) / (b - a) * (r1 - r0); }
+  return v => r0 + (v - d0) / (d1 - d0) * (r1 - r0); }
+function niceTicks(a, b, n = 5) { const span = b - a, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+  const t = []; for (let v = Math.ceil(a / step) * step; v <= b + 1e-9; v += step) t.push(+v.toFixed(10)); return t; }
+
+/* Generic xy frame: returns {g, x, y, W, H} after drawing axes and grid. */
+function frame(host, o) {
+  host.innerHTML = ""; const W = o.width || Math.max(300, Math.round(host.clientWidth || 640)), H = o.height || 260, m = Object.assign({ t: 10, r: 14, b: 38, l: 48 }, o.margin || {});
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": o.aria || "" }, host);
+  const x = o.xband ? null : scale(o.x[0], o.x[1], m.l, W - m.r, o.xlog), y = scale(o.y[0], o.y[1], H - m.b, m.t, o.ylog);
+  const g = el("g", {}, svg), ax = el("g", { class: "axis" }, svg);
+  const yt = o.yticks || (o.ylog ? [] : niceTicks(o.y[0], o.y[1], o.yn || 5));
+  yt.forEach(v => { el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: "gridl" }, g);
+    const t = el("text", { x: m.l - 6, y: y(v) + 4, "text-anchor": "end" }, ax); t.textContent = o.yfmt ? o.yfmt(v) : v; });
+  if (x) { const xt = o.xticks || niceTicks(o.x[0], o.x[1], o.xn || 6);
+    xt.forEach(v => { el("line", { x1: x(v), x2: x(v), y1: H - m.b, y2: H - m.b + 4 }, ax);
+      const t = el("text", { x: x(v), y: H - m.b + 16, "text-anchor": "middle" }, ax); t.textContent = o.xfmt ? o.xfmt(v) : v; }); }
+  el("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b }, ax);
+  if (o.xlabel) { const t = el("text", { x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle" }, ax); t.textContent = o.xlabel; }
+  if (o.ylabel) { const t = el("text", { x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})` }, ax); t.textContent = o.ylabel; }
+  return { svg, g, x, y, W, H, m };
+}
+function path(g, pts, color, w = 2, dash) { const d = pts.filter(p => p[1] != null && isFinite(p[1])).map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join("");
+  return el("path", { d, fill: "none", stroke: color, "stroke-width": w, "stroke-linejoin": "round", "stroke-dasharray": dash || "" }, g); }
+function hover(target, html) { target.addEventListener("mousemove", ev => showTip(ev, html())); target.addEventListener("mouseleave", hideTip); }
+function hitDot(g, cx, cy, r, html) { const c = el("circle", { cx, cy, r: Math.max(r, 7), fill: "transparent" }, g); hover(c, html); return c; }
+
+let D, E;
+const STAGE_COL = { LS: "--st-ls", DS: "--st-ds", REM: "--st-rem", awake: "--st-awake" };
+const STAGE_NAME = { LS: "light sleep", DS: "deep sleep", REM: "REM", awake: "wake" };
+
+/* ---------- Fig 1 ---------- */
+function fig1() {
+  const R = D.replication, host = document.getElementById("fig1a");
+  const stages = R.stage_order; const all = stages.flatMap(s => R.rank_curves[s].real);
+  const f = frame(host, { x: [0, 4 * 36], y: [0.5, 100], ylog: true, yticks: [1, 2, 5, 10, 20, 50, 100], xticks: [], height: 280,
+    ylabel: "mean link strength (TDS %)", aria: "Ranked link strength per stage" });
+  stages.forEach((s, k) => { const off = k * 36; const c = R.rank_curves[s];
+    const lab = el("text", { x: f.x(off + 17.5), y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); lab.textContent = STAGE_NAME[s];
+    [["stored_sur", "--null"], ["port_sur", "--s3"], ["real", "--s1"]].forEach(([key, col]) => {
+      const pts = c[key].map((v, i) => [f.x(off + i + 0.5), f.y(Math.max(v, 0.5))]);
+      path(f.g, pts, css(col), key === "real" ? 2 : 1.6, key === "stored_sur" ? "4 3" : "");
+      if (key === "real") c[key].forEach((v, i) => { el("circle", { cx: f.x(off + i + 0.5), cy: f.y(Math.max(v, .5)), r: 2.4, fill: css(col) }, f.g);
+        hitDot(f.g, f.x(off + i + 0.5), f.y(Math.max(v, .5)), 3, () => `<b>${STAGE_NAME[s]}, rank ${i + 1}</b><br>real ${fmt(v, 1)} %<br>surrogate p95 (stored / ours) ${fmt(c.stored_sur_p95[i], 1)} / ${fmt(c.port_sur_p95[i], 1)} %`); }); }); });
+  legend("leg1a", [{ label: "real subjects (35)", color: "--s1" }, { label: "surrogates, stored (2 000)", color: "--null" }, { label: "surrogates, ported (2 000)", color: "--s3" }]);
+  const T = R.threshold_curves, h2 = document.getElementById("fig1b");
+  const g2 = frame(h2, { x: [1, 20], y: [40, 102], height: 280, xlabel: "TDS threshold (%)", ylabel: "significant links above threshold (%)", yticks: [40, 60, 80, 100] });
+  [["stored", "--null", "4 3"], ["port_surrogates_all_data_clean", "--s3", ""]].forEach(([k, col, dash]) =>
+    path(g2.g, T.grid.map((t, i) => [g2.x(t), T[k][i] == null ? null : g2.y(T[k][i])]), css(col), 2, dash));
+  [[R.thresholds.stored, "8.6 % stored"], [R.thresholds.all_data_clean_pooling, "7.1 %"]].forEach(([t, lab], k) => {
+    el("line", { x1: g2.x(t), x2: g2.x(t), y1: g2.y(40), y2: g2.y(102), stroke: css("--ink-3"), "stroke-dasharray": "2 3" }, g2.g);
+    const tx = el("text", { x: g2.x(t) + 4, y: g2.y(46 + k * 8) }, g2.svg); tx.textContent = lab; });
+  const ov = el("rect", { x: g2.m.l, y: g2.m.t, width: g2.W - g2.m.l - g2.m.r, height: g2.H - g2.m.t - g2.m.b, fill: "transparent" }, g2.svg);
+  ov.addEventListener("mousemove", ev => { const bb = g2.svg.getBoundingClientRect(); const px = (ev.clientX - bb.left) / bb.width * g2.W;
+    const t = 1 + (px - g2.m.l) / (g2.W - g2.m.l - g2.m.r) * 19; const i = Math.max(0, Math.min(T.grid.length - 1, Math.round((t - 1) * 10)));
+    showTip(ev, `<b>threshold ${fmt(T.grid[i], 1)} %</b><br>stored ${fmt(T.stored[i], 1)} %<br>ours ${fmt(T.port_surrogates_all_data_clean[i], 1)} %`); });
+  ov.addEventListener("mouseleave", hideTip);
+  legend("leg1b", [{ label: "stored (reproduction)", color: "--null" }, { label: "ours (ported surrogates)", color: "--s3" }]);
+}
+
+/* ---------- Fig 2 (sleep worked example) ---------- */
+function stageBands(f, t0, t1, stage, dt) { for (let i = 0; i < stage.length; ) { let j = i; while (j < stage.length && stage[j] === stage[i]) j++;
+  const a = t0 + i * dt, b = t0 + j * dt; if (STAGE_COL[stage[i]]) { const r = el("rect", { x: f.x(a), y: f.m.t, width: Math.max(0, f.x(b) - f.x(a)), height: f.H - f.m.t - f.m.b, fill: css(STAGE_COL[stage[i]]) }, f.g);
+    const s = stage[i]; hover(r, () => `${STAGE_NAME[s]}, ${Math.round(a / 60)}–${Math.round(b / 60)} min`); }
+  i = j; } }
+function zs(a) { const m = a.reduce((s, v) => s + v, 0) / a.length, sd = Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / a.length) || 1; return a.map(v => (v - m) / sd); }
+function fig2() {
+  const S = E.sleep, [t0, t1] = S.span, M = S.methods; const mk = { TDS: "--s1", aTDS: "--s2" };
+  document.querySelectorAll("[data-x]").forEach(n => { const k = n.dataset.x;
+    n.textContent = k === "ex.subject" ? "#" + S.subject : k === "ex.pair" ? S.pair.join(" – ") : k === "ex.tol" ? M.aTDS.params.tolerance :
+      k === "ex.rawmax" ? Math.max(...Object.values(S.atds_derivation.raw_window_by_signal)) + " s" : ""; });
+  legend("leg2", [{ label: "TDS (60 / 30 / ±30 / ±1 s)", color: "--s1" }, { label: `aTDS (${M.aTDS.params.window} / ${M.aTDS.params.step} / ±${M.aTDS.params.max_lag} / ±${M.aTDS.params.tolerance} s)`, color: "--s2" },
+    { label: "light sleep", color: "--st-ls", kind: "box" }, { label: "deep sleep", color: "--st-ds", kind: "box" }, { label: "chance score (D)", color: "--ink" }]);
+  const xm = v => (v / 60).toFixed(0);
+  let f = frame(document.getElementById("fig2a"), { x: [t0, t1], y: [-8, 8], height: 230, xfmt: xm, xlabel: "time in recording (min)", yticks: [] });
+  stageBands(f, t0, t1, S.stage, 1);
+  const zx = zs(S.x), zy = zs(S.y);
+  path(f.g, zx.map((v, i) => [f.x(t0 + i), f.y(4 + Math.max(-3.8, Math.min(3.8, v)))]), css("--ink-2"), 1);
+  path(f.g, zy.map((v, i) => [f.x(t0 + i), f.y(-4 + Math.max(-3.8, Math.min(3.8, v)))]), css("--s3"), 1);
+  el("line", { x1: f.x(S.transition), x2: f.x(S.transition), y1: f.m.t, y2: f.H - f.m.b, stroke: css("--ink"), "stroke-dasharray": "3 3" }, f.g);
+  const lab = (txt, col, y) => { const t = el("text", { x: f.x(t0) + 6, y }, f.svg); t.textContent = txt; t.style.fill = css(col); };
+  lab(S.pair[0] + " (gray)", "--ink-2", f.y(7.4)); lab(S.pair[1] + " (aqua)", "--ink-2", f.y(-0.6));
+  const tl = el("text", { x: f.x(S.transition) + 4, y: f.H - f.m.b - 6 }, f.svg); tl.textContent = "LS → DS";
+  // B: tau per window
+  const lagmax = M.aTDS.params.max_lag;
+  f = frame(document.getElementById("fig2b"), { x: [t0, t1], y: [-lagmax - 5, lagmax + 5], height: 230, xfmt: xm, xlabel: "window centre (min)", ylabel: "τ₀ (s)", yticks: [-150, -100, -50, 0, 50, 100, 150] });
+  stageBands(f, t0, t1, S.stage, 1);
+  ["TDS", "aTDS"].forEach(k => { const m = M[k]; const col = css(mk[k]);
+    el("rect", { x: f.m.l, y: f.y(m.params.max_lag), width: f.W - f.m.l - f.m.r, height: f.y(-m.params.max_lag) - f.y(m.params.max_lag), fill: "none", stroke: col, "stroke-dasharray": "2 4", "stroke-width": 1 }, f.g);
+    m.centre.forEach((c, i) => { const st = m.stable[i] === 1, cx = f.x(c), cy = f.y(m.tau[i]);
+      el("circle", { cx, cy, r: k === "aTDS" ? 5 : 3.5, fill: st ? col : css("--paper"), stroke: col, "stroke-width": 1.6 }, f.g);
+      hitDot(f.g, cx, cy, 4, () => `<b>${k}</b> window at ${(c / 60).toFixed(1)} min<br>τ₀ = ${m.tau[i]} s · ${st ? "stable" : "not stable"}<br>search ±${m.params.max_lag} s, tolerance ±${m.params.tolerance} s`); }); });
+  // C: xcorr curves
+  const xc = document.getElementById("fig2c"); f = frame(xc, { x: [-lagmax, lagmax], y: [-1, 1], height: 240, xlabel: "lag τ (s)", ylabel: "C(τ)", yticks: [-1, -0.5, 0, 0.5, 1] });
+  ["TDS", "aTDS"].forEach(k => M[k].xcorr.forEach((w, n) => { const col = css(mk[k]);
+    const p = path(f.g, w.lags.map((l, i) => [f.x(l), f.y(w.C[i])]), col, 1.6, ["", "5 3", "1.5 3"][n]);
+    let b = 0; w.C.forEach((v, i) => { if (Math.abs(v) > Math.abs(w.C[b])) b = i; });
+    el("circle", { cx: f.x(w.lags[b]), cy: f.y(w.C[b]), r: 4, fill: col }, f.g);
+    hitDot(f.g, f.x(w.lags[b]), f.y(w.C[b]), 4, () => `<b>${k}</b>, window at ${(w.centre / 60).toFixed(1)} min<br>τ₀ = ${w.lags[b]} s, C = ${fmt(w.C[b])}`); }));
+  const note = el("text", { x: f.m.l + 4, y: f.m.t + 12 }, f.svg); note.textContent = "solid / dashed / dotted: " + M.TDS.xcorr.map(w => (w.centre / 60).toFixed(0) + " min").join(", ");
+  // D: stage scores
+  const order = ["awake", "REM", "LS", "DS"]; f = frame(document.getElementById("fig2d"), { xband: true, y: [0, 40], height: 240, ylabel: "TDS % (whole night)" });
+  const bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const x0 = f.m.l + k * bw; const t = el("text", { x: x0 + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
+    ["TDS", "aTDS"].forEach((mth, j) => { const r = M[mth].stage_scores.find(z => z.stage === s); const bx = x0 + bw * (0.18 + j * 0.34), w = bw * 0.28;
+      if (r && r.real != null) { el("rect", { x: bx, y: f.y(Math.min(r.real, 40)), width: w, height: f.y(0) - f.y(Math.min(r.real, 40)), rx: 3, fill: css(mk[mth]) }, f.g);
+        if (r.chance != null) el("line", { x1: bx - 2, x2: bx + w + 2, y1: f.y(r.chance), y2: f.y(r.chance), stroke: css("--ink"), "stroke-width": 2 }, f.g);
+        const hb = el("rect", { x: bx, y: f.m.t, width: w, height: f.y(0) - f.m.t, fill: "transparent" }, f.g);
+        hover(hb, () => `<b>${mth}, ${STAGE_NAME[s]}</b><br>real ${fmt(r.real, 1)} % · chance ${fmt(r.chance, 1)} %<br>excess ${fmt(r.excess, 1)} · ${r.n_windows} windows`); }
+      else { const tt = el("text", { x: bx + w / 2, y: f.y(0) - 4, "text-anchor": "middle" }, f.svg); tt.textContent = "n/a"; } }); });
+  // E: tolerance calibration
+  const NS_ = S.atds_derivation.null_score_by_tolerance, tols = Object.keys(NS_).map(Number);
+  f = frame(document.getElementById("fig2e"), { x: [0, Math.max(...tols)], y: [0, 7], height: 220, xlabel: "tolerance (± s)", ylabel: "null TDS score (%)" });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(5), y2: f.y(5), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+  const l5 = el("text", { x: f.m.l + 4, y: f.y(5) - 5 }, f.svg); l5.textContent = "5 % chance budget";
+  path(f.g, tols.map(t => [f.x(t), f.y(NS_[t])]), css("--s2"), 2);
+  tols.forEach(t => { el("circle", { cx: f.x(t), cy: f.y(NS_[t]), r: t === S.atds_derivation.chosen_tolerance ? 6 : 3, fill: css("--s2") }, f.g);
+    hitDot(f.g, f.x(t), f.y(NS_[t]), 3, () => `tolerance ±${t} s → null score ${fmt(NS_[t])} %${t === S.atds_derivation.chosen_tolerance ? "<br><b>chosen</b>" : ""}`); });
+  // F: raw Bartlett windows
+  const RW = S.atds_derivation.raw_window_by_signal, sigs = Object.keys(RW).sort((a, b) => RW[b] - RW[a]);
+  f = frame(document.getElementById("fig2f"), { xband: true, y: [30, 10000], ylog: true, yticks: [60, 300, 1000, 3000, 10000], height: 230, ylabel: "window for 30 indep. samples (s)", margin: { b: 44, l: 56 } });
+  const bw2 = (f.W - f.m.l - f.m.r) / sigs.length;
+  sigs.forEach((s, k) => { const x0 = f.m.l + k * bw2 + bw2 * 0.2, w = bw2 * 0.6, inPair = S.pair.includes(s);
+    el("rect", { x: x0, y: f.y(RW[s]), width: w, height: f.y(30) - f.y(RW[s]), rx: 3, fill: css(inPair ? "--s2" : "--null") }, f.g);
+    const t = el("text", { x: x0 + w / 2, y: f.H - f.m.b + 14, "text-anchor": "middle" }, f.svg); t.textContent = s;
+    const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(30) - f.m.t, fill: "transparent" }, f.g); hover(hb, () => `<b>${s}</b>: ${RW[s]} s${inPair ? " (in this pair)" : ""}`); });
+  [[60, "60 s (TDS)"], [300, "300 s cap"]].forEach(([v, lab]) => { el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(v), y2: f.y(v), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+    const t = el("text", { x: f.m.l + 4, y: f.y(v) - 4 }, f.svg); t.textContent = lab; });
+}
+
+/* ---------- Fig 3 heatmaps ---------- */
+function fig3() {
+  const grid = document.getElementById("fig3grid"); grid.innerHTML = ""; const sig = D.signals;
+  const short = ["HR", "Rsp", "Chn", "Leg", "Eye", "δ", "θ", "α", "σ", "β"];
+  [["published", "TDS", "--s1"], ["v2_calibrated", "aTDS", "--s2"]].forEach(([v, name, col]) => {
+    const vals = D.stages.flatMap(s => D.stage_matrices[v][s].excess.flat()).filter(x => x != null); const vmax = Math.max(...vals.map(Math.abs));
+    D.stages.forEach(s => { const M = D.stage_matrices[v][s]; const div = document.createElement("div"); div.className = "panel";
+      div.innerHTML = `<div class="ptitle">${name} · ${STAGE_NAME[s]}</div><div class="chart"></div>`; grid.appendChild(div);
+      const host = div.querySelector(".chart"); const W = 230, H = 230, l = 30, t = 4, cs = (W - l - 4) / 10;
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${name} ${s} network` }, host);
+      for (let i = 0; i < 10; i++) { const a = el("text", { x: l - 4, y: t + i * cs + cs / 2 + 4, "text-anchor": "end" }, svg); a.textContent = short[i];
+        const b = el("text", { x: l + i * cs + cs / 2, y: t + 10 * cs + 13, "text-anchor": "middle", style: "font-size:9.5px" }, svg); b.textContent = short[i];
+        for (let j = 0; j < 10; j++) { const val = M.excess[i][j]; if (i === j || val == null) continue;
+          const a01 = Math.max(0, val) / vmax; const r = el("rect", { x: l + j * cs + 1, y: t + i * cs + 1, width: cs - 2, height: cs - 2, rx: 2, fill: css(col), "fill-opacity": (0.06 + 0.94 * a01).toFixed(3) }, svg);
+          hover(r, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>${sig[i]} – ${sig[j]}<br>excess ${fmt(val, 1)} pts · real ${fmt(M.real[i][j], 1)} %<br>${M.n_subjects} subjects`); } } }); });
+  legend("leg3", [{ label: "TDS: darker = more excess over chance", color: "--s1", kind: "box" }, { label: "aTDS (own scale)", color: "--s2", kind: "box" }]);
+}
+
+/* ---------- Fig 4 ---------- */
+function fig4() {
+  const order = ["awake", "REM", "LS", "DS"], C = D.connectivity; const vals = [];
+  ["published", "v2_calibrated"].forEach(v => order.forEach(s => C[v].strict[s].forEach(x => x != null && vals.push(x))));
+  const f = frame(document.getElementById("fig4a"), { xband: true, y: [Math.min(-2, Math.floor(Math.min(...vals))), Math.ceil(Math.max(...vals))], height: 300, ylabel: "connectivity (mean excess, pts)" });
+  const bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s]; });
+  [["published", "--s1", 0.3], ["v2_calibrated", "--s2", 0.7]].forEach(([v, col, pos]) => { const c = css(col);
+    for (let subj = 0; subj < 35; subj++) { const pts = order.map((s, k) => [f.m.l + k * bw + bw * pos, C[v].strict[s][subj] == null ? null : f.y(C[v].strict[s][subj])]);
+      let seg = []; pts.forEach(p => { if (p[1] == null) { if (seg.length > 1) path(f.g, seg, c, 0.6).setAttribute("stroke-opacity", .35); seg = []; } else seg.push(p); });
+      if (seg.length > 1) path(f.g, seg, c, 0.6).setAttribute("stroke-opacity", .35);
+      pts.forEach((p, k) => { if (p[1] == null) return; el("circle", { cx: p[0], cy: p[1], r: 2.6, fill: c, "fill-opacity": .8 }, f.g);
+        hitDot(f.g, p[0], p[1], 3, () => `<b>${v === "published" ? "TDS" : "aTDS"}</b>, subject ${subj}<br>${STAGE_NAME[order[k]]}: ${fmt(C[v].strict[order[k]][subj], 1)} pts`); }); } });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(0), y2: f.y(0), stroke: css("--ink-3") }, f.g);
+  legend("leg4a", [{ label: "TDS", color: "--s1", kind: "dot" }, { label: "aTDS", color: "--s2", kind: "dot" }]);
+  // B forest
+  const vars = [["published", "TDS (published)", "--s1"], ["tol_only", "tol_only (60 s, calibrated tol.)", "--s3"], ["v2_calibrated", "aTDS (cap 300)", "--s2"], ["win_only", "win_only (300 s, ±1 s)", "--null"]];
+  const hyps = ["H1", "H2", "H3", "H4"], hname = { H1: "LS > DS", H2: "wake > DS", H3: "LS > REM", H4: "wake > REM" };
+  const rows = D.effects.effects.filter(r => r.rule === "strict");
+  const g = frame(document.getElementById("fig4b"), { x: [0, 4.5], y: [0, hyps.length * (vars.length + 1)], height: 320, xlabel: "dz (paired effect size)", margin: { l: 82 }, yticks: [] });
+  hyps.forEach((h, hi) => { const base = hi * (vars.length + 1); const lab = el("text", { x: g.m.l - 6, y: g.y(base + vars.length / 2) + 4, "text-anchor": "end" }, g.svg); lab.textContent = hname[h];
+    vars.forEach(([v, name, col], vi) => { const r = rows.find(z => z.variant === v && z.hyp === h); if (!r) return; const yy = g.y(base + vi + 0.5);
+      const hi_ = Math.min(4.5, r.dz_ci_hi);
+      el("line", { x1: g.x(Math.max(0, r.dz_ci_lo)), x2: g.x(hi_), y1: yy, y2: yy, stroke: css(col), "stroke-width": 2 }, g.g);
+      el("circle", { cx: g.x(Math.min(4.5, r.dz)), cy: yy, r: 4, fill: css(col) }, g.g);
+      hitDot(g.g, g.x(Math.min(4.5, r.dz)), yy, 4, () => `<b>${name}</b>, ${hname[h]}<br>dz ${fmt(r.dz)} [${fmt(r.dz_ci_lo)}, ${fmt(r.dz_ci_hi)}]<br>n = ${r.n} · Holm p ${(+r.p_holm).toPrecision(2)}`); }); });
+  legend("leg4b", vars.map(([, name, col]) => ({ label: name, color: col, kind: "dot" })));
+}
+
+/* ---------- Fig 5 ---------- */
+function fig5() {
+  const vars = [["published", "TDS", "--s1"], ["tol_only", "tol_only", "--s3"], ["v2_calibrated", "aTDS", "--s2"], ["win_only", "win_only", "--null"]];
+  const order = ["awake", "REM", "LS", "DS"], N = D.network.by_stage;
+  let f = frame(document.getElementById("fig5a"), { xband: true, y: [0.5, 1], height: 260, ylabel: "mean AUC" });
+  let bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
+    vars.forEach(([v, name, col], j) => { const r = N.find(z => z.variant === v && z.stage === s); if (!r) return; const w = bw * 0.8 / vars.length, x0 = f.m.l + k * bw + bw * 0.1 + j * w;
+      el("rect", { x: x0 + 1, y: f.y(r.mean_auc), width: w - 2, height: f.y(0.5) - f.y(r.mean_auc), rx: 3, fill: css(col) }, f.g);
+      const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0.5) - f.m.t, fill: "transparent" }, f.g);
+      hover(hb, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>mean AUC ${fmt(r.mean_auc, 3)}<br>${r.n_sig} of 35 links significant`); }); });
+  legend("leg5", vars.map(([, name, col]) => ({ label: name, color: col, kind: "box" })));
+  const nd = D.mechanism.n_defined, vv = [["published", "TDS", "--s1"], ["v2_cap120", "aTDS cap 120", "--s3"], ["v2_calibrated", "aTDS cap 300", "--s2"], ["v2_cap600", "aTDS cap 600", "--null"]];
+  f = frame(document.getElementById("fig5b"), { xband: true, y: [0, 35], height: 260, ylabel: "subjects (strict rule)", yticks: [0, 10, 20, 30, 35] });
+  bw = (f.W - f.m.l - f.m.r) / order.length;
+  order.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = STAGE_NAME[s];
+    vv.forEach(([v, name, col], j) => { const n = nd[`${v}|strict|${s}`]; const w = bw * 0.8 / vv.length, x0 = f.m.l + k * bw + bw * 0.1 + j * w;
+      el("rect", { x: x0 + 1, y: f.y(n), width: w - 2, height: f.y(0) - f.y(n), rx: 3, fill: css(col) }, f.g);
+      const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0) - f.m.t, fill: "transparent" }, f.g);
+      hover(hb, () => `<b>${name}, ${STAGE_NAME[s]}</b><br>${n} of 35 subjects defined<br>(80 % rule: ${nd[`${v}|p80|${s}`]})`); }); });
+  legend("leg5b", vv.map(([, name, col]) => ({ label: name, color: col, kind: "box" })));
+}
+
+/* ---------- Fig 6 ---------- */
+function fig6() {
+  const I = D.mechanism.independent_samples_per_window, sigs = D.signals.slice().sort((a, b) => I["60"][a] - I["60"][b]);
+  const f = frame(document.getElementById("fig6a"), { xband: true, y: [0.1, 100], ylog: true, yticks: [0.1, 0.3, 1, 3, 10, 30, 100], height: 270, ylabel: "independent samples per window" });
+  const bw = (f.W - f.m.l - f.m.r) / sigs.length, Ls = [["60", "--s1", "60 s (TDS)"], ["120", "--s3", "120 s"], ["300", "--s2", "300 s (aTDS cap)"]];
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(1), y2: f.y(1), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+  sigs.forEach((s, k) => { const t = el("text", { x: f.m.l + k * bw + bw / 2, y: f.H - f.m.b + 16, "text-anchor": "middle" }, f.svg); t.textContent = s;
+    Ls.forEach(([L, col, name], j) => { const v = I[L][s], w = bw * 0.75 / 3, x0 = f.m.l + k * bw + bw * 0.125 + j * w;
+      el("rect", { x: x0 + 1, y: f.y(v), width: w - 2, height: f.y(0.1) - f.y(v), rx: 2, fill: css(col) }, f.g);
+      const hb = el("rect", { x: x0, y: f.m.t, width: w, height: f.y(0.1) - f.m.t, fill: "transparent" }, f.g);
+      hover(hb, () => `<b>${s}</b>, ${name}<br>${fmt(v, 2)} independent samples<br>median Bartlett window ${D.mechanism.median_raw_bartlett_window[s]} s`); }); });
+  legend("leg6", Ls.map(([, col, name]) => ({ label: name, color: col, kind: "box" })));
+}
+
+/* ---------- Fig 7 apnea ---------- */
+let apStage = "awake";
+function fig7() {
+  const A = D.apnea, host = document.getElementById("fig7a");
+  if (!document.getElementById("ap-bar")) {
+    const bar = document.createElement("div"); bar.id = "ap-bar"; bar.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 6px";
+    A.stage_order.forEach(s => { const b = document.createElement("button"); b.type = "button"; b.textContent = STAGE_NAME[s]; b.id = "ap-" + s;
+      b.style.cssText = "font:500 12.5px var(--f-ui);padding:3px 9px;border-radius:4px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer";
+      b.onclick = () => { apStage = s; fig7(); }; bar.appendChild(b); });
+    host.parentElement.insertBefore(bar, document.getElementById("leg7a")); }
+  A.stage_order.forEach(s => { const b = document.getElementById("ap-" + s); b.style.background = css(s === apStage ? "--tint" : "--paper"); b.style.fontWeight = s === apStage ? 600 : 400; b.setAttribute("aria-pressed", s === apStage); });
+  const R = A.ranks[apStage]; const t = A.tests[apStage];
+  const f = frame(host, { x: [0, 105], y: [0, Math.max(30, Math.ceil(Math.max(...R.sick, ...R.healthy) / 5) * 5)], height: 270, xlabel: "link rank", ylabel: "group link strength (TDS %)" });
+  [["sick", "--s1"], ["healthy", "--s3"]].forEach(([k, col]) => { path(f.g, R[k].map((v, i) => [f.x(i + 1), f.y(v)]), css(col), 2);
+    R[k].forEach((v, i) => hitDot(f.g, f.x(i + 1), f.y(v), 2, () => `<b>${k === "sick" ? "AHI > 10" : "AHI ≤ 10"}</b>, rank ${i + 1}: ${fmt(v, 1)} %`)); });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(A.threshold), y2: f.y(A.threshold), stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, f.g);
+  const tx = el("text", { x: f.W - f.m.r - 2, y: f.m.t + 12, "text-anchor": "end" }, f.svg);
+  tx.textContent = `${STAGE_NAME[apStage]} · signed-rank p ${(+t.thesis_signrank_p).toPrecision(2)} · KS p ${(+t.thesis_ks_p).toPrecision(2)}`;
+  legend("leg7a", [{ label: "AHI > 10 (14)", color: "--s1" }, { label: "AHI ≤ 10 (14)", color: "--s3" }]);
+  const P = A.full_night.per_patient_ahi_links;
+  const g = frame(document.getElementById("fig7b"), { x: [0, 115], y: [20, 75], height: 270, xlabel: "AHI (events per hour)", ylabel: "links above 7.8 %" });
+  el("line", { x1: g.x(10), x2: g.x(10), y1: g.m.t, y2: g.H - g.m.b, stroke: css("--ink-3"), "stroke-dasharray": "4 3" }, g.g);
+  P.forEach(([a, n]) => { const col = css(a > 10 ? "--s1" : "--s3"); el("circle", { cx: g.x(a), cy: g.y(n), r: 4.5, fill: col, stroke: css("--paper"), "stroke-width": 1.5 }, g.g);
+    hitDot(g.g, g.x(a), g.y(n), 5, () => `AHI ${a} · ${n} links`); });
+  const tt = el("text", { x: g.W - g.m.r - 2, y: g.m.t + 12, "text-anchor": "end" }, g.svg); tt.textContent = `Spearman ρ = ${fmt(A.full_night.spearman_links_vs_ahi)}, p = ${fmt(A.full_night.spearman_p, 3)}`;
+  legend("leg7b", [{ label: "AHI > 10", color: "--s1", kind: "dot" }, { label: "AHI ≤ 10", color: "--s3", kind: "dot" }]);
+}
+
+/* ---------- Fig 8 Garmin ---------- */
+function fig8() {
+  const G = D.garmin, names = { frozen: "app 120/40/±2", pytds_default: "pyTDS default 60/30/±1", v1_fixedtol: "v1 rule ±2", v2_fixedtol: "aTDS window, ±2",
+    v2_calibrated: "aTDS (per run)", v2_calibrated_pooled: "aTDS pooled 240/119/±14", fixed_240_tol2: "240/80/±2", fixed_240_tol14: "240/80/±14", fixed_120_tol14: "120/40/±14", locked_240_119_tol14: "locked 240/119/±14" };
+  const main = G.main.filter(r => r.dataset === "real"), held = G.heldout.filter(r => r.dataset === "real");
+  const order = ["pytds_default", "v1_fixedtol", "fixed_240_tol2", "v2_fixedtol", "fixed_120_tol14", "frozen", "fixed_240_tol14", "v2_calibrated", "v2_calibrated_pooled", "locked_240_119_tol14"];
+  const f = frame(document.getElementById("fig8a"), { x: [0, 10], y: [0, order.length], height: 330, xlabel: "runs with a detected link (main set, of 30)", margin: { l: 168 }, yticks: [], xticks: [0, 2, 4, 6, 8, 10] });
+  order.forEach((v, i) => { const r = main.find(z => z.variant === v), h = held.find(z => z.variant === v); if (!r) return; const yy = f.y(order.length - i - 0.5);
+    const col = v === "frozen" ? "--s1" : v === "v2_calibrated" ? "--s2" : "--null";
+    const lab = el("text", { x: f.m.l - 6, y: yy + 4, "text-anchor": "end" }, f.svg); lab.textContent = names[v];
+    el("rect", { x: f.x(0), y: yy - 8, width: f.x(r.n_detect) - f.x(0), height: 16, rx: 3, fill: css(col) }, f.g);
+    const vt = el("text", { x: f.x(r.n_detect) + 5, y: yy + 4 }, f.svg); vt.textContent = `${r.n_detect}${h ? `  · held-out ${h.n_detect}/4` : ""}`;
+    const hb = el("rect", { x: f.m.l, y: yy - 10, width: f.W - f.m.l - f.m.r, height: 20, fill: "transparent" }, f.g);
+    hover(hb, () => `<b>${names[v]}</b><br>${r.n_detect}/30 detected · cross-run false positives ${r.n_xrun_fp}/${r.n_xrun}<br>median lag ${fmt(r.speed_hr_lag_median, 1)} s · window ${r.window_median} s · tol ±${r.tolerance_median} s${h ? `<br>held-out: ${h.n_detect}/4` : ""}`); });
+  legend("leg8", [{ label: "app setting (TDS)", color: "--s1", kind: "box" }, { label: "aTDS per run", color: "--s2", kind: "box" }, { label: "other settings", color: "--null", kind: "box" }]);
+}
+
+/* ---------- Fig 9 Garmin example ---------- */
+function fig9() {
+  const G = E.garmin, M = G.methods, keys = Object.keys(M), cols = ["--s1", "--s2"]; const n = G.hr.length;
+  legend("leg9", keys.map((k, i) => ({ label: `${k}: ${M[k].params.window} / ${M[k].params.step} / ±${M[k].params.max_lag} / ±${M[k].params.tolerance} s`, color: cols[i] })));
+  const hp = (a, w) => a.map((v, i) => { let s = 0, c = 0; for (let j = Math.max(0, i - (w >> 1)); j < Math.min(a.length, i + (w >> 1)); j++) { s += a[j]; c++; } return v - s / c; });
+  let f = frame(document.getElementById("fig9a"), { x: [0, n], y: [-3.5, 3.5], height: 200, xfmt: v => (v / 60).toFixed(0), xlabel: "time (min)" });
+  path(f.g, zs(hp(G.hr, 120)).map((v, i) => [f.x(i), f.y(Math.max(-3.5, Math.min(3.5, v)))]), css("--ink-2"), 1);
+  path(f.g, zs(hp(G.speed, 120)).map((v, i) => [f.x(i), f.y(Math.max(-3.5, Math.min(3.5, v)))]), css("--s3"), 1);
+  const a = el("text", { x: f.m.l + 6, y: f.m.t + 12 }, f.svg); a.textContent = "heart rate (gray) · speed (aqua)";
+  const lm = Math.max(...keys.map(k => M[k].params.max_lag));
+  f = frame(document.getElementById("fig9b"), { x: [0, n], y: [-lm - 5, lm + 5], height: 230, xfmt: v => (v / 60).toFixed(0), xlabel: "window centre (min)", ylabel: "lag (s)" });
+  el("line", { x1: f.m.l, x2: f.W - f.m.r, y1: f.y(0), y2: f.y(0), stroke: css("--ink-3") }, f.g);
+  keys.forEach((k, i) => { const m = M[k], c = css(cols[i]);
+    m.centre.forEach((t, j) => { const lag = -m.lag_hr_leads_speed_s[j]; const st = m.stable[j] === 1;
+      el("circle", { cx: f.x(t), cy: f.y(lag), r: i ? 5 : 3.5, fill: st ? c : css("--paper"), stroke: c, "stroke-width": 1.6 }, f.g);
+      hitDot(f.g, f.x(t), f.y(lag), 4, () => `<b>${k}</b> at ${(t / 60).toFixed(1)} min<br>speed leads HR by ${lag} s · ${st ? "stable" : "not stable"}`); }); });
+  f = frame(document.getElementById("fig9c"), { x: [0, 50], y: [0, keys.length], height: 150, xlabel: "TDS score (%)", margin: { l: 120 }, yticks: [] });
+  keys.forEach((k, i) => { const m = M[k], yy = f.y(keys.length - i - 0.5), c = css(cols[i]);
+    const lab = el("text", { x: f.m.l - 6, y: yy + 4, "text-anchor": "end" }, f.svg); lab.textContent = k;
+    m.null_scores.forEach(v => el("line", { x1: f.x(v), x2: f.x(v), y1: yy - 7, y2: yy + 7, stroke: css("--null"), "stroke-opacity": .5 }, f.g));
+    el("circle", { cx: f.x(m.score), cy: yy, r: 7, fill: c, stroke: css("--paper"), "stroke-width": 2 }, f.g);
+    hitDot(f.g, f.x(m.score), yy, 7, () => `<b>${k}</b><br>score ${fmt(m.score, 1)} % · chance 95th pct ${fmt(m.chance95, 1)} %<br>p = ${fmt(m.p, 3)} · ${m.detected ? "detected" : "not detected"}${m.lag_s != null ? ` · lag ${-m.lag_s} s` : ""}`); });
+}
+
+function renderAll() { try { fig1(); fig3(); fig4(); fig5(); fig6(); fig7(); fig8(); } catch (e) { console.error(e); }
+  if (E) { try { fig2(); fig9(); } catch (e) { console.error(e); } } }
+Promise.all([fetch("figures/figdata.json").then(r => r.json()), fetch("examples.json").then(r => r.ok ? r.json() : null).catch(() => null)])
+  .then(([d, e]) => { D = d; E = e; if (!E) ["fig2a", "fig9a"].forEach(id => { const n = document.getElementById(id); if (n) n.innerHTML = '<div class="loading">Worked-example traces are not in the public repository; run paper/scripts/examples.py to generate examples.json.</div>'; });
+    renderAll();
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(renderAll, 150); });
+    const mq = matchMedia("(prefers-color-scheme: dark)"); (mq.addEventListener ? mq.addEventListener("change", renderAll) : mq.addListener(renderAll));
+    new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }); })
+  .catch(err => { document.querySelectorAll(".chart").forEach(n => n.innerHTML = '<div class="loading">Figure data could not be loaded.</div>'); console.error(err); });
+})();
+</script>
