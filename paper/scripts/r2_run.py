@@ -26,7 +26,7 @@ from adaptive import adaptive_params, bartlett_factor  # noqa: E402
 from common import (calibrate_tolerance, published_params, stable_seed,  # noqa: E402,F401
                     variant_params, window_labels)
 
-DATA = "/tmp/claude-0/-home-user/b218c801-5d78-507e-9550-a8f2a0e7c418/scratchpad/ncom35.npz"
+DATA = os.environ.get("NCOM35", "/tmp/claude-0/-home-user/b218c801-5d78-507e-9550-a8f2a0e7c418/scratchpad/ncom35.npz")
 STAGES = ("LS", "DS", "REM", "awake")
 MAIN = ("published", "win_only", "tol_only", "v2_calibrated", "v2_cal_lag3")
 VARIANTS = MAIN + ("v2_cap120", "v2_cap600")
