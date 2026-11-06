@@ -61,7 +61,7 @@ __ANIMCSS__
 
   <div class="step">
     <h3>Step 1 · Window</h3>
-    <p>Neighbouring samples of a smooth signal nearly repeat each other. From each signal's autocorrelation r(k), the Bartlett factor B = 1 + 2 Σ r(k)² (up to the first zero crossing) says how many samples count as one independent sample. aTDS computes B for every signal, takes the largest (the slowest signal) and sets L = 30 · B.</p>
+    <p>Neighbouring samples of a smooth signal nearly repeat each other. From each signal's autocorrelation r(k), the Bartlett factor B = 1 + 2 Σ r(k)² (up to the first zero crossing) says how many samples count as one independent sample. aTDS computes B for every signal, takes the largest (the slowest signal) and sets L = 30 · B, at least 61 samples and at most 10 % of the record.</p>
     __A1__
     <div class="why">
       <p><b>Why 30.</b> The correlation measured in a window with n independent samples has a random error of about 1/√n: ±0.18 at n = 30, ±1 at n = 1. Fewer samples make τ₀ mostly noise; more make it more reliable but leave fewer windows, so less detail over time. In a test where coupling switched on and off, 30 was within 0.015–0.05 of the best window (45–60 independent samples for longer episodes). 30 is a convention that favours time resolution, not an optimum.</p>
@@ -75,19 +75,19 @@ __ANIMCSS__
     <p>In each window, y is shifted against x and the cross-correlation C(k) is computed for every shift k in ±(L − 1)/2; τ₀ is the shift with the largest |C|. Windows move by half their length.</p>
     __A2__
     <div class="why">
-      <p><b>Why (L − 1)/2.</b> In a window of L samples, a shift by more than half the window cannot be told apart from a shift in the other direction, so (L − 1)/2 is the widest search that is unambiguous. It is also the published ratio (±30 in 60).</p>
+      <p><b>Why (L − 1)/2.</b> With the circular cross-correlation TDS uses, a shift by more than half the window cannot be told apart from a shift in the other direction, so (L − 1)/2 is the widest search that is unambiguous. It is also the published ratio (±30 in 60).</p>
       <p><b>Why a step of L/2.</b> The published 50 % overlap, kept unchanged.</p>
-      <p><b>Why half a period for rhythms.</b> For a signal that repeats every P samples, a delay d and d − P look the same, so delays are only searched within ±P/2.</p>
+      <p><b>Why half a period for rhythms.</b> For a signal that repeats every P samples, a delay d and d − P look the same, so delays are only searched within ±P/2. Within that range the anti-phase lobe can still win, so rhythmic signals are best converted to cycle-by-cycle series (Limits).</p>
     </div>
   </div>
 
   <div class="step">
     <h3>Step 3 · Tolerance</h3>
-    <p>y is rotated in time by a large random amount (its end wraps to its start). Each signal keeps its own shape, but the coupling is gone, so any stability left is luck. For each tolerance 0, 1, 2, … aTDS scores 20 such copies and averages them into the chance score C(tol), the false-alarm rate at that tolerance. It keeps the widest tolerance whose C(tol), plus two standard errors, stays ≤ 5 %.</p>
+    <p>y is rotated in time by a large random amount (its end wraps to its start). Each signal keeps its own shape, but the coupling is gone, so any stability left is luck. For each tolerance 0, 1, 2, … aTDS scores 20 such copies per pair, pooled over all recordings available, and averages them into the chance score C(tol), the false-alarm rate at that tolerance. It keeps the widest tolerance whose C(tol), plus two standard errors, stays ≤ 5 %.</p>
     __A3__
     <div class="why">
       <p><b>Why a wider tolerance at all.</b> A real delay wobbles a little from window to window; a tolerance lets TDS accept that wobble. Too wide, and random delays agree by luck.</p>
-      <p><b>Why 5 %.</b> A false-alarm budget, the same idea as the usual 5 % significance level: on average at most 5 % of windows of uncoupled signals may look stable. It is a design constant; 1 % would be stricter. It is not a per-link significance test, which each link still needs.</p>
+      <p><b>Why 5 %.</b> A false-alarm budget, not a significance level: on average at most 5 % of windows of uncoupled signals may look stable. It is a design constant; 1 % would be stricter. Whether a link is significant still needs its own rotation test.</p>
       <p><b>Why two standard errors.</b> With the mean alone, the chance score on <i>new</i> pairs reached 6.7 %. With the margin, and rotations pooled over all recordings available, it stayed at 3.3–4.4 %.</p>
     </div>
   </div>

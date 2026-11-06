@@ -167,7 +167,7 @@ ol.steps { margin: 4px 0; padding-left: 1.3em; display: grid; gap: 3px; }
 
   <div class="step">
     <h3>Step 1 · Window</h3>
-    <p>Neighbouring samples of a smooth signal nearly repeat each other. From each signal's autocorrelation r(k), the Bartlett factor B = 1 + 2 Σ r(k)² (up to the first zero crossing) says how many samples count as one independent sample. aTDS computes B for every signal, takes the largest (the slowest signal) and sets L = 30 · B.</p>
+    <p>Neighbouring samples of a smooth signal nearly repeat each other. From each signal's autocorrelation r(k), the Bartlett factor B = 1 + 2 Σ r(k)² (up to the first zero crossing) says how many samples count as one independent sample. aTDS computes B for every signal, takes the largest (the slowest signal) and sets L = 30 · B, at least 61 samples and at most 10 % of the record.</p>
     <div class="anim">
       <canvas id="a1" width="680" height="250" role="img" aria-label="Animation: the autocorrelation of x and of y is built one lag at a time and each B is summed up to its first zero crossing (K). The larger B (the slower signal, here x) is used. Then the window is built from independent samples: each dot is one independent sample, worth B samples, until there are 30."></canvas>
       <div class="anim-bar"><p>Animation: the autocorrelation of x and of y is built one lag at a time and each B is summed up to its first zero crossing (K). The larger B (the slower signal, here x) is used. Then the window is built from independent samples: each dot is one independent sample, worth B samples, until there are 30.</p><button type="button" data-anim="a1">Pause</button></div>
@@ -187,22 +187,22 @@ ol.steps { margin: 4px 0; padding-left: 1.3em; display: grid; gap: 3px; }
       <div class="anim-bar"><p>Animation: inside one window, y is shifted against x across the whole lag range while C(k) is drawn; the largest |C| gives τ₀ = −20, the true delay.</p><button type="button" data-anim="a2">Pause</button></div>
     </div>
     <div class="why">
-      <p><b>Why (L − 1)/2.</b> In a window of L samples, a shift by more than half the window cannot be told apart from a shift in the other direction, so (L − 1)/2 is the widest search that is unambiguous. It is also the published ratio (±30 in 60).</p>
+      <p><b>Why (L − 1)/2.</b> With the circular cross-correlation TDS uses, a shift by more than half the window cannot be told apart from a shift in the other direction, so (L − 1)/2 is the widest search that is unambiguous. It is also the published ratio (±30 in 60).</p>
       <p><b>Why a step of L/2.</b> The published 50 % overlap, kept unchanged.</p>
-      <p><b>Why half a period for rhythms.</b> For a signal that repeats every P samples, a delay d and d − P look the same, so delays are only searched within ±P/2.</p>
+      <p><b>Why half a period for rhythms.</b> For a signal that repeats every P samples, a delay d and d − P look the same, so delays are only searched within ±P/2. Within that range the anti-phase lobe can still win, so rhythmic signals are best converted to cycle-by-cycle series (Limits).</p>
     </div>
   </div>
 
   <div class="step">
     <h3>Step 3 · Tolerance</h3>
-    <p>y is rotated in time by a large random amount (its end wraps to its start). Each signal keeps its own shape, but the coupling is gone, so any stability left is luck. For each tolerance 0, 1, 2, … aTDS scores 20 such copies and averages them into the chance score C(tol), the false-alarm rate at that tolerance. It keeps the widest tolerance whose C(tol), plus two standard errors, stays ≤ 5 %.</p>
+    <p>y is rotated in time by a large random amount (its end wraps to its start). Each signal keeps its own shape, but the coupling is gone, so any stability left is luck. For each tolerance 0, 1, 2, … aTDS scores 20 such copies per pair, pooled over all recordings available, and averages them into the chance score C(tol), the false-alarm rate at that tolerance. It keeps the widest tolerance whose C(tol), plus two standard errors, stays ≤ 5 %.</p>
     <div class="anim">
       <canvas id="a3" width="680" height="430" role="img" aria-label="Animation: y is rotated to destroy the coupling (8 rotated copies here; aTDS uses 20). For each tolerance, the middle row shows copy 1: τ₀ in every window, filled where 4 of 5 neighbouring windows agree within the tolerance; that fraction is the copy's score. The bars are the scores of all copies, and their mean is C(tol). The tolerance rises until the upper bound C + 2 SE passes 5 %; the last tolerance at or under 5 % is kept."></canvas>
       <div class="anim-bar"><p>Animation: y is rotated to destroy the coupling (8 rotated copies here; aTDS uses 20). For each tolerance, the middle row shows copy 1: τ₀ in every window, filled where 4 of 5 neighbouring windows agree within the tolerance; that fraction is the copy's score. The bars are the scores of all copies, and their mean is C(tol). The tolerance rises until the upper bound C + 2 SE passes 5 %; the last tolerance at or under 5 % is kept.</p><button type="button" data-anim="a3">Pause</button></div>
     </div>
     <div class="why">
       <p><b>Why a wider tolerance at all.</b> A real delay wobbles a little from window to window; a tolerance lets TDS accept that wobble. Too wide, and random delays agree by luck.</p>
-      <p><b>Why 5 %.</b> A false-alarm budget, the same idea as the usual 5 % significance level: on average at most 5 % of windows of uncoupled signals may look stable. It is a design constant; 1 % would be stricter. It is not a per-link significance test, which each link still needs.</p>
+      <p><b>Why 5 %.</b> A false-alarm budget, not a significance level: on average at most 5 % of windows of uncoupled signals may look stable. It is a design constant; 1 % would be stricter. Whether a link is significant still needs its own rotation test.</p>
       <p><b>Why two standard errors.</b> With the mean alone, the chance score on <i>new</i> pairs reached 6.7 %. With the margin, and rotations pooled over all recordings available, it stayed at 3.3–4.4 %.</p>
     </div>
   </div>

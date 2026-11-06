@@ -293,3 +293,38 @@ These are all text-level.
 Referee 1 (network physiology), fifth round
 
 **Author's changes after round 5:** all ten edits made as written. This is the version saved in `atds_brief.html` and published.
+
+---
+
+## Short brief checks
+
+The technical report above was condensed into `atds_brief_short.html`. The same
+AI referee checked it twice for faithfulness to the approved report.
+
+**Check 1** found five overstatements in the first short version (the
+rescaled-baseline verdict, the false-alarm range, the tolerance wording, the
+"all tests synthetic" sentence, and the description of the review as if done by
+a human referee) and two missing limits (score scale, record-length dependence
+of B). All were fixed in the extended brief.
+
+**Check 2 (final):**
+
+**1. Overstatements or contradictions**
+- **Why 5 %.** "A false-alarm budget, the same idea as the usual 5 % significance level." The approved report says explicitly that the 5 % is not a significance level, and two sentences later the brief itself says it is not a per-link test. → "A false-alarm budget, not a significance level: on average at most 5 % of windows of uncoupled signals may look stable. It is a design constant; 1 % would be stricter. Whether a link is significant still needs its own rotation test."
+
+Every other number I checked matches the approved report and its data: 5.2/91.3 %, 259/±129/±13, 16 of 50 wrong sign, 72–96 %, 0.88 vs 0.81, 85 vs 60 %, 0.92/0.96 and 0.65/0.69, 3.3–4.4 %, 5.2 %, the 95th percentile up to 20 %, 0.47 → 0.59 vs 0.598, about 600 samples and fewer than 19 windows, B 13 → 84, ±56.
+
+**2. The new "why" explanations**
+- **Why (L − 1)/2.** "a shift by more than half the window cannot be told apart from a shift in the other direction." This is true only because TDS uses circular cross-correlation. → "With the circular cross-correlation TDS uses, a shift by more than half the window …"
+- **Why half a period.** This is correct as stated, but a reader may conclude the delay is always right inside ±P/2. The report's rhythm test showed that |C| can still pick the anti-phase lobe. Optional addition: "Within ±P/2 the anti-phase lobe can still win, so rhythmic signals are best converted to cycle-by-cycle series (Limits)."
+- **Step 3.** "aTDS scores 20 such copies." → "20 copies per pair, pooled over all recordings available" (100 copies in the synthetic tests).
+- **Step 1.** Add "at most 10 % of the record" after L = 30 · B, since the 61-sample floor and its cost are described but the 10 % cap is not.
+
+The explanations for 30, 61, the slowest signal, the step of L/2 and the 2-SE margin are correct.
+
+**3. Decision**
+**APPROVED** as a faithful brief once the 5 % sentence and the (L − 1)/2 sentence are edited as above. The other two edits are recommended, and the anti-phase note is optional. None of them needs another check.
+
+Referee 1 (network physiology), short-brief check 2
+
+**Author's changes:** all five edits made, including the recommended and optional ones.
