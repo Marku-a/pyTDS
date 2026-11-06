@@ -1,8 +1,8 @@
 # aTDS brief — referee record
 
-Five review rounds by one referee agent playing a senior reviewer from the
-network-physiology school that introduced TDS (it signs as "Referee 1"; it does
-not speak for any named person). Each report is copied word for word. After
+Five review rounds by an AI model (Claude, run as a sub-agent) asked to act as a
+senior reviewer from the network-physiology school that introduced TDS. It signs
+as "Referee 1"; it is not a human expert and does not speak for any named person. Each report is copied word for word. After
 each report there is a short note of what the author changed in response; the
 full detail is in the brief itself (`atds_brief.html`).
 

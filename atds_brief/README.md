@@ -4,12 +4,16 @@ A self-contained brief on **adaptive Time Delay Stability**: TDS that sets its
 own window, lag range and tolerance from the signals. The only mandatory input
 is the signals; the longest plausible delay `d_max` is optional.
 
-- **The brief:** `atds_brief.html` (open in any browser; interactive charts and
+- **Technical report:** `atds_brief.html` (open in any browser; interactive charts and
   animations, no internet needed except for fonts). Published privately at
   https://claude.ai/artifact/Ji7ju8xZzQQTRVyRsDFyP8 — share it from the page's
   Share menu.
-- **Referee record:** `REVIEW.md` — five review rounds, word for word, with the
-  changes made after each. Final decision: approved to show as an idea.
+- **Short brief (send this):** `atds_brief_short.html`, published at
+  https://claude.ai/artifact/T2wbNs2czosxrEtzzbx3H3 — the idea, the step-by-step
+  rules with animations, why each number was chosen, the key results and limits.
+- **Review record:** `REVIEW.md` — five review rounds by an AI model (Claude)
+  acting as a network-physiology referee, word for word, with the changes made
+  after each. Final decision: approved to show as an idea after corrections.
 
 ## The rule (aTDS v2.1)
 
@@ -31,7 +35,8 @@ in `experiments/exp4.py` (`calib`, `atds2`) and `experiments/exp6.py`
 
 | Path | Contents |
 |---|---|
-| `atds_brief.html` | The built, published brief |
+| `atds_brief.html` | The full technical report |
+| `atds_brief_short.html` | The short brief (build: `python atds_brief/page_source/build_short.py`) |
 | `page_source/` | Page source: `body.html` (text, charts code), `style.css`, `lib.js` (chart helpers), `anim.js` (step animations), `build_page.py` |
 | `experiments/` | Every script behind a figure or table (see below) |
 | `experiments/atds_code/` | Copies of `adaptive.py`, `generators.py`, `common.py` used by the scripts |
@@ -87,7 +92,7 @@ repository.
 
 ## Status
 
-Approved by the referee as an idea. Not yet tested: staged multi-subject sleep
+Approved as an idea by the AI referee (see `REVIEW.md`); not yet reviewed by a human expert. Not yet tested: staged multi-subject sleep
 cohorts with cross-subject, stage-matched surrogates; coupling that switches
 with the regime; stronger common drivers. See "Not tested here" and "Next
 steps" in the brief.
