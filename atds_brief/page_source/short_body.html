@@ -1,0 +1,175 @@
+<title>Adaptive TDS Brief</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+__STYLE__
+<style>
+main { max-width: 720px; gap: 34px; }
+.rules-tbl td, .rules-tbl th { white-space: normal; text-align: left; vertical-align: top; }
+.rules-tbl td:first-child { font-weight: 600; white-space: nowrap; }
+.rules-tbl td.f { font-family: var(--f-mono); font-size: 0.82rem; color: var(--accent); white-space: nowrap; }
+.verdict-list { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 68ch; }
+.more { border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; background: var(--surface); font-size: 0.93rem; color: var(--ink-2); display: grid; gap: 6px; }
+.more p { max-width: none; }
+.more a { color: var(--accent); }
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Idea for review · Asaf Markuza · November 2026</div>
+  <h1>Adaptive TDS: Time Delay Stability that sets its own parameters</h1>
+  <p class="lede">TDS needs a window, a lag range and a tolerance, and for a new system nobody knows the right values. aTDS takes only the signals and measures all three from them.</p>
+</header>
+
+<section>
+  <h2>The problem</h2>
+  <p>Time Delay Stability (Bashan et al. 2012) links two signals when the delay τ₀ that best aligns them stays nearly constant from window to window: a window counts as stable when 4 of 5 neighbouring delays agree within a tolerance, and the TDS score is the share of stable windows.</p>
+  <p>The published setting, window 60, lag ±30, tolerance ±1, was chosen for 1&#8209;Hz sleep recordings and is counted in samples. For a slower system, or the same system recorded faster, the same numbers mean something else, and TDS can miss a coupling that is plainly there.</p>
+  <figure>
+    <div class="fig-title">Figure 1 · One coupled pair, two parameter sets</div>
+    <div class="chart" id="f1"></div>
+    <figcaption>
+      <p>y follows x with a true delay of 20 samples (dashed line). Each dot is the delay τ₀ found in one window; filled dots are stable windows. With the published setting (top) τ₀ scatters and the score is <b>5.2 %</b>. With the parameters aTDS chose by itself (bottom: window 259, lag ±129, tolerance ±13) τ₀ sits on the true delay and the score is <b>91.3 %</b>.</p>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>The idea: three rules</h2>
+  <div class="tbl">
+    <table class="rules-tbl">
+      <thead><tr><th>Parameter</th><th>Rule</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Window</td><td class="f">L = 30 · B</td><td>B (the Bartlett factor, from the autocorrelation) says how many samples make one independent sample, so every window holds about 30 independent samples of the slowest signal. Never shorter than 61 samples.</td></tr>
+        <tr><td>Lag range</td><td class="f">±(L − 1) / 2</td><td>The published ratio (±30 in 60), so the search grows with the window; capped at half a rhythm's period if a signal is rhythmic.</td></tr>
+        <tr><td>Tolerance</td><td class="f">chance ≤ 5 %</td><td>One signal is rotated in time to destroy the coupling; the tolerance is the widest one at which these coupling-free copies look stable in at most 5 % of windows.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The 4-of-5 stability rule is unchanged. The only required input is the signals; the longest plausible delay can be given as an option, and then the window is made long enough to search that far.</p>
+</section>
+
+<section>
+  <h2>What the tests show</h2>
+  <p>All tests use synthetic signals with a known coupling and delay, so a method's answer can be checked. aTDS sets its parameters on separate training data and is scored on data it has not seen.</p>
+
+  <figure>
+    <div class="fig-title">Figure 2 · A lag range that is too short gives a confident wrong answer</div>
+    <div class="chart" id="f2"></div>
+    <figcaption>
+      <p>Slow signals with true delays from 5 to 160 samples, 10 pairs per delay. Only the lag range differs. With the published ±30, every delay beyond 30 is reported as about ±30 (hollow dots), 16 of 50 with the wrong sign, while the TDS score stays high (72–96 %). With the aTDS lag range the reported delay is exact in all 90 pairs.</p>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 3 · Detecting weak coupling as the system slows down</div>
+    <div class="pair">
+      <div class="chart" id="f3a"></div>
+      <div class="chart" id="f3b"></div>
+    </div>
+    <figcaption>
+      <p>One system made r times slower (equivalently, recorded r times faster), with weak coupling; 100 coupled and 100 uncoupled pairs per r, bars are 95 % intervals. AUC is the chance that a coupled pair scores higher than an uncoupled one (1 = perfect, 0.5 = coin flip). Four settings: the <b>published</b> one; the published one <b>rescaled by hand</b> (60r / ±30r / ±r, what an analyst would choose if told r); <b>aTDS</b>, which is not told r; and an <b>oracle</b>, the best of 91 settings picked by looking at labelled training pairs, a practical upper bound no real analysis has.</p>
+      <p>The published setting is close to chance from r = 4 on. aTDS reaches the hand-rescaled setting without knowing r: equivalent at r = 1–2, better at r = 8 (AUC 0.88 vs 0.81, true delay found in 85 % vs 60 % of pairs), undecided at r = 4 and 16. The oracle does better still, mostly with much longer windows.</p>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Verdict</h2>
+  <ul class="verdict-list">
+    <li><b>Much better than the published setting</b> whenever the system is slower than that setting assumes; equal where it fits.</li>
+    <li><b>As good as an expert who knows the time scale</b>, without being told it; better in one case, undecided in two (Figure 3).</li>
+    <li><b>Not optimal.</b> A setting tuned on labelled data does better; aTDS's value is that it needs no tuning.</li>
+    <li><b>False alarms stay within budget:</b> on new uncoupled pairs the chance score was 3.3–4.4 %, and a per-link test on networks reported no false link in 20 uncoupled networks.</li>
+    <li><b>Also better</b> on long-memory signals (H = 0.9), rhythms with a delay below half a period, and signals whose dynamics change halfway; equal on long-memory signals with H = 0.6 and 0.75; detects bursting neurons but reports their delay 3 steps too long.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Limits and open questions</h2>
+  <ul class="limits">
+    <li><b>Long delays in fast signals</b> are missed silently unless the optional longest delay is given (delay 50: AUC 0.56 without it, 1.00 with it). Rhythms with a delay beyond half a period give a wrong delay.</li>
+    <li><b>Coarser timing:</b> longer windows mean one answer per window, so short coupling episodes can be missed; a maximum window can be set.</li>
+    <li><b>The delay is known only within the tolerance</b>, which grows for slow signals (up to ±56 here).</li>
+    <li><b>Untested so far:</b> whether aTDS changes or sharpens sleep-stage contrasts in real sleep networks; the cross-subject, stage-matched surrogates of the original method; coupling that switches on and off with the sleep stage.</li>
+  </ul>
+</section>
+
+<section class="more">
+  <p><b>Full technical report.</b> The complete algorithm with formulas and step-by-step animations, all tests (window, lag range, tolerance, other signal types, a real EEG pair, networks with false-discovery control), every number with its interval, and definitions of all terms: <a href="https://claude.ai/artifact/Ji7ju8xZzQQTRVyRsDFyP8">Adaptive TDS technical report</a>.</p>
+  <p>The report went through five rounds of review by a referee from network physiology and was approved to be shown as an idea. Code, results and the referee record are in the pyTDS repository, folder <code>atds_brief/</code>.</p>
+</section>
+
+<footer>Bashan A, Bartsch RP, Kantelhardt JW, Havlin S, Ivanov PCh. Network physiology reveals relations between network topology and physiological function. Nature Communications 3:702 (2012).</footer>
+</main>
+
+<script>
+const EX = __EX__;
+const U4 = __U4__;
+const U1 = __U1__;
+__LIB__
+// Figure 1: worked example
+(() => {
+  const c = document.getElementById("f1"), E = EX;
+  legend(c, [{ n: "Stable window", c: "var(--ink-2)", k: "dot" }, { n: "Unstable window", c: "var(--ink-2)", k: "ring" }, { n: "True delay", c: "", k: "dash" }]);
+  [["fixed", "Published setting · window 60, lag ±30, tol ±1 · score 5.2 %", "var(--fixed)"],
+   ["atds", "aTDS · window 259, lag ±129, tol ±13 · score 91.3 %", "var(--atds)"]].forEach(([k, title, col], idx) => {
+    const S = E[k];
+    const p = plot(c, { h: 220, title, aria: title, m: { b: idx ? 46 : 28 },
+      x: { min: 0, max: 12000, ticks: [0, 3000, 6000, 9000, 12000], label: idx ? "Time (samples)" : "" },
+      y: { min: -130, max: 130, ticks: [-120, -60, 0, 60, 120], label: "Delay τ₀ (samples)" } });
+    el("line", { x1: p.x(0), x2: p.x(12000), y1: p.y(-20), y2: p.y(-20), class: "ref" }, p.layer);
+    S.t.forEach((t, i) => {
+      const st = S.stable[i] === 1, cx = p.x(t), cy = p.y(S.tau[i]);
+      el("circle", { cx, cy, r: k === "fixed" ? 3 : 4.2, fill: st ? col : "var(--surface)", stroke: col, "stroke-width": st ? 1 : 1.5 }, p.layer);
+      p.pts.push({ px: cx, py: cy, html: `t = ${fmt(t)} · τ₀ = <b>${S.tau[i]}</b><br>${st ? "stable" : "unstable"}` });
+    });
+    attachTip(p);
+  });
+})();
+
+// Figure 2: reported delay vs true delay, lag range only
+(() => {
+  const c = document.getElementById("f2");
+  const V = [["lag30", "var(--fixed)", "Published lag ±30"], ["atds", "var(--atds)", "aTDS lag range"]];
+  legend(c, V.map(v => ({ n: v[2], c: v[1], k: "dot" })).concat([{ n: "Wrong delay", c: "var(--fixed)", k: "ring" }, { n: "Perfect answer", c: "", k: "dash" }]));
+  const p = plot(c, { h: 300, aria: "Delay reported versus true delay",
+    x: { min: 0, max: 170, ticks: [0, 20, 40, 60, 80, 100, 120, 140, 160], label: "True delay (samples)" },
+    y: { min: -40, max: 170, ticks: [-40, 0, 40, 80, 120, 160], label: "Delay reported (samples)" } });
+  el("line", { x1: p.x(0), x2: p.x(170), y1: p.y(0), y2: p.y(170), class: "ref" }, p.layer);
+  U4.forEach(r => V.forEach(([k, col, n], vi) => {
+    const v = r[k], ok = v.found === r.d, cx = p.x(r.d + (vi ? 1.8 : -1.8) + (r.k - 4.5) * 0.35), cy = p.y(v.found);
+    el("circle", { cx, cy, r: 3.6, fill: ok ? col : "var(--surface)", stroke: ok ? "var(--surface)" : col, "stroke-width": ok ? 1.2 : 1.8, "fill-opacity": 0.9 }, p.layer);
+    p.pts.push({ px: cx, py: cy, html: `true delay ${r.d} · ${n}<br>reports <b>${v.found}</b> · TDS score ${v.score} %` });
+  }));
+  attachTip(p);
+})();
+
+// Figure 3: AUC and delay found, four settings, 95 % intervals
+function ciSeries(p, rows, col, off, tip) {
+  const pts = rows.map(r => [r[0] * off, r[1], r[2], r[3]]);
+  el("path", { d: pts.map((v, i) => (i ? "L" : "M") + p.x(v[0]).toFixed(1) + " " + p.y(v[1]).toFixed(1)).join(" "), fill: "none", stroke: col, "stroke-width": 2 }, p.layer);
+  pts.forEach((v, i) => {
+    const cx = p.x(v[0]);
+    el("line", { x1: cx, x2: cx, y1: p.y(v[2]), y2: p.y(v[3]), stroke: col, "stroke-width": 1.5 }, p.layer);
+    el("circle", { cx, cy: p.y(v[1]), r: 4, fill: col, stroke: "var(--surface)", "stroke-width": 1.5 }, p.layer);
+    p.pts.push({ px: cx, py: p.y(v[1]), html: tip(rows[i]) });
+  });
+}
+(() => {
+  const M = [["fixed", "Published", "var(--fixed)"], ["rescaled", "Rescaled by hand", "var(--v1)"], ["atds", "aTDS", "var(--atds)"], ["oracle", "Oracle (upper bound)", "var(--ink-3)"]];
+  const R = U1.map(r => r.r);
+  [["f3a", "auc", "auc_ci", "AUC (coupled vs uncoupled)", 0.4, 1.02, [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]],
+   ["f3b", "hit", "hit_ci", "True delay found (share of pairs)", 0, 1.02, [0, 0.25, 0.5, 0.75, 1.0]]].forEach(([id, key, ci, lab, lo, hi, ticks]) => {
+    const c = document.getElementById(id);
+    legend(c, M.map(m => ({ n: m[1], c: m[2] })));
+    const p = plot(c, { w: 340, h: 300, m: { l: 50, r: 14 }, aria: lab,
+      x: { min: 0.75, max: 21, log: true, ticks: R, label: "Slow-down factor r (log)" },
+      y: { min: lo, max: hi, ticks, label: lab } });
+    if (key === "auc") el("line", { x1: p.x(0.75), x2: p.x(21), y1: p.y(0.5), y2: p.y(0.5), class: "ref" }, p.layer);
+    M.forEach(([k, n, col], mi) => ciSeries(p, U1.map(r => [r.r, r[k][key], r[k][ci][0], r[k][ci][1]]), col, Math.pow(1.06, mi - 1.5),
+      row => `r = ${row[0]} · ${n}<br>${key === "auc" ? "AUC" : "delay found"} <b>${row[1]}</b> [${row[2]}, ${row[3]}]`));
+    attachTip(p);
+  });
+})();
+</script>

@@ -1,0 +1,341 @@
+<title>Adaptive TDS Brief</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column (~68ch) with figures allowed to run slightly wider; lab-notebook restraint. */
+:root {
+  --bg: #fbfcfd;
+  --surface: #ffffff;
+  --ink: #12161c;
+  --ink-2: #4a5260;
+  --ink-3: #7a8290;
+  --rule: #dde2e8;
+  --grid: #e9edf1;
+  --accent: #1f5fae;
+  --fixed: #2a78d6;
+  --atds: #eb6834;
+  --v1: #1baf7a;
+  --tint: #eef3f9;
+  --f-display: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121519; --surface: #181c21; --ink: #eef0f3; --ink-2: #b9c0ca; --ink-3: #8a929e;
+    --rule: #2b3139; --grid: #232830; --accent: #7fb0ec;
+    --fixed: #3987e5; --atds: #d95926; --v1: #199e70; --tint: #1b2430; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121519; --surface: #181c21; --ink: #eef0f3; --ink-2: #b9c0ca; --ink-3: #8a929e;
+  --rule: #2b3139; --grid: #232830; --accent: #7fb0ec;
+  --fixed: #3987e5; --atds: #d95926; --v1: #199e70; --tint: #1b2430; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+main { max-width: 760px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+section, figure { grid-template-columns: minmax(0, 1fr); }
+section { display: grid; gap: 16px; min-width: 0; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.25; }
+h1 { font-size: 2.1rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-top: 8px; border-top: 1px solid var(--rule); padding-top: 24px; }
+h3 { font-size: 1.05rem; font-family: var(--f-body); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.lede { font-size: 1.12rem; color: var(--ink-2); }
+header { display: grid; gap: 12px; }
+.claim { background: var(--tint); border-radius: 6px; padding: 18px 20px; display: grid; gap: 8px; }
+.claim p { max-width: none; }
+.claim strong { color: var(--ink); }
+code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
+.rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.rule-card { border: 1px solid var(--rule); border-radius: 6px; padding: 16px; display: grid; gap: 10px; align-content: start; background: var(--surface); min-width: 0; }
+.rule-card .eq { font-family: var(--f-mono); font-size: 0.92rem; color: var(--accent); background: var(--tint); padding: 8px 10px; border-radius: 4px; overflow-x: auto; }
+.rule-card p { font-size: 0.93rem; color: var(--ink-2); }
+.rule-card .test { font-size: 0.86rem; color: var(--ink-3); border-top: 1px dashed var(--rule); padding-top: 8px; }
+@media (max-width: 720px) { .rules { grid-template-columns: 1fr; } }
+figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
+.fig-title { font-weight: 600; font-size: 0.98rem; }
+.chart { position: relative; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 8px 4px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .pair { grid-template-columns: 1fr; } }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--ink-2); padding: 2px 6px 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.sw.dot { width: 9px; height: 9px; border-radius: 50%; }
+.sw.ring { width: 9px; height: 9px; border-radius: 50%; background: transparent !important; border: 2px solid; }
+.sw.dash { background: repeating-linear-gradient(90deg, var(--ink-3) 0 4px, transparent 4px 7px) !important; }
+figcaption { grid-template-columns: minmax(0, 1fr); font-size: 0.92rem; color: var(--ink-2); display: grid; gap: 6px; }
+figcaption p { max-width: none; }
+figcaption .proves { color: var(--ink); }
+figcaption .proves b { font-weight: 600; }
+figcaption .src { overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 0.76rem; color: var(--ink-3); }
+details { font-size: 0.85rem; color: var(--ink-2); }
+details summary { cursor: pointer; color: var(--accent); width: fit-content; }
+details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tbl { overflow-x: auto; margin-top: 8px; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.85rem; min-width: 100%; }
+th, td { text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--ink-3); font-weight: 500; }
+.axis text { fill: var(--ink-3); font-family: var(--f-mono); font-size: 11px; }
+.axis-label { fill: var(--ink-2); font-family: var(--f-body); font-size: 12px; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.baseline { stroke: var(--ink-3); stroke-width: 1; }
+.ref { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.ref-label { fill: var(--ink-2); font-family: var(--f-body); font-size: 11.5px; }
+.direct { font-family: var(--f-body); font-size: 12px; font-weight: 500; fill: var(--ink); }
+.panel-title { font-family: var(--f-body); font-size: 12.5px; font-weight: 600; fill: var(--ink); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 0.8rem; line-height: 1.4; padding: 6px 9px; border-radius: 4px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); z-index: 5; }
+.hover-ring { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+ul.limits { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 68ch; }
+ul.limits li::marker { color: var(--ink-3); }
+.status { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; font-size: 0.93rem; }
+.status dt { font-family: var(--f-mono); font-size: 0.8rem; color: var(--ink-3); padding-top: 2px; }
+.status dd { margin: 0; color: var(--ink-2); min-width: 0; }
+@media (max-width: 520px) { .status { grid-template-columns: 1fr; } .status dd { margin-bottom: 6px; } }
+footer { font-size: 0.82rem; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 16px; }
+</style>
+
+<style>
+main { max-width: 720px; gap: 34px; }
+.rules-tbl td, .rules-tbl th { white-space: normal; text-align: left; vertical-align: top; }
+.rules-tbl td:first-child { font-weight: 600; white-space: nowrap; }
+.rules-tbl td.f { font-family: var(--f-mono); font-size: 0.82rem; color: var(--accent); white-space: nowrap; }
+.verdict-list { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 68ch; }
+.more { border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; background: var(--surface); font-size: 0.93rem; color: var(--ink-2); display: grid; gap: 6px; }
+.more p { max-width: none; }
+.more a { color: var(--accent); }
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Idea for review · Asaf Markuza · November 2026</div>
+  <h1>Adaptive TDS: Time Delay Stability that sets its own parameters</h1>
+  <p class="lede">TDS needs a window, a lag range and a tolerance, and for a new system nobody knows the right values. aTDS takes only the signals and measures all three from them.</p>
+</header>
+
+<section>
+  <h2>The problem</h2>
+  <p>Time Delay Stability (Bashan et al. 2012) links two signals when the delay τ₀ that best aligns them stays nearly constant from window to window: a window counts as stable when 4 of 5 neighbouring delays agree within a tolerance, and the TDS score is the share of stable windows.</p>
+  <p>The published setting, window 60, lag ±30, tolerance ±1, was chosen for 1&#8209;Hz sleep recordings and is counted in samples. For a slower system, or the same system recorded faster, the same numbers mean something else, and TDS can miss a coupling that is plainly there.</p>
+  <figure>
+    <div class="fig-title">Figure 1 · One coupled pair, two parameter sets</div>
+    <div class="chart" id="f1"></div>
+    <figcaption>
+      <p>y follows x with a true delay of 20 samples (dashed line). Each dot is the delay τ₀ found in one window; filled dots are stable windows. With the published setting (top) τ₀ scatters and the score is <b>5.2 %</b>. With the parameters aTDS chose by itself (bottom: window 259, lag ±129, tolerance ±13) τ₀ sits on the true delay and the score is <b>91.3 %</b>.</p>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>The idea: three rules</h2>
+  <div class="tbl">
+    <table class="rules-tbl">
+      <thead><tr><th>Parameter</th><th>Rule</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Window</td><td class="f">L = 30 · B</td><td>B (the Bartlett factor, from the autocorrelation) says how many samples make one independent sample, so every window holds about 30 independent samples of the slowest signal. Never shorter than 61 samples.</td></tr>
+        <tr><td>Lag range</td><td class="f">±(L − 1) / 2</td><td>The published ratio (±30 in 60), so the search grows with the window; capped at half a rhythm's period if a signal is rhythmic.</td></tr>
+        <tr><td>Tolerance</td><td class="f">chance ≤ 5 %</td><td>One signal is rotated in time to destroy the coupling; the tolerance is the widest one at which these coupling-free copies look stable in at most 5 % of windows.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The 4-of-5 stability rule is unchanged. The only required input is the signals; the longest plausible delay can be given as an option, and then the window is made long enough to search that far.</p>
+</section>
+
+<section>
+  <h2>What the tests show</h2>
+  <p>All tests use synthetic signals with a known coupling and delay, so a method's answer can be checked. aTDS sets its parameters on separate training data and is scored on data it has not seen.</p>
+
+  <figure>
+    <div class="fig-title">Figure 2 · A lag range that is too short gives a confident wrong answer</div>
+    <div class="chart" id="f2"></div>
+    <figcaption>
+      <p>Slow signals with true delays from 5 to 160 samples, 10 pairs per delay. Only the lag range differs. With the published ±30, every delay beyond 30 is reported as about ±30 (hollow dots), 16 of 50 with the wrong sign, while the TDS score stays high (72–96 %). With the aTDS lag range the reported delay is exact in all 90 pairs.</p>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 3 · Detecting weak coupling as the system slows down</div>
+    <div class="pair">
+      <div class="chart" id="f3a"></div>
+      <div class="chart" id="f3b"></div>
+    </div>
+    <figcaption>
+      <p>One system made r times slower (equivalently, recorded r times faster), with weak coupling; 100 coupled and 100 uncoupled pairs per r, bars are 95 % intervals. AUC is the chance that a coupled pair scores higher than an uncoupled one (1 = perfect, 0.5 = coin flip). Four settings: the <b>published</b> one; the published one <b>rescaled by hand</b> (60r / ±30r / ±r, what an analyst would choose if told r); <b>aTDS</b>, which is not told r; and an <b>oracle</b>, the best of 91 settings picked by looking at labelled training pairs, a practical upper bound no real analysis has.</p>
+      <p>The published setting is close to chance from r = 4 on. aTDS reaches the hand-rescaled setting without knowing r: equivalent at r = 1–2, better at r = 8 (AUC 0.88 vs 0.81, true delay found in 85 % vs 60 % of pairs), undecided at r = 4 and 16. The oracle does better still, mostly with much longer windows.</p>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Verdict</h2>
+  <ul class="verdict-list">
+    <li><b>Much better than the published setting</b> whenever the system is slower than that setting assumes; equal where it fits.</li>
+    <li><b>As good as an expert who knows the time scale</b>, without being told it; better in one case, undecided in two (Figure 3).</li>
+    <li><b>Not optimal.</b> A setting tuned on labelled data does better; aTDS's value is that it needs no tuning.</li>
+    <li><b>False alarms stay within budget:</b> on new uncoupled pairs the chance score was 3.3–4.4 %, and a per-link test on networks reported no false link in 20 uncoupled networks.</li>
+    <li><b>Also better</b> on long-memory signals (H = 0.9), rhythms with a delay below half a period, and signals whose dynamics change halfway; equal on long-memory signals with H = 0.6 and 0.75; detects bursting neurons but reports their delay 3 steps too long.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Limits and open questions</h2>
+  <ul class="limits">
+    <li><b>Long delays in fast signals</b> are missed silently unless the optional longest delay is given (delay 50: AUC 0.56 without it, 1.00 with it). Rhythms with a delay beyond half a period give a wrong delay.</li>
+    <li><b>Coarser timing:</b> longer windows mean one answer per window, so short coupling episodes can be missed; a maximum window can be set.</li>
+    <li><b>The delay is known only within the tolerance</b>, which grows for slow signals (up to ±56 here).</li>
+    <li><b>Untested so far:</b> whether aTDS changes or sharpens sleep-stage contrasts in real sleep networks; the cross-subject, stage-matched surrogates of the original method; coupling that switches on and off with the sleep stage.</li>
+  </ul>
+</section>
+
+<section class="more">
+  <p><b>Full technical report.</b> The complete algorithm with formulas and step-by-step animations, all tests (window, lag range, tolerance, other signal types, a real EEG pair, networks with false-discovery control), every number with its interval, and definitions of all terms: <a href="https://claude.ai/artifact/Ji7ju8xZzQQTRVyRsDFyP8">Adaptive TDS technical report</a>.</p>
+  <p>The report went through five rounds of review by a referee from network physiology and was approved to be shown as an idea. Code, results and the referee record are in the pyTDS repository, folder <code>atds_brief/</code>.</p>
+</section>
+
+<footer>Bashan A, Bartsch RP, Kantelhardt JW, Havlin S, Ivanov PCh. Network physiology reveals relations between network topology and physiological function. Nature Communications 3:702 (2012).</footer>
+</main>
+
+<script>
+const EX = {"fixed":{"params":{"window":60,"step":30,"max_lag":30,"tol":1},"score":5.2,"near_true":28.2,"t":[30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,540,570,600,630,660,690,720,750,780,810,840,870,900,930,960,990,1020,1050,1080,1110,1140,1170,1200,1230,1260,1290,1320,1350,1380,1410,1440,1470,1500,1530,1560,1590,1620,1650,1680,1710,1740,1770,1800,1830,1860,1890,1920,1950,1980,2010,2040,2070,2100,2130,2160,2190,2220,2250,2280,2310,2340,2370,2400,2430,2460,2490,2520,2550,2580,2610,2640,2670,2700,2730,2760,2790,2820,2850,2880,2910,2940,2970,3000,3030,3060,3090,3120,3150,3180,3210,3240,3270,3300,3330,3360,3390,3420,3450,3480,3510,3540,3570,3600,3630,3660,3690,3720,3750,3780,3810,3840,3870,3900,3930,3960,3990,4020,4050,4080,4110,4140,4170,4200,4230,4260,4290,4320,4350,4380,4410,4440,4470,4500,4530,4560,4590,4620,4650,4680,4710,4740,4770,4800,4830,4860,4890,4920,4950,4980,5010,5040,5070,5100,5130,5160,5190,5220,5250,5280,5310,5340,5370,5400,5430,5460,5490,5520,5550,5580,5610,5640,5670,5700,5730,5760,5790,5820,5850,5880,5910,5940,5970,6000,6030,6060,6090,6120,6150,6180,6210,6240,6270,6300,6330,6360,6390,6420,6450,6480,6510,6540,6570,6600,6630,6660,6690,6720,6750,6780,6810,6840,6870,6900,6930,6960,6990,7020,7050,7080,7110,7140,7170,7200,7230,7260,7290,7320,7350,7380,7410,7440,7470,7500,7530,7560,7590,7620,7650,7680,7710,7740,7770,7800,7830,7860,7890,7920,7950,7980,8010,8040,8070,8100,8130,8160,8190,8220,8250,8280,8310,8340,8370,8400,8430,8460,8490,8520,8550,8580,8610,8640,8670,8700,8730,8760,8790,8820,8850,8880,8910,8940,8970,9000,9030,9060,9090,9120,9150,9180,9210,9240,9270,9300,9330,9360,9390,9420,9450,9480,9510,9540,9570,9600,9630,9660,9690,9720,9750,9780,9810,9840,9870,9900,9930,9960,9990,10020,10050,10080,10110,10140,10170,10200,10230,10260,10290,10320,10350,10380,10410,10440,10470,10500,10530,10560,10590,10620,10650,10680,10710,10740,10770,10800,10830,10860,10890,10920,10950,10980,11010,11040,11070,11100,11130,11160,11190,11220,11250,11280,11310,11340,11370,11400,11430,11460,11490,11520,11550,11580,11610,11640,11670,11700,11730,11760,11790,11820,11850,11880,11910,11940,11970,12000],"tau":[27,-26,11,29,16,-27,7,-16,29,-24,-8,-21,22,-20,-29,-20,-20,-21,-20,-20,-20,20,15,-29,-15,13,15,23,-18,-20,18,-20,29,-9,28,1,-21,20,-20,-20,-20,29,8,7,-20,3,3,10,-19,-17,-20,-4,-20,-23,0,-21,-18,-20,-24,-3,-4,11,7,11,8,9,-9,16,-20,28,27,-20,-25,-19,-3,16,-18,-20,16,26,-8,27,-20,-20,28,-9,23,-5,24,-20,7,-5,29,-16,20,-27,0,16,13,-16,-27,-15,-20,-9,-8,-6,-12,-16,-2,1,-20,-16,24,-5,14,18,-11,-20,19,-27,-20,1,18,-23,18,3,-9,-12,-7,-11,-11,-3,15,13,2,16,27,14,-20,21,-27,-14,-12,17,-20,27,-20,6,-23,24,22,-14,-5,18,-9,22,-20,-28,-3,-14,-20,23,-23,13,26,-20,-11,2,-13,25,-17,-20,-13,-3,14,-20,-17,4,9,-16,14,3,-11,-20,16,14,-20,1,-9,-6,-20,-24,19,-12,29,-9,-20,12,12,17,20,-6,-4,10,23,-10,-4,-10,18,-20,-14,0,25,24,24,8,-7,-7,18,6,6,-20,-20,14,14,1,1,29,17,21,-19,8,14,28,-29,18,-20,10,-13,-21,11,-20,-24,6,-20,-20,0,-5,26,-19,19,-20,23,16,-4,-2,29,12,-18,24,-16,-28,-24,-18,-20,14,-22,-20,-29,11,21,25,-6,-6,-8,-12,-20,-27,-16,-20,-22,-12,-18,-20,25,-20,-20,-21,4,-20,-20,29,-10,-26,12,-20,-28,-12,-3,4,16,26,29,5,20,-20,29,-24,16,15,24,-7,-4,-26,-20,-18,-13,13,-20,-20,-27,-20,-7,-20,-4,23,-25,17,17,2,-20,-20,-20,16,29,-20,8,18,17,-15,-15,3,22,-20,-20,-20,-26,15,-20,-20,9,-12,-20,-20,-20,-17,10,27,-20,-20,-17,23,4,-27,-10,25,-15,-16,-20,-20,-14,28,17,3,-21,28,25,6,-15,-20,-20,-20,-26,29,20,23,-21,6,-13,-19,10,-1,16,-13,-18,-20,1,9,25,-20],"stable":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"atds":{"params":{"window":259,"step":129,"max_lag":129,"tol":13},"score":91.3,"near_true":90.0,"t":[129,258,387,516,645,774,903,1032,1161,1290,1419,1548,1677,1806,1935,2064,2193,2322,2451,2580,2709,2838,2967,3096,3225,3354,3483,3612,3741,3870,3999,4128,4257,4386,4515,4644,4773,4902,5031,5160,5289,5418,5547,5676,5805,5934,6063,6192,6321,6450,6579,6708,6837,6966,7095,7224,7353,7482,7611,7740,7869,7998,8127,8256,8385,8514,8643,8772,8901,9030,9159,9288,9417,9546,9675,9804,9933,10062,10191,10320,10449,10578,10707,10836,10965,11094,11223,11352,11481,11610,11739,11868,11997],"tau":[22,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-3,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,0,-96,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-75,-12,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-120,-20,-20,-4,-85,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-33,-20,-20,-20,-20,-20,-20],"stable":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}};
+const U4 = [{"d":5,"k":0,"window":514,"tol":28,"lag30":{"found":5,"score":97.4,"max_lag":30},"atds":{"found":5,"score":88.2,"max_lag":256}},{"d":5,"k":1,"window":514,"tol":28,"lag30":{"found":5,"score":98.7,"max_lag":30},"atds":{"found":5,"score":89.5,"max_lag":256}},{"d":5,"k":2,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":94.7,"max_lag":256}},{"d":5,"k":3,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":4,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":98.7,"max_lag":256}},{"d":5,"k":5,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":92.1,"max_lag":256}},{"d":5,"k":6,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":7,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":8,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":97.4,"max_lag":256}},{"d":5,"k":9,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":98.7,"max_lag":256}},{"d":10,"k":0,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.8,"max_lag":241}},{"d":10,"k":1,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":85.2,"max_lag":241}},{"d":10,"k":2,"window":484,"tol":24,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":88.9,"max_lag":241}},{"d":10,"k":3,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":96.3,"max_lag":241}},{"d":10,"k":4,"window":484,"tol":24,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":96.3,"max_lag":241}},{"d":10,"k":5,"window":484,"tol":24,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":86.4,"max_lag":241}},{"d":10,"k":6,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":92.6,"max_lag":241}},{"d":10,"k":7,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":95.1,"max_lag":241}},{"d":10,"k":8,"window":484,"tol":24,"lag30":{"found":10,"score":97.5,"max_lag":30},"atds":{"found":10,"score":91.4,"max_lag":241}},{"d":10,"k":9,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.8,"max_lag":241}},{"d":20,"k":0,"window":493,"tol":26,"lag30":{"found":20,"score":97.5,"max_lag":30},"atds":{"found":20,"score":90.0,"max_lag":246}},{"d":20,"k":1,"window":493,"tol":26,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":97.5,"max_lag":246}},{"d":20,"k":2,"window":493,"tol":26,"lag30":{"found":20,"score":95.0,"max_lag":30},"atds":{"found":20,"score":87.5,"max_lag":246}},{"d":20,"k":3,"window":493,"tol":26,"lag30":{"found":20,"score":97.5,"max_lag":30},"atds":{"found":20,"score":88.8,"max_lag":246}},{"d":20,"k":4,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":86.2,"max_lag":246}},{"d":20,"k":5,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":86.2,"max_lag":246}},{"d":20,"k":6,"window":493,"tol":26,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":92.5,"max_lag":246}},{"d":20,"k":7,"window":493,"tol":26,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":91.2,"max_lag":246}},{"d":20,"k":8,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":88.8,"max_lag":246}},{"d":20,"k":9,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":95.0,"max_lag":246}},{"d":30,"k":0,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":87.1,"max_lag":231}},{"d":30,"k":1,"window":463,"tol":23,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":30,"score":88.2,"max_lag":231}},{"d":30,"k":2,"window":463,"tol":23,"lag30":{"found":30,"score":96.5,"max_lag":30},"atds":{"found":30,"score":90.6,"max_lag":231}},{"d":30,"k":3,"window":463,"tol":23,"lag30":{"found":30,"score":96.5,"max_lag":30},"atds":{"found":30,"score":82.4,"max_lag":231}},{"d":30,"k":4,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":84.7,"max_lag":231}},{"d":30,"k":5,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":87.1,"max_lag":231}},{"d":30,"k":6,"window":463,"tol":23,"lag30":{"found":30,"score":94.1,"max_lag":30},"atds":{"found":30,"score":82.4,"max_lag":231}},{"d":30,"k":7,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":84.7,"max_lag":231}},{"d":30,"k":8,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":94.1,"max_lag":231}},{"d":30,"k":9,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":88.2,"max_lag":231}},{"d":40,"k":0,"window":503,"tol":29,"lag30":{"found":30,"score":92.3,"max_lag":30},"atds":{"found":40,"score":82.1,"max_lag":251}},{"d":40,"k":1,"window":503,"tol":29,"lag30":{"found":30,"score":79.5,"max_lag":30},"atds":{"found":40,"score":96.2,"max_lag":251}},{"d":40,"k":2,"window":503,"tol":29,"lag30":{"found":30,"score":87.2,"max_lag":30},"atds":{"found":40,"score":84.6,"max_lag":251}},{"d":40,"k":3,"window":503,"tol":29,"lag30":{"found":30,"score":83.3,"max_lag":30},"atds":{"found":40,"score":71.8,"max_lag":251}},{"d":40,"k":4,"window":503,"tol":29,"lag30":{"found":30,"score":87.2,"max_lag":30},"atds":{"found":40,"score":85.9,"max_lag":251}},{"d":40,"k":5,"window":503,"tol":29,"lag30":{"found":30,"score":92.3,"max_lag":30},"atds":{"found":40,"score":89.7,"max_lag":251}},{"d":40,"k":6,"window":503,"tol":29,"lag30":{"found":30,"score":89.7,"max_lag":30},"atds":{"found":40,"score":87.2,"max_lag":251}},{"d":40,"k":7,"window":503,"tol":29,"lag30":{"found":30,"score":93.6,"max_lag":30},"atds":{"found":40,"score":83.3,"max_lag":251}},{"d":40,"k":8,"window":503,"tol":29,"lag30":{"found":30,"score":91.0,"max_lag":30},"atds":{"found":40,"score":93.6,"max_lag":251}},{"d":40,"k":9,"window":503,"tol":29,"lag30":{"found":30,"score":71.8,"max_lag":30},"atds":{"found":40,"score":88.5,"max_lag":251}},{"d":60,"k":0,"window":471,"tol":25,"lag30":{"found":30,"score":77.4,"max_lag":30},"atds":{"found":60,"score":82.1,"max_lag":235}},{"d":60,"k":1,"window":471,"tol":25,"lag30":{"found":30,"score":86.9,"max_lag":30},"atds":{"found":60,"score":81.0,"max_lag":235}},{"d":60,"k":2,"window":471,"tol":25,"lag30":{"found":-30,"score":88.1,"max_lag":30},"atds":{"found":60,"score":72.6,"max_lag":235}},{"d":60,"k":3,"window":471,"tol":25,"lag30":{"found":-30,"score":85.7,"max_lag":30},"atds":{"found":60,"score":76.2,"max_lag":235}},{"d":60,"k":4,"window":471,"tol":25,"lag30":{"found":30,"score":86.9,"max_lag":30},"atds":{"found":60,"score":83.3,"max_lag":235}},{"d":60,"k":5,"window":471,"tol":25,"lag30":{"found":30,"score":95.2,"max_lag":30},"atds":{"found":60,"score":77.4,"max_lag":235}},{"d":60,"k":6,"window":471,"tol":25,"lag30":{"found":30,"score":85.7,"max_lag":30},"atds":{"found":60,"score":82.1,"max_lag":235}},{"d":60,"k":7,"window":471,"tol":25,"lag30":{"found":30,"score":81.0,"max_lag":30},"atds":{"found":60,"score":57.1,"max_lag":235}},{"d":60,"k":8,"window":471,"tol":25,"lag30":{"found":30,"score":91.7,"max_lag":30},"atds":{"found":60,"score":76.2,"max_lag":235}},{"d":60,"k":9,"window":471,"tol":25,"lag30":{"found":30,"score":85.7,"max_lag":30},"atds":{"found":60,"score":77.4,"max_lag":235}},{"d":80,"k":0,"window":471,"tol":24,"lag30":{"found":30,"score":92.9,"max_lag":30},"atds":{"found":80,"score":83.3,"max_lag":235}},{"d":80,"k":1,"window":471,"tol":24,"lag30":{"found":-30,"score":91.7,"max_lag":30},"atds":{"found":80,"score":67.9,"max_lag":235}},{"d":80,"k":2,"window":471,"tol":24,"lag30":{"found":30,"score":76.2,"max_lag":30},"atds":{"found":80,"score":75.0,"max_lag":235}},{"d":80,"k":3,"window":471,"tol":24,"lag30":{"found":30,"score":79.8,"max_lag":30},"atds":{"found":80,"score":67.9,"max_lag":235}},{"d":80,"k":4,"window":471,"tol":24,"lag30":{"found":-30,"score":90.5,"max_lag":30},"atds":{"found":80,"score":81.0,"max_lag":235}},{"d":80,"k":5,"window":471,"tol":24,"lag30":{"found":-30,"score":86.9,"max_lag":30},"atds":{"found":80,"score":65.5,"max_lag":235}},{"d":80,"k":6,"window":471,"tol":24,"lag30":{"found":30,"score":81.0,"max_lag":30},"atds":{"found":80,"score":65.5,"max_lag":235}},{"d":80,"k":7,"window":471,"tol":24,"lag30":{"found":-30,"score":89.3,"max_lag":30},"atds":{"found":80,"score":76.2,"max_lag":235}},{"d":80,"k":8,"window":471,"tol":24,"lag30":{"found":30,"score":86.9,"max_lag":30},"atds":{"found":80,"score":48.8,"max_lag":235}},{"d":80,"k":9,"window":471,"tol":24,"lag30":{"found":-30,"score":88.1,"max_lag":30},"atds":{"found":80,"score":58.3,"max_lag":235}},{"d":120,"k":0,"window":454,"tol":26,"lag30":{"found":30,"score":81.6,"max_lag":30},"atds":{"found":120,"score":49.4,"max_lag":226}},{"d":120,"k":1,"window":454,"tol":26,"lag30":{"found":-30,"score":88.5,"max_lag":30},"atds":{"found":120,"score":54.0,"max_lag":226}},{"d":120,"k":2,"window":454,"tol":26,"lag30":{"found":30,"score":93.1,"max_lag":30},"atds":{"found":120,"score":56.3,"max_lag":226}},{"d":120,"k":3,"window":454,"tol":26,"lag30":{"found":18,"score":87.4,"max_lag":30},"atds":{"found":120,"score":40.2,"max_lag":226}},{"d":120,"k":4,"window":454,"tol":26,"lag30":{"found":30,"score":93.1,"max_lag":30},"atds":{"found":120,"score":56.3,"max_lag":226}},{"d":120,"k":5,"window":454,"tol":26,"lag30":{"found":-30,"score":87.4,"max_lag":30},"atds":{"found":120,"score":55.2,"max_lag":226}},{"d":120,"k":6,"window":454,"tol":26,"lag30":{"found":-30,"score":88.5,"max_lag":30},"atds":{"found":120,"score":37.9,"max_lag":226}},{"d":120,"k":7,"window":454,"tol":26,"lag30":{"found":-30,"score":90.8,"max_lag":30},"atds":{"found":120,"score":64.4,"max_lag":226}},{"d":120,"k":8,"window":454,"tol":26,"lag30":{"found":30,"score":95.4,"max_lag":30},"atds":{"found":120,"score":47.1,"max_lag":226}},{"d":120,"k":9,"window":454,"tol":26,"lag30":{"found":-30,"score":92.0,"max_lag":30},"atds":{"found":120,"score":51.7,"max_lag":226}},{"d":160,"k":0,"window":513,"tol":28,"lag30":{"found":30,"score":90.9,"max_lag":30},"atds":{"found":160,"score":27.3,"max_lag":256}},{"d":160,"k":1,"window":513,"tol":28,"lag30":{"found":30,"score":96.1,"max_lag":30},"atds":{"found":160,"score":55.8,"max_lag":256}},{"d":160,"k":2,"window":513,"tol":28,"lag30":{"found":30,"score":92.2,"max_lag":30},"atds":{"found":160,"score":51.9,"max_lag":256}},{"d":160,"k":3,"window":513,"tol":28,"lag30":{"found":-30,"score":94.8,"max_lag":30},"atds":{"found":160,"score":51.9,"max_lag":256}},{"d":160,"k":4,"window":513,"tol":28,"lag30":{"found":-30,"score":96.1,"max_lag":30},"atds":{"found":160,"score":55.8,"max_lag":256}},{"d":160,"k":5,"window":513,"tol":28,"lag30":{"found":30,"score":93.5,"max_lag":30},"atds":{"found":160,"score":39.0,"max_lag":256}},{"d":160,"k":6,"window":513,"tol":28,"lag30":{"found":-30,"score":96.1,"max_lag":30},"atds":{"found":160,"score":48.1,"max_lag":256}},{"d":160,"k":7,"window":513,"tol":28,"lag30":{"found":30,"score":90.9,"max_lag":30},"atds":{"found":160,"score":50.6,"max_lag":256}},{"d":160,"k":8,"window":513,"tol":28,"lag30":{"found":30,"score":94.8,"max_lag":30},"atds":{"found":160,"score":62.3,"max_lag":256}},{"d":160,"k":9,"window":513,"tol":28,"lag30":{"found":-30,"score":89.6,"max_lag":30},"atds":{"found":160,"score":48.1,"max_lag":256}}];
+const U1 = [{"r":1,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":60,"max_lag":30,"tol":1},"atds":{"window":66,"max_lag":32,"tol":3},"atds_tol1":{"window":66,"max_lag":32,"tol":1},"oracle":{"window":60,"max_lag":29,"tol":0}},"fixed":{"auc":0.997,"auc_ci":[0.989,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":6.4,"chance":0.78,"chance_p95":1.81},"rescaled":{"auc":0.997,"auc_ci":[0.989,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":6.4,"chance":0.78,"chance_p95":1.81},"atds":{"auc":0.995,"auc_ci":[0.988,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":12.39,"chance":4.36,"chance_p95":7.27},"atds_tol1":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":7.29,"chance":0.66,"chance_p95":1.98},"oracle":{"auc":1.0,"auc_ci":[0.999,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":4.06,"chance":0.03,"chance_p95":0.03},"diff_fixed":{"ci90":[-0.009,0.006],"ci95":[-0.011,0.007]},"diff_rescaled":{"ci90":[-0.009,0.006],"ci95":[-0.011,0.007]},"diff_oracle":{"ci90":[-0.011,-0.001],"ci95":[-0.012,-0.0]},"diff_atds_tol1":{"ci90":[-0.011,-0.001],"ci95":[-0.012,-0.001]}},{"r":2,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":120,"max_lag":60,"tol":2},"atds":{"window":126,"max_lag":62,"tol":6},"atds_tol1":{"window":126,"max_lag":62,"tol":1},"oracle":{"window":240,"max_lag":119,"tol":0}},"fixed":{"auc":0.888,"auc_ci":[0.839,0.93],"hit":0.84,"hit_ci":[0.756,0.899],"hit_cond":0.86,"n_cond":98,"coupled":2.21,"chance":0.64,"chance_p95":1.8},"rescaled":{"auc":0.993,"auc_ci":[0.984,0.999],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":6.82,"chance":0.52,"chance_p95":2.41},"atds":{"auc":0.979,"auc_ci":[0.961,0.992],"hit":0.99,"hit_ci":[0.946,0.998],"hit_cond":0.99,"n_cond":100,"coupled":12.5,"chance":3.63,"chance_p95":7.59},"atds_tol1":{"auc":0.988,"auc_ci":[0.969,0.999],"hit":0.97,"hit_ci":[0.915,0.99],"hit_cond":0.99,"n_cond":98,"coupled":6.53,"chance":0.12,"chance_p95":1.27},"oracle":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":20.08,"chance":0.0,"chance_p95":0.0},"diff_fixed":{"ci90":[0.054,0.131],"ci95":[0.049,0.139]},"diff_rescaled":{"ci90":[-0.029,-0.002],"ci95":[-0.032,0.001]},"diff_oracle":{"ci90":[-0.036,-0.01],"ci95":[-0.039,-0.009]},"diff_atds_tol1":{"ci90":[-0.025,0.008],"ci95":[-0.028,0.01]}},{"r":4,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":240,"max_lag":120,"tol":4},"atds":{"window":237,"max_lag":118,"tol":12},"atds_tol1":{"window":237,"max_lag":118,"tol":1},"oracle":{"window":960,"max_lag":479,"tol":0}},"fixed":{"auc":0.59,"auc_ci":[0.513,0.658],"hit":0.18,"hit_ci":[0.117,0.267],"hit_cond":0.23,"n_cond":80,"coupled":0.92,"chance":0.72,"chance_p95":1.96},"rescaled":{"auc":0.955,"auc_ci":[0.926,0.978],"hit":0.91,"hit_ci":[0.838,0.952],"hit_cond":0.96,"n_cond":95,"coupled":6.18,"chance":0.39,"chance_p95":2.42},"atds":{"auc":0.923,"auc_ci":[0.885,0.959],"hit":0.88,"hit_ci":[0.802,0.93],"hit_cond":0.9,"n_cond":98,"coupled":11.71,"chance":3.65,"chance_p95":10.12},"atds_tol1":{"auc":0.885,"auc_ci":[0.84,0.925],"hit":0.77,"hit_ci":[0.678,0.842],"hit_cond":1.0,"n_cond":77,"coupled":4.47,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":58.65,"chance":0.0,"chance_p95":0.0},"diff_fixed":{"ci90":[0.26,0.402],"ci95":[0.244,0.416]},"diff_rescaled":{"ci90":[-0.064,0.003],"ci95":[-0.073,0.008]},"diff_oracle":{"ci90":[-0.112,-0.047],"ci95":[-0.119,-0.041]},"diff_atds_tol1":{"ci90":[0.001,0.076],"ci95":[-0.006,0.083]}},{"r":8,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":480,"max_lag":240,"tol":8},"atds":{"window":563,"max_lag":281,"tol":27},"atds_tol1":{"window":563,"max_lag":281,"tol":1},"oracle":{"window":1920,"max_lag":959,"tol":0}},"fixed":{"auc":0.541,"auc_ci":[0.464,0.618],"hit":0.0,"hit_ci":[0.0,0.037],"hit_cond":0.0,"n_cond":68,"coupled":0.68,"chance":0.59,"chance_p95":1.36},"rescaled":{"auc":0.806,"auc_ci":[0.752,0.857],"hit":0.6,"hit_ci":[0.502,0.691],"hit_cond":0.92,"n_cond":65,"coupled":6.04,"chance":0.34,"chance_p95":4.88},"atds":{"auc":0.877,"auc_ci":[0.829,0.923],"hit":0.85,"hit_ci":[0.767,0.907],"hit_cond":0.91,"n_cond":93,"coupled":14.03,"chance":3.31,"chance_p95":11.43},"atds_tol1":{"auc":0.83,"auc_ci":[0.785,0.875],"hit":0.66,"hit_ci":[0.563,0.745],"hit_cond":1.0,"n_cond":66,"coupled":6.59,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":0.985,"auc_ci":[0.965,1.0],"hit":0.97,"hit_ci":[0.915,0.99],"hit_cond":1.0,"n_cond":97,"coupled":55.79,"chance":0.0,"chance_p95":0.0},"diff_fixed":{"ci90":[0.263,0.414],"ci95":[0.249,0.435]},"diff_rescaled":{"ci90":[0.018,0.131],"ci95":[0.007,0.142]},"diff_oracle":{"ci90":[-0.152,-0.066],"ci95":[-0.158,-0.059]},"diff_atds_tol1":{"ci90":[0.006,0.089],"ci95":[-0.006,0.098]}},{"r":16,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":960,"max_lag":480,"tol":16},"atds":{"window":1083,"max_lag":541,"tol":56},"atds_tol1":{"window":1083,"max_lag":541,"tol":1},"oracle":{"window":1920,"max_lag":959,"tol":135}},"fixed":{"auc":0.509,"auc_ci":[0.428,0.585],"hit":0.0,"hit_ci":[0.0,0.037],"hit_cond":0.0,"n_cond":76,"coupled":0.9,"chance":0.91,"chance_p95":2.41},"rescaled":{"auc":0.688,"auc_ci":[0.631,0.737],"hit":0.41,"hit_ci":[0.319,0.508],"hit_cond":1.0,"n_cond":41,"coupled":5.92,"chance":0.42,"chance_p95":0.0},"atds":{"auc":0.645,"auc_ci":[0.58,0.716],"hit":0.42,"hit_ci":[0.328,0.518],"hit_cond":0.79,"n_cond":53,"coupled":10.69,"chance":4.11,"chance_p95":14.43},"atds_tol1":{"auc":0.63,"auc_ci":[0.585,0.675],"hit":0.26,"hit_ci":[0.184,0.354],"hit_cond":1.0,"n_cond":26,"coupled":4.54,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":0.843,"auc_ci":[0.788,0.891],"hit":0.73,"hit_ci":[0.636,0.807],"hit_cond":0.94,"n_cond":78,"coupled":32.21,"chance":4.95,"chance_p95":26.32},"diff_fixed":{"ci90":[0.045,0.229],"ci95":[0.026,0.246]},"diff_rescaled":{"ci90":[-0.105,0.018],"ci95":[-0.117,0.029]},"diff_oracle":{"ci90":[-0.261,-0.138],"ci95":[-0.271,-0.129]},"diff_atds_tol1":{"ci90":[-0.037,0.06],"ci95":[-0.048,0.07]}}];
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function scale(d0, d1, r0, r1, log) {
+  if (log) { const a = Math.log(d0), b = Math.log(d1); return v => r0 + (Math.log(v) - a) / (b - a) * (r1 - r0); }
+  return v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
+}
+function fmt(v) { return typeof v === "number" ? (Math.abs(v) >= 100 ? v.toLocaleString("en-US") : String(v)) : v; }
+
+// Builds one SVG plot with axes and a nearest-point tooltip layer.
+function plot(container, o) {
+  const W = o.w || 680, H = o.h || 300, m = Object.assign({ l: 58, r: 20, t: o.title ? 28 : 14, b: 48 }, o.m || {});
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": o.aria || "" }, container);
+  const x = scale(o.x.min, o.x.max, m.l, W - m.r, o.x.log), y = scale(o.y.min, o.y.max, H - m.b, m.t, o.y.log);
+  const ax = el("g", { class: "axis" }, svg);
+  if (o.title) el("text", { x: m.l, y: 16, class: "panel-title" }, svg).textContent = o.title;
+  o.y.ticks.forEach(t => {
+    el("line", { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), class: "gridline" }, ax);
+    el("text", { x: m.l - 8, y: y(t) + 4, "text-anchor": "end" }, ax).textContent = (o.y.fmt || fmt)(t);
+  });
+  el("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, class: "baseline" }, ax);
+  o.x.ticks.forEach(t => {
+    el("line", { x1: x(t), x2: x(t), y1: H - m.b, y2: H - m.b + 4, class: "baseline" }, ax);
+    el("text", { x: x(t), y: H - m.b + 18, "text-anchor": "middle" }, ax).textContent = (o.x.fmt || fmt)(t);
+  });
+  el("text", { x: (m.l + W - m.r) / 2, y: H - 8, "text-anchor": "middle", class: "axis-label" }, svg).textContent = o.x.label;
+  const yl = el("text", { x: 0, y: 0, "text-anchor": "middle", class: "axis-label", transform: `translate(14 ${(m.t + H - m.b) / 2}) rotate(-90)` }, svg);
+  yl.textContent = o.y.label;
+  const layer = el("g", {}, svg);
+  const pts = [];
+  return { svg, x, y, layer, pts, W, H, m, container };
+}
+function attachTip(p) {
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; p.container.appendChild(tip);
+  const ring = el("circle", { r: 7, class: "hover-ring", visibility: "hidden" }, p.svg);
+  function move(ev) {
+    const r = p.svg.getBoundingClientRect(), sx = p.W / r.width;
+    const mx = (ev.clientX - r.left) * sx, my = (ev.clientY - r.top) * sx;
+    let best = null, bd = 1e9;
+    p.pts.forEach(q => { const d = Math.hypot(q.px - mx, q.py - my); if (d < bd) { bd = d; best = q; } });
+    if (!best || bd > 40) { tip.hidden = true; ring.setAttribute("visibility", "hidden"); return; }
+    ring.setAttribute("cx", best.px); ring.setAttribute("cy", best.py); ring.setAttribute("visibility", "visible");
+    const cr = p.container.getBoundingClientRect();
+    tip.innerHTML = best.html; tip.hidden = false;
+    let left = r.left - cr.left + best.px / sx; left = Math.max(80, Math.min(cr.width - 80, left));
+    tip.style.left = left + "px"; tip.style.top = (r.top - cr.top + best.py / sx) + "px";
+  }
+  p.svg.addEventListener("pointermove", move);
+  p.svg.addEventListener("pointerleave", () => { tip.hidden = true; ring.setAttribute("visibility", "hidden"); });
+}
+function line(p, data, color, opts = {}) {
+  const d = data.map((v, i) => (i ? "L" : "M") + p.x(v[0]).toFixed(1) + " " + p.y(v[1]).toFixed(1)).join(" ");
+  el("path", { d, fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-dasharray": opts.dash || "none" }, p.layer);
+  if (opts.dots !== false) data.forEach(v => el("circle", { cx: p.x(v[0]), cy: p.y(v[1]), r: 4, fill: color, stroke: "var(--surface)", "stroke-width": 2 }, p.layer));
+  data.forEach(v => p.pts.push({ px: p.x(v[0]), py: p.y(v[1]), html: opts.tip(v) }));
+}
+function legend(container, items) {
+  const L = document.createElement("div"); L.className = "legend";
+  L.innerHTML = items.map(i => `<span><i class="sw ${i.k || ""}" style="background:${i.c};border-color:${i.c}"></i>${i.n}</span>`).join("");
+  container.prepend(L);
+}
+function table(id, head, rows) {
+  document.getElementById(id).innerHTML = "<table><thead><tr>" + head.map(h => `<th>${h}</th>`).join("") + "</tr></thead><tbody>" +
+    rows.map(r => "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>").join("") + "</tbody></table>";
+}
+
+
+// Figure 1: worked example
+(() => {
+  const c = document.getElementById("f1"), E = EX;
+  legend(c, [{ n: "Stable window", c: "var(--ink-2)", k: "dot" }, { n: "Unstable window", c: "var(--ink-2)", k: "ring" }, { n: "True delay", c: "", k: "dash" }]);
+  [["fixed", "Published setting · window 60, lag ±30, tol ±1 · score 5.2 %", "var(--fixed)"],
+   ["atds", "aTDS · window 259, lag ±129, tol ±13 · score 91.3 %", "var(--atds)"]].forEach(([k, title, col], idx) => {
+    const S = E[k];
+    const p = plot(c, { h: 220, title, aria: title, m: { b: idx ? 46 : 28 },
+      x: { min: 0, max: 12000, ticks: [0, 3000, 6000, 9000, 12000], label: idx ? "Time (samples)" : "" },
+      y: { min: -130, max: 130, ticks: [-120, -60, 0, 60, 120], label: "Delay τ₀ (samples)" } });
+    el("line", { x1: p.x(0), x2: p.x(12000), y1: p.y(-20), y2: p.y(-20), class: "ref" }, p.layer);
+    S.t.forEach((t, i) => {
+      const st = S.stable[i] === 1, cx = p.x(t), cy = p.y(S.tau[i]);
+      el("circle", { cx, cy, r: k === "fixed" ? 3 : 4.2, fill: st ? col : "var(--surface)", stroke: col, "stroke-width": st ? 1 : 1.5 }, p.layer);
+      p.pts.push({ px: cx, py: cy, html: `t = ${fmt(t)} · τ₀ = <b>${S.tau[i]}</b><br>${st ? "stable" : "unstable"}` });
+    });
+    attachTip(p);
+  });
+})();
+
+// Figure 2: reported delay vs true delay, lag range only
+(() => {
+  const c = document.getElementById("f2");
+  const V = [["lag30", "var(--fixed)", "Published lag ±30"], ["atds", "var(--atds)", "aTDS lag range"]];
+  legend(c, V.map(v => ({ n: v[2], c: v[1], k: "dot" })).concat([{ n: "Wrong delay", c: "var(--fixed)", k: "ring" }, { n: "Perfect answer", c: "", k: "dash" }]));
+  const p = plot(c, { h: 300, aria: "Delay reported versus true delay",
+    x: { min: 0, max: 170, ticks: [0, 20, 40, 60, 80, 100, 120, 140, 160], label: "True delay (samples)" },
+    y: { min: -40, max: 170, ticks: [-40, 0, 40, 80, 120, 160], label: "Delay reported (samples)" } });
+  el("line", { x1: p.x(0), x2: p.x(170), y1: p.y(0), y2: p.y(170), class: "ref" }, p.layer);
+  U4.forEach(r => V.forEach(([k, col, n], vi) => {
+    const v = r[k], ok = v.found === r.d, cx = p.x(r.d + (vi ? 1.8 : -1.8) + (r.k - 4.5) * 0.35), cy = p.y(v.found);
+    el("circle", { cx, cy, r: 3.6, fill: ok ? col : "var(--surface)", stroke: ok ? "var(--surface)" : col, "stroke-width": ok ? 1.2 : 1.8, "fill-opacity": 0.9 }, p.layer);
+    p.pts.push({ px: cx, py: cy, html: `true delay ${r.d} · ${n}<br>reports <b>${v.found}</b> · TDS score ${v.score} %` });
+  }));
+  attachTip(p);
+})();
+
+// Figure 3: AUC and delay found, four settings, 95 % intervals
+function ciSeries(p, rows, col, off, tip) {
+  const pts = rows.map(r => [r[0] * off, r[1], r[2], r[3]]);
+  el("path", { d: pts.map((v, i) => (i ? "L" : "M") + p.x(v[0]).toFixed(1) + " " + p.y(v[1]).toFixed(1)).join(" "), fill: "none", stroke: col, "stroke-width": 2 }, p.layer);
+  pts.forEach((v, i) => {
+    const cx = p.x(v[0]);
+    el("line", { x1: cx, x2: cx, y1: p.y(v[2]), y2: p.y(v[3]), stroke: col, "stroke-width": 1.5 }, p.layer);
+    el("circle", { cx, cy: p.y(v[1]), r: 4, fill: col, stroke: "var(--surface)", "stroke-width": 1.5 }, p.layer);
+    p.pts.push({ px: cx, py: p.y(v[1]), html: tip(rows[i]) });
+  });
+}
+(() => {
+  const M = [["fixed", "Published", "var(--fixed)"], ["rescaled", "Rescaled by hand", "var(--v1)"], ["atds", "aTDS", "var(--atds)"], ["oracle", "Oracle (upper bound)", "var(--ink-3)"]];
+  const R = U1.map(r => r.r);
+  [["f3a", "auc", "auc_ci", "AUC (coupled vs uncoupled)", 0.4, 1.02, [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]],
+   ["f3b", "hit", "hit_ci", "True delay found (share of pairs)", 0, 1.02, [0, 0.25, 0.5, 0.75, 1.0]]].forEach(([id, key, ci, lab, lo, hi, ticks]) => {
+    const c = document.getElementById(id);
+    legend(c, M.map(m => ({ n: m[1], c: m[2] })));
+    const p = plot(c, { w: 340, h: 300, m: { l: 50, r: 14 }, aria: lab,
+      x: { min: 0.75, max: 21, log: true, ticks: R, label: "Slow-down factor r (log)" },
+      y: { min: lo, max: hi, ticks, label: lab } });
+    if (key === "auc") el("line", { x1: p.x(0.75), x2: p.x(21), y1: p.y(0.5), y2: p.y(0.5), class: "ref" }, p.layer);
+    M.forEach(([k, n, col], mi) => ciSeries(p, U1.map(r => [r.r, r[k][key], r[k][ci][0], r[k][ci][1]]), col, Math.pow(1.06, mi - 1.5),
+      row => `r = ${row[0]} · ${n}<br>${key === "auc" ? "AUC" : "delay found"} <b>${row[1]}</b> [${row[2]}, ${row[3]}]`));
+    attachTip(p);
+  });
+})();
+</script>
