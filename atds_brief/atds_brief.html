@@ -1,0 +1,997 @@
+<title>Adaptive TDS Brief</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column (~68ch) with figures allowed to run slightly wider; lab-notebook restraint. */
+:root {
+  --bg: #fbfcfd;
+  --surface: #ffffff;
+  --ink: #12161c;
+  --ink-2: #4a5260;
+  --ink-3: #7a8290;
+  --rule: #dde2e8;
+  --grid: #e9edf1;
+  --accent: #1f5fae;
+  --fixed: #2a78d6;
+  --atds: #eb6834;
+  --v1: #1baf7a;
+  --tint: #eef3f9;
+  --f-display: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121519; --surface: #181c21; --ink: #eef0f3; --ink-2: #b9c0ca; --ink-3: #8a929e;
+    --rule: #2b3139; --grid: #232830; --accent: #7fb0ec;
+    --fixed: #3987e5; --atds: #d95926; --v1: #199e70; --tint: #1b2430; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121519; --surface: #181c21; --ink: #eef0f3; --ink-2: #b9c0ca; --ink-3: #8a929e;
+  --rule: #2b3139; --grid: #232830; --accent: #7fb0ec;
+  --fixed: #3987e5; --atds: #d95926; --v1: #199e70; --tint: #1b2430; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+main { max-width: 760px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+section, figure { grid-template-columns: minmax(0, 1fr); }
+section { display: grid; gap: 16px; min-width: 0; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.25; }
+h1 { font-size: 2.1rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-top: 8px; border-top: 1px solid var(--rule); padding-top: 24px; }
+h3 { font-size: 1.05rem; font-family: var(--f-body); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.lede { font-size: 1.12rem; color: var(--ink-2); }
+header { display: grid; gap: 12px; }
+.claim { background: var(--tint); border-radius: 6px; padding: 18px 20px; display: grid; gap: 8px; }
+.claim p { max-width: none; }
+.claim strong { color: var(--ink); }
+code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
+.rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.rule-card { border: 1px solid var(--rule); border-radius: 6px; padding: 16px; display: grid; gap: 10px; align-content: start; background: var(--surface); min-width: 0; }
+.rule-card .eq { font-family: var(--f-mono); font-size: 0.92rem; color: var(--accent); background: var(--tint); padding: 8px 10px; border-radius: 4px; overflow-x: auto; }
+.rule-card p { font-size: 0.93rem; color: var(--ink-2); }
+.rule-card .test { font-size: 0.86rem; color: var(--ink-3); border-top: 1px dashed var(--rule); padding-top: 8px; }
+@media (max-width: 720px) { .rules { grid-template-columns: 1fr; } }
+figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
+.fig-title { font-weight: 600; font-size: 0.98rem; }
+.chart { position: relative; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 8px 4px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .pair { grid-template-columns: 1fr; } }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--ink-2); padding: 2px 6px 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.sw.dot { width: 9px; height: 9px; border-radius: 50%; }
+.sw.ring { width: 9px; height: 9px; border-radius: 50%; background: transparent !important; border: 2px solid; }
+.sw.dash { background: repeating-linear-gradient(90deg, var(--ink-3) 0 4px, transparent 4px 7px) !important; }
+figcaption { grid-template-columns: minmax(0, 1fr); font-size: 0.92rem; color: var(--ink-2); display: grid; gap: 6px; }
+figcaption p { max-width: none; }
+figcaption .proves { color: var(--ink); }
+figcaption .proves b { font-weight: 600; }
+figcaption .src { overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 0.76rem; color: var(--ink-3); }
+details { font-size: 0.85rem; color: var(--ink-2); }
+details summary { cursor: pointer; color: var(--accent); width: fit-content; }
+details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tbl { overflow-x: auto; margin-top: 8px; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.85rem; min-width: 100%; }
+th, td { text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--ink-3); font-weight: 500; }
+.axis text { fill: var(--ink-3); font-family: var(--f-mono); font-size: 11px; }
+.axis-label { fill: var(--ink-2); font-family: var(--f-body); font-size: 12px; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.baseline { stroke: var(--ink-3); stroke-width: 1; }
+.ref { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+.ref-label { fill: var(--ink-2); font-family: var(--f-body); font-size: 11.5px; }
+.direct { font-family: var(--f-body); font-size: 12px; font-weight: 500; fill: var(--ink); }
+.panel-title { font-family: var(--f-body); font-size: 12.5px; font-weight: 600; fill: var(--ink); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 0.8rem; line-height: 1.4; padding: 6px 9px; border-radius: 4px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); z-index: 5; }
+.hover-ring { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+ul.limits { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 68ch; }
+ul.limits li::marker { color: var(--ink-3); }
+.status { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; font-size: 0.93rem; }
+.status dt { font-family: var(--f-mono); font-size: 0.8rem; color: var(--ink-3); padding-top: 2px; }
+.status dd { margin: 0; color: var(--ink-2); min-width: 0; }
+@media (max-width: 520px) { .status { grid-template-columns: 1fr; } .status dd { margin-bottom: 6px; } }
+footer { font-size: 0.82rem; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 16px; }
+</style>
+
+<style>
+.methods { border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; font-size: 0.92rem; color: var(--ink-2); background: var(--surface); }
+.methods p { max-width: none; }
+.verdict { font-size: 0.9rem; color: var(--ink-2); }
+ol.steps { margin: 6px 0; padding-left: 1.3em; display: grid; gap: 3px; }
+section > h3 { margin-top: 6px; }
+.anim { display: grid; gap: 6px; }
+.anim canvas { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+.anim-bar { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; font-size: 0.86rem; color: var(--ink-2); }
+.anim-bar p { max-width: none; }
+.anim-bar button { font: inherit; font-size: 0.8rem; color: var(--accent); background: transparent; border: 1px solid var(--rule); border-radius: 4px; padding: 2px 10px; cursor: pointer; flex: none; }
+.anim-bar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+pre.algo { margin: 0; font-family: var(--f-mono); font-size: 0.84rem; line-height: 1.6; background: var(--tint); color: var(--ink); border-radius: 6px; padding: 14px 16px; overflow-x: auto; }
+pre.algo .c { color: var(--ink-3); }
+.step { display: grid; gap: 10px; }
+.step h3 { font-size: 1rem; }
+.formula { font-family: var(--f-display); font-size: 1.05rem; padding: 4px 0; overflow-x: auto; }
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Idea for review · Asaf Markuza · 31 October 2026</div>
+  <h1>Adaptive TDS: Time Delay Stability that chooses its own parameters</h1>
+  <p class="lede">TDS needs a window, a lag range and a tolerance, and nobody knows the right values for a new system. aTDS measures them from the signals. This brief tests each of the three rules against signals whose coupling and delay are known. It does not yet show whether aTDS changes or sharpens sleep-stage contrasts in real sleep networks; that is untested.</p>
+</header>
+
+<section>
+  <h2>The idea</h2>
+  <p>Time Delay Stability (Bashan et al. 2012) links two signals when the delay τ₀ that best aligns them stays nearly constant over consecutive windows. A window counts as stable when at least 4 of 5 neighbouring delays agree within a tolerance. The TDS score is the percentage of stable windows.</p>
+  <p>The result depends on three numbers: the <b>window</b>, the <b>lag range</b> searched and the <b>tolerance</b>. The published values (60 / ±30 / ±1 samples) were chosen for 1&#8209;Hz sleep recordings. They are counted in samples, so they mean something different for every system and every sampling rate. For a new system they are a guess.</p>
+  <div class="claim">
+    <p><strong>aTDS: you give it the signals, and it sets all three numbers itself.</strong></p>
+    <p>The 4-of-5 stability rule stays as published. The three rules use only each signal's own structure and coupling-free copies; they never use which pairs are coupled or what the delay is. (A coupled signal's own autocorrelation partly reflects its partner, so B is not entirely blind to coupling.)</p>
+  </div>
+  <figure>
+    <div class="fig-title">Figure 1 · Same coupled pair, two parameter sets</div>
+    <div class="chart" id="f1"></div>
+    <figcaption>
+      <p>Signal y follows x with a true delay of 20 samples (memory τ<sub>c</sub> = 8 samples, coupling strength 0.6). Each dot is τ₀ in one window, over the first 12 000 samples. Filled dots are stable windows and hollow dots unstable ones. The dashed line is the true delay (τ = −20; negative means x leads). Top: fixed parameters (window 60, lag ±30, tolerance ±1). Bottom: aTDS, which chose window 259, lag ±129 and tolerance ±13 by itself, on a separate training pair of the same kind.</p>
+      <p class="proves"><b>What it shows:</b> the coupling is identical in both panels; only the parameters differ. With the fixed window, τ₀ scatters and rarely holds for 4 of 5 windows: score <b>5.2 %</b>, with τ₀ within ±2 samples of the true delay in 28 % of windows. With the aTDS parameters, τ₀ sits on the true delay: score <b>91.3 %</b>, within ±2 samples in 90 % of windows. Most of this gain comes from the window and lag range (Figure 5).</p>
+      <details><summary>Show data</summary><div class="tbl" id="t1"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>How aTDS chooses the three parameters</h2>
+  <div class="rules">
+    <div class="rule-card">
+      <h3>Window</h3>
+      <div class="eq">L = 30 · B</div>
+      <p>B = 1 + 2 Σ r(k)², summed over the autocorrelation r(k) up to its first zero crossing (the Bartlett factor). For a smooth signal, B neighbouring samples carry about one sample's worth of new information. So L holds about <b>30 independent samples</b> of the slowest signal in the system. Limits: at least 61 samples (so the lag range is never narrower than the published ±30), at most 10 % of the recording. Optional: if the user knows the longest plausible delay d<sub>max</sub>, the window is at least 2·d<sub>max</sub> + 1.</p>
+      <p>Why 30: with n independent samples each correlation value has a random error of about 1/√n (±0.18 at n = 30). 30 is a convention that balances reliability against time resolution; Figure 3b tests it.</p>
+      <p class="test">Tested in Figures 2, 3 and 3b.</p>
+    </div>
+    <div class="rule-card">
+      <h3>Lag range and step</h3>
+      <div class="eq">τ<sub>max</sub> = (L − 1) / 2</div>
+      <p>The same ratio as the published setting (±30 in a 60-sample window). Step = L / 2, the published 50 % overlap. If a signal has a rhythm with period P, τ<sub>max</sub> ≤ P / 2, because beyond half a cycle a delay d and d − P look the same.</p>
+      <p class="test">Tested in Figure 4.</p>
+    </div>
+    <div class="rule-card">
+      <h3>Tolerance</h3>
+      <div class="eq">largest tol with chance + 2 SE ≤ 5 %</div>
+      <p>One signal is circularly shifted by a large random amount. That keeps each signal's own structure but destroys the coupling. TDS is scored on these shifted copies at tolerance 0, 1, 2, …, and the largest tolerance whose mean chance score, plus two standard errors, stays ≤ 5 % is kept. Rotations are pooled over all recordings available (for a cohort, all subjects). If even 0 exceeds 5 %, the result is flagged <code>calibration_failed</code>.</p>
+      <p class="test">Tested in Figures 5 and 6.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The algorithm</h2>
+  <p>Input: the signals of one system, s<sub>1</sub> … s<sub>n</sub>, each T samples long. Output: one parameter set used for every pair in the system. The stability rule (4 of 5 windows) is not changed. Constants: 30 independent samples per window, 5 % chance budget, window between 61 samples and 10 % of T, 20 random shifts per pair.</p>
+
+  <div class="step">
+    <h3>Step 0 · Autocorrelation of each signal</h3>
+    <div class="formula">r<sub>i</sub>(k) = Σ<sub>t</sub> x<sub>i</sub>(t) x<sub>i</sub>(t+k) / Σ<sub>t</sub> x<sub>i</sub>(t)², &nbsp; x<sub>i</sub> = s<sub>i</sub> − mean(s<sub>i</sub>), &nbsp; k = 0 … T/4</div>
+  </div>
+
+  <div class="step">
+    <h3>Step 1 · Window</h3>
+    <div class="formula">B<sub>i</sub> = 1 + 2 Σ<sub>k=1</sub><sup>K<sub>i</sub>−1</sup> r<sub>i</sub>(k)², &nbsp; K<sub>i</sub> = first k with r<sub>i</sub>(k) ≤ 0</div>
+    <div class="formula">L = clip( round(30 · max<sub>i</sub> B<sub>i</sub>), L<sub>min</sub>, 0.1 T ), &nbsp; step = ⌊L / 2⌋</div>
+    <div class="formula">L<sub>min</sub> = 61, &nbsp; or max(61, 2·d<sub>max</sub> + 1) if the longest plausible delay d<sub>max</sub> is given (optional)</div>
+    <p><b>The only input is the signals.</b> d<sub>max</sub> is optional. Without it, aTDS searches at least ±30 samples, the published range; with it, the lag range is guaranteed to reach d<sub>max</sub> (Table 2, fast signal with delay 50).</p>
+    <p><b>What B means.</b> Neighbouring samples of a smooth signal nearly repeat each other. B<sub>i</sub> (the Bartlett factor) says how many consecutive samples of signal i carry as much new information as one independent sample: B = 1 for white noise, B = 8 means every 8 samples count as one. A window of L samples therefore holds L / B<sub>i</sub> independent samples of signal i.</p>
+    <p><b>Both signals, one window.</b> B is computed for <i>every</i> signal in the system (for a pair, for x and for y). The largest B, i.e. the slowest signal, sets the window, so every signal, and every pair built from them, has at least 30 independent samples in each window. One window is used for all pairs so that all scores are measured on the same ruler. When signals differ strongly in speed, this gives fast pairs a longer window and a wider tolerance than they need; per-pair windows are the alternative (Table 2).</p>
+    <p><b>Why 30.</b> Each value of C(τ) in a window carries a random error of about 1/√n, where n = L / B is the number of independent samples (Bartlett's formula): ±0.18 at n = 30, ±1 at n = 1. But τ₀ is the <i>largest</i> of roughly 30 independent lags, and the largest of 30 pure-noise values is higher, about 0.18 · √(2 ln 30) ≈ 0.47. So a weak coupling (0.3) does not stand out in every single window. What separates it from noise is the 4-of-5 stability rule: noise peaks land at random lags, while the true peak keeps returning to the same lag. More independent samples make τ₀ more reliable but leave fewer windows, and so a coarser picture over time. 30 is a fixed design constant chosen as a balance, not an optimum: with on/off coupling, 45–60 did slightly better (Figure 3b).</p>
+    <div class="anim">
+      <canvas id="a1" width="680" height="250" role="img" aria-label="Animation: the autocorrelation of x and of y is built one lag at a time and each B is summed up to its first zero crossing (K). The larger B (the slower signal, here x) is used. Then the window is built from independent samples: each dot is one independent sample, worth B samples, until there are 30."></canvas>
+      <div class="anim-bar"><p>Animation: the autocorrelation of x and of y is built one lag at a time and each B is summed up to its first zero crossing (K). The larger B (the slower signal, here x) is used. Then the window is built from independent samples: each dot is one independent sample, worth B samples, until there are 30.</p><button type="button" data-anim="a1">Pause</button></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 2 · Lag range</h3>
+    <div class="formula">τ<sub>max</sub> = ⌊(L − 1) / 2⌋</div>
+    <div class="formula">if some signal has a rhythm with period P<sub>i</sub>: &nbsp; τ<sub>max</sub> = min(τ<sub>max</sub>, ⌊min<sub>i</sub> P<sub>i</sub> / 2⌋)</div>
+    <p>Rhythm test: after the first zero crossing of r<sub>i</sub>, take the highest autocorrelation peak; if it is at least 0.3 and not at the edge of the range, its lag is P<sub>i</sub>. Otherwise the signal is treated as not rhythmic.</p>
+    <div class="anim">
+      <canvas id="a2" width="680" height="240" role="img" aria-label="Animation: inside one window, y is shifted against x across the whole lag range while C(k) is drawn; the largest |C| gives τ₀ = −20, the true delay."></canvas>
+      <div class="anim-bar"><p>Animation: inside one window, y is shifted against x across the whole lag range while C(k) is drawn; the largest |C| gives τ₀ = −20, the true delay.</p><button type="button" data-anim="a2">Pause</button></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 3 · Tolerance</h3>
+    <p><b>1 · Make coupling-free copies.</b> Rotate y in time by a large random amount h (the end wraps around to the start). Each signal keeps its own shape and rhythm, but y no longer follows x, so any stability found between them is pure chance. Repeat with 20 different h. When several recordings of the same kind are available (a cohort), pool the rotated copies of all of them.</p>
+    <p><b>2 · Score each copy at tolerance tol.</b> For copy j, find τ₀ in every window (the same window and lag range as above), apply the 4-of-5 rule with this tolerance, and count the stable windows:</p>
+    <div class="formula">score<sub>j</sub>(tol) = 100 % × (stable windows of copy j) / (all windows of copy j)</div>
+    <p><b>3 · Average over the copies.</b></p>
+    <div class="formula">C(tol) = mean<sub>j</sub> score<sub>j</sub>(tol)</div>
+    <p>Because the copies contain no coupling, every stable window in them is a false alarm. C(tol) is therefore the false-alarm rate of TDS at that tolerance: the score you would get from uncoupled signals just by luck.</p>
+    <p><b>4 · Choose the tolerance.</b> Try tol = 0, 1, 2, … and keep the largest tol whose upper bound, C(tol) plus two standard errors of that mean, is ≤ 5 %:</p>
+    <div class="formula">tol* = max { tol : C(tol) + 2 · SE(tol) ≤ 5 % }, &nbsp; SE = SD<sub>j</sub>(score<sub>j</sub>) / √(number of copies)</div>
+    <p>The upper bound is used, not the mean alone, so that the budget also holds on new recordings, not only on the copies used to choose the tolerance. With the mean alone, the chance score on new pairs reached 6.7 %; with the upper bound and pooled rotations it stayed at 3.3–4.4 % (Figure 6).</p>
+    <p><b>Why a wider tolerance is wanted at all.</b> A real delay is never perfectly constant; it wobbles from window to window. A wider tolerance lets TDS accept that wobble and see real coupling, but it also lets random τ₀ values agree by luck. The tolerance has to be as wide as possible without letting luck take over.</p>
+    <p><b>What the 5 % means.</b> It is a design budget for false stability: on coupling-free copies, at most 5 % of windows on average may be labelled stable. It is <i>not</i> the probability that a link is false. Whether a particular link is significant still needs its own test (its score against its own rotated copies) and, in a network, a correction for testing many links at once. The 5 % is a fixed design constant; a stricter user could use 1 %.</p>
+    <p><b>Why stopping at the first tol above 5 % is right.</b> A wider tolerance can only add stable windows, never remove them, so C(tol) only goes up. Once it passes 5 %, every larger tolerance is also above 5 %, and the previous one is the widest tolerance inside the budget. (The upper bound behaves the same way in practice.)</p>
+    <div class="anim">
+      <canvas id="a3" width="680" height="430" role="img" aria-label="Animation: y is rotated to destroy the coupling (8 rotated copies here; aTDS uses 20). For each tolerance, the middle row shows copy 1: τ₀ in every window, filled where 4 of 5 neighbouring windows agree within the tolerance; that fraction is the copy's score. The bars are the scores of all copies, and their mean is C(tol). The tolerance rises until the upper bound C + 2 SE passes 5 %; the last tolerance at or under 5 % is kept."></canvas>
+      <div class="anim-bar"><p>Animation: y is rotated to destroy the coupling (8 rotated copies here; aTDS uses 20). For each tolerance, the middle row shows copy 1: τ₀ in every window, filled where 4 of 5 neighbouring windows agree within the tolerance; that fraction is the copy's score. The bars are the scores of all copies, and their mean is C(tol). The tolerance rises until the upper bound C + 2 SE passes 5 %; the last tolerance at or under 5 % is kept.</p><button type="button" data-anim="a3">Pause</button></div>
+    </div>
+  </div>
+
+  <pre class="algo">aTDS_parameters(s<sub>1</sub> … s<sub>n</sub>):
+    <span class="c"># Step 1: window</span>
+    for each signal i:
+        r<sub>i</sub> = autocorrelation(s<sub>i</sub>)
+        K<sub>i</sub> = first k where r<sub>i</sub>(k) ≤ 0
+        B<sub>i</sub> = 1 + 2 · sum(r<sub>i</sub>(k)² for k = 1 … K<sub>i</sub>−1)
+    Lmin = 61   (or max(61, 2·d_max + 1) if the optional d_max is given)
+    L    = clip(round(30 · max(B)), Lmin, 0.1·T)   # Lmin wins if 0.1·T &lt; Lmin
+    step = L // 2
+
+    <span class="c"># Step 2: lag range</span>
+    lag = (L − 1) // 2
+    P   = [dominant_period(r<sub>i</sub>) for each signal, if rhythmic]
+    if P not empty: lag = max(1, min(lag, min(P) // 2))
+
+    <span class="c"># Step 3: tolerance</span>
+    null = []
+    for each pair (i, j) in the system, in every recording available (at most 50 pairs):
+        repeat 20 times:
+            h = random integer in [a, T − a),  a = max(L, T // 10)
+            null.append( τ₀ series of (s<sub>i</sub>, rotate(s<sub>j</sub>, h)) with L, step, lag )
+    tol = 0
+    for t = 0, 1, 2, … up to max(1, lag // 4):
+        s  = [ TDS score of each null series, 4-of-5 rule, tolerance t ]
+        C  = mean(s);  SE = sd(s) / √len(s)
+        if C + 2·SE ≤ 5 %: tol = t
+        else: break
+    calibration_failed = (C + 2·SE at t = 0) &gt; 5 %
+
+    return window = L, step, max_lag = lag, tolerance = tol</pre>
+</section>
+
+<section>
+  <h2>How to read this brief</h2>
+  <p>Everything in the tests below is measured the same way. This section explains each term once, so no figure needs guessing.</p>
+  <dl class="status">
+    <dt>Known answer</dt><dd>Most tests use synthetic signals that we generate ourselves. We decide whether a pair is coupled, and with what delay, so we can check whether a method gets it right. One test uses a real EEG pair, where only detection can be checked.</dd>
+    <dt>Coupled / uncoupled pair</dt><dd>A coupled pair: y copies part of x with a delay d, y(t) = c · x(t − d) + noise, with coupling strength c between 0 and 1. An uncoupled pair is generated the same way with c = 0, so y has no link to x. Each test scores many coupled and many uncoupled pairs.</dd>
+    <dt>TDS score</dt><dd>The percentage of windows labelled stable (4 of 5 neighbouring delays agree within the tolerance). A score well above the chance score of the same data indicates a stable delay, and so coupling. The score alone says nothing about whether the delay is right (Figure 4), and aTDS scores are not comparable with published TDS scores.</dd>
+    <dt>Chance score</dt><dd>The TDS score a pair gets when the coupling is destroyed by rotating y in time (its end wraps to its start). It tells how high a score luck alone gives. "Chance" in the tables is the mean over many uncoupled pairs or rotated copies; "95th pct" is the value only 5 % of them exceed.</dd>
+    <dt>AUC</dt><dd>How well the TDS score separates coupled from uncoupled pairs: the probability that a randomly chosen coupled pair scores higher than a randomly chosen uncoupled one. 1 = always (perfect), 0.5 = no better than a coin flip. Example: AUC 0.9 means a coupled pair outscores an uncoupled one 9 times out of 10.</dd>
+    <dt>Delay found</dt><dd>The share of coupled pairs for which the method reports the right delay: at least 3 stable windows, and the median τ₀ of those windows within 10 % of the true delay (at least ±1 sample).</dd>
+    <dt>95 % interval</dt><dd>The range the true value very likely lies in, given the finite number of pairs. For AUC: 1 000 bootstrap resamples (draw the pairs again with replacement, recompute, take the middle 95 %). For shares such as "delay found": the Wilson interval. If two methods' intervals do not overlap, the difference is significant at roughly the 5 % level. For methods scored on the same pairs the proper test is the interval of the paired difference (next entry); overlapping intervals do not mean "no difference".</dd>
+    <dt>"Better", "equivalent", "undecided"</dt><dd>For two methods scored on the same pairs, we compute the interval of the <i>difference</i> in AUC. "Better": the 95 % interval of the difference is entirely above 0. "Equivalent": the 90 % interval lies inside ±0.05, i.e. any difference is smaller than 0.05 AUC (an equivalence test, TOST). "Undecided": neither.</dd>
+    <dt>Training vs scored pairs</dt><dd>aTDS chooses its parameters on separate training pairs (or, for the EEG, the first half of the record) and is then scored on new pairs it never saw, so the parameters cannot fit the answer by accident. In Table 3, calibration is label-free on the scored network itself (rotations only), as in a real analysis.</dd>
+    <dt>Slow-down factor r</dt><dd>One test system made r times slower: memory 2r samples and delay 5r samples. This is what happens when the same physical system is recorded r times faster. At r = 1 the published values fit; the larger r, the worse they fit.</dd>
+  </dl>
+  <h3>The four settings compared</h3>
+  <dl class="status">
+    <dt>Published</dt><dd>The fixed TDS setting of Bashan et al. (2012): window 60, step 30, lag ±30 (±29 effective in pyTDS's circular cross-correlation), tolerance ±1, the same for every system.</dd>
+    <dt>Rescaled by hand</dt><dd>The published setting multiplied by the slow-down factor r: window 60r, step 30r, lag ±30r, tolerance ±r (at r = 4: 240 / ±120 / ±4). It is what a careful analyst would choose <i>if told</i> how much slower the system is. In real data nobody knows r, so this is a fair but generous baseline.</dd>
+    <dt>aTDS</dt><dd>The method of this brief: only the two signals go in (optionally the longest plausible delay d<sub>max</sub>; for a network, all of its signals), and it sets window, lag range and tolerance itself.</dd>
+    <dt>Oracle</dt><dd>The best of 91 grid settings, chosen by checking the answers on labelled training pairs. It is a practical upper bound, not a method anyone can use, because it needs to know which pairs are coupled; a setting outside the grid could do even better (at r = 16 the oracle reaches only AUC 0.84). <b>How it is computed</b>, for each slow-down factor r:
+      <ol class="steps">
+        <li>Generate 20 coupled and 20 uncoupled <i>training</i> pairs, separate from the pairs that are scored later.</li>
+        <li>Try every combination of 7 windows (30, 60, 120, 240, 480, 960, 1 920 samples; lag range (L − 1)/2 each) and 13 tolerances (0, 1, 2, 3, 5, 8, 12, 18, 27, 40, 60, 90, 135; tolerances larger than the lag range are skipped): up to 91 settings.</li>
+        <li>For each setting, score the 40 training pairs and compute the AUC.</li>
+        <li>Keep the setting with the highest training AUC (the first one if several tie).</li>
+        <li>Score the same 100 + 100 test pairs as the other three settings with it.</li>
+      </ol>
+      <b>How it is shown:</b> grey line in Figure 7; the setting it chose at each r is in the Figure 7 data table. If aTDS is close to the oracle, little is left to gain by tuning; if it is far below, better parameters exist.</dd>
+  </dl>
+  <h3>Signals used</h3>
+  <dl class="status">
+    <dt>AR(1)</dt><dd>Smooth random noise whose memory fades exponentially; τ<sub>c</sub> is how many samples it takes to forget its past. The main test signal.</dd>
+    <dt>fGn (long memory)</dt><dd>Fractional Gaussian noise: memory that fades slowly, like heart rate or EEG power. Its Hurst exponent H (0.5 = no memory, closer to 1 = long memory) equals the DFA exponent α used in physiology.</dd>
+    <dt>AR(2) (rhythm)</dt><dd>A noisy oscillator with a period of about 40 samples, like breathing.</dd>
+    <dt>Rulkov neurons</dt><dd>A standard model of two bursting neurons; neuron 0 drives neuron 1 with a delay.</dd>
+    <dt>EEG pair</dt><dd>Real sleep EEG δ- and σ-band power of one night at 1 Hz, from the pyTDS repository. The original MATLAB result on it, 43.6 %, is reproduced by pyTDS only with the causal stability anchor (43.5 %); the default anchor, used everywhere else in this brief, gives 58.1 %.</dd>
+  </dl>
+  <h3>Other terms</h3>
+  <dl class="status">
+    <dt>B, independent samples</dt><dd>B (Bartlett factor) is how many consecutive samples count as one independent sample. A window of L samples holds L / B independent samples. B<sub>xy</sub> is the same for a pair of signals.</dd>
+    <dt>Balanced accuracy</dt><dd>Used in Figure 3b: the average of two hit rates. While coupling is on, a window counts as correct only if it is labelled stable <i>and</i> its τ₀ is within ±2 samples of the true delay; while coupling is off, a window counts as correct if it is not labelled stable. 0.5 = guessing, 1 = perfect.</dd>
+    <dt>Per-link p-value, FDR</dt><dd>Used in Table 3. A link's p-value is p = (1 + number of its 999 rotated copies that score at least as high as the real pair) / 1 000; the smallest possible value is 0.001. When many links are tested at once, some pass by luck; the Benjamini–Hochberg procedure keeps the expected share of false links among the reported ones (the false-discovery rate) at most 5 %, assuming the links are independent or positively dependent.</dd>
+    <dt>v2.1</dt><dd>The current version of the aTDS rules, described in the algorithm section (minimum window 61; tolerance from the upper bound of the chance score).</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Test 1 · Window</h2>
+  <figure>
+    <div class="fig-title">Figure 2 · A fixed window holds less information as the signal gets slower</div>
+    <div class="chart" id="f2"></div>
+    <figcaption>
+      <p>The x-axis says how slow a signal is. Its correlation time τ<sub>c</sub> is the number of samples it takes for the signal to "forget" its past (for its autocorrelation to fall to 1/e ≈ 0.37). τ<sub>c</sub> = 1 is a fast, noisy signal; τ<sub>c</sub> = 64 is a slow, smooth one, for example the same signal recorded 64 times faster. For each τ<sub>c</sub>, B is the median over 5 test signals of 30 000 samples. The y-axis gives the number of independent samples a window holds, L / B.</p>
+      <p class="proves"><b>What it shows:</b> with a fixed 60-sample window, slower systems are measured with less information, down to 0.93 independent samples at τ<sub>c</sub> = 64. The orange line is flat at 30 by construction, since aTDS sets L = 30 · B; the figure illustrates the rule, it does not test it. Figures 3 and 7 test what the window does to detection.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t2"></div></details>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 3 · Detection against window length, with the aTDS choice marked (100 pairs per class)</div>
+    <div class="chart" id="f3"></div>
+    <figcaption>
+      <p>Two systems with known weak coupling (strength 0.3): a faster one (τ<sub>c</sub> = 4, delay 10) and one 4× slower (τ<sub>c</sub> = 16, delay 40). For each window length, 100 coupled and 100 uncoupled pairs were scored. The lag range is (L − 1)/2 and the tolerance is calibrated for every window length, including the 60-sample point, so only the window varies. AUC measures how well the score separates coupled from uncoupled pairs (1 = perfect, 0.5 = guessing); whiskers are bootstrap 95 % intervals. Vertical lines: the fixed window (dashed, 60) and the window aTDS chose for each system separately (121 for the faster, 515 for the slower system), in that system's colour; the orange dots are the AUC measured at exactly those windows.</p>
+      <p class="proves"><b>What it shows:</b> the window aTDS picks moves with the time scale (4× longer for the 4× slower system). At its own windows aTDS reaches AUC 0.97 [0.95, 0.99] for the faster and 0.79 [0.73, 0.85] for the slower system, against 0.83 and 0.51 at 60 samples. Detection keeps rising past the aTDS choice: with coupling that is always on, a longer window is always better (0.99 at 1 920 samples for the slower system). The aTDS choice is a compromise with time resolution, not the best window for detection.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t3"></div></details>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 3b · When coupling switches on and off: is 30 independent samples the right window?</div>
+    <div class="chart" id="f3b"></div>
+    <figcaption>
+      <p>Coupling (strength 0.6, τ<sub>c</sub> = 8, delay 20) switched on and off in blocks of 1 000, 2 000 or 4 000 samples (about 125, 250 and 500 independent samples per block), 40 000 samples, 20 pairs per point. A window is scored as right when, during coupling, it is labelled stable <i>and</i> its τ₀ is within ±2 samples of the true delay (the same strict criterion for every window length), or, when coupling is off, it is not labelled stable. The y-axis is the balanced accuracy of these labels (0.5 = guessing). The x-axis is the number of independent samples per window, L / B. The vertical line marks the aTDS choice of 30.</p>
+      <p class="proves"><b>What it shows:</b> the trade-off behind the window rule is real, and the best window depends on how long the coupling episodes last. For the shortest blocks the best is 45 independent samples (0.87; 30 gives 0.85), for 2 000-sample blocks 60 (0.92; 30 gives 0.88), and for the longest blocks a plateau of 0.94–0.95 from 45 on (30 gives 0.91). 30 is within 0.015–0.05 of the best in all three cases and on the short side. It is a convention that favours time resolution, not an optimum.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t3b"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Test 2 · Lag range</h2>
+  <figure>
+    <div class="fig-title">Figure 4 · Only the lag range changes: ±30 vs the aTDS lag range</div>
+    <div class="pair">
+      <div class="chart" id="f4a"></div>
+      <div class="chart" id="f4b"></div>
+    </div>
+    <figcaption>
+      <p>Slow coupled signals (τ<sub>c</sub> = 16, coupling strength 0.6) with true delays from 5 to 160 samples, 10 pairs per delay. For each delay, aTDS set its parameters on 5 separate training pairs (window 454–514, tolerance ±23 to ±29). Both variants use that window and tolerance; only the lag range differs: the published ±30, or the aTDS range (L − 1)/2, here ±226 to ±256. Left: the delay each variant reports (the most frequent τ₀ among its stable windows; positive = x leads). The diagonal is a perfect answer. Right: the TDS score of the same runs. Filled dots reported the right delay; hollow dots a wrong one.</p>
+      <p class="proves"><b>What it shows:</b> with the aTDS lag range, the reported delay is exact for all 90 pairs, from 5 to 160 samples, sign included. With ±30, all 50 pairs with delays beyond 30 report a wrong delay at the edge of the search (±30, once 18), 16 of them with the wrong sign, and their TDS scores stay high (72–96 %). <b>With a fixed lag range, a high TDS score can come with a wrong delay:</b> the TDS score measures how stable the delay is, not whether it is right.</p>
+      <p><b>Why aTDS scores fall at long delays.</b> The longer the delay, the smaller the part of each window in which x and the delayed y overlap, so the correlation peak gets weaker and fewer windows pass the 4-of-5 rule (scores 27–62 % at delay 160). The delay reported from those windows is still right. Within ±30 both variants are right, and the narrow range scores somewhat higher (94–100 % vs 82–99 %) because it has fewer lags to pick wrongly by chance. The tolerance (±23 to ±29) is wider than the shortest delays; it only decides which windows count as stable. Direction comes from the reported delay itself, which was right in every aTDS pair.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t4"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Test 3 · Tolerance</h2>
+  <figure>
+    <div class="fig-title">Figure 5 · How the tolerance is chosen</div>
+    <div class="pair">
+      <div class="chart" id="f5a"></div>
+      <div class="chart" id="f5b"></div>
+    </div>
+    <figcaption>
+      <p>The pair from Figure 1, with the aTDS window. Left: the chance score C(tol), the mean TDS of 20 circularly rotated copies of this pair (blue), and its upper bound C + 2 SE (dashed blue), at each tolerance. Right: the real, unshifted pair at the same tolerances. aTDS chose ±13 from rotations of its 5 separate training pairs; on this pair the upper bound crosses 5 % between ±12 and ±13.</p>
+      <p class="proves"><b>What it shows:</b> the tolerance comes from the coupling-free copies alone. Here the real score barely depends on it (90.0 % at tolerance 0, 91.3 % at ±13), so the jump from 5.2 % to 91.3 % in Figure 1 comes from the window and lag range, not from the tolerance. The tolerance's job is to cap false stability while allowing the delay to wobble.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t5"></div></details>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 6 · Only the tolerance changes: ±1 vs calibrated, 100 pairs per class, 95 % intervals</div>
+    <div class="pair">
+      <div class="chart" id="f6a"></div>
+      <div class="chart" id="f6b"></div>
+    </div>
+    <figcaption>
+      <p><b>The slow-down factor r.</b> One test system is made slower step by step: at r = 1 its memory is τ<sub>c</sub> = 2 samples and its delay 5 samples, a case the fixed parameters fit well. At factor r both are multiplied by r (memory 2r, delay 5r), so r = 16 means memory 32 and delay 80 samples. This is what happens when the same physical system is recorded r times faster (for example at 16 Hz instead of 1 Hz). The coupling is weak (strength 0.3). Both variants use the same aTDS window and lag range, set on 5 separate training pairs; only the tolerance differs. 100 coupled and 100 uncoupled pairs per r. Left: AUC with bootstrap 95 % intervals. Right: share of coupled pairs where the stable windows report the true delay (within 10 %), with Wilson 95 % intervals.</p>
+      <p class="proves"><b>What it shows:</b> calibrating the tolerance helps slow systems find the right delay: 85 % vs 66 % of pairs at r = 8 (intervals do not overlap), 88 % vs 77 % at r = 4 and 42 % vs 26 % at r = 16 (intervals overlap). The AUC gain (+0.04 at r = 4 and 8) is not significant at 95 %; at r = 1 the calibrated tolerance is very slightly worse (−0.005, interval −0.012 to −0.001). The gain comes from having enough stable windows: with ±1, only 77, 66 and 26 of 100 coupled pairs at r = 4, 8, 16 have 3 or more stable windows, and those few are almost always right (100 %); calibrated, 98, 93 and 53 pairs have them, of which 90 %, 91 % and 79 % are right. The mean chance score on new pairs is 3.3–4.4 % at every r, inside the 5 % budget.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t6"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>All three rules together, against fair baselines</h2>
+  <figure>
+    <div class="fig-title">Figure 7 · aTDS against the published setting, the setting rescaled by hand, and an oracle</div>
+    <div class="pair">
+      <div class="chart" id="f7a"></div>
+      <div class="chart" id="f7b"></div>
+    </div>
+    <figcaption>
+      <p>The same slow-down test as Figure 6 (r = 1 to 16, 100 coupled and 100 uncoupled pairs per r). Four settings:</p>
+      <ul class="limits">
+        <li><b>Published:</b> 60 / ±30 / ±1, the same at every r.</li>
+        <li><b>Rescaled by hand:</b> the published setting multiplied by the slow-down factor r: window 60r, step 30r, lag ±30r, tolerance ±r (at r = 4: 240 / ±120 / ±4). Nothing is tuned; the formula is applied once per r. It is what a careful analyst would choose <i>if told</i> that the system is exactly r times slower than the 1-Hz case the published values were made for. In real data nobody knows r, so this baseline is fair but generous. aTDS is not told r.</li>
+        <li><b>aTDS:</b> all three rules (v2.1), set on 5 separate training pairs.</li>
+        <li><b>Oracle:</b> the best window and tolerance from a grid of 7 windows × 13 tolerances, chosen by AUC on 20 + 20 separate, <i>labelled</i> training pairs. It uses knowledge no real analysis has: an upper bound.</li>
+      </ul>
+      <p class="proves"><b>What it shows:</b> aTDS is far better than the published setting once the system is slower than that setting assumes (AUC 0.92 vs 0.59 at r = 4; 95 % interval of the difference +0.24 to +0.42). Against the setting rescaled by hand, with an equivalence margin of ±0.05 AUC (90 % interval of the difference inside ±0.05): <b>equivalent at r = 1 and 2</b> (at r = 2 the rescaled setting is marginally higher, 0.99 vs 0.98), <b>better at r = 8</b> (0.88 vs 0.81; 95 % interval +0.007 to +0.142; true delay found in 85 % vs 60 % of pairs), and <b>undecided at r = 4 and 16</b> (90 % intervals −0.064 to +0.003 and −0.105 to +0.018). The oracle is better than aTDS at every r ≥ 2 (0.99 vs 0.88 at r = 8), mostly by choosing much longer windows. The v2.1 rule (stricter tolerance) cost some detection at r = 16: AUC 0.65, against 0.72 with the earlier rule and 0.69 for the rescaled setting. The published setting is close to chance from r = 4 on (AUC 0.51–0.59), with chance scores of 0.6–0.9 %.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t7"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Test 4 · Other kinds of signals, and one real recording</h2>
+  <p>The tests above use one kind of signal: smooth noise with short memory (AR(1)) and a constant delay. Physiological signals often have long memory (heart rate, EEG band power), rhythms (breathing, heartbeat), bursts (neurons), mixed speeds, or change their dynamics over time (sleep stages). Table 2 runs aTDS against the published setting on each of these, and on the real sleep-EEG benchmark pair in the repository. In every row aTDS set its parameters on data that were not scored.</p>
+  <div class="tbl">
+    <table class="t2">
+      <thead><tr><th>Signals (known answer)</th><th>Published 60 / ±30 / ±1</th><th>aTDS v2.1</th><th>Reading</th></tr></thead>
+      <tbody>
+        <tr><td>Long memory, H = 0.6 (fGn), delay 20, weak coupling 0.2</td><td>AUC 0.60 [0.47, 0.72], delay found 28 %</td><td>AUC 0.59 [0.45, 0.71], 23 % (window 61, lag ±30)</td><td>Equal. The old minimum window of 20 gave window 32, lag ±15 and AUC 0.47; the new minimum of 61 fixes that failure.</td></tr>
+        <tr><td>Long memory, H = 0.75, delay 20, coupling 0.2</td><td>AUC 0.70 [0.59, 0.81], 33 %</td><td>AUC 0.65 [0.53, 0.77], 23 % (window 73)</td><td>Not distinguishable (intervals overlap).</td></tr>
+        <tr><td>Long memory, H = 0.9, delay 20, coupling 0.2</td><td>AUC 0.46 [0.33, 0.58], 15 %</td><td><b>AUC 0.82</b> [0.73, 0.91], <b>85 %</b> (window 614, tol ±34)</td><td>aTDS better. B depends on record length here (13 → 23 → 84 for 5 000 → 20 000 → 80 000 samples).</td></tr>
+        <tr><td>Rhythm, period ≈ 40, delay 8 (below half a period)</td><td>AUC 0.97, delay found 43 %</td><td><b>AUC 1.00, 100 %</b> (period found 41, lag capped at ±20)</td><td>aTDS better.</td></tr>
+        <tr><td>Rhythm, period ≈ 40, delay 30 (beyond half a period)</td><td>AUC 0.46, 0 %</td><td>AUC 0.995, delay 0 %: reports 11</td><td>Coupling detected, delay wrong. 30 is outside the capped lag range (±20); the largest |C| inside it is the anti-phase lobe (in 93 % of pairs the first stable window has negative C), about half a period from the true delay, with the right sign.</td></tr>
+        <tr><td>Rulkov neurons, one-way coupling, delays 16 and 32</td><td>AUC 0.73 and 0.79; median delay reported 0 and 15.5</td><td><b>AUC 1.00 and 1.00</b>; median delay reported 19 and 35</td><td>aTDS detects better and reports the true delay plus a constant 3 steps at both delays, probably the map's response latency. (By the 10 % rule this counts as found at 32 and missed at 16; it is the same result.) Calibration did not fail with one-way coupling.</td></tr>
+        <tr><td>Fast signal (τ<sub>c</sub> = 1) with a long delay, 50, coupling 0.5, 100 + 100 pairs</td><td>AUC 0.56, delay found 0 %</td><td>default (window 61, lag ±30): AUC 0.56, 0 %; <b>with the optional d<sub>max</sub> = 60</b> (window 121, lag ±60): <b>AUC 1.00, 100 %</b></td><td>A delay beyond ±30 in a fast signal needs the optional input. At delay 20 all three settings are perfect.</td></tr>
+        <tr><td>Changing dynamics: memory τ<sub>c</sub> = 4 in the first half, 16 in the second, delay 10, coupling 0.4</td><td>first half AUC 0.98; second half 0.71, 45 %</td><td>one window for the whole record (252): 1.00 and 0.96, 90 %; a window per half, using the known change point (124 / 484): 1.00 and 0.98, 100 %</td><td>aTDS better; setting it per segment is slightly better still.</td></tr>
+        <tr><td>Mixed system: slow pair (τ<sub>c</sub> 32, delay 40) + fast pair (τ<sub>c</sub> 2, delay 5), coupling 0.4</td><td>slow AUC 0.44, fast 1.00</td><td>one window (972): slow 0.99, fast 1.00, but fast pair tol ±56; per-pair windows: fast 64, tol ±3</td><td>A system-wide window costs fast pairs delay precision.</td></tr>
+        <tr><td>Coupled fast–slow pair: slow x (τ<sub>c</sub> 32) drives fast y (τ<sub>c</sub> 2), delay 10, coupling 0.5</td><td>AUC 0.83, delay found 57 %</td><td>window from max B (939, ±51): AUC 1.00, 100 %, chance 5.2 %; window from the pair's joint B<sub>xy</sub> (339, ±19): AUC 1.00, 100 %, chance 3.9 %</td><td>The joint B<sub>xy</sub> = 1 + 2Σ r<sub>x</sub>r<sub>y</sub> (here 11.3, between B<sub>x</sub> 31.3 and B<sub>y</sub> 5.0) gives the same detection with a window 2.8× shorter and a tolerance 2.7× tighter.</td></tr>
+        <tr><td>Real: sleep EEG δ and σ power, 1 Hz; parameters from the first half (14 970 s), scored on the second half</td><td>50.8 % vs chance 1.2 % (95th pct 2.6); 37.3 % with the causal anchor</td><td>window 652 (11 min), lag ±325, tol ±22, 44 windows: 95.5 % vs chance 2.1 % (95th pct 11.4); capped at 300 s (lag ±149, tol ±9): 82.7 % vs 2.3 %</td><td>Both detect the known strong coupling (p ≤ 0.01, the smallest possible with 100 rotations), delay 0 in both. No ground truth beyond detection, so this row is not counted for or against aTDS.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="verdict">Long-memory signals: fractional Gaussian noise with Hurst exponent H (DFA α = H), 40 + 40 pairs. Rhythms: noisy AR(2) oscillators, 30 + 30 pairs. Rulkov: two Rulkov map neurons, neuron 1 driven by neuron 0 with the given delay (coupling 0.12 vs 0), 20 + 20 pairs. Changing dynamics, mixed system and fast–slow pair: 40 + 40. Intervals in brackets are bootstrap 95 %. The EEG reference value 43.6 % from the original MATLAB code is reproduced by pyTDS only with the causal stability anchor (43.5 % on the whole record); every other result on this page uses the default anchor.</p>
+
+  <figure>
+    <div class="fig-title">Table 3 · Links in a network: a per-link test with false-discovery-rate control</div>
+    <div class="tbl" id="t8"></div>
+    <figcaption>
+      <p>Networks of 6 signals (τ<sub>c</sub> = 8, 10 000 samples), 15 possible links. Two designs, 10 coupled and 10 uncoupled networks each: <b>disjoint</b> (3 separate true links: 0→1, 2→3, 4→5, delays 10, 20, 15) and <b>common driver</b> (signal 0 drives 1 with delay 10 and 2 with delay 20, plus 3→4 with delay 15). A common driver creates an <i>indirect</i> link between 1 and 2 (delay 10) that is not a direct coupling. Coupling 0.4. aTDS sets one parameter set from the network's own signals by rotation only (no labels). Each link gets a p-value from its score against 999 rotated copies of the same pair; the 15 links are tested together with the Benjamini–Hochberg procedure at q = 0.05.</p>
+      <p class="proves"><b>What it shows:</b> the per-link test is calibrated: on links that are not coupled, 2.7–5.8 % reach p ≤ 0.05, close to the nominal 5 %. After FDR control there is no false link in any of the 20 uncoupled networks. In the coupled networks aTDS finds 27 of 30 true links (disjoint) and 26 of 30 (common driver); the false-discovery proportion averages 8.3 % and 2.5 %, against the 5 % target (10 networks each, so these are noisy). The indirect link of the common driver was not reported in any network (raw p ≤ 0.05 in 1 of 10): at coupling 0.4 the indirect correlation is only about 0.4 × 0.4 = 0.16. Pairwise TDS cannot tell an indirect link from a direct one, so with stronger drivers indirect links are expected to appear.</p>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Verdict</h2>
+  <div class="claim">
+    <p><strong>aTDS does automatically what a careful analyst would do by hand: it scales the TDS parameters to the system, without being told the system's time scale.</strong></p>
+    <p>Against the published setting it is much better whenever the system is slower than that setting assumes. Against the setting rescaled by hand it is equivalent or better where the tests can decide (r = 1, 2, 8), and undecided elsewhere. It does not find the best possible parameters: an oracle that looks at labelled data does better. Its value is automation with a false-alarm budget that held on new data in the main test.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Comparison</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>aTDS vs published 60 / ±30 / ±1 (Fig. 7)</td><td><b>aTDS better from r = 2 on</b> (AUC difference, 95 %: +0.05 to +0.14 at r = 2, +0.24 to +0.42 at r = 4, +0.03 to +0.25 at r = 16); equal at r = 1.</td></tr>
+        <tr><td>aTDS vs the setting rescaled by hand (Fig. 7)</td><td><b>Equivalent</b> (±0.05 AUC) at r = 1 and 2; <b>aTDS better</b> at r = 8; <b>undecided</b> at r = 4 and 16. aTDS is not told r.</td></tr>
+        <tr><td>aTDS vs oracle grid (Fig. 7)</td><td><b>Oracle better</b> at r ≥ 2, mostly through longer windows.</td></tr>
+        <tr><td>Lag range only (Fig. 4)</td><td>±30 gives a wrong delay for all 50 pairs with delays beyond 30 (16 with the wrong sign) at scores of 72–96 %; <b>aTDS exact in all 90 pairs</b>.</td></tr>
+        <tr><td>Tolerance only (Fig. 6)</td><td>Delay found more often at r = 8 (85 vs 66 %, significant), also higher at r = 4 and 16 (not significant); AUC gain not significant; chance 3.3–4.4 % on new pairs.</td></tr>
+        <tr><td>Window and on/off coupling (Fig. 3b)</td><td>30 independent samples is within 0.015–0.05 of the best balanced accuracy for all three episode lengths, on the short side.</td></tr>
+        <tr><td>Other signals (Table 2)</td><td><b>Better</b> on long memory H = 0.9, rhythms with delay below half a period, changing dynamics, and Rulkov detection (delay reported with a constant +3 offset). <b>Equal or not distinguishable</b> on H = 0.6 and 0.75. <b>Wrong delay</b> (coupling still detected) on rhythms with delay beyond half a period. A fast signal with delay 50 needs the optional d<sub>max</sub>; with it, AUC 1.00.</td></tr>
+        <tr><td>Network links (Table 3)</td><td>Per-link rotation test (999 rotations) + FDR: 0 false links in 20 uncoupled networks; 87–90 % of true links found; false-discovery proportion 2.5–8.3 %; the common driver's indirect link not reported.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Limits</h2>
+  <ul class="limits">
+    <li><b>Not optimal, only scaled.</b> With coupling that is always on, longer windows detect better than aTDS (Figures 3 and 7, oracle). 30 independent samples trades some detection for time resolution; for longer coupling episodes, 45–60 did slightly better (Figure 3b).</li>
+    <li><b>The minimum window sets a minimum lag range.</b> In v2.1 the window is never shorter than 61 samples, so the lag range is never narrower than ±30, the published range. Delays longer than half the window still cannot be found: a fast signal with delay 50 was missed by default (AUC 0.56). The optional longest plausible delay d<sub>max</sub> fixes this (AUC 1.00 with d<sub>max</sub> = 60). Nothing in the output warns the user when a delay is out of reach: for the fast signal with delay 50 the default score was 4.8 % against a chance score of 4.4 %, which reads as "no coupling". d<sub>max</sub> is the only safeguard for long delays in fast signals. d<sub>max</sub> was tested only with a correct value (60 for a true delay of 50): an overstated d<sub>max</sub> makes the window longer than needed (coarser timing), an understated one leaves the delay out of reach. The minimum of 61 also has a cost: in recordings shorter than about 600 samples, 61 is more than 10 % of the record and takes precedence over the 10 % cap, so there are fewer than 19 windows; and for very fast signals the windows are longer than the 30 · B rule asks, so there are fewer of them.</li>
+    <li><b>One answer per window, so short events can be missed.</b> aTDS uses longer windows for slow signals (259 samples instead of 60 in Figure 1; 11 minutes on the EEG pair). A maximum window can be set, trading reliability for finer timing. For records whose dynamics change, setting the parameters per segment helped (Table 2).</li>
+    <li><b>The delay is pinned down only within the tolerance.</b> The calibrated tolerance grows with the time scale (±13 in Figure 1, up to ±56 at r = 16) and can exceed the delay itself. The reported delay was right in Figure 4, but the stability judgement is coarse.</li>
+    <li><b>5 % is a budget for the mean, not a significance level.</b> With rotations pooled over several recordings and the upper-bound rule, the mean chance score on new data stayed ≤ 5 % in all rows except one (5.2 %, fast–slow pair with the max-B window). Single recordings still exceed it by luck (95th percentile up to 20 %), so each link needs its own test (Table 3).</li>
+    <li><b>B depends on the record length for long-memory signals.</b> For H = 0.9, B grew from 13 to 84 as the record grew from 5 000 to 80 000 samples, so the window depends on how long one records.</li>
+    <li><b>Rhythms and bursts.</b> Delays longer than half a cycle are reported wrongly (as the anti-phase lobe); for Rulkov neurons the delay is reported 3 steps too long. Such signals should first be turned into cycle-by-cycle series.</li>
+    <li><b>One window for all pairs.</b> Setting the window from the slowest signal keeps all scores on one ruler, but fast pairs then get a wide tolerance (±56 instead of ±3). For pairs whose two signals differ in speed, the pair's joint B<sub>xy</sub> gave the same detection with a much shorter window (Table 2).</li>
+    <li><b>Scores are not comparable with published TDS numbers.</b> Compare an aTDS score with the aTDS chance level of the same data.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Not tested here</h2>
+  <ul class="limits">
+    <li><b>Coupling that switches with the regime.</b> No test switches the coupling itself on in one regime and off in another (the sleep-stage case); the changing-dynamics test changes only the signals' memory.</li>
+    <li><b>Sleep stages in real cohorts.</b> Whether parameters should be set per stage or frozen per cohort, and how that changes stage contrasts, needs staged multi-subject recordings, which are not in this repository. The synthetic changing-dynamics test (Table 2) is only a first step.</li>
+    <li><b>The original surrogate test.</b> Bashan et al. (2012) build the null by mixing signals across subjects within the same sleep stage. That null keeps stage-driven co-modulation, which rotating one signal within a recording removes, so the rotation null can be too lenient on real data. Comparing both nulls needs multi-subject data.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Next steps</h2>
+  <ul class="limits">
+    <li>A public staged sleep cohort: per-stage networks under aTDS and the published setting, with cross-subject, stage-matched surrogates next to the rotation null.</li>
+    <li>Make the pair's joint B<sub>xy</sub> the window rule for pairs of different speed, and retest Figures 3–7 with it.</li>
+    <li>Networks with stronger common drivers and chains, to measure how often indirect links appear, and whether partial (conditional) TDS is needed.</li>
+    <li>A regime-switching test in which the coupling itself is on in one regime and off in another, scored per regime (the sleep-stage case).</li>
+    <li>A standard error clustered by recording in the tolerance rule, since rotations of one recording are not independent.</li>
+    <li>A weaker-coupling fast–slow pair (to compare the max-B and B<sub>xy</sub> windows on detection, not only on window length), and long-memory signals with stronger coupling.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Methods</h2>
+  <div class="methods">
+    <p><b>Signals.</b> AR(1): x has correlation time τ<sub>c</sub> (φ = e<sup>−1/τc</sup>), z-scored; the coupled partner is y(t) = c · x(t − d) + √(1 − c²) · η(t), where η is an independent AR(1) process with the same τ<sub>c</sub>; uncoupled pairs use c = 0. Long memory: fractional Gaussian noise (exact circulant-embedding method) with Hurst exponent H. Rhythms: AR(2) with period 40 and pole radius 0.97. Rulkov: two Rulkov maps, neuron 1 driven by neuron 0 through delayed diffusive coupling. Changing dynamics: two AR(1) halves with τ<sub>c</sub> 4 and 16. Real data: the δ and σ power series in <code>pyTDS/data</code>. Records are 20 000 samples long unless stated (30 000 in Figures 1, 2 and 5; 40 000 in Figure 3b; 6 000 for Rulkov; 10 000 in Table 3). Every pair has its own fixed random seed.</p>
+    <p><b>aTDS v2.1.</b> As in the algorithm section, with two changes made in this revision: the minimum window is 61 samples (was 20), optionally max(61, 2·d<sub>max</sub> + 1), and the tolerance is the largest value for which the mean chance score plus 2 standard errors, over rotations pooled across all available training recordings, stays ≤ 5 % (was: the mean over 20 rotations of one recording). In every figure and table, aTDS sets its parameters on separate training data that are not scored: 5 training pairs in the synthetic tests, the first half of the record for the EEG pair. In Table 3 the calibration is label-free on the scored network itself (rotations only, no knowledge of which links are true), as it would be in a real analysis.</p>
+    <p><b>Baselines.</b> Published: window 60, step 30, lag ±30 (±29 effective), tolerance ±1. Rescaled by hand: window 60r, step 30r, lag ±30r, tolerance ±r, using the true slow-down factor r. Oracle: windows 30–1 920 × tolerances 0–135, chosen by AUC on 20 + 20 labelled training pairs.</p>
+    <p><b>TDS.</b> pyTDS, circular cross-correlation, z-scored windows, τ₀ = lag of the largest |C(τ)|, stability rule 4 of 5 windows, default (non-causal) stability anchor.</p>
+    <p><b>Statistics.</b> AUC: probability that a coupled pair outscores an uncoupled one. Intervals: 1 000 bootstrap resamples of the pairs (paired across methods for differences); Wilson intervals for shares. Equivalence: two one-sided tests, i.e. the 90 % interval of the AUC difference inside ±0.05. Delay found: at least 3 stable windows and their median τ₀ within 10 % (at least ±1 sample) of the true delay. Network links: p = (1 + number of rotations scoring at least the real score) / 1 000, Benjamini–Hochberg at q = 0.05. Rulkov delay: median τ₀ of the stable windows, as for all other rows.</p>
+    <p><b>Scope.</b> Synthetic signals with known answers and one real benchmark pair. No staged sleep cohort and no cross-subject surrogates.</p>
+  </div>
+</section>
+
+<footer>Bashan A, Bartsch RP, Kantelhardt JW, Havlin S, Ivanov PCh. Network physiology reveals relations between network topology and physiological function. Nature Communications 3:702 (2012). · Bartlett MS. On the theoretical specification and sampling properties of autocorrelated time-series. J. R. Stat. Soc. Suppl. 8:27–41 (1946).</footer>
+</main>
+
+<script>
+const D = {"memory":[{"tc":1,"B":1.3,"indep_fixed":46.12,"atds_window":39,"indep_atds":30.0},{"tc":2,"B":2.16,"indep_fixed":27.75,"atds_window":65,"indep_atds":30.1},{"tc":4,"B":4.13,"indep_fixed":14.52,"atds_window":124,"indep_atds":30.0},{"tc":8,"B":8.23,"indep_fixed":7.29,"atds_window":247,"indep_atds":30.0},{"tc":16,"B":15.02,"indep_fixed":3.99,"atds_window":451,"indep_atds":30.0},{"tc":32,"B":30.75,"indep_fixed":1.95,"atds_window":922,"indep_atds":30.0},{"tc":64,"B":64.64,"indep_fixed":0.93,"atds_window":1939,"indep_atds":30.0}],"example":{"fixed":{"params":{"window":60,"step":30,"max_lag":30,"tol":1},"score":5.2,"near_true":28.2,"t":[30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,540,570,600,630,660,690,720,750,780,810,840,870,900,930,960,990,1020,1050,1080,1110,1140,1170,1200,1230,1260,1290,1320,1350,1380,1410,1440,1470,1500,1530,1560,1590,1620,1650,1680,1710,1740,1770,1800,1830,1860,1890,1920,1950,1980,2010,2040,2070,2100,2130,2160,2190,2220,2250,2280,2310,2340,2370,2400,2430,2460,2490,2520,2550,2580,2610,2640,2670,2700,2730,2760,2790,2820,2850,2880,2910,2940,2970,3000,3030,3060,3090,3120,3150,3180,3210,3240,3270,3300,3330,3360,3390,3420,3450,3480,3510,3540,3570,3600,3630,3660,3690,3720,3750,3780,3810,3840,3870,3900,3930,3960,3990,4020,4050,4080,4110,4140,4170,4200,4230,4260,4290,4320,4350,4380,4410,4440,4470,4500,4530,4560,4590,4620,4650,4680,4710,4740,4770,4800,4830,4860,4890,4920,4950,4980,5010,5040,5070,5100,5130,5160,5190,5220,5250,5280,5310,5340,5370,5400,5430,5460,5490,5520,5550,5580,5610,5640,5670,5700,5730,5760,5790,5820,5850,5880,5910,5940,5970,6000,6030,6060,6090,6120,6150,6180,6210,6240,6270,6300,6330,6360,6390,6420,6450,6480,6510,6540,6570,6600,6630,6660,6690,6720,6750,6780,6810,6840,6870,6900,6930,6960,6990,7020,7050,7080,7110,7140,7170,7200,7230,7260,7290,7320,7350,7380,7410,7440,7470,7500,7530,7560,7590,7620,7650,7680,7710,7740,7770,7800,7830,7860,7890,7920,7950,7980,8010,8040,8070,8100,8130,8160,8190,8220,8250,8280,8310,8340,8370,8400,8430,8460,8490,8520,8550,8580,8610,8640,8670,8700,8730,8760,8790,8820,8850,8880,8910,8940,8970,9000,9030,9060,9090,9120,9150,9180,9210,9240,9270,9300,9330,9360,9390,9420,9450,9480,9510,9540,9570,9600,9630,9660,9690,9720,9750,9780,9810,9840,9870,9900,9930,9960,9990,10020,10050,10080,10110,10140,10170,10200,10230,10260,10290,10320,10350,10380,10410,10440,10470,10500,10530,10560,10590,10620,10650,10680,10710,10740,10770,10800,10830,10860,10890,10920,10950,10980,11010,11040,11070,11100,11130,11160,11190,11220,11250,11280,11310,11340,11370,11400,11430,11460,11490,11520,11550,11580,11610,11640,11670,11700,11730,11760,11790,11820,11850,11880,11910,11940,11970,12000],"tau":[27,-26,11,29,16,-27,7,-16,29,-24,-8,-21,22,-20,-29,-20,-20,-21,-20,-20,-20,20,15,-29,-15,13,15,23,-18,-20,18,-20,29,-9,28,1,-21,20,-20,-20,-20,29,8,7,-20,3,3,10,-19,-17,-20,-4,-20,-23,0,-21,-18,-20,-24,-3,-4,11,7,11,8,9,-9,16,-20,28,27,-20,-25,-19,-3,16,-18,-20,16,26,-8,27,-20,-20,28,-9,23,-5,24,-20,7,-5,29,-16,20,-27,0,16,13,-16,-27,-15,-20,-9,-8,-6,-12,-16,-2,1,-20,-16,24,-5,14,18,-11,-20,19,-27,-20,1,18,-23,18,3,-9,-12,-7,-11,-11,-3,15,13,2,16,27,14,-20,21,-27,-14,-12,17,-20,27,-20,6,-23,24,22,-14,-5,18,-9,22,-20,-28,-3,-14,-20,23,-23,13,26,-20,-11,2,-13,25,-17,-20,-13,-3,14,-20,-17,4,9,-16,14,3,-11,-20,16,14,-20,1,-9,-6,-20,-24,19,-12,29,-9,-20,12,12,17,20,-6,-4,10,23,-10,-4,-10,18,-20,-14,0,25,24,24,8,-7,-7,18,6,6,-20,-20,14,14,1,1,29,17,21,-19,8,14,28,-29,18,-20,10,-13,-21,11,-20,-24,6,-20,-20,0,-5,26,-19,19,-20,23,16,-4,-2,29,12,-18,24,-16,-28,-24,-18,-20,14,-22,-20,-29,11,21,25,-6,-6,-8,-12,-20,-27,-16,-20,-22,-12,-18,-20,25,-20,-20,-21,4,-20,-20,29,-10,-26,12,-20,-28,-12,-3,4,16,26,29,5,20,-20,29,-24,16,15,24,-7,-4,-26,-20,-18,-13,13,-20,-20,-27,-20,-7,-20,-4,23,-25,17,17,2,-20,-20,-20,16,29,-20,8,18,17,-15,-15,3,22,-20,-20,-20,-26,15,-20,-20,9,-12,-20,-20,-20,-17,10,27,-20,-20,-17,23,4,-27,-10,25,-15,-16,-20,-20,-14,28,17,3,-21,28,25,6,-15,-20,-20,-20,-26,29,20,23,-21,6,-13,-19,10,-1,16,-13,-18,-20,1,9,25,-20],"stable":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"atds":{"params":{"window":252,"step":126,"max_lag":125,"tol":14},"score":88.2,"near_true":87.8,"t":[126,252,378,504,630,756,882,1008,1134,1260,1386,1512,1638,1764,1890,2016,2142,2268,2394,2520,2646,2772,2898,3024,3150,3276,3402,3528,3654,3780,3906,4032,4158,4284,4410,4536,4662,4788,4914,5040,5166,5292,5418,5544,5670,5796,5922,6048,6174,6300,6426,6552,6678,6804,6930,7056,7182,7308,7434,7560,7686,7812,7938,8064,8190,8316,8442,8568,8694,8820,8946,9072,9198,9324,9450,9576,9702,9828,9954,10080,10206,10332,10458,10584,10710,10836,10962,11088,11214,11340,11466,11592,11718,11844,11970],"tau":[-32,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,63,-20,98,-20,-20,-20,-48,-100,-20,-20,-105,-20,124,-20,-59,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,93,-20,-20,120,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-8,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-33,-20,-20,-20,-94,-20,-20],"stable":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1]}},"example_info":{"bartlett":[8.24,8.4],"window":252,"calibration_failed":false},"tol_curve":[{"tol":0,"null":0.0,"real":86.5},{"tol":1,"null":0.08,"real":86.5},{"tol":2,"null":0.08,"real":86.5},{"tol":3,"null":0.42,"real":86.5},{"tol":4,"null":0.7,"real":86.5},{"tol":5,"null":0.95,"real":86.5},{"tol":6,"null":1.2,"real":86.5},{"tol":7,"null":1.56,"real":86.5},{"tol":8,"null":1.9,"real":86.5},{"tol":9,"null":2.09,"real":86.5},{"tol":10,"null":2.68,"real":86.5},{"tol":11,"null":2.95,"real":86.5},{"tol":12,"null":3.35,"real":87.34},{"tol":13,"null":4.18,"real":88.19},{"tol":14,"null":4.66,"real":88.19},{"tol":15,"null":5.63,"real":88.19},{"tol":16,"null":6.73,"real":88.19},{"tol":17,"null":7.57,"real":88.19},{"tol":18,"null":8.38,"real":88.19},{"tol":19,"null":9.43,"real":88.19},{"tol":20,"null":10.59,"real":88.19},{"tol":21,"null":11.67,"real":88.19},{"tol":22,"null":12.72,"real":88.19},{"tol":23,"null":13.82,"real":88.19},{"tol":24,"null":14.6,"real":88.19},{"tol":25,"null":16.5,"real":88.19},{"tol":26,"null":18.1,"real":88.61},{"tol":27,"null":19.26,"real":88.61},{"tol":28,"null":20.3,"real":90.3},{"tol":29,"null":22.07,"real":90.3},{"tol":30,"null":23.67,"real":90.3}]};
+const T = {"A":[{"r":2,"L":30,"tol":1,"auc":0.568},{"r":2,"L":60,"tol":3,"auc":0.776},{"r":2,"L":120,"tol":6,"auc":0.969},{"r":2,"L":240,"tol":12,"auc":1.0},{"r":2,"L":480,"tol":29,"auc":1.0},{"r":2,"L":960,"tol":68,"auc":1.0},{"r":2,"L":1920,"tol":109,"auc":1.0},{"r":8,"L":30,"tol":1,"auc":0.594},{"r":8,"L":60,"tol":2,"auc":0.468},{"r":8,"L":120,"tol":6,"auc":0.535},{"r":8,"L":240,"tol":13,"auc":0.623},{"r":8,"L":480,"tol":31,"auc":0.755},{"r":8,"L":960,"tol":54,"auc":0.909},{"r":8,"L":1920,"tol":137,"auc":0.999}],"A_marks":{"2":121,"8":515},"B":[{"d":5,"k":0,"fixed":{"found":5,"score":17.6,"from_stable":true,"max_lag":30},"atds":{"found":5,"score":86.4,"from_stable":true,"max_lag":242}},{"d":5,"k":1,"fixed":{"found":5,"score":15.8,"from_stable":true,"max_lag":30},"atds":{"found":5,"score":96.2,"from_stable":true,"max_lag":250}},{"d":5,"k":2,"fixed":{"found":5,"score":20.8,"from_stable":true,"max_lag":30},"atds":{"found":5,"score":96.2,"from_stable":true,"max_lag":247}},{"d":5,"k":3,"fixed":{"found":5,"score":18.8,"from_stable":true,"max_lag":30},"atds":{"found":5,"score":93.9,"from_stable":true,"max_lag":239}},{"d":5,"k":4,"fixed":{"found":5,"score":16.1,"from_stable":true,"max_lag":30},"atds":{"found":5,"score":96.2,"from_stable":true,"max_lag":245}},{"d":10,"k":0,"fixed":{"found":10,"score":7.7,"from_stable":true,"max_lag":30},"atds":{"found":10,"score":93.1,"from_stable":true,"max_lag":273}},{"d":10,"k":1,"fixed":{"found":10,"score":8.7,"from_stable":true,"max_lag":30},"atds":{"found":10,"score":93.4,"from_stable":true,"max_lag":256}},{"d":10,"k":2,"fixed":{"found":10,"score":10.4,"from_stable":true,"max_lag":30},"atds":{"found":10,"score":91.8,"from_stable":true,"max_lag":270}},{"d":10,"k":3,"fixed":{"found":10,"score":11.4,"from_stable":true,"max_lag":30},"atds":{"found":10,"score":96.4,"from_stable":true,"max_lag":238}},{"d":10,"k":4,"fixed":{"found":10,"score":6.2,"from_stable":true,"max_lag":30},"atds":{"found":10,"score":90.5,"from_stable":true,"max_lag":235}},{"d":20,"k":0,"fixed":{"found":20,"score":3.6,"from_stable":true,"max_lag":30},"atds":{"found":20,"score":92.0,"from_stable":true,"max_lag":259}},{"d":20,"k":1,"fixed":{"found":20,"score":2.6,"from_stable":true,"max_lag":30},"atds":{"found":20,"score":91.8,"from_stable":true,"max_lag":269}},{"d":20,"k":2,"fixed":{"found":20,"score":1.4,"from_stable":true,"max_lag":30},"atds":{"found":20,"score":87.3,"from_stable":true,"max_lag":247}},{"d":20,"k":3,"fixed":{"found":20,"score":4.5,"from_stable":true,"max_lag":30},"atds":{"found":20,"score":90.8,"from_stable":true,"max_lag":224}},{"d":20,"k":4,"fixed":{"found":20,"score":3.8,"from_stable":true,"max_lag":30},"atds":{"found":20,"score":82.3,"from_stable":true,"max_lag":249}},{"d":30,"k":0,"fixed":{"found":-28,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":30,"score":83.3,"from_stable":true,"max_lag":251}},{"d":30,"k":1,"fixed":{"found":29,"score":1.2,"from_stable":true,"max_lag":30},"atds":{"found":30,"score":90.9,"from_stable":true,"max_lag":223}},{"d":30,"k":2,"fixed":{"found":-5,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":30,"score":90.6,"from_stable":true,"max_lag":231}},{"d":30,"k":3,"fixed":{"found":13,"score":1.2,"from_stable":true,"max_lag":30},"atds":{"found":30,"score":87.3,"from_stable":true,"max_lag":249}},{"d":30,"k":4,"fixed":{"found":0,"score":1.2,"from_stable":true,"max_lag":30},"atds":{"found":30,"score":91.7,"from_stable":true,"max_lag":273}},{"d":40,"k":0,"fixed":{"found":-20,"score":2.4,"from_stable":true,"max_lag":30},"atds":{"found":40,"score":84.0,"from_stable":true,"max_lag":240}},{"d":40,"k":1,"fixed":{"found":0,"score":2.0,"from_stable":true,"max_lag":30},"atds":{"found":40,"score":94.6,"from_stable":true,"max_lag":264}},{"d":40,"k":2,"fixed":{"found":-3,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":40,"score":88.0,"from_stable":true,"max_lag":260}},{"d":40,"k":3,"fixed":{"found":0,"score":1.8,"from_stable":true,"max_lag":30},"atds":{"found":40,"score":87.7,"from_stable":true,"max_lag":242}},{"d":40,"k":4,"fixed":{"found":4,"score":1.2,"from_stable":true,"max_lag":30},"atds":{"found":40,"score":88.0,"from_stable":true,"max_lag":262}},{"d":60,"k":0,"fixed":{"found":-10,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":60,"score":86.2,"from_stable":true,"max_lag":243}},{"d":60,"k":1,"fixed":{"found":24,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":60,"score":80.0,"from_stable":true,"max_lag":259}},{"d":60,"k":2,"fixed":{"found":0,"score":0.0,"from_stable":false,"max_lag":30},"atds":{"found":60,"score":81.8,"from_stable":true,"max_lag":254}},{"d":60,"k":3,"fixed":{"found":-7,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":60,"score":82.2,"from_stable":true,"max_lag":268}},{"d":60,"k":4,"fixed":{"found":-1,"score":1.2,"from_stable":true,"max_lag":30},"atds":{"found":60,"score":89.5,"from_stable":true,"max_lag":257}},{"d":80,"k":0,"fixed":{"found":0,"score":0.0,"from_stable":false,"max_lag":30},"atds":{"found":80,"score":77.6,"from_stable":true,"max_lag":231}},{"d":80,"k":1,"fixed":{"found":0,"score":1.5,"from_stable":true,"max_lag":30},"atds":{"found":80,"score":62.4,"from_stable":true,"max_lag":231}},{"d":80,"k":2,"fixed":{"found":2,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":80,"score":80.2,"from_stable":true,"max_lag":242}},{"d":80,"k":3,"fixed":{"found":0,"score":0.0,"from_stable":false,"max_lag":30},"atds":{"found":80,"score":79.5,"from_stable":true,"max_lag":250}},{"d":80,"k":4,"fixed":{"found":-15,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":80,"score":82.7,"from_stable":true,"max_lag":261}},{"d":120,"k":0,"fixed":{"found":12,"score":1.2,"from_stable":true,"max_lag":30},"atds":{"found":120,"score":68.0,"from_stable":true,"max_lag":261}},{"d":120,"k":1,"fixed":{"found":-1,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":120,"score":78.2,"from_stable":true,"max_lag":253}},{"d":120,"k":2,"fixed":{"found":-9,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":120,"score":78.6,"from_stable":true,"max_lag":278}},{"d":120,"k":3,"fixed":{"found":0,"score":0.0,"from_stable":false,"max_lag":30},"atds":{"found":120,"score":55.0,"from_stable":true,"max_lag":245}},{"d":120,"k":4,"fixed":{"found":-18,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":120,"score":65.4,"from_stable":true,"max_lag":251}},{"d":160,"k":0,"fixed":{"found":1,"score":1.2,"from_stable":true,"max_lag":30},"atds":{"found":160,"score":40.7,"from_stable":true,"max_lag":241}},{"d":160,"k":1,"fixed":{"found":-1,"score":2.0,"from_stable":true,"max_lag":30},"atds":{"found":160,"score":49.4,"from_stable":true,"max_lag":241}},{"d":160,"k":2,"fixed":{"found":0,"score":0.6,"from_stable":true,"max_lag":30},"atds":{"found":160,"score":42.2,"from_stable":true,"max_lag":236}},{"d":160,"k":3,"fixed":{"found":0,"score":0.0,"from_stable":false,"max_lag":30},"atds":{"found":160,"score":22.2,"from_stable":true,"max_lag":242}},{"d":160,"k":4,"fixed":{"found":0,"score":0.0,"from_stable":false,"max_lag":30},"atds":{"found":160,"score":21.6,"from_stable":true,"max_lag":222}}],"C":[{"tc":1,"window":39,"tol":1,"fixed":{"mean":0.7,"p95":1.68},"atds":{"mean":1.77,"p95":3.01}},{"tc":2,"window":65,"tol":3,"fixed":{"mean":0.86,"p95":2.2},"atds":{"mean":3.94,"p95":6.31}},{"tc":4,"window":129,"tol":6,"fixed":{"mean":0.66,"p95":1.8},"atds":{"mean":4.19,"p95":8.6}},{"tc":8,"window":237,"tol":14,"fixed":{"mean":0.76,"p95":2.27},"atds":{"mean":4.78,"p95":9.26}},{"tc":16,"window":484,"tol":31,"fixed":{"mean":0.65,"p95":1.95},"atds":{"mean":5.6,"p95":14.26}},{"tc":32,"window":997,"tol":73,"fixed":{"mean":0.75,"p95":2.05},"atds":{"mean":6.32,"p95":20.51}},{"tc":64,"window":1758,"tol":114,"fixed":{"mean":1.47,"p95":2.71},"atds":{"mean":5.4,"p95":21.67}}],"D":[{"r":1,"window":65,"max_lag":32,"tol":3,"fixed":{"auc":1.0,"hit":1.0},"atds":{"auc":1.0,"hit":1.0}},{"r":2,"window":131,"max_lag":65,"tol":6,"fixed":{"auc":0.889,"hit":0.85},"atds":{"auc":0.975,"hit":1.0}},{"r":4,"window":240,"max_lag":119,"tol":13,"fixed":{"auc":0.362,"hit":0.3},"atds":{"auc":0.865,"hit":0.9}},{"r":8,"window":473,"max_lag":236,"tol":29,"fixed":{"auc":0.343,"hit":0.0},"atds":{"auc":0.825,"hit":0.6}},{"r":16,"window":1003,"max_lag":501,"tol":66,"fixed":{"auc":0.454,"hit":0.0},"atds":{"auc":0.671,"hit":0.35}}]};
+const T2 = {"B2":[{"d":5,"k":0,"window":486,"tol":30,"lag30":{"found":5,"score":98.8,"max_lag":30},"atds":{"found":5,"score":86.4,"max_lag":242}},{"d":5,"k":1,"window":501,"tol":39,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.2,"max_lag":250}},{"d":5,"k":2,"window":495,"tol":25,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.2,"max_lag":247}},{"d":5,"k":3,"window":479,"tol":30,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":93.9,"max_lag":239}},{"d":5,"k":4,"window":492,"tol":32,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.2,"max_lag":245}},{"d":10,"k":0,"window":547,"tol":34,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.1,"max_lag":273}},{"d":10,"k":1,"window":514,"tol":31,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.4,"max_lag":256}},{"d":10,"k":2,"window":541,"tol":35,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":91.8,"max_lag":270}},{"d":10,"k":3,"window":477,"tol":26,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":96.4,"max_lag":238}},{"d":10,"k":4,"window":471,"tol":25,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":90.5,"max_lag":235}},{"d":20,"k":0,"window":520,"tol":29,"lag30":{"found":20,"score":98.7,"max_lag":30},"atds":{"found":20,"score":92.0,"max_lag":259}},{"d":20,"k":1,"window":540,"tol":35,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":91.8,"max_lag":269}},{"d":20,"k":2,"window":495,"tol":31,"lag30":{"found":20,"score":97.5,"max_lag":30},"atds":{"found":20,"score":87.3,"max_lag":247}},{"d":20,"k":3,"window":450,"tol":28,"lag30":{"found":20,"score":98.9,"max_lag":30},"atds":{"found":20,"score":90.8,"max_lag":224}},{"d":20,"k":4,"window":499,"tol":27,"lag30":{"found":20,"score":98.7,"max_lag":30},"atds":{"found":20,"score":82.3,"max_lag":249}},{"d":30,"k":0,"window":503,"tol":30,"lag30":{"found":30,"score":98.7,"max_lag":30},"atds":{"found":30,"score":83.3,"max_lag":251}},{"d":30,"k":1,"window":447,"tol":24,"lag30":{"found":30,"score":97.7,"max_lag":30},"atds":{"found":30,"score":90.9,"max_lag":223}},{"d":30,"k":2,"window":463,"tol":27,"lag30":{"found":30,"score":96.5,"max_lag":30},"atds":{"found":30,"score":90.6,"max_lag":231}},{"d":30,"k":3,"window":499,"tol":33,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":30,"score":87.3,"max_lag":249}},{"d":30,"k":4,"window":547,"tol":30,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":30,"score":91.7,"max_lag":273}},{"d":40,"k":0,"window":482,"tol":30,"lag30":{"found":30,"score":93.8,"max_lag":30},"atds":{"found":40,"score":84.0,"max_lag":240}},{"d":40,"k":1,"window":529,"tol":31,"lag30":{"found":30,"score":93.2,"max_lag":30},"atds":{"found":40,"score":94.6,"max_lag":264}},{"d":40,"k":2,"window":521,"tol":31,"lag30":{"found":30,"score":80.0,"max_lag":30},"atds":{"found":40,"score":88.0,"max_lag":260}},{"d":40,"k":3,"window":486,"tol":30,"lag30":{"found":30,"score":80.2,"max_lag":30},"atds":{"found":40,"score":87.7,"max_lag":242}},{"d":40,"k":4,"window":525,"tol":27,"lag30":{"found":30,"score":88.0,"max_lag":30},"atds":{"found":40,"score":88.0,"max_lag":262}},{"d":60,"k":0,"window":488,"tol":22,"lag30":{"found":30,"score":80.0,"max_lag":30},"atds":{"found":60,"score":86.2,"max_lag":243}},{"d":60,"k":1,"window":520,"tol":30,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":60,"score":80.0,"max_lag":259}},{"d":60,"k":2,"window":510,"tol":34,"lag30":{"found":30,"score":93.5,"max_lag":30},"atds":{"found":60,"score":81.8,"max_lag":254}},{"d":60,"k":3,"window":538,"tol":34,"lag30":{"found":30,"score":97.3,"max_lag":30},"atds":{"found":60,"score":82.2,"max_lag":268}},{"d":60,"k":4,"window":516,"tol":33,"lag30":{"found":30,"score":97.4,"max_lag":30},"atds":{"found":60,"score":89.5,"max_lag":257}},{"d":80,"k":0,"window":463,"tol":23,"lag30":{"found":-30,"score":89.4,"max_lag":30},"atds":{"found":80,"score":77.6,"max_lag":231}},{"d":80,"k":1,"window":464,"tol":28,"lag30":{"found":30,"score":83.5,"max_lag":30},"atds":{"found":80,"score":62.4,"max_lag":231}},{"d":80,"k":2,"window":486,"tol":23,"lag30":{"found":30,"score":86.4,"max_lag":30},"atds":{"found":80,"score":80.2,"max_lag":242}},{"d":80,"k":3,"window":502,"tol":29,"lag30":{"found":-30,"score":92.3,"max_lag":30},"atds":{"found":80,"score":79.5,"max_lag":250}},{"d":80,"k":4,"window":524,"tol":26,"lag30":{"found":-30,"score":90.7,"max_lag":30},"atds":{"found":80,"score":82.7,"max_lag":261}},{"d":120,"k":0,"window":524,"tol":36,"lag30":{"found":30,"score":98.7,"max_lag":30},"atds":{"found":120,"score":68.0,"max_lag":261}},{"d":120,"k":1,"window":507,"tol":34,"lag30":{"found":30,"score":98.7,"max_lag":30},"atds":{"found":120,"score":78.2,"max_lag":253}},{"d":120,"k":2,"window":557,"tol":33,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":120,"score":78.6,"max_lag":278}},{"d":120,"k":3,"window":492,"tol":23,"lag30":{"found":-30,"score":85.0,"max_lag":30},"atds":{"found":120,"score":55.0,"max_lag":245}},{"d":120,"k":4,"window":503,"tol":32,"lag30":{"found":30,"score":94.9,"max_lag":30},"atds":{"found":120,"score":65.4,"max_lag":251}},{"d":160,"k":0,"window":483,"tol":26,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":160,"score":40.7,"max_lag":241}},{"d":160,"k":1,"window":484,"tol":29,"lag30":{"found":30,"score":97.5,"max_lag":30},"atds":{"found":160,"score":49.4,"max_lag":241}},{"d":160,"k":2,"window":474,"tol":23,"lag30":{"found":30,"score":81.9,"max_lag":30},"atds":{"found":160,"score":42.2,"max_lag":236}},{"d":160,"k":3,"window":486,"tol":32,"lag30":{"found":-30,"score":100.0,"max_lag":30},"atds":{"found":160,"score":22.2,"max_lag":242}},{"d":160,"k":4,"window":446,"tol":27,"lag30":{"found":-30,"score":92.0,"max_lag":30},"atds":{"found":160,"score":21.6,"max_lag":222}}],"C2":[{"r":1,"window":65,"max_lag":32,"tol":3,"tol1":{"auc":0.998,"hit":1.0,"chance":0.73,"coupled":6.8},"atds":{"auc":1.0,"hit":1.0,"chance":3.95,"coupled":11.6}},{"r":2,"window":131,"max_lag":65,"tol":6,"tol1":{"auc":0.993,"hit":1.0,"chance":0.2,"coupled":6.3},"atds":{"auc":0.975,"hit":1.0,"chance":3.35,"coupled":12.4}},{"r":4,"window":240,"max_lag":119,"tol":13,"tol1":{"auc":0.825,"hit":0.65,"chance":0.0,"coupled":3.8},"atds":{"auc":0.865,"hit":0.9,"chance":4.58,"coupled":10.8}},{"r":8,"window":473,"max_lag":236,"tol":29,"tol1":{"auc":0.775,"hit":0.55,"chance":0.0,"coupled":4.0},"atds":{"auc":0.825,"hit":0.6,"chance":4.04,"coupled":12.7}},{"r":16,"window":1003,"max_lag":501,"tol":66,"tol1":{"auc":0.575,"hit":0.15,"chance":0.0,"coupled":2.4},"atds":{"auc":0.671,"hit":0.35,"chance":3.42,"coupled":11.4}}]};
+const EX = {"T7":[{"n":29941,"B":[58.7,14.6],"fixed":{"window":60,"max_lag":30,"tol":1,"score":58.1,"chance":1.4,"chance_p95":2.8,"excess":56.7,"p_emp":0.01,"n_windows":997,"median_stable_tau":0.0},"fixed_end":{"window":60,"max_lag":30,"tol":1,"score":43.5,"chance":0.4,"chance_p95":0.8,"excess":43.1,"p_emp":0.01,"n_windows":997,"median_stable_tau":0.0},"atds":{"window":1760,"max_lag":879,"tol":116,"score":100.0,"chance":10.1,"chance_p95":27.3,"excess":89.9,"p_emp":0.01,"n_windows":33,"median_stable_tau":0.0},"atds_cap300":{"window":300,"max_lag":149,"tol":14,"score":89.9,"chance":4.1,"chance_p95":8.1,"excess":85.8,"p_emp":0.01,"n_windows":198,"median_stable_tau":0.0}}],"T9":[{"example":{"fixed":{"params":{"window":60,"step":30,"max_lag":30,"tol":1},"score":5.2,"near_true":28.2,"t":[30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,540,570,600,630,660,690,720,750,780,810,840,870,900,930,960,990,1020,1050,1080,1110,1140,1170,1200,1230,1260,1290,1320,1350,1380,1410,1440,1470,1500,1530,1560,1590,1620,1650,1680,1710,1740,1770,1800,1830,1860,1890,1920,1950,1980,2010,2040,2070,2100,2130,2160,2190,2220,2250,2280,2310,2340,2370,2400,2430,2460,2490,2520,2550,2580,2610,2640,2670,2700,2730,2760,2790,2820,2850,2880,2910,2940,2970,3000,3030,3060,3090,3120,3150,3180,3210,3240,3270,3300,3330,3360,3390,3420,3450,3480,3510,3540,3570,3600,3630,3660,3690,3720,3750,3780,3810,3840,3870,3900,3930,3960,3990,4020,4050,4080,4110,4140,4170,4200,4230,4260,4290,4320,4350,4380,4410,4440,4470,4500,4530,4560,4590,4620,4650,4680,4710,4740,4770,4800,4830,4860,4890,4920,4950,4980,5010,5040,5070,5100,5130,5160,5190,5220,5250,5280,5310,5340,5370,5400,5430,5460,5490,5520,5550,5580,5610,5640,5670,5700,5730,5760,5790,5820,5850,5880,5910,5940,5970,6000,6030,6060,6090,6120,6150,6180,6210,6240,6270,6300,6330,6360,6390,6420,6450,6480,6510,6540,6570,6600,6630,6660,6690,6720,6750,6780,6810,6840,6870,6900,6930,6960,6990,7020,7050,7080,7110,7140,7170,7200,7230,7260,7290,7320,7350,7380,7410,7440,7470,7500,7530,7560,7590,7620,7650,7680,7710,7740,7770,7800,7830,7860,7890,7920,7950,7980,8010,8040,8070,8100,8130,8160,8190,8220,8250,8280,8310,8340,8370,8400,8430,8460,8490,8520,8550,8580,8610,8640,8670,8700,8730,8760,8790,8820,8850,8880,8910,8940,8970,9000,9030,9060,9090,9120,9150,9180,9210,9240,9270,9300,9330,9360,9390,9420,9450,9480,9510,9540,9570,9600,9630,9660,9690,9720,9750,9780,9810,9840,9870,9900,9930,9960,9990,10020,10050,10080,10110,10140,10170,10200,10230,10260,10290,10320,10350,10380,10410,10440,10470,10500,10530,10560,10590,10620,10650,10680,10710,10740,10770,10800,10830,10860,10890,10920,10950,10980,11010,11040,11070,11100,11130,11160,11190,11220,11250,11280,11310,11340,11370,11400,11430,11460,11490,11520,11550,11580,11610,11640,11670,11700,11730,11760,11790,11820,11850,11880,11910,11940,11970,12000],"tau":[27,-26,11,29,16,-27,7,-16,29,-24,-8,-21,22,-20,-29,-20,-20,-21,-20,-20,-20,20,15,-29,-15,13,15,23,-18,-20,18,-20,29,-9,28,1,-21,20,-20,-20,-20,29,8,7,-20,3,3,10,-19,-17,-20,-4,-20,-23,0,-21,-18,-20,-24,-3,-4,11,7,11,8,9,-9,16,-20,28,27,-20,-25,-19,-3,16,-18,-20,16,26,-8,27,-20,-20,28,-9,23,-5,24,-20,7,-5,29,-16,20,-27,0,16,13,-16,-27,-15,-20,-9,-8,-6,-12,-16,-2,1,-20,-16,24,-5,14,18,-11,-20,19,-27,-20,1,18,-23,18,3,-9,-12,-7,-11,-11,-3,15,13,2,16,27,14,-20,21,-27,-14,-12,17,-20,27,-20,6,-23,24,22,-14,-5,18,-9,22,-20,-28,-3,-14,-20,23,-23,13,26,-20,-11,2,-13,25,-17,-20,-13,-3,14,-20,-17,4,9,-16,14,3,-11,-20,16,14,-20,1,-9,-6,-20,-24,19,-12,29,-9,-20,12,12,17,20,-6,-4,10,23,-10,-4,-10,18,-20,-14,0,25,24,24,8,-7,-7,18,6,6,-20,-20,14,14,1,1,29,17,21,-19,8,14,28,-29,18,-20,10,-13,-21,11,-20,-24,6,-20,-20,0,-5,26,-19,19,-20,23,16,-4,-2,29,12,-18,24,-16,-28,-24,-18,-20,14,-22,-20,-29,11,21,25,-6,-6,-8,-12,-20,-27,-16,-20,-22,-12,-18,-20,25,-20,-20,-21,4,-20,-20,29,-10,-26,12,-20,-28,-12,-3,4,16,26,29,5,20,-20,29,-24,16,15,24,-7,-4,-26,-20,-18,-13,13,-20,-20,-27,-20,-7,-20,-4,23,-25,17,17,2,-20,-20,-20,16,29,-20,8,18,17,-15,-15,3,22,-20,-20,-20,-26,15,-20,-20,9,-12,-20,-20,-20,-17,10,27,-20,-20,-17,23,4,-27,-10,25,-15,-16,-20,-20,-14,28,17,3,-21,28,25,6,-15,-20,-20,-20,-26,29,20,23,-21,6,-13,-19,10,-1,16,-13,-18,-20,1,9,25,-20],"stable":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"atds":{"params":{"window":259,"step":129,"max_lag":129,"tol":13},"score":91.3,"near_true":90.0,"t":[129,258,387,516,645,774,903,1032,1161,1290,1419,1548,1677,1806,1935,2064,2193,2322,2451,2580,2709,2838,2967,3096,3225,3354,3483,3612,3741,3870,3999,4128,4257,4386,4515,4644,4773,4902,5031,5160,5289,5418,5547,5676,5805,5934,6063,6192,6321,6450,6579,6708,6837,6966,7095,7224,7353,7482,7611,7740,7869,7998,8127,8256,8385,8514,8643,8772,8901,9030,9159,9288,9417,9546,9675,9804,9933,10062,10191,10320,10449,10578,10707,10836,10965,11094,11223,11352,11481,11610,11739,11868,11997],"tau":[22,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-3,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,0,-96,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-75,-12,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-120,-20,-20,-4,-85,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-33,-20,-20,-20,-20,-20,-20],"stable":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}},"example_info":{"window":259,"tol":13},"tol_curve":[{"tol":0,"null":0.0,"real":90.04},{"tol":1,"null":0.0,"real":90.04},{"tol":2,"null":0.09,"real":90.04},{"tol":3,"null":0.17,"real":90.48},{"tol":4,"null":0.26,"real":90.48},{"tol":5,"null":0.26,"real":90.48},{"tol":6,"null":0.69,"real":90.48},{"tol":7,"null":0.87,"real":90.48},{"tol":8,"null":1.15,"real":90.91},{"tol":9,"null":1.58,"real":90.91},{"tol":10,"null":2.38,"real":90.91},{"tol":11,"null":2.99,"real":90.91},{"tol":12,"null":3.44,"real":90.91},{"tol":13,"null":4.13,"real":91.34},{"tol":14,"null":4.68,"real":91.34},{"tol":15,"null":5.45,"real":91.34},{"tol":16,"null":6.23,"real":91.77},{"tol":17,"null":7.08,"real":92.64},{"tol":18,"null":8.01,"real":92.64},{"tol":19,"null":8.68,"real":92.64},{"tol":20,"null":10.06,"real":93.07},{"tol":21,"null":11.13,"real":93.07},{"tol":22,"null":12.77,"real":93.07},{"tol":23,"null":13.68,"real":93.07},{"tol":24,"null":15.09,"real":93.07},{"tol":25,"null":16.1,"real":93.07},{"tol":26,"null":17.27,"real":93.07},{"tol":27,"null":18.59,"real":93.07},{"tol":28,"null":19.59,"real":93.07},{"tol":29,"null":21.45,"real":93.07},{"tol":30,"null":22.45,"real":93.07}],"fig3_at_atds":{"2":{"L":121,"tol":6,"auc":0.988},"8":{"L":515,"tol":35,"auc":0.711}}}],"T5":[{"d":8,"period_detected":[41,null],"calib_failed":false,"fixed":{"auc":0.974,"hit":0.43,"chance":1.5,"coupled":5.29,"most_reported":7,"max_lag":30,"tol":1,"window":60},"atds":{"auc":1.0,"hit":1.0,"chance":3.89,"coupled":64.85,"most_reported":8,"max_lag":20,"tol":1,"window":316}},{"d":30,"period_detected":[40,41],"calib_failed":false,"fixed":{"auc":0.462,"hit":0.0,"chance":1.61,"coupled":1.46,"most_reported":0,"max_lag":30,"tol":1,"window":60},"atds":{"auc":0.995,"hit":0.0,"chance":2.5,"coupled":15.13,"most_reported":11,"max_lag":20,"tol":1,"window":318}}],"T6":[{"d":16,"periods":[41,41],"calib_failed":true,"fixed":{"auc":1.0,"hit":0.05,"most_reported":0,"window":60,"max_lag":30,"tol":1,"chance":2.41},"atds":{"auc":0.964,"hit":0.0,"most_reported":19,"window":110,"max_lag":20,"tol":0,"chance":1.34}},{"d":32,"periods":[72,143],"calib_failed":true,"fixed":{"auc":0.57,"hit":0.0,"most_reported":-25,"window":60,"max_lag":30,"tol":1,"chance":2.14},"atds":{"auc":1.0,"hit":0.75,"most_reported":-36,"window":85,"max_lag":36,"tol":0,"chance":0.89}}],"T4":[{"H":0.6,"window":32,"max_lag":15,"tol":1,"calib_failed":false,"B_vs_length":{"5000":1.06,"20000":1.07,"80000":1.08},"fixed":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":0.64,"chance_p95":1.22,"coupled":35.8},"atds":{"auc":0.65,"auc_ci":[0.533,0.763],"hit":0.0,"chance":3.14,"chance_p95":4.59,"coupled":3.75}},{"H":0.75,"window":73,"max_lag":36,"tol":3,"calib_failed":false,"B_vs_length":{"5000":1.98,"20000":2.79,"80000":2.99},"fixed":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":0.5,"chance_p95":1.2,"coupled":24.76},"atds":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":2.61,"chance_p95":4.18,"coupled":50.16}},{"H":0.9,"window":732,"max_lag":365,"tol":46,"calib_failed":false,"B_vs_length":{"5000":13.17,"20000":22.51,"80000":84.28},"fixed":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":0.82,"chance_p95":2.56,"coupled":11.48},"atds":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":6.18,"chance_p95":16.98,"coupled":99.58}}],"T2":[{"d":5,"k":0,"window":514,"tol":26,"lag30":{"found":5,"score":97.4,"max_lag":30},"atds":{"found":5,"score":88.2,"max_lag":256}},{"d":5,"k":1,"window":514,"tol":26,"lag30":{"found":5,"score":98.7,"max_lag":30},"atds":{"found":5,"score":89.5,"max_lag":256}},{"d":5,"k":2,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":94.7,"max_lag":256}},{"d":5,"k":3,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":4,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":98.7,"max_lag":256}},{"d":5,"k":5,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":92.1,"max_lag":256}},{"d":5,"k":6,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":7,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":8,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":97.4,"max_lag":256}},{"d":5,"k":9,"window":514,"tol":26,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":98.7,"max_lag":256}},{"d":10,"k":0,"window":484,"tol":27,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.8,"max_lag":241}},{"d":10,"k":1,"window":484,"tol":27,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":86.4,"max_lag":241}},{"d":10,"k":2,"window":484,"tol":27,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":88.9,"max_lag":241}},{"d":10,"k":3,"window":484,"tol":27,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":96.3,"max_lag":241}},{"d":10,"k":4,"window":484,"tol":27,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":96.3,"max_lag":241}},{"d":10,"k":5,"window":484,"tol":27,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":86.4,"max_lag":241}},{"d":10,"k":6,"window":484,"tol":27,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":92.6,"max_lag":241}},{"d":10,"k":7,"window":484,"tol":27,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":95.1,"max_lag":241}},{"d":10,"k":8,"window":484,"tol":27,"lag30":{"found":10,"score":97.5,"max_lag":30},"atds":{"found":10,"score":91.4,"max_lag":241}},{"d":10,"k":9,"window":484,"tol":27,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.8,"max_lag":241}},{"d":20,"k":0,"window":493,"tol":27,"lag30":{"found":20,"score":97.5,"max_lag":30},"atds":{"found":20,"score":90.0,"max_lag":246}},{"d":20,"k":1,"window":493,"tol":27,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":97.5,"max_lag":246}},{"d":20,"k":2,"window":493,"tol":27,"lag30":{"found":20,"score":95.0,"max_lag":30},"atds":{"found":20,"score":87.5,"max_lag":246}},{"d":20,"k":3,"window":493,"tol":27,"lag30":{"found":20,"score":97.5,"max_lag":30},"atds":{"found":20,"score":88.8,"max_lag":246}},{"d":20,"k":4,"window":493,"tol":27,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":86.2,"max_lag":246}},{"d":20,"k":5,"window":493,"tol":27,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":86.2,"max_lag":246}},{"d":20,"k":6,"window":493,"tol":27,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":92.5,"max_lag":246}},{"d":20,"k":7,"window":493,"tol":27,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":92.5,"max_lag":246}},{"d":20,"k":8,"window":493,"tol":27,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":88.8,"max_lag":246}},{"d":20,"k":9,"window":493,"tol":27,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":95.0,"max_lag":246}},{"d":30,"k":0,"window":463,"tol":30,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":87.1,"max_lag":231}},{"d":30,"k":1,"window":463,"tol":30,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":30,"score":88.2,"max_lag":231}},{"d":30,"k":2,"window":463,"tol":30,"lag30":{"found":30,"score":97.6,"max_lag":30},"atds":{"found":30,"score":90.6,"max_lag":231}},{"d":30,"k":3,"window":463,"tol":30,"lag30":{"found":30,"score":97.6,"max_lag":30},"atds":{"found":30,"score":83.5,"max_lag":231}},{"d":30,"k":4,"window":463,"tol":30,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":84.7,"max_lag":231}},{"d":30,"k":5,"window":463,"tol":30,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":88.2,"max_lag":231}},{"d":30,"k":6,"window":463,"tol":30,"lag30":{"found":30,"score":94.1,"max_lag":30},"atds":{"found":30,"score":82.4,"max_lag":231}},{"d":30,"k":7,"window":463,"tol":30,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":87.1,"max_lag":231}},{"d":30,"k":8,"window":463,"tol":30,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":94.1,"max_lag":231}},{"d":30,"k":9,"window":463,"tol":30,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":30,"score":89.4,"max_lag":231}},{"d":40,"k":0,"window":503,"tol":31,"lag30":{"found":30,"score":92.3,"max_lag":30},"atds":{"found":40,"score":82.1,"max_lag":251}},{"d":40,"k":1,"window":503,"tol":31,"lag30":{"found":30,"score":80.8,"max_lag":30},"atds":{"found":40,"score":96.2,"max_lag":251}},{"d":40,"k":2,"window":503,"tol":31,"lag30":{"found":30,"score":88.5,"max_lag":30},"atds":{"found":40,"score":84.6,"max_lag":251}},{"d":40,"k":3,"window":503,"tol":31,"lag30":{"found":30,"score":83.3,"max_lag":30},"atds":{"found":40,"score":71.8,"max_lag":251}},{"d":40,"k":4,"window":503,"tol":31,"lag30":{"found":30,"score":89.7,"max_lag":30},"atds":{"found":40,"score":85.9,"max_lag":251}},{"d":40,"k":5,"window":503,"tol":31,"lag30":{"found":30,"score":92.3,"max_lag":30},"atds":{"found":40,"score":89.7,"max_lag":251}},{"d":40,"k":6,"window":503,"tol":31,"lag30":{"found":30,"score":89.7,"max_lag":30},"atds":{"found":40,"score":87.2,"max_lag":251}},{"d":40,"k":7,"window":503,"tol":31,"lag30":{"found":30,"score":93.6,"max_lag":30},"atds":{"found":40,"score":83.3,"max_lag":251}},{"d":40,"k":8,"window":503,"tol":31,"lag30":{"found":30,"score":91.0,"max_lag":30},"atds":{"found":40,"score":93.6,"max_lag":251}},{"d":40,"k":9,"window":503,"tol":31,"lag30":{"found":30,"score":78.2,"max_lag":30},"atds":{"found":40,"score":88.5,"max_lag":251}},{"d":60,"k":0,"window":471,"tol":31,"lag30":{"found":30,"score":90.5,"max_lag":30},"atds":{"found":60,"score":82.1,"max_lag":235}},{"d":60,"k":1,"window":471,"tol":31,"lag30":{"found":30,"score":96.4,"max_lag":30},"atds":{"found":60,"score":81.0,"max_lag":235}},{"d":60,"k":2,"window":471,"tol":31,"lag30":{"found":-30,"score":89.3,"max_lag":30},"atds":{"found":60,"score":73.8,"max_lag":235}},{"d":60,"k":3,"window":471,"tol":31,"lag30":{"found":-30,"score":96.4,"max_lag":30},"atds":{"found":60,"score":76.2,"max_lag":235}},{"d":60,"k":4,"window":471,"tol":31,"lag30":{"found":30,"score":92.9,"max_lag":30},"atds":{"found":60,"score":85.7,"max_lag":235}},{"d":60,"k":5,"window":471,"tol":31,"lag30":{"found":30,"score":97.6,"max_lag":30},"atds":{"found":60,"score":77.4,"max_lag":235}},{"d":60,"k":6,"window":471,"tol":31,"lag30":{"found":30,"score":96.4,"max_lag":30},"atds":{"found":60,"score":82.1,"max_lag":235}},{"d":60,"k":7,"window":471,"tol":31,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":60,"score":57.1,"max_lag":235}},{"d":60,"k":8,"window":471,"tol":31,"lag30":{"found":30,"score":97.6,"max_lag":30},"atds":{"found":60,"score":76.2,"max_lag":235}},{"d":60,"k":9,"window":471,"tol":31,"lag30":{"found":30,"score":97.6,"max_lag":30},"atds":{"found":60,"score":78.6,"max_lag":235}},{"d":80,"k":0,"window":471,"tol":27,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":80,"score":83.3,"max_lag":235}},{"d":80,"k":1,"window":471,"tol":27,"lag30":{"found":-30,"score":94.0,"max_lag":30},"atds":{"found":80,"score":67.9,"max_lag":235}},{"d":80,"k":2,"window":471,"tol":27,"lag30":{"found":30,"score":82.1,"max_lag":30},"atds":{"found":80,"score":75.0,"max_lag":235}},{"d":80,"k":3,"window":471,"tol":27,"lag30":{"found":30,"score":85.7,"max_lag":30},"atds":{"found":80,"score":67.9,"max_lag":235}},{"d":80,"k":4,"window":471,"tol":27,"lag30":{"found":-30,"score":90.5,"max_lag":30},"atds":{"found":80,"score":81.0,"max_lag":235}},{"d":80,"k":5,"window":471,"tol":27,"lag30":{"found":30,"score":90.5,"max_lag":30},"atds":{"found":80,"score":65.5,"max_lag":235}},{"d":80,"k":6,"window":471,"tol":27,"lag30":{"found":30,"score":91.7,"max_lag":30},"atds":{"found":80,"score":65.5,"max_lag":235}},{"d":80,"k":7,"window":471,"tol":27,"lag30":{"found":-30,"score":90.5,"max_lag":30},"atds":{"found":80,"score":76.2,"max_lag":235}},{"d":80,"k":8,"window":471,"tol":27,"lag30":{"found":30,"score":90.5,"max_lag":30},"atds":{"found":80,"score":53.6,"max_lag":235}},{"d":80,"k":9,"window":471,"tol":27,"lag30":{"found":-30,"score":95.2,"max_lag":30},"atds":{"found":80,"score":58.3,"max_lag":235}},{"d":120,"k":0,"window":454,"tol":30,"lag30":{"found":30,"score":92.0,"max_lag":30},"atds":{"found":120,"score":49.4,"max_lag":226}},{"d":120,"k":1,"window":454,"tol":30,"lag30":{"found":-30,"score":96.6,"max_lag":30},"atds":{"found":120,"score":58.6,"max_lag":226}},{"d":120,"k":2,"window":454,"tol":30,"lag30":{"found":30,"score":96.6,"max_lag":30},"atds":{"found":120,"score":57.5,"max_lag":226}},{"d":120,"k":3,"window":454,"tol":30,"lag30":{"found":18,"score":98.9,"max_lag":30},"atds":{"found":120,"score":40.2,"max_lag":226}},{"d":120,"k":4,"window":454,"tol":30,"lag30":{"found":30,"score":96.6,"max_lag":30},"atds":{"found":120,"score":57.5,"max_lag":226}},{"d":120,"k":5,"window":454,"tol":30,"lag30":{"found":-30,"score":94.3,"max_lag":30},"atds":{"found":120,"score":55.2,"max_lag":226}},{"d":120,"k":6,"window":454,"tol":30,"lag30":{"found":-30,"score":96.6,"max_lag":30},"atds":{"found":120,"score":42.5,"max_lag":226}},{"d":120,"k":7,"window":454,"tol":30,"lag30":{"found":-30,"score":96.6,"max_lag":30},"atds":{"found":120,"score":64.4,"max_lag":226}},{"d":120,"k":8,"window":454,"tol":30,"lag30":{"found":30,"score":96.6,"max_lag":30},"atds":{"found":120,"score":47.1,"max_lag":226}},{"d":120,"k":9,"window":454,"tol":30,"lag30":{"found":30,"score":97.7,"max_lag":30},"atds":{"found":120,"score":59.8,"max_lag":226}},{"d":160,"k":0,"window":513,"tol":33,"lag30":{"found":-30,"score":100.0,"max_lag":30},"atds":{"found":160,"score":31.2,"max_lag":256}},{"d":160,"k":1,"window":513,"tol":33,"lag30":{"found":30,"score":96.1,"max_lag":30},"atds":{"found":160,"score":57.1,"max_lag":256}},{"d":160,"k":2,"window":513,"tol":33,"lag30":{"found":30,"score":93.5,"max_lag":30},"atds":{"found":160,"score":55.8,"max_lag":256}},{"d":160,"k":3,"window":513,"tol":33,"lag30":{"found":-30,"score":100.0,"max_lag":30},"atds":{"found":160,"score":57.1,"max_lag":256}},{"d":160,"k":4,"window":513,"tol":33,"lag30":{"found":-30,"score":98.7,"max_lag":30},"atds":{"found":160,"score":55.8,"max_lag":256}},{"d":160,"k":5,"window":513,"tol":33,"lag30":{"found":30,"score":94.8,"max_lag":30},"atds":{"found":160,"score":44.2,"max_lag":256}},{"d":160,"k":6,"window":513,"tol":33,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":160,"score":48.1,"max_lag":256}},{"d":160,"k":7,"window":513,"tol":33,"lag30":{"found":30,"score":92.2,"max_lag":30},"atds":{"found":160,"score":50.6,"max_lag":256}},{"d":160,"k":8,"window":513,"tol":33,"lag30":{"found":30,"score":98.7,"max_lag":30},"atds":{"found":160,"score":68.8,"max_lag":256}},{"d":160,"k":9,"window":513,"tol":33,"lag30":{"found":-30,"score":92.2,"max_lag":30},"atds":{"found":160,"score":49.4,"max_lag":256}}],"T8":[{"cross_pair_pairwise":{"window":113,"tol":5},"system_wide":{"slow":{"window":972,"max_lag":485,"tol":60,"auc":0.979,"auc_ci":[0.952,0.997],"hit":0.97,"chance":4.44},"fast":{"window":972,"max_lag":485,"tol":60,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":6.25}},"per_pair_maxB":{"slow":{"window":972,"max_lag":485,"tol":58,"auc":0.979,"auc_ci":[0.952,0.997],"hit":0.97,"chance":4.44},"fast":{"window":64,"max_lag":31,"tol":3,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":4.67}},"pairwise_Bxy":{"slow":{"window":967,"max_lag":483,"tol":62,"auc":0.986,"auc_ci":[0.963,0.999],"hit":1.0,"chance":5.56},"fast":{"window":64,"max_lag":31,"tol":3,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":4.67}},"fixed":{"slow":{"window":60,"max_lag":30,"tol":1,"auc":0.438,"auc_ci":[0.316,0.558],"hit":0.0,"chance":0.94},"fast":{"window":60,"max_lag":30,"tol":1,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"chance":0.67}},"cross_pair_chance_pairwise":2.85}],"T3":[{"neff":5,"c":0.3,"B":8.06,"window":40,"tol":1,"bal_acc":0.488,"sd":0.004},{"neff":10,"c":0.3,"B":8.06,"window":81,"tol":4,"bal_acc":0.482,"sd":0.011},{"neff":15,"c":0.3,"B":8.06,"window":121,"tol":6,"bal_acc":0.498,"sd":0.02},{"neff":20,"c":0.3,"B":8.06,"window":161,"tol":8,"bal_acc":0.512,"sd":0.013},{"neff":30,"c":0.3,"B":8.06,"window":242,"tol":13,"bal_acc":0.525,"sd":0.027},{"neff":45,"c":0.3,"B":8.06,"window":363,"tol":19,"bal_acc":0.561,"sd":0.034},{"neff":60,"c":0.3,"B":8.06,"window":483,"tol":25,"bal_acc":0.582,"sd":0.058},{"neff":90,"c":0.3,"B":8.06,"window":725,"tol":42,"bal_acc":0.586,"sd":0.025},{"neff":120,"c":0.3,"B":8.06,"window":967,"tol":61,"bal_acc":0.588,"sd":0.047},{"neff":5,"c":0.6,"B":8.06,"window":40,"tol":1,"bal_acc":0.488,"sd":0.004},{"neff":10,"c":0.6,"B":8.06,"window":81,"tol":4,"bal_acc":0.573,"sd":0.022},{"neff":15,"c":0.6,"B":8.06,"window":121,"tol":6,"bal_acc":0.696,"sd":0.017},{"neff":20,"c":0.6,"B":8.06,"window":161,"tol":8,"bal_acc":0.805,"sd":0.036},{"neff":30,"c":0.6,"B":8.06,"window":242,"tol":13,"bal_acc":0.877,"sd":0.018},{"neff":45,"c":0.6,"B":8.06,"window":363,"tol":19,"bal_acc":0.926,"sd":0.017},{"neff":60,"c":0.6,"B":8.06,"window":483,"tol":25,"bal_acc":0.925,"sd":0.034},{"neff":90,"c":0.6,"B":8.06,"window":725,"tol":43,"bal_acc":0.907,"sd":0.028},{"neff":120,"c":0.6,"B":8.06,"window":967,"tol":63,"bal_acc":0.844,"sd":0.034}],"T1":[{"r":1,"n":100,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":60,"max_lag":30,"tol":1},"atds":{"window":65,"max_lag":32,"tol":3},"atds_tol1":{"window":65,"max_lag":32,"tol":1},"oracle":{"window":60,"max_lag":29,"tol":0}},"fixed":{"auc":0.997,"auc_ci":[0.989,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":6.4,"chance":0.78,"chance_p95":1.81},"rescaled":{"auc":0.997,"auc_ci":[0.989,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":6.4,"chance":0.78,"chance_p95":1.81},"atds":{"auc":0.997,"auc_ci":[0.991,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":12.04,"chance":4.12,"chance_p95":6.61},"atds_tol1":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":7.26,"chance":0.72,"chance_p95":1.93},"oracle":{"auc":1.0,"auc_ci":[0.999,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":4.06,"chance":0.03,"chance_p95":0.03},"diff_atds_minus_fixed":[-0.008,0.009],"diff_atds_minus_rescaled":[-0.008,0.009],"diff_atds_minus_oracle":[-0.009,0.0],"diff_atds_minus_atds_tol1":[-0.009,0.0]},{"r":2,"n":100,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":120,"max_lag":60,"tol":2},"atds":{"window":131,"max_lag":65,"tol":6},"atds_tol1":{"window":131,"max_lag":65,"tol":1},"oracle":{"window":240,"max_lag":119,"tol":0}},"fixed":{"auc":0.888,"auc_ci":[0.839,0.93],"hit":0.84,"hit_ci":[0.756,0.899],"coupled":2.21,"chance":0.64,"chance_p95":1.8},"rescaled":{"auc":0.993,"auc_ci":[0.984,0.999],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":6.82,"chance":0.52,"chance_p95":2.41},"atds":{"auc":0.985,"auc_ci":[0.969,0.997],"hit":0.97,"hit_ci":[0.915,0.99],"coupled":12.08,"chance":3.34,"chance_p95":6.91},"atds_tol1":{"auc":0.985,"auc_ci":[0.967,0.998],"hit":0.98,"hit_ci":[0.93,0.994],"coupled":6.61,"chance":0.17,"chance_p95":1.31},"oracle":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":20.08,"chance":0.0,"chance_p95":0.0},"diff_atds_minus_fixed":[0.057,0.144],"diff_atds_minus_rescaled":[-0.026,0.007],"diff_atds_minus_oracle":[-0.031,-0.003],"diff_atds_minus_atds_tol1":[-0.02,0.019]},{"r":4,"n":100,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":240,"max_lag":120,"tol":4},"atds":{"window":240,"max_lag":119,"tol":13},"atds_tol1":{"window":240,"max_lag":119,"tol":1},"oracle":{"window":960,"max_lag":479,"tol":0}},"fixed":{"auc":0.59,"auc_ci":[0.513,0.658],"hit":0.18,"hit_ci":[0.117,0.267],"coupled":0.92,"chance":0.72,"chance_p95":1.96},"rescaled":{"auc":0.955,"auc_ci":[0.926,0.978],"hit":0.91,"hit_ci":[0.838,0.952],"coupled":6.18,"chance":0.39,"chance_p95":2.42},"atds":{"auc":0.912,"auc_ci":[0.871,0.949],"hit":0.98,"hit_ci":[0.93,0.994],"coupled":12.25,"chance":4.41,"chance_p95":10.42},"atds_tol1":{"auc":0.92,"auc_ci":[0.885,0.955],"hit":0.83,"hit_ci":[0.745,0.891],"coupled":4.57,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"coupled":58.65,"chance":0.0,"chance_p95":0.0},"diff_atds_minus_fixed":[0.228,0.412],"diff_atds_minus_rescaled":[-0.084,0.001],"diff_atds_minus_oracle":[-0.132,-0.049],"diff_atds_minus_atds_tol1":[-0.055,0.041]},{"r":8,"n":100,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":480,"max_lag":240,"tol":8},"atds":{"window":473,"max_lag":236,"tol":29},"atds_tol1":{"window":473,"max_lag":236,"tol":1},"oracle":{"window":1920,"max_lag":959,"tol":0}},"fixed":{"auc":0.541,"auc_ci":[0.464,0.618],"hit":0.0,"hit_ci":[0.0,0.037],"coupled":0.68,"chance":0.59,"chance_p95":1.36},"rescaled":{"auc":0.806,"auc_ci":[0.752,0.857],"hit":0.6,"hit_ci":[0.502,0.691],"coupled":6.04,"chance":0.34,"chance_p95":4.88},"atds":{"auc":0.792,"auc_ci":[0.733,0.851],"hit":0.68,"hit_ci":[0.583,0.763],"coupled":12.95,"chance":5.48,"chance_p95":14.46},"atds_tol1":{"auc":0.755,"auc_ci":[0.71,0.8],"hit":0.51,"hit_ci":[0.413,0.606],"coupled":3.96,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":0.985,"auc_ci":[0.965,1.0],"hit":0.97,"hit_ci":[0.915,0.99],"coupled":55.79,"chance":0.0,"chance_p95":0.0},"diff_atds_minus_fixed":[0.159,0.357],"diff_atds_minus_rescaled":[-0.086,0.059],"diff_atds_minus_oracle":[-0.259,-0.129],"diff_atds_minus_atds_tol1":[-0.03,0.101]},{"r":16,"n":100,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":960,"max_lag":480,"tol":16},"atds":{"window":1003,"max_lag":501,"tol":66},"atds_tol1":{"window":1003,"max_lag":501,"tol":1},"oracle":{"window":1920,"max_lag":959,"tol":135}},"fixed":{"auc":0.509,"auc_ci":[0.428,0.585],"hit":0.0,"hit_ci":[0.0,0.037],"coupled":0.9,"chance":0.91,"chance_p95":2.41},"rescaled":{"auc":0.688,"auc_ci":[0.631,0.737],"hit":0.41,"hit_ci":[0.319,0.508],"coupled":5.92,"chance":0.42,"chance_p95":0.0},"atds":{"auc":0.722,"auc_ci":[0.657,0.786],"hit":0.57,"hit_ci":[0.472,0.663],"coupled":15.42,"chance":6.66,"chance_p95":23.68},"atds_tol1":{"auc":0.65,"auc_ci":[0.605,0.695],"hit":0.3,"hit_ci":[0.219,0.396],"coupled":3.95,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":0.843,"auc_ci":[0.788,0.891],"hit":0.73,"hit_ci":[0.636,0.807],"coupled":32.21,"chance":4.95,"chance_p95":26.32},"diff_atds_minus_fixed":[0.107,0.325],"diff_atds_minus_rescaled":[-0.042,0.105],"diff_atds_minus_oracle":[-0.191,-0.047],"diff_atds_minus_atds_tol1":[-0.001,0.138]}]};
+const EX4 = {"U12":[{"example":{"fixed":{"params":{"window":60,"step":30,"max_lag":30,"tol":1},"score":5.2,"near_true":28.2,"t":[30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,540,570,600,630,660,690,720,750,780,810,840,870,900,930,960,990,1020,1050,1080,1110,1140,1170,1200,1230,1260,1290,1320,1350,1380,1410,1440,1470,1500,1530,1560,1590,1620,1650,1680,1710,1740,1770,1800,1830,1860,1890,1920,1950,1980,2010,2040,2070,2100,2130,2160,2190,2220,2250,2280,2310,2340,2370,2400,2430,2460,2490,2520,2550,2580,2610,2640,2670,2700,2730,2760,2790,2820,2850,2880,2910,2940,2970,3000,3030,3060,3090,3120,3150,3180,3210,3240,3270,3300,3330,3360,3390,3420,3450,3480,3510,3540,3570,3600,3630,3660,3690,3720,3750,3780,3810,3840,3870,3900,3930,3960,3990,4020,4050,4080,4110,4140,4170,4200,4230,4260,4290,4320,4350,4380,4410,4440,4470,4500,4530,4560,4590,4620,4650,4680,4710,4740,4770,4800,4830,4860,4890,4920,4950,4980,5010,5040,5070,5100,5130,5160,5190,5220,5250,5280,5310,5340,5370,5400,5430,5460,5490,5520,5550,5580,5610,5640,5670,5700,5730,5760,5790,5820,5850,5880,5910,5940,5970,6000,6030,6060,6090,6120,6150,6180,6210,6240,6270,6300,6330,6360,6390,6420,6450,6480,6510,6540,6570,6600,6630,6660,6690,6720,6750,6780,6810,6840,6870,6900,6930,6960,6990,7020,7050,7080,7110,7140,7170,7200,7230,7260,7290,7320,7350,7380,7410,7440,7470,7500,7530,7560,7590,7620,7650,7680,7710,7740,7770,7800,7830,7860,7890,7920,7950,7980,8010,8040,8070,8100,8130,8160,8190,8220,8250,8280,8310,8340,8370,8400,8430,8460,8490,8520,8550,8580,8610,8640,8670,8700,8730,8760,8790,8820,8850,8880,8910,8940,8970,9000,9030,9060,9090,9120,9150,9180,9210,9240,9270,9300,9330,9360,9390,9420,9450,9480,9510,9540,9570,9600,9630,9660,9690,9720,9750,9780,9810,9840,9870,9900,9930,9960,9990,10020,10050,10080,10110,10140,10170,10200,10230,10260,10290,10320,10350,10380,10410,10440,10470,10500,10530,10560,10590,10620,10650,10680,10710,10740,10770,10800,10830,10860,10890,10920,10950,10980,11010,11040,11070,11100,11130,11160,11190,11220,11250,11280,11310,11340,11370,11400,11430,11460,11490,11520,11550,11580,11610,11640,11670,11700,11730,11760,11790,11820,11850,11880,11910,11940,11970,12000],"tau":[27,-26,11,29,16,-27,7,-16,29,-24,-8,-21,22,-20,-29,-20,-20,-21,-20,-20,-20,20,15,-29,-15,13,15,23,-18,-20,18,-20,29,-9,28,1,-21,20,-20,-20,-20,29,8,7,-20,3,3,10,-19,-17,-20,-4,-20,-23,0,-21,-18,-20,-24,-3,-4,11,7,11,8,9,-9,16,-20,28,27,-20,-25,-19,-3,16,-18,-20,16,26,-8,27,-20,-20,28,-9,23,-5,24,-20,7,-5,29,-16,20,-27,0,16,13,-16,-27,-15,-20,-9,-8,-6,-12,-16,-2,1,-20,-16,24,-5,14,18,-11,-20,19,-27,-20,1,18,-23,18,3,-9,-12,-7,-11,-11,-3,15,13,2,16,27,14,-20,21,-27,-14,-12,17,-20,27,-20,6,-23,24,22,-14,-5,18,-9,22,-20,-28,-3,-14,-20,23,-23,13,26,-20,-11,2,-13,25,-17,-20,-13,-3,14,-20,-17,4,9,-16,14,3,-11,-20,16,14,-20,1,-9,-6,-20,-24,19,-12,29,-9,-20,12,12,17,20,-6,-4,10,23,-10,-4,-10,18,-20,-14,0,25,24,24,8,-7,-7,18,6,6,-20,-20,14,14,1,1,29,17,21,-19,8,14,28,-29,18,-20,10,-13,-21,11,-20,-24,6,-20,-20,0,-5,26,-19,19,-20,23,16,-4,-2,29,12,-18,24,-16,-28,-24,-18,-20,14,-22,-20,-29,11,21,25,-6,-6,-8,-12,-20,-27,-16,-20,-22,-12,-18,-20,25,-20,-20,-21,4,-20,-20,29,-10,-26,12,-20,-28,-12,-3,4,16,26,29,5,20,-20,29,-24,16,15,24,-7,-4,-26,-20,-18,-13,13,-20,-20,-27,-20,-7,-20,-4,23,-25,17,17,2,-20,-20,-20,16,29,-20,8,18,17,-15,-15,3,22,-20,-20,-20,-26,15,-20,-20,9,-12,-20,-20,-20,-17,10,27,-20,-20,-17,23,4,-27,-10,25,-15,-16,-20,-20,-14,28,17,3,-21,28,25,6,-15,-20,-20,-20,-26,29,20,23,-21,6,-13,-19,10,-1,16,-13,-18,-20,1,9,25,-20],"stable":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"atds":{"params":{"window":259,"step":129,"max_lag":129,"tol":13},"score":91.3,"near_true":90.0,"t":[129,258,387,516,645,774,903,1032,1161,1290,1419,1548,1677,1806,1935,2064,2193,2322,2451,2580,2709,2838,2967,3096,3225,3354,3483,3612,3741,3870,3999,4128,4257,4386,4515,4644,4773,4902,5031,5160,5289,5418,5547,5676,5805,5934,6063,6192,6321,6450,6579,6708,6837,6966,7095,7224,7353,7482,7611,7740,7869,7998,8127,8256,8385,8514,8643,8772,8901,9030,9159,9288,9417,9546,9675,9804,9933,10062,10191,10320,10449,10578,10707,10836,10965,11094,11223,11352,11481,11610,11739,11868,11997],"tau":[22,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-3,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,0,-96,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-75,-12,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-120,-20,-20,-4,-85,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-33,-20,-20,-20,-20,-20,-20],"stable":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}},"example_info":{"window":259,"tol":13},"tol_curve":[{"tol":0,"null":0.0,"ub":0.0,"real":90.04},{"tol":1,"null":0.0,"ub":0.0,"real":90.04},{"tol":2,"null":0.09,"ub":0.26,"real":90.04},{"tol":3,"null":0.17,"ub":0.41,"real":90.48},{"tol":4,"null":0.26,"ub":0.54,"real":90.48},{"tol":5,"null":0.26,"ub":0.54,"real":90.48},{"tol":6,"null":0.69,"ub":1.16,"real":90.48},{"tol":7,"null":0.87,"ub":1.34,"real":90.48},{"tol":8,"null":1.15,"ub":1.74,"real":90.91},{"tol":9,"null":1.58,"ub":2.31,"real":90.91},{"tol":10,"null":2.38,"ub":3.17,"real":90.91},{"tol":11,"null":2.99,"ub":4.13,"real":90.91},{"tol":12,"null":3.44,"ub":4.58,"real":90.91},{"tol":13,"null":4.13,"ub":5.43,"real":91.34},{"tol":14,"null":4.68,"ub":6.11,"real":91.34},{"tol":15,"null":5.45,"ub":6.92,"real":91.34},{"tol":16,"null":6.23,"ub":7.79,"real":91.77},{"tol":17,"null":7.08,"ub":8.89,"real":92.64},{"tol":18,"null":8.01,"ub":9.87,"real":92.64},{"tol":19,"null":8.68,"ub":10.74,"real":92.64},{"tol":20,"null":10.06,"ub":12.12,"real":93.07},{"tol":21,"null":11.13,"ub":13.23,"real":93.07},{"tol":22,"null":12.77,"ub":14.94,"real":93.07},{"tol":23,"null":13.68,"ub":15.94,"real":93.07},{"tol":24,"null":15.09,"ub":17.29,"real":93.07},{"tol":25,"null":16.1,"ub":18.3,"real":93.07},{"tol":26,"null":17.27,"ub":19.43,"real":93.07},{"tol":27,"null":18.59,"ub":20.72,"real":93.07},{"tol":28,"null":19.59,"ub":21.78,"real":93.07},{"tol":29,"null":21.45,"ub":23.88,"real":93.07},{"tol":30,"null":22.45,"ub":24.74,"real":93.07}]}],"U8":[{"n_half":14970,"fixed":{"window":60,"max_lag":30,"tol":1,"score":50.8,"chance":1.2,"chance_p95":2.6,"p_emp":0.01,"n_windows":498,"median_stable_tau":0.0},"fixed_end":{"window":60,"max_lag":30,"tol":1,"score":37.3,"chance":0.3,"chance_p95":0.8,"p_emp":0.01,"n_windows":498,"median_stable_tau":0.0},"atds":{"window":652,"max_lag":325,"tol":22,"score":95.5,"chance":2.1,"chance_p95":11.4,"p_emp":0.01,"n_windows":44,"median_stable_tau":0.0},"atds_cap300":{"window":300,"max_lag":149,"tol":9,"score":82.7,"chance":2.3,"chance_p95":8.2,"p_emp":0.01,"n_windows":98,"median_stable_tau":0.0}}],"U6":[{"d":8,"period":[41,null],"calib_failed":false,"fixed":{"auc":0.974,"hit":0.43,"chance":1.5,"reported_mode":7,"share_negative_C":0.07,"window":60,"max_lag":30,"tol":1},"atds":{"auc":1.0,"hit":1.0,"chance":3.89,"reported_mode":8,"share_negative_C":0.0,"window":316,"max_lag":20,"tol":1}},{"d":30,"period":[40,41],"calib_failed":false,"fixed":{"auc":0.462,"hit":0.0,"chance":1.61,"reported_mode":0,"share_negative_C":0.75,"window":60,"max_lag":30,"tol":1},"atds":{"auc":0.995,"hit":0.0,"chance":2.5,"reported_mode":11,"share_negative_C":0.93,"window":318,"max_lag":20,"tol":1}}],"U7":[{"d":16,"calib_failed":false,"periods":[169,169],"fixed":{"auc":0.734,"hit":0.0,"reported_mode":0,"window":60,"max_lag":30,"tol":1,"chance":2.41},"atds":{"auc":1.0,"hit":0.0,"reported_mode":19,"window":128,"max_lag":63,"tol":0,"chance":0.0}},{"d":32,"calib_failed":false,"periods":[null,170],"fixed":{"auc":0.786,"hit":0.0,"reported_mode":16,"window":60,"max_lag":30,"tol":1,"chance":2.14},"atds":{"auc":1.0,"hit":1.0,"reported_mode":35,"window":127,"max_lag":63,"tol":0,"chance":0.21}}],"U5":[{"H":0.6,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"atds":{"window":61,"max_lag":30,"tol":3},"atds_v2_min20":{"window":32,"max_lag":15,"tol":1}},"fixed":{"auc":0.598,"auc_ci":[0.472,0.717],"hit":0.28,"hit_ci":[0.161,0.428],"hit_cond":0.37,"n_cond":30,"coupled":0.92,"chance":0.64,"chance_p95":1.22},"atds":{"auc":0.588,"auc_ci":[0.454,0.705],"hit":0.23,"hit_ci":[0.123,0.375],"hit_cond":0.23,"n_cond":40,"coupled":4.81,"chance":4.26,"chance_p95":6.2},"atds_v2_min20":{"auc":0.466,"auc_ci":[0.339,0.589],"hit":0.0,"hit_ci":[-0.0,0.088],"hit_cond":0.0,"n_cond":40,"coupled":3.01,"chance":3.14,"chance_p95":4.59}},{"H":0.75,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"atds":{"window":73,"max_lag":36,"tol":3},"atds_v2_min20":{"window":73,"max_lag":36,"tol":4}},"fixed":{"auc":0.701,"auc_ci":[0.59,0.805],"hit":0.33,"hit_ci":[0.201,0.48],"hit_cond":0.41,"n_cond":32,"coupled":1.04,"chance":0.5,"chance_p95":1.2},"atds":{"auc":0.653,"auc_ci":[0.531,0.768],"hit":0.23,"hit_ci":[0.123,0.375],"hit_cond":0.23,"n_cond":40,"coupled":3.57,"chance":2.61,"chance_p95":4.18},"atds_v2_min20":{"auc":0.645,"auc_ci":[0.512,0.763],"hit":0.23,"hit_ci":[0.123,0.375],"hit_cond":0.23,"n_cond":40,"coupled":5.86,"chance":4.9,"chance_p95":7.78}},{"H":0.9,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"atds":{"window":614,"max_lag":306,"tol":34},"atds_v2_min20":{"window":614,"max_lag":306,"tol":35}},"fixed":{"auc":0.455,"auc_ci":[0.328,0.577],"hit":0.15,"hit_ci":[0.071,0.291],"hit_cond":0.24,"n_cond":25,"coupled":0.67,"chance":0.82,"chance_p95":2.56},"atds":{"auc":0.821,"auc_ci":[0.728,0.911],"hit":0.85,"hit_ci":[0.709,0.929],"hit_cond":1.0,"n_cond":34,"coupled":15.55,"chance":4.8,"chance_p95":14.06},"atds_v2_min20":{"auc":0.817,"auc_ci":[0.72,0.908],"hit":0.85,"hit_ci":[0.709,0.929],"hit_cond":1.0,"n_cond":34,"coupled":15.66,"chance":5.27,"chance_p95":14.06}}],"U4":[{"d":5,"k":0,"window":514,"tol":28,"lag30":{"found":5,"score":97.4,"max_lag":30},"atds":{"found":5,"score":88.2,"max_lag":256}},{"d":5,"k":1,"window":514,"tol":28,"lag30":{"found":5,"score":98.7,"max_lag":30},"atds":{"found":5,"score":89.5,"max_lag":256}},{"d":5,"k":2,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":94.7,"max_lag":256}},{"d":5,"k":3,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":4,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":98.7,"max_lag":256}},{"d":5,"k":5,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":92.1,"max_lag":256}},{"d":5,"k":6,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":7,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":96.1,"max_lag":256}},{"d":5,"k":8,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":97.4,"max_lag":256}},{"d":5,"k":9,"window":514,"tol":28,"lag30":{"found":5,"score":100.0,"max_lag":30},"atds":{"found":5,"score":98.7,"max_lag":256}},{"d":10,"k":0,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.8,"max_lag":241}},{"d":10,"k":1,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":85.2,"max_lag":241}},{"d":10,"k":2,"window":484,"tol":24,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":88.9,"max_lag":241}},{"d":10,"k":3,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":96.3,"max_lag":241}},{"d":10,"k":4,"window":484,"tol":24,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":96.3,"max_lag":241}},{"d":10,"k":5,"window":484,"tol":24,"lag30":{"found":10,"score":98.8,"max_lag":30},"atds":{"found":10,"score":86.4,"max_lag":241}},{"d":10,"k":6,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":92.6,"max_lag":241}},{"d":10,"k":7,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":95.1,"max_lag":241}},{"d":10,"k":8,"window":484,"tol":24,"lag30":{"found":10,"score":97.5,"max_lag":30},"atds":{"found":10,"score":91.4,"max_lag":241}},{"d":10,"k":9,"window":484,"tol":24,"lag30":{"found":10,"score":100.0,"max_lag":30},"atds":{"found":10,"score":93.8,"max_lag":241}},{"d":20,"k":0,"window":493,"tol":26,"lag30":{"found":20,"score":97.5,"max_lag":30},"atds":{"found":20,"score":90.0,"max_lag":246}},{"d":20,"k":1,"window":493,"tol":26,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":97.5,"max_lag":246}},{"d":20,"k":2,"window":493,"tol":26,"lag30":{"found":20,"score":95.0,"max_lag":30},"atds":{"found":20,"score":87.5,"max_lag":246}},{"d":20,"k":3,"window":493,"tol":26,"lag30":{"found":20,"score":97.5,"max_lag":30},"atds":{"found":20,"score":88.8,"max_lag":246}},{"d":20,"k":4,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":86.2,"max_lag":246}},{"d":20,"k":5,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":86.2,"max_lag":246}},{"d":20,"k":6,"window":493,"tol":26,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":92.5,"max_lag":246}},{"d":20,"k":7,"window":493,"tol":26,"lag30":{"found":20,"score":98.8,"max_lag":30},"atds":{"found":20,"score":91.2,"max_lag":246}},{"d":20,"k":8,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":88.8,"max_lag":246}},{"d":20,"k":9,"window":493,"tol":26,"lag30":{"found":20,"score":100.0,"max_lag":30},"atds":{"found":20,"score":95.0,"max_lag":246}},{"d":30,"k":0,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":87.1,"max_lag":231}},{"d":30,"k":1,"window":463,"tol":23,"lag30":{"found":30,"score":100.0,"max_lag":30},"atds":{"found":30,"score":88.2,"max_lag":231}},{"d":30,"k":2,"window":463,"tol":23,"lag30":{"found":30,"score":96.5,"max_lag":30},"atds":{"found":30,"score":90.6,"max_lag":231}},{"d":30,"k":3,"window":463,"tol":23,"lag30":{"found":30,"score":96.5,"max_lag":30},"atds":{"found":30,"score":82.4,"max_lag":231}},{"d":30,"k":4,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":84.7,"max_lag":231}},{"d":30,"k":5,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":87.1,"max_lag":231}},{"d":30,"k":6,"window":463,"tol":23,"lag30":{"found":30,"score":94.1,"max_lag":30},"atds":{"found":30,"score":82.4,"max_lag":231}},{"d":30,"k":7,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":84.7,"max_lag":231}},{"d":30,"k":8,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":94.1,"max_lag":231}},{"d":30,"k":9,"window":463,"tol":23,"lag30":{"found":30,"score":98.8,"max_lag":30},"atds":{"found":30,"score":88.2,"max_lag":231}},{"d":40,"k":0,"window":503,"tol":29,"lag30":{"found":30,"score":92.3,"max_lag":30},"atds":{"found":40,"score":82.1,"max_lag":251}},{"d":40,"k":1,"window":503,"tol":29,"lag30":{"found":30,"score":79.5,"max_lag":30},"atds":{"found":40,"score":96.2,"max_lag":251}},{"d":40,"k":2,"window":503,"tol":29,"lag30":{"found":30,"score":87.2,"max_lag":30},"atds":{"found":40,"score":84.6,"max_lag":251}},{"d":40,"k":3,"window":503,"tol":29,"lag30":{"found":30,"score":83.3,"max_lag":30},"atds":{"found":40,"score":71.8,"max_lag":251}},{"d":40,"k":4,"window":503,"tol":29,"lag30":{"found":30,"score":87.2,"max_lag":30},"atds":{"found":40,"score":85.9,"max_lag":251}},{"d":40,"k":5,"window":503,"tol":29,"lag30":{"found":30,"score":92.3,"max_lag":30},"atds":{"found":40,"score":89.7,"max_lag":251}},{"d":40,"k":6,"window":503,"tol":29,"lag30":{"found":30,"score":89.7,"max_lag":30},"atds":{"found":40,"score":87.2,"max_lag":251}},{"d":40,"k":7,"window":503,"tol":29,"lag30":{"found":30,"score":93.6,"max_lag":30},"atds":{"found":40,"score":83.3,"max_lag":251}},{"d":40,"k":8,"window":503,"tol":29,"lag30":{"found":30,"score":91.0,"max_lag":30},"atds":{"found":40,"score":93.6,"max_lag":251}},{"d":40,"k":9,"window":503,"tol":29,"lag30":{"found":30,"score":71.8,"max_lag":30},"atds":{"found":40,"score":88.5,"max_lag":251}},{"d":60,"k":0,"window":471,"tol":25,"lag30":{"found":30,"score":77.4,"max_lag":30},"atds":{"found":60,"score":82.1,"max_lag":235}},{"d":60,"k":1,"window":471,"tol":25,"lag30":{"found":30,"score":86.9,"max_lag":30},"atds":{"found":60,"score":81.0,"max_lag":235}},{"d":60,"k":2,"window":471,"tol":25,"lag30":{"found":-30,"score":88.1,"max_lag":30},"atds":{"found":60,"score":72.6,"max_lag":235}},{"d":60,"k":3,"window":471,"tol":25,"lag30":{"found":-30,"score":85.7,"max_lag":30},"atds":{"found":60,"score":76.2,"max_lag":235}},{"d":60,"k":4,"window":471,"tol":25,"lag30":{"found":30,"score":86.9,"max_lag":30},"atds":{"found":60,"score":83.3,"max_lag":235}},{"d":60,"k":5,"window":471,"tol":25,"lag30":{"found":30,"score":95.2,"max_lag":30},"atds":{"found":60,"score":77.4,"max_lag":235}},{"d":60,"k":6,"window":471,"tol":25,"lag30":{"found":30,"score":85.7,"max_lag":30},"atds":{"found":60,"score":82.1,"max_lag":235}},{"d":60,"k":7,"window":471,"tol":25,"lag30":{"found":30,"score":81.0,"max_lag":30},"atds":{"found":60,"score":57.1,"max_lag":235}},{"d":60,"k":8,"window":471,"tol":25,"lag30":{"found":30,"score":91.7,"max_lag":30},"atds":{"found":60,"score":76.2,"max_lag":235}},{"d":60,"k":9,"window":471,"tol":25,"lag30":{"found":30,"score":85.7,"max_lag":30},"atds":{"found":60,"score":77.4,"max_lag":235}},{"d":80,"k":0,"window":471,"tol":24,"lag30":{"found":30,"score":92.9,"max_lag":30},"atds":{"found":80,"score":83.3,"max_lag":235}},{"d":80,"k":1,"window":471,"tol":24,"lag30":{"found":-30,"score":91.7,"max_lag":30},"atds":{"found":80,"score":67.9,"max_lag":235}},{"d":80,"k":2,"window":471,"tol":24,"lag30":{"found":30,"score":76.2,"max_lag":30},"atds":{"found":80,"score":75.0,"max_lag":235}},{"d":80,"k":3,"window":471,"tol":24,"lag30":{"found":30,"score":79.8,"max_lag":30},"atds":{"found":80,"score":67.9,"max_lag":235}},{"d":80,"k":4,"window":471,"tol":24,"lag30":{"found":-30,"score":90.5,"max_lag":30},"atds":{"found":80,"score":81.0,"max_lag":235}},{"d":80,"k":5,"window":471,"tol":24,"lag30":{"found":-30,"score":86.9,"max_lag":30},"atds":{"found":80,"score":65.5,"max_lag":235}},{"d":80,"k":6,"window":471,"tol":24,"lag30":{"found":30,"score":81.0,"max_lag":30},"atds":{"found":80,"score":65.5,"max_lag":235}},{"d":80,"k":7,"window":471,"tol":24,"lag30":{"found":-30,"score":89.3,"max_lag":30},"atds":{"found":80,"score":76.2,"max_lag":235}},{"d":80,"k":8,"window":471,"tol":24,"lag30":{"found":30,"score":86.9,"max_lag":30},"atds":{"found":80,"score":48.8,"max_lag":235}},{"d":80,"k":9,"window":471,"tol":24,"lag30":{"found":-30,"score":88.1,"max_lag":30},"atds":{"found":80,"score":58.3,"max_lag":235}},{"d":120,"k":0,"window":454,"tol":26,"lag30":{"found":30,"score":81.6,"max_lag":30},"atds":{"found":120,"score":49.4,"max_lag":226}},{"d":120,"k":1,"window":454,"tol":26,"lag30":{"found":-30,"score":88.5,"max_lag":30},"atds":{"found":120,"score":54.0,"max_lag":226}},{"d":120,"k":2,"window":454,"tol":26,"lag30":{"found":30,"score":93.1,"max_lag":30},"atds":{"found":120,"score":56.3,"max_lag":226}},{"d":120,"k":3,"window":454,"tol":26,"lag30":{"found":18,"score":87.4,"max_lag":30},"atds":{"found":120,"score":40.2,"max_lag":226}},{"d":120,"k":4,"window":454,"tol":26,"lag30":{"found":30,"score":93.1,"max_lag":30},"atds":{"found":120,"score":56.3,"max_lag":226}},{"d":120,"k":5,"window":454,"tol":26,"lag30":{"found":-30,"score":87.4,"max_lag":30},"atds":{"found":120,"score":55.2,"max_lag":226}},{"d":120,"k":6,"window":454,"tol":26,"lag30":{"found":-30,"score":88.5,"max_lag":30},"atds":{"found":120,"score":37.9,"max_lag":226}},{"d":120,"k":7,"window":454,"tol":26,"lag30":{"found":-30,"score":90.8,"max_lag":30},"atds":{"found":120,"score":64.4,"max_lag":226}},{"d":120,"k":8,"window":454,"tol":26,"lag30":{"found":30,"score":95.4,"max_lag":30},"atds":{"found":120,"score":47.1,"max_lag":226}},{"d":120,"k":9,"window":454,"tol":26,"lag30":{"found":-30,"score":92.0,"max_lag":30},"atds":{"found":120,"score":51.7,"max_lag":226}},{"d":160,"k":0,"window":513,"tol":28,"lag30":{"found":30,"score":90.9,"max_lag":30},"atds":{"found":160,"score":27.3,"max_lag":256}},{"d":160,"k":1,"window":513,"tol":28,"lag30":{"found":30,"score":96.1,"max_lag":30},"atds":{"found":160,"score":55.8,"max_lag":256}},{"d":160,"k":2,"window":513,"tol":28,"lag30":{"found":30,"score":92.2,"max_lag":30},"atds":{"found":160,"score":51.9,"max_lag":256}},{"d":160,"k":3,"window":513,"tol":28,"lag30":{"found":-30,"score":94.8,"max_lag":30},"atds":{"found":160,"score":51.9,"max_lag":256}},{"d":160,"k":4,"window":513,"tol":28,"lag30":{"found":-30,"score":96.1,"max_lag":30},"atds":{"found":160,"score":55.8,"max_lag":256}},{"d":160,"k":5,"window":513,"tol":28,"lag30":{"found":30,"score":93.5,"max_lag":30},"atds":{"found":160,"score":39.0,"max_lag":256}},{"d":160,"k":6,"window":513,"tol":28,"lag30":{"found":-30,"score":96.1,"max_lag":30},"atds":{"found":160,"score":48.1,"max_lag":256}},{"d":160,"k":7,"window":513,"tol":28,"lag30":{"found":30,"score":90.9,"max_lag":30},"atds":{"found":160,"score":50.6,"max_lag":256}},{"d":160,"k":8,"window":513,"tol":28,"lag30":{"found":30,"score":94.8,"max_lag":30},"atds":{"found":160,"score":62.3,"max_lag":256}},{"d":160,"k":9,"window":513,"tol":28,"lag30":{"found":-30,"score":89.6,"max_lag":30},"atds":{"found":160,"score":48.1,"max_lag":256}}],"U10":[{"params":{"whole":252,"whole_tol":12,"first":124,"first_tol":6,"second":484,"second_tol":21},"first":{"fixed":{"auc":0.982,"auc_ci":[0.957,0.998],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":6.58,"chance":0.84,"chance_p95":2.42},"atds_whole":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":68.21,"chance":4.46,"chance_p95":11.79},"atds_per_segment":{"auc":0.999,"auc_ci":[0.995,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":30.8,"chance":4.42,"chance_p95":10.72}},"second":{"fixed":{"auc":0.709,"auc_ci":[0.594,0.81],"hit":0.45,"hit_ci":[0.307,0.602],"hit_cond":0.62,"n_cond":29,"coupled":1.66,"chance":0.71,"chance_p95":2.41},"atds_whole":{"auc":0.964,"auc_ci":[0.923,0.992],"hit":0.9,"hit_ci":[0.769,0.96],"hit_cond":0.9,"n_cond":40,"coupled":20.22,"chance":3.53,"chance_p95":11.73},"atds_per_segment":{"auc":0.982,"auc_ci":[0.957,0.998],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":35.38,"chance":3.88,"chance_p95":12.87}}}],"U9":[{"system_wide":{"slow":{"window":972,"max_lag":485,"tol":56,"auc":0.986,"auc_ci":[0.966,1.0],"hit":0.97,"hit_ci":[0.871,0.996],"hit_cond":0.97,"n_cond":40,"coupled":34.25,"chance":3.56,"chance_p95":10.0},"fast":{"window":972,"max_lag":485,"tol":56,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":100.0,"chance":4.94,"chance_p95":20.37}},"per_pair_maxB":{"slow":{"window":972,"max_lag":485,"tol":54,"auc":0.983,"auc_ci":[0.961,0.996],"hit":0.97,"hit_ci":[0.871,0.996],"hit_cond":0.97,"n_cond":40,"coupled":33.81,"chance":3.31,"chance_p95":10.0},"fast":{"window":64,"max_lag":31,"tol":3,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":30.85,"chance":4.67,"chance_p95":7.75}},"pairwise_Bxy":{"slow":{"window":967,"max_lag":483,"tol":52,"auc":0.982,"auc_ci":[0.957,0.997],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":37.75,"chance":4.56,"chance_p95":15.25},"fast":{"window":64,"max_lag":31,"tol":3,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":30.85,"chance":4.67,"chance_p95":7.75}},"fixed":{"slow":{"window":60,"max_lag":30,"tol":1,"auc":0.438,"auc_ci":[0.316,0.558],"hit":0.0,"hit_ci":[-0.0,0.088],"hit_cond":0.0,"n_cond":27,"coupled":0.79,"chance":0.94,"chance_p95":2.12},"fast":{"window":60,"max_lag":30,"tol":1,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":22.6,"chance":0.67,"chance_p95":1.53}},"fast_slow_pair":{"per_pair_maxB":{"window":939,"max_lag":469,"tol":51,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":100.0,"chance":5.24,"chance_p95":19.63},"pairwise_Bxy":{"window":339,"max_lag":169,"tol":19,"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.912,1.0],"hit_cond":1.0,"n_cond":40,"coupled":91.09,"chance":3.91,"chance_p95":10.3},"fixed":{"window":60,"max_lag":30,"tol":1,"auc":0.828,"auc_ci":[0.73,0.916],"hit":0.57,"hit_ci":[0.422,0.715],"hit_cond":0.64,"n_cond":36,"coupled":1.66,"chance":0.56,"chance_p95":1.52}},"fast_slow_B":{"B_x":31.29,"B_y":4.98,"B_xy":11.28}}],"U3":[{"neff":5,"block":1000,"B":8.06,"window":40,"tol":1,"bal_acc":0.49,"sd":0.006},{"neff":10,"block":1000,"B":8.06,"window":81,"tol":3,"bal_acc":0.579,"sd":0.013},{"neff":15,"block":1000,"B":8.06,"window":121,"tol":5,"bal_acc":0.675,"sd":0.025},{"neff":20,"block":1000,"B":8.06,"window":161,"tol":7,"bal_acc":0.76,"sd":0.03},{"neff":30,"block":1000,"B":8.06,"window":242,"tol":10,"bal_acc":0.852,"sd":0.025},{"neff":45,"block":1000,"B":8.06,"window":363,"tol":20,"bal_acc":0.867,"sd":0.024},{"neff":60,"block":1000,"B":8.06,"window":483,"tol":24,"bal_acc":0.827,"sd":0.034},{"neff":90,"block":1000,"B":8.06,"window":725,"tol":36,"bal_acc":0.598,"sd":0.034},{"neff":120,"block":1000,"B":8.06,"window":967,"tol":45,"bal_acc":0.708,"sd":0.031},{"neff":5,"block":2000,"B":8.06,"window":40,"tol":1,"bal_acc":0.491,"sd":0.005},{"neff":10,"block":2000,"B":8.06,"window":81,"tol":3,"bal_acc":0.58,"sd":0.015},{"neff":15,"block":2000,"B":8.06,"window":121,"tol":5,"bal_acc":0.693,"sd":0.022},{"neff":20,"block":2000,"B":8.06,"window":161,"tol":7,"bal_acc":0.788,"sd":0.03},{"neff":30,"block":2000,"B":8.06,"window":242,"tol":11,"bal_acc":0.878,"sd":0.022},{"neff":45,"block":2000,"B":8.06,"window":363,"tol":20,"bal_acc":0.913,"sd":0.024},{"neff":60,"block":2000,"B":8.06,"window":483,"tol":23,"bal_acc":0.924,"sd":0.027},{"neff":90,"block":2000,"B":8.06,"window":725,"tol":33,"bal_acc":0.919,"sd":0.031},{"neff":120,"block":2000,"B":8.06,"window":967,"tol":49,"bal_acc":0.851,"sd":0.037},{"neff":5,"block":4000,"B":8.06,"window":40,"tol":1,"bal_acc":0.492,"sd":0.006},{"neff":10,"block":4000,"B":8.06,"window":81,"tol":3,"bal_acc":0.583,"sd":0.017},{"neff":15,"block":4000,"B":8.06,"window":121,"tol":5,"bal_acc":0.692,"sd":0.031},{"neff":20,"block":4000,"B":8.06,"window":161,"tol":8,"bal_acc":0.787,"sd":0.028},{"neff":30,"block":4000,"B":8.06,"window":242,"tol":10,"bal_acc":0.905,"sd":0.026},{"neff":45,"block":4000,"B":8.06,"window":363,"tol":20,"bal_acc":0.939,"sd":0.03},{"neff":60,"block":4000,"B":8.06,"window":483,"tol":27,"bal_acc":0.937,"sd":0.025},{"neff":90,"block":4000,"B":8.06,"window":725,"tol":36,"bal_acc":0.938,"sd":0.034},{"neff":120,"block":4000,"B":8.06,"window":967,"tol":42,"bal_acc":0.946,"sd":0.031}],"U11":[{"seed":0,"coupled":true,"window":271,"tol":13,"true_found":3,"false_links":1,"n_sig":4,"raw_p05_false":1},{"seed":1,"coupled":true,"window":243,"tol":13,"true_found":3,"false_links":0,"n_sig":3,"raw_p05_false":0},{"seed":2,"coupled":true,"window":257,"tol":11,"true_found":3,"false_links":0,"n_sig":3,"raw_p05_false":1},{"seed":3,"coupled":true,"window":263,"tol":12,"true_found":3,"false_links":0,"n_sig":3,"raw_p05_false":1},{"seed":4,"coupled":true,"window":253,"tol":13,"true_found":3,"false_links":0,"n_sig":3,"raw_p05_false":1},{"seed":5,"coupled":true,"window":249,"tol":12,"true_found":3,"false_links":0,"n_sig":3,"raw_p05_false":2},{"seed":6,"coupled":true,"window":246,"tol":14,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":1},{"seed":7,"coupled":true,"window":272,"tol":13,"true_found":2,"false_links":1,"n_sig":3,"raw_p05_false":1},{"seed":8,"coupled":true,"window":267,"tol":12,"true_found":3,"false_links":0,"n_sig":3,"raw_p05_false":1},{"seed":9,"coupled":true,"window":251,"tol":12,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":1},{"seed":0,"coupled":false,"window":274,"tol":13,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":1},{"seed":1,"coupled":false,"window":248,"tol":13,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":0},{"seed":2,"coupled":false,"window":257,"tol":11,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":0},{"seed":3,"coupled":false,"window":263,"tol":13,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":0},{"seed":4,"coupled":false,"window":253,"tol":13,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":1},{"seed":5,"coupled":false,"window":244,"tol":12,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":1},{"seed":6,"coupled":false,"window":247,"tol":14,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":1},{"seed":7,"coupled":false,"window":272,"tol":14,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":1},{"seed":8,"coupled":false,"window":267,"tol":13,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":0},{"seed":9,"coupled":false,"window":251,"tol":13,"true_found":0,"false_links":0,"n_sig":0,"raw_p05_false":0}],"U2m":[{"r":2,"L":121,"tol":5,"auc":0.97,"auc_ci":[0.947,0.988]},{"r":8,"L":515,"tol":25,"auc":0.79,"auc_ci":[0.728,0.85]}],"U2":[{"r":2,"L":30,"tol":1,"auc":0.589,"auc_ci":[0.507,0.666]},{"r":2,"L":60,"tol":2,"auc":0.829,"auc_ci":[0.768,0.88]},{"r":2,"L":120,"tol":5,"auc":0.974,"auc_ci":[0.956,0.99]},{"r":2,"L":240,"tol":13,"auc":1.0,"auc_ci":[0.999,1.0]},{"r":2,"L":480,"tol":27,"auc":1.0,"auc_ci":[1.0,1.0]},{"r":2,"L":960,"tol":51,"auc":1.0,"auc_ci":[1.0,1.0]},{"r":2,"L":1920,"tol":116,"auc":1.0,"auc_ci":[1.0,1.0]},{"r":8,"L":30,"tol":1,"auc":0.469,"auc_ci":[0.395,0.551]},{"r":8,"L":60,"tol":2,"auc":0.513,"auc_ci":[0.432,0.597]},{"r":8,"L":120,"tol":6,"auc":0.518,"auc_ci":[0.438,0.602]},{"r":8,"L":240,"tol":13,"auc":0.659,"auc_ci":[0.586,0.737]},{"r":8,"L":480,"tol":26,"auc":0.755,"auc_ci":[0.689,0.818]},{"r":8,"L":960,"tol":47,"auc":0.915,"auc_ci":[0.874,0.952]},{"r":8,"L":1920,"tol":101,"auc":0.99,"auc_ci":[0.976,0.999]}],"U1":[{"r":1,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":60,"max_lag":30,"tol":1},"atds":{"window":66,"max_lag":32,"tol":3},"atds_tol1":{"window":66,"max_lag":32,"tol":1},"oracle":{"window":60,"max_lag":29,"tol":0}},"fixed":{"auc":0.997,"auc_ci":[0.989,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":6.4,"chance":0.78,"chance_p95":1.81},"rescaled":{"auc":0.997,"auc_ci":[0.989,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":6.4,"chance":0.78,"chance_p95":1.81},"atds":{"auc":0.995,"auc_ci":[0.988,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":12.39,"chance":4.36,"chance_p95":7.27},"atds_tol1":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":7.29,"chance":0.66,"chance_p95":1.98},"oracle":{"auc":1.0,"auc_ci":[0.999,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":4.06,"chance":0.03,"chance_p95":0.03},"diff_fixed":{"ci90":[-0.009,0.006],"ci95":[-0.011,0.007]},"diff_rescaled":{"ci90":[-0.009,0.006],"ci95":[-0.011,0.007]},"diff_oracle":{"ci90":[-0.011,-0.001],"ci95":[-0.012,-0.0]},"diff_atds_tol1":{"ci90":[-0.011,-0.001],"ci95":[-0.012,-0.001]}},{"r":2,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":120,"max_lag":60,"tol":2},"atds":{"window":126,"max_lag":62,"tol":6},"atds_tol1":{"window":126,"max_lag":62,"tol":1},"oracle":{"window":240,"max_lag":119,"tol":0}},"fixed":{"auc":0.888,"auc_ci":[0.839,0.93],"hit":0.84,"hit_ci":[0.756,0.899],"hit_cond":0.86,"n_cond":98,"coupled":2.21,"chance":0.64,"chance_p95":1.8},"rescaled":{"auc":0.993,"auc_ci":[0.984,0.999],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":6.82,"chance":0.52,"chance_p95":2.41},"atds":{"auc":0.979,"auc_ci":[0.961,0.992],"hit":0.99,"hit_ci":[0.946,0.998],"hit_cond":0.99,"n_cond":100,"coupled":12.5,"chance":3.63,"chance_p95":7.59},"atds_tol1":{"auc":0.988,"auc_ci":[0.969,0.999],"hit":0.97,"hit_ci":[0.915,0.99],"hit_cond":0.99,"n_cond":98,"coupled":6.53,"chance":0.12,"chance_p95":1.27},"oracle":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":20.08,"chance":0.0,"chance_p95":0.0},"diff_fixed":{"ci90":[0.054,0.131],"ci95":[0.049,0.139]},"diff_rescaled":{"ci90":[-0.029,-0.002],"ci95":[-0.032,0.001]},"diff_oracle":{"ci90":[-0.036,-0.01],"ci95":[-0.039,-0.009]},"diff_atds_tol1":{"ci90":[-0.025,0.008],"ci95":[-0.028,0.01]}},{"r":4,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":240,"max_lag":120,"tol":4},"atds":{"window":237,"max_lag":118,"tol":12},"atds_tol1":{"window":237,"max_lag":118,"tol":1},"oracle":{"window":960,"max_lag":479,"tol":0}},"fixed":{"auc":0.59,"auc_ci":[0.513,0.658],"hit":0.18,"hit_ci":[0.117,0.267],"hit_cond":0.23,"n_cond":80,"coupled":0.92,"chance":0.72,"chance_p95":1.96},"rescaled":{"auc":0.955,"auc_ci":[0.926,0.978],"hit":0.91,"hit_ci":[0.838,0.952],"hit_cond":0.96,"n_cond":95,"coupled":6.18,"chance":0.39,"chance_p95":2.42},"atds":{"auc":0.923,"auc_ci":[0.885,0.959],"hit":0.88,"hit_ci":[0.802,0.93],"hit_cond":0.9,"n_cond":98,"coupled":11.71,"chance":3.65,"chance_p95":10.12},"atds_tol1":{"auc":0.885,"auc_ci":[0.84,0.925],"hit":0.77,"hit_ci":[0.678,0.842],"hit_cond":1.0,"n_cond":77,"coupled":4.47,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":1.0,"auc_ci":[1.0,1.0],"hit":1.0,"hit_ci":[0.963,1.0],"hit_cond":1.0,"n_cond":100,"coupled":58.65,"chance":0.0,"chance_p95":0.0},"diff_fixed":{"ci90":[0.26,0.402],"ci95":[0.244,0.416]},"diff_rescaled":{"ci90":[-0.064,0.003],"ci95":[-0.073,0.008]},"diff_oracle":{"ci90":[-0.112,-0.047],"ci95":[-0.119,-0.041]},"diff_atds_tol1":{"ci90":[0.001,0.076],"ci95":[-0.006,0.083]}},{"r":8,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":480,"max_lag":240,"tol":8},"atds":{"window":563,"max_lag":281,"tol":27},"atds_tol1":{"window":563,"max_lag":281,"tol":1},"oracle":{"window":1920,"max_lag":959,"tol":0}},"fixed":{"auc":0.541,"auc_ci":[0.464,0.618],"hit":0.0,"hit_ci":[0.0,0.037],"hit_cond":0.0,"n_cond":68,"coupled":0.68,"chance":0.59,"chance_p95":1.36},"rescaled":{"auc":0.806,"auc_ci":[0.752,0.857],"hit":0.6,"hit_ci":[0.502,0.691],"hit_cond":0.92,"n_cond":65,"coupled":6.04,"chance":0.34,"chance_p95":4.88},"atds":{"auc":0.877,"auc_ci":[0.829,0.923],"hit":0.85,"hit_ci":[0.767,0.907],"hit_cond":0.91,"n_cond":93,"coupled":14.03,"chance":3.31,"chance_p95":11.43},"atds_tol1":{"auc":0.83,"auc_ci":[0.785,0.875],"hit":0.66,"hit_ci":[0.563,0.745],"hit_cond":1.0,"n_cond":66,"coupled":6.59,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":0.985,"auc_ci":[0.965,1.0],"hit":0.97,"hit_ci":[0.915,0.99],"hit_cond":1.0,"n_cond":97,"coupled":55.79,"chance":0.0,"chance_p95":0.0},"diff_fixed":{"ci90":[0.263,0.414],"ci95":[0.249,0.435]},"diff_rescaled":{"ci90":[0.018,0.131],"ci95":[0.007,0.142]},"diff_oracle":{"ci90":[-0.152,-0.066],"ci95":[-0.158,-0.059]},"diff_atds_tol1":{"ci90":[0.006,0.089],"ci95":[-0.006,0.098]}},{"r":16,"n":100,"calib_failed":false,"params":{"fixed":{"window":60,"max_lag":30,"tol":1},"rescaled":{"window":960,"max_lag":480,"tol":16},"atds":{"window":1083,"max_lag":541,"tol":56},"atds_tol1":{"window":1083,"max_lag":541,"tol":1},"oracle":{"window":1920,"max_lag":959,"tol":135}},"fixed":{"auc":0.509,"auc_ci":[0.428,0.585],"hit":0.0,"hit_ci":[0.0,0.037],"hit_cond":0.0,"n_cond":76,"coupled":0.9,"chance":0.91,"chance_p95":2.41},"rescaled":{"auc":0.688,"auc_ci":[0.631,0.737],"hit":0.41,"hit_ci":[0.319,0.508],"hit_cond":1.0,"n_cond":41,"coupled":5.92,"chance":0.42,"chance_p95":0.0},"atds":{"auc":0.645,"auc_ci":[0.58,0.716],"hit":0.42,"hit_ci":[0.328,0.518],"hit_cond":0.79,"n_cond":53,"coupled":10.69,"chance":4.11,"chance_p95":14.43},"atds_tol1":{"auc":0.63,"auc_ci":[0.585,0.675],"hit":0.26,"hit_ci":[0.184,0.354],"hit_cond":1.0,"n_cond":26,"coupled":4.54,"chance":0.0,"chance_p95":0.0},"oracle":{"auc":0.843,"auc_ci":[0.788,0.891],"hit":0.73,"hit_ci":[0.636,0.807],"hit_cond":0.94,"n_cond":78,"coupled":32.21,"chance":4.95,"chance_p95":26.32},"diff_fixed":{"ci90":[0.045,0.229],"ci95":[0.026,0.246]},"diff_rescaled":{"ci90":[-0.105,0.018],"ci95":[-0.117,0.029]},"diff_oracle":{"ci90":[-0.261,-0.138],"ci95":[-0.271,-0.129]},"diff_atds_tol1":{"ci90":[-0.037,0.06],"ci95":[-0.048,0.07]}}]};
+const EX5 = {"V1":[{"d":16,"calib_failed":false,"fixed":{"auc":0.734,"hit":0.0,"n_with_stable":17,"median_reported":0.0,"median_offset":-16.0,"window":60,"max_lag":30,"tol":1,"chance":2.41},"atds":{"auc":1.0,"hit":0.0,"n_with_stable":20,"median_reported":19.0,"median_offset":3.0,"window":128,"max_lag":63,"tol":0,"chance":0.0}},{"d":32,"calib_failed":false,"fixed":{"auc":0.786,"hit":0.0,"n_with_stable":19,"median_reported":15.5,"median_offset":-16.5,"window":60,"max_lag":30,"tol":1,"chance":2.14},"atds":{"auc":1.0,"hit":1.0,"n_with_stable":20,"median_reported":35.0,"median_offset":3.0,"window":127,"max_lag":63,"tol":0,"chance":0.21}}],"V2":[{"seed":0,"kind":"disjoint","coupled":true,"window":271,"tol":13,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":1,"n_other":12,"raw_fp_other":1,"n_sig":4},{"seed":1,"kind":"disjoint","coupled":true,"window":243,"tol":13,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":12,"raw_fp_other":0,"n_sig":3},{"seed":2,"kind":"disjoint","coupled":true,"window":257,"tol":11,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":12,"raw_fp_other":1,"n_sig":3},{"seed":3,"kind":"disjoint","coupled":true,"window":263,"tol":12,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":12,"raw_fp_other":1,"n_sig":3},{"seed":4,"kind":"disjoint","coupled":true,"window":253,"tol":13,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":12,"raw_fp_other":1,"n_sig":3},{"seed":5,"kind":"disjoint","coupled":true,"window":249,"tol":12,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":1,"n_other":12,"raw_fp_other":2,"n_sig":4},{"seed":6,"kind":"disjoint","coupled":true,"window":246,"tol":14,"true_found":2,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":12,"raw_fp_other":0,"n_sig":2},{"seed":7,"kind":"disjoint","coupled":true,"window":272,"tol":13,"true_found":2,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":1,"n_other":12,"raw_fp_other":1,"n_sig":3},{"seed":8,"kind":"disjoint","coupled":true,"window":267,"tol":12,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":12,"raw_fp_other":0,"n_sig":3},{"seed":9,"kind":"disjoint","coupled":true,"window":251,"tol":12,"true_found":2,"n_true":3,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":12,"raw_fp_other":0,"n_sig":2},{"seed":0,"kind":"disjoint","coupled":false,"window":274,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":1,"kind":"disjoint","coupled":false,"window":248,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":2,"kind":"disjoint","coupled":false,"window":257,"tol":11,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":3,"kind":"disjoint","coupled":false,"window":263,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":4,"kind":"disjoint","coupled":false,"window":253,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":5,"kind":"disjoint","coupled":false,"window":244,"tol":12,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":6,"kind":"disjoint","coupled":false,"window":247,"tol":14,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":7,"kind":"disjoint","coupled":false,"window":272,"tol":14,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":8,"kind":"disjoint","coupled":false,"window":267,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":9,"kind":"disjoint","coupled":false,"window":251,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":0,"kind":"driver","coupled":true,"window":274,"tol":15,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":0.131,"false_other":0,"n_other":11,"raw_fp_other":0,"n_sig":3},{"seed":1,"kind":"driver","coupled":true,"window":243,"tol":12,"true_found":2,"n_true":3,"indirect_flagged":0,"indirect_p":1.0,"false_other":0,"n_other":11,"raw_fp_other":0,"n_sig":2},{"seed":2,"kind":"driver","coupled":true,"window":266,"tol":13,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":0.026,"false_other":0,"n_other":11,"raw_fp_other":0,"n_sig":3},{"seed":3,"kind":"driver","coupled":true,"window":268,"tol":13,"true_found":2,"n_true":3,"indirect_flagged":0,"indirect_p":0.167,"false_other":0,"n_other":11,"raw_fp_other":1,"n_sig":2},{"seed":4,"kind":"driver","coupled":true,"window":255,"tol":14,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":1.0,"false_other":0,"n_other":11,"raw_fp_other":0,"n_sig":3},{"seed":5,"kind":"driver","coupled":true,"window":246,"tol":11,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":1.0,"false_other":0,"n_other":11,"raw_fp_other":1,"n_sig":3},{"seed":6,"kind":"driver","coupled":true,"window":246,"tol":13,"true_found":1,"n_true":3,"indirect_flagged":0,"indirect_p":0.206,"false_other":0,"n_other":11,"raw_fp_other":2,"n_sig":1},{"seed":7,"kind":"driver","coupled":true,"window":279,"tol":12,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":0.386,"false_other":1,"n_other":11,"raw_fp_other":2,"n_sig":4},{"seed":8,"kind":"driver","coupled":true,"window":263,"tol":13,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":0.491,"false_other":0,"n_other":11,"raw_fp_other":0,"n_sig":3},{"seed":9,"kind":"driver","coupled":true,"window":251,"tol":13,"true_found":3,"n_true":3,"indirect_flagged":0,"indirect_p":0.185,"false_other":0,"n_other":11,"raw_fp_other":0,"n_sig":3},{"seed":0,"kind":"driver","coupled":false,"window":274,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":1,"kind":"driver","coupled":false,"window":248,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":2,"kind":"driver","coupled":false,"window":257,"tol":11,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":3,"kind":"driver","coupled":false,"window":263,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":4,"kind":"driver","coupled":false,"window":253,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":5,"kind":"driver","coupled":false,"window":244,"tol":12,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":6,"kind":"driver","coupled":false,"window":247,"tol":14,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":7,"kind":"driver","coupled":false,"window":272,"tol":14,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":1,"n_sig":0},{"seed":8,"kind":"driver","coupled":false,"window":267,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0},{"seed":9,"kind":"driver","coupled":false,"window":251,"tol":13,"true_found":0,"n_true":0,"indirect_flagged":0,"indirect_p":null,"false_other":0,"n_other":15,"raw_fp_other":0,"n_sig":0}]};
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function scale(d0, d1, r0, r1, log) {
+  if (log) { const a = Math.log(d0), b = Math.log(d1); return v => r0 + (Math.log(v) - a) / (b - a) * (r1 - r0); }
+  return v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
+}
+function fmt(v) { return typeof v === "number" ? (Math.abs(v) >= 100 ? v.toLocaleString("en-US") : String(v)) : v; }
+
+// Builds one SVG plot with axes and a nearest-point tooltip layer.
+function plot(container, o) {
+  const W = o.w || 680, H = o.h || 300, m = Object.assign({ l: 58, r: 20, t: o.title ? 28 : 14, b: 48 }, o.m || {});
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": o.aria || "" }, container);
+  const x = scale(o.x.min, o.x.max, m.l, W - m.r, o.x.log), y = scale(o.y.min, o.y.max, H - m.b, m.t, o.y.log);
+  const ax = el("g", { class: "axis" }, svg);
+  if (o.title) el("text", { x: m.l, y: 16, class: "panel-title" }, svg).textContent = o.title;
+  o.y.ticks.forEach(t => {
+    el("line", { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), class: "gridline" }, ax);
+    el("text", { x: m.l - 8, y: y(t) + 4, "text-anchor": "end" }, ax).textContent = (o.y.fmt || fmt)(t);
+  });
+  el("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, class: "baseline" }, ax);
+  o.x.ticks.forEach(t => {
+    el("line", { x1: x(t), x2: x(t), y1: H - m.b, y2: H - m.b + 4, class: "baseline" }, ax);
+    el("text", { x: x(t), y: H - m.b + 18, "text-anchor": "middle" }, ax).textContent = (o.x.fmt || fmt)(t);
+  });
+  el("text", { x: (m.l + W - m.r) / 2, y: H - 8, "text-anchor": "middle", class: "axis-label" }, svg).textContent = o.x.label;
+  const yl = el("text", { x: 0, y: 0, "text-anchor": "middle", class: "axis-label", transform: `translate(14 ${(m.t + H - m.b) / 2}) rotate(-90)` }, svg);
+  yl.textContent = o.y.label;
+  const layer = el("g", {}, svg);
+  const pts = [];
+  return { svg, x, y, layer, pts, W, H, m, container };
+}
+function attachTip(p) {
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; p.container.appendChild(tip);
+  const ring = el("circle", { r: 7, class: "hover-ring", visibility: "hidden" }, p.svg);
+  function move(ev) {
+    const r = p.svg.getBoundingClientRect(), sx = p.W / r.width;
+    const mx = (ev.clientX - r.left) * sx, my = (ev.clientY - r.top) * sx;
+    let best = null, bd = 1e9;
+    p.pts.forEach(q => { const d = Math.hypot(q.px - mx, q.py - my); if (d < bd) { bd = d; best = q; } });
+    if (!best || bd > 40) { tip.hidden = true; ring.setAttribute("visibility", "hidden"); return; }
+    ring.setAttribute("cx", best.px); ring.setAttribute("cy", best.py); ring.setAttribute("visibility", "visible");
+    const cr = p.container.getBoundingClientRect();
+    tip.innerHTML = best.html; tip.hidden = false;
+    let left = r.left - cr.left + best.px / sx; left = Math.max(80, Math.min(cr.width - 80, left));
+    tip.style.left = left + "px"; tip.style.top = (r.top - cr.top + best.py / sx) + "px";
+  }
+  p.svg.addEventListener("pointermove", move);
+  p.svg.addEventListener("pointerleave", () => { tip.hidden = true; ring.setAttribute("visibility", "hidden"); });
+}
+function line(p, data, color, opts = {}) {
+  const d = data.map((v, i) => (i ? "L" : "M") + p.x(v[0]).toFixed(1) + " " + p.y(v[1]).toFixed(1)).join(" ");
+  el("path", { d, fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-dasharray": opts.dash || "none" }, p.layer);
+  if (opts.dots !== false) data.forEach(v => el("circle", { cx: p.x(v[0]), cy: p.y(v[1]), r: 4, fill: color, stroke: "var(--surface)", "stroke-width": 2 }, p.layer));
+  data.forEach(v => p.pts.push({ px: p.x(v[0]), py: p.y(v[1]), html: opts.tip(v) }));
+}
+function legend(container, items) {
+  const L = document.createElement("div"); L.className = "legend";
+  L.innerHTML = items.map(i => `<span><i class="sw ${i.k || ""}" style="background:${i.c};border-color:${i.c}"></i>${i.n}</span>`).join("");
+  container.prepend(L);
+}
+function table(id, head, rows) {
+  document.getElementById(id).innerHTML = "<table><thead><tr>" + head.map(h => `<th>${h}</th>`).join("") + "</tr></thead><tbody>" +
+    rows.map(r => "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>").join("") + "</tbody></table>";
+}
+
+
+const pct = v => v + " %";
+
+// Figure 1: worked example, two stacked panels
+(() => {
+  const c = document.getElementById("f1"), E = EX4.U12[0].example;
+  legend(c, [{ n: "Stable window", c: "var(--ink-2)", k: "dot" }, { n: "Unstable window", c: "var(--ink-2)", k: "ring" }, { n: "True delay (−20)", c: "", k: "dash" }]);
+  [["fixed", "Fixed TDS · window 60, lag ±30, tol ±1 · score 5.2 %", "var(--fixed)"],
+   ["atds", "aTDS · window 259, lag ±129, tol ±13 · score 91.3 %", "var(--atds)"]].forEach(([k, title, col], idx) => {
+    const S = E[k];
+    const p = plot(c, { h: 230, title, aria: title, m: { b: idx ? 48 : 30 },
+      x: { min: 0, max: 12000, ticks: [0, 2000, 4000, 6000, 8000, 10000, 12000], label: idx ? "Time (samples)" : "" },
+      y: { min: -130, max: 130, ticks: [-120, -60, 0, 60, 120], label: "τ₀ (samples)" } });
+    el("line", { x1: p.x(0), x2: p.x(12000), y1: p.y(-20), y2: p.y(-20), class: "ref" }, p.layer);
+    S.t.forEach((t, i) => {
+      const st = S.stable[i] === 1, cx = p.x(t), cy = p.y(S.tau[i]);
+      el("circle", { cx, cy, r: k === "fixed" ? 3 : 4.2, fill: st ? col : "var(--surface)", stroke: col, "stroke-width": st ? 1 : 1.5 }, p.layer);
+      p.pts.push({ px: cx, py: cy, html: `t = ${fmt(t)} · τ₀ = <b>${S.tau[i]}</b><br>${st ? "stable" : "unstable"}` });
+    });
+    attachTip(p);
+  });
+  table("t1", ["", "window", "step", "lag range", "tolerance", "TDS score", "τ₀ within ±2 of true delay"],
+    [["Fixed TDS", 60, 30, "±30", "±1", pct(E.fixed.score), pct(E.fixed.near_true)],
+     ["aTDS", E.atds.params.window, E.atds.params.step, "±" + E.atds.params.max_lag, "±" + E.atds.params.tol, pct(E.atds.score), pct(E.atds.near_true)]]);
+})();
+
+// Figure 2: independent samples per window
+(() => {
+  const c = document.getElementById("f2"), M = D.memory;
+  legend(c, [{ n: "Fixed window (60 samples)", c: "var(--fixed)" }, { n: "aTDS window (30 · B)", c: "var(--atds)" }, { n: "1 independent sample", c: "", k: "dash" }]);
+  const p = plot(c, { aria: "Independent samples per window versus signal memory",
+    x: { min: 0.8, max: 80, log: true, ticks: [1, 2, 4, 8, 16, 32, 64], label: "How slow the signal is: correlation time τc (samples, log)" },
+    y: { min: 0.5, max: 80, log: true, ticks: [0.5, 1, 2, 5, 10, 30, 60], label: "Independent samples per window (log)" } });
+  el("line", { x1: p.x(0.8), x2: p.x(80), y1: p.y(1), y2: p.y(1), class: "ref" }, p.layer);
+  line(p, M.map(r => [r.tc, r.indep_fixed]), "var(--fixed)", { tip: v => { const r = M.find(q => q.tc === v[0]); return `τc = ${r.tc} · B = ${r.B}<br>fixed 60: <b>${r.indep_fixed}</b> independent samples`; } });
+  line(p, M.map(r => [r.tc, r.indep_atds]), "var(--atds)", { tip: v => { const r = M.find(q => q.tc === v[0]); return `τc = ${r.tc} · aTDS window ${fmt(r.atds_window)}<br><b>${r.indep_atds}</b> independent samples`; } });
+  const last = M[M.length - 1];
+  el("text", { x: p.x(last.tc) - 8, y: p.y(last.indep_fixed) + 18, "text-anchor": "end", class: "direct" }, p.layer).textContent = "fixed: 0.93";
+  el("text", { x: p.x(last.tc) - 8, y: p.y(30) - 10, "text-anchor": "end", class: "direct" }, p.layer).textContent = "aTDS: 30";
+  attachTip(p);
+  table("t2", ["τc (samples)", "Bartlett B", "indep. in 60", "aTDS window", "indep. in aTDS"], M.map(r => [r.tc, r.B, r.indep_fixed, fmt(r.atds_window), r.indep_atds]));
+})();
+
+// Figure 3: AUC vs window length (n = 100 per class), AUC at the aTDS windows
+(() => {
+  const c = document.getElementById("f3"), A = EX4.U2, at = EX4.U2m;
+  const sys = [[2, "Faster system (τc 4, delay 10)", "var(--fixed)"], [8, "4× slower system (τc 16, delay 40)", "var(--v1)"]];
+  legend(c, sys.map(s => ({ n: s[1], c: s[2] })).concat([{ n: "Fixed window (60), both systems", c: "", k: "dash" }, { n: "AUC at the aTDS window", c: "var(--atds)", k: "dot" }]));
+  const p = plot(c, { aria: "AUC versus window length",
+    x: { min: 24, max: 2400, log: true, ticks: [30, 60, 120, 240, 480, 960, 1920], label: "Window length (samples, log scale)" },
+    y: { min: 0.4, max: 1.02, ticks: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], label: "AUC (coupled vs uncoupled)" } });
+  el("line", { x1: p.x(60), x2: p.x(60), y1: p.y(0.4), y2: p.y(1.02), class: "ref" }, p.layer);
+  el("text", { x: p.x(60) + 5, y: p.y(0.43), class: "ref-label" }, p.layer).textContent = "fixed 60";
+  sys.forEach(([r, n, col]) => ciSeries(p, A.filter(a => a.r === r).map(a => [a.L, a.auc, a.auc_ci[0], a.auc_ci[1]]), col, 1,
+    row => { const a = A.find(q => q.r === r && q.L === row[0]); return `${n}<br>window ${a.L} · tol ±${a.tol}<br>AUC <b>${a.auc.toFixed(2)}</b> [${a.auc_ci.join(", ")}]`; }));
+  [[2, "var(--fixed)"], [8, "var(--v1)"]].forEach(([r, col]) => {
+    const m = at.find(q => q.r === r);
+    el("line", { x1: p.x(m.L), x2: p.x(m.L), y1: p.y(0.4), y2: p.y(1.02), stroke: col, "stroke-width": 2, "stroke-opacity": 0.6 }, p.layer);
+    el("circle", { cx: p.x(m.L), cy: p.y(m.auc), r: 6, fill: "var(--atds)", stroke: "var(--surface)", "stroke-width": 2 }, p.layer);
+    el("text", { x: p.x(m.L) + 9, y: p.y(m.auc) + (r === 2 ? 18 : 4), class: "direct" }, p.layer).textContent = `aTDS ${m.L}: ${m.auc.toFixed(2)}`;
+    p.pts.push({ px: p.x(m.L), py: p.y(m.auc), html: `aTDS window ${m.L} (tol ±${m.tol})<br>AUC <b>${m.auc.toFixed(2)}</b> [${m.auc_ci.join(", ")}]` });
+  });
+  attachTip(p);
+  const Ls = [...new Set(A.map(a => a.L))];
+  const rows = Ls.map(L => { const f = A.find(a => a.r === 2 && a.L === L), s = A.find(a => a.r === 8 && a.L === L); return [L, `${f.auc.toFixed(2)} [${f.auc_ci.join(", ")}]`, "±" + f.tol, `${s.auc.toFixed(2)} [${s.auc_ci.join(", ")}]`, "±" + s.tol]; });
+  const f2_ = at.find(q => q.r === 2), s2_ = at.find(q => q.r === 8);
+  rows.push([`aTDS ${f2_.L} / ${s2_.L}`, `${f2_.auc.toFixed(2)} [${f2_.auc_ci.join(", ")}]`, "±" + f2_.tol, `${s2_.auc.toFixed(2)} [${s2_.auc_ci.join(", ")}]`, "±" + s2_.tol]);
+  table("t3", ["window", "AUC faster [95 %]", "tol faster", "AUC slower [95 %]", "tol slower"], rows);
+})();
+
+// Figure 3b: on/off coupling, three block lengths, fixed +-2 criterion
+(() => {
+  const c = document.getElementById("f3b"), R = EX4.U3;
+  const S_ = [[1000, "Blocks of 1 000 samples", "var(--fixed)"], [2000, "Blocks of 2 000", "var(--v1)"], [4000, "Blocks of 4 000", "var(--atds)"]];
+  legend(c, S_.map(s => ({ n: s[1], c: s[2] })).concat([{ n: "aTDS choice (30)", c: "", k: "dash" }]));
+  const p = plot(c, { aria: "Balanced accuracy versus independent samples per window",
+    x: { min: 4, max: 150, log: true, ticks: [5, 10, 15, 20, 30, 45, 60, 90, 120], label: "Independent samples per window, L / B (log scale)" },
+    y: { min: 0.4, max: 1.0, ticks: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], label: "Balanced accuracy of the stable labels" } });
+  el("line", { x1: p.x(30), x2: p.x(30), y1: p.y(0.4), y2: p.y(1.0), class: "ref" }, p.layer);
+  el("line", { x1: p.x(4), x2: p.x(150), y1: p.y(0.5), y2: p.y(0.5), stroke: "var(--ink-3)", "stroke-width": 1 }, p.layer);
+  el("text", { x: p.x(150) - 4, y: p.y(0.5) - 6, "text-anchor": "end", class: "ref-label" }, p.layer).textContent = "guessing (0.5)";
+  S_.forEach(([bl, n, col]) => line(p, R.filter(r => r.block === bl).map(r => [r.neff, r.bal_acc]), col,
+    { tip: v => { const r = R.find(q => q.block === bl && q.neff === v[0]); return `${n} · ${r.neff} independent samples<br>window ${r.window}, tol ±${r.tol}<br>balanced accuracy <b>${r.bal_acc}</b> (sd ${r.sd})`; } }));
+  attachTip(p);
+  table("t3b", ["indep. samples", "window", "blocks 1 000", "blocks 2 000", "blocks 4 000"],
+    [...new Set(R.map(r => r.neff))].map(ne => { const g = bl => R.find(r => r.neff === ne && r.block === bl); return [ne, g(1000).window, g(1000).bal_acc, g(2000).bal_acc, g(4000).bal_acc]; }));
+})();
+
+// Figure 4: lag range only
+(() => {
+  const B = EX4.U4;
+  const V = [["lag30", "var(--fixed)", "Lag ±30"], ["atds", "var(--atds)", "aTDS lag range"]];
+  const a = document.getElementById("f4a");
+  legend(a, V.map(v => ({ n: v[2], c: v[1], k: "dot" })).concat([{ n: "Perfect answer", c: "", k: "dash" }]));
+  const p = plot(a, { w: 340, h: 300, m: { l: 50, r: 12 }, aria: "Delay reported versus true delay",
+    x: { min: 0, max: 170, ticks: [0, 40, 80, 120, 160], label: "True delay (samples)" },
+    y: { min: -40, max: 170, ticks: [-40, 0, 40, 80, 120, 160], label: "Delay reported (samples)" } });
+  el("line", { x1: p.x(0), x2: p.x(170), y1: p.y(0), y2: p.y(170), class: "ref" }, p.layer);
+  const b = document.getElementById("f4b");
+  legend(b, V.map(v => ({ n: v[2], c: v[1], k: "dot" })).concat([{ n: "Wrong delay reported", c: "var(--fixed)", k: "ring" }]));
+  const q = plot(b, { w: 340, h: 300, m: { l: 50, r: 12 }, aria: "TDS score versus true delay",
+    x: { min: 0, max: 170, ticks: [0, 40, 80, 120, 160], label: "True delay (samples)" },
+    y: { min: 0, max: 100, ticks: [0, 25, 50, 75, 100], label: "TDS score (%)" } });
+  B.forEach(r => V.forEach(([k, col, n], vi) => {
+    const off = (vi ? 1.8 : -1.8) + (r.k - 4.5) * 0.35, v = r[k], ok = v.found === r.d;
+    const html = `true delay ${r.d} · ${n} (±${v.max_lag})<br>reports <b>${v.found}</b> · score ${v.score} %<br>${ok ? "right delay" : "<b>wrong delay</b>"}`;
+    [[p, v.found], [q, v.score]].forEach(([pl, yv]) => {
+      const cx = pl.x(r.d + off), cy = pl.y(yv);
+      el("circle", { cx, cy, r: 3.6, fill: ok ? col : "var(--surface)", stroke: ok ? "var(--surface)" : col, "stroke-width": ok ? 1.2 : 1.8, "fill-opacity": 0.9 }, pl.layer);
+      pl.pts.push({ px: cx, py: cy, html });
+    });
+  }));
+  attachTip(p); attachTip(q);
+  const ds = [...new Set(B.map(r => r.d))];
+  table("t4", ["true delay", "window", "tol", "lag ±30: reported", "lag ±30: score %", "aTDS lag: reported", "aTDS lag: score %"],
+    ds.map(d => { const r = B.filter(x => x.d === d); return [d, r[0].window, "±" + r[0].tol, r.map(x => x.lag30.found).join(", "), r.map(x => x.lag30.score).join(", "), r.map(x => x.atds.found).join(", "), r.map(x => x.atds.score).join(", ")]; }));
+})();
+
+// Figure 5: tolerance calibration, with the upper bound
+(() => {
+  const C = EX4.U12[0].tol_curve, pick = EX4.U12[0].example_info.tol;
+  const a = document.getElementById("f5a");
+  legend(a, [{ n: "Chance score C(tol)", c: "var(--fixed)" }, { n: "Upper bound C + 2 SE", c: "var(--v1)" }, { n: "5 % budget", c: "", k: "dash" }]);
+  const p = plot(a, { w: 340, h: 280, m: { l: 50, r: 12 }, aria: "Chance score versus tolerance",
+    x: { min: 0, max: 30, ticks: [0, 5, 10, 15, 20, 25, 30], label: "Tolerance (± samples)" },
+    y: { min: 0, max: 25, ticks: [0, 5, 10, 15, 20, 25], label: "Chance TDS score (%)" } });
+  el("line", { x1: p.x(0), x2: p.x(30), y1: p.y(5), y2: p.y(5), class: "ref" }, p.layer);
+  el("line", { x1: p.x(pick), x2: p.x(pick), y1: p.y(0), y2: p.y(25), stroke: "var(--atds)", "stroke-width": 1.5 }, p.layer);
+  el("text", { x: p.x(pick) - 5, y: p.y(22), "text-anchor": "end", class: "direct" }, p.layer).textContent = `aTDS chose ±${pick}`;
+  line(p, C.map(r => [r.tol, r.ub]), "var(--v1)", { dots: false, dash: "5 3", tip: v => `tol ±${v[0]}<br>upper bound <b>${v[1]} %</b>` });
+  line(p, C.map(r => [r.tol, r.null]), "var(--fixed)", { dots: false, tip: v => `tol ±${v[0]}<br>chance score <b>${v[1]} %</b>` });
+  attachTip(p);
+  const b = document.getElementById("f5b");
+  legend(b, [{ n: "Real pair score", c: "var(--atds)" }]);
+  const q = plot(b, { w: 340, h: 280, m: { l: 50, r: 12 }, aria: "Real pair score versus tolerance",
+    x: { min: 0, max: 30, ticks: [0, 5, 10, 15, 20, 25, 30], label: "Tolerance (± samples)" },
+    y: { min: 0, max: 100, ticks: [0, 25, 50, 75, 100], label: "Real TDS score (%)" } });
+  el("line", { x1: q.x(pick), x2: q.x(pick), y1: q.y(0), y2: q.y(100), stroke: "var(--atds)", "stroke-width": 1.5, "stroke-dasharray": "2 3" }, q.layer);
+  line(q, C.map(r => [r.tol, r.real]), "var(--atds)", { dots: false, tip: v => `tol ±${v[0]}<br>real score <b>${v[1]} %</b>` });
+  attachTip(q);
+  table("t5", ["tolerance", "chance score %", "upper bound %", "real score %"], C.filter(r => r.tol % 2 === 0 || r.tol === 13 || r.tol === 15).map(r => ["±" + r.tol, r.null, r.ub, r.real]));
+})();
+
+// CI series helper: points with 95 % whiskers, x offset in log space
+function ciSeries(p, rows, col, off, tip) {
+  const pts = rows.map(r => [r[0] * off, r[1], r[2], r[3]]);
+  const d = pts.map((v, i) => (i ? "L" : "M") + p.x(v[0]).toFixed(1) + " " + p.y(v[1]).toFixed(1)).join(" ");
+  el("path", { d, fill: "none", stroke: col, "stroke-width": 2 }, p.layer);
+  pts.forEach((v, i) => {
+    const cx = p.x(v[0]);
+    el("line", { x1: cx, x2: cx, y1: p.y(v[2]), y2: p.y(v[3]), stroke: col, "stroke-width": 1.5 }, p.layer);
+    [v[2], v[3]].forEach(e => el("line", { x1: cx - 3, x2: cx + 3, y1: p.y(e), y2: p.y(e), stroke: col, "stroke-width": 1.5 }, p.layer));
+    el("circle", { cx, cy: p.y(v[1]), r: 4, fill: col, stroke: "var(--surface)", "stroke-width": 1.5 }, p.layer);
+    p.pts.push({ px: cx, py: p.y(v[1]), html: tip(rows[i]) });
+  });
+}
+function ciFigure(ids, M, rows) {
+  const R = rows.map(r => r.r);
+  [[ids[0], "auc", "auc_ci", "AUC (coupled vs uncoupled)", 0.4, 1.02, [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]],
+   [ids[1], "hit", "hit_ci", "True delay found (share of pairs)", 0, 1.02, [0, 0.25, 0.5, 0.75, 1.0]]].forEach(([id, key, ci, lab, lo, hi, ticks]) => {
+    const c = document.getElementById(id);
+    legend(c, M.map(m => ({ n: m[1], c: m[2], k: m[3] || "" })));
+    const p = plot(c, { w: 340, h: 300, m: { l: 50, r: 14 }, aria: lab,
+      x: { min: 0.75, max: 21, log: true, ticks: R, label: "Slow-down factor r: system r× slower (log)" },
+      y: { min: lo, max: hi, ticks, label: lab } });
+    if (key === "auc") el("line", { x1: p.x(0.75), x2: p.x(21), y1: p.y(0.5), y2: p.y(0.5), class: "ref" }, p.layer);
+    M.forEach(([k, n, col], mi) => {
+      const off = Math.pow(1.06, mi - (M.length - 1) / 2);
+      ciSeries(p, rows.map(r => [r.r, r[k][key], r[k][ci][0], r[k][ci][1]]), col, off,
+        row => { const r = rows.find(q => q.r === row[0]), v = r[k], pp = r.params[k]; return `r = ${r.r} · ${n}<br>${key === "auc" ? "AUC" : "delay found"} <b>${row[1]}</b> [${row[2]}, ${row[3]}]<br>window ${pp.window}, lag ±${pp.max_lag}, tol ±${pp.tol}<br>coupled ${v.coupled} % · chance ${v.chance} %`; });
+    });
+    attachTip(p);
+  });
+}
+
+// Figure 6: tolerance only
+(() => {
+  const rows = EX4.U1;
+  ciFigure(["f6a", "f6b"], [["atds_tol1", "Tolerance ±1", "var(--fixed)"], ["atds", "Calibrated tolerance", "var(--atds)"]], rows);
+  table("t6", ["r", "window / lag", "calibrated tol", "AUC ±1", "AUC calibrated", "AUC diff (95 %)", "delay found ±1", "delay found cal.", "pairs ≥ 3 stable: ±1 / cal.", "right among those: ±1 / cal.", "chance ±1 / cal."],
+    rows.map(r => [r.r, `${r.params.atds.window} / ±${r.params.atds.max_lag}`, "±" + r.params.atds.tol, `${r.atds_tol1.auc} [${r.atds_tol1.auc_ci.join(", ")}]`, `${r.atds.auc} [${r.atds.auc_ci.join(", ")}]`,
+      r.diff_atds_tol1.ci95.join(" to "), `${Math.round(r.atds_tol1.hit * 100)} %`, `${Math.round(r.atds.hit * 100)} %`, `${r.atds_tol1.n_cond} / ${r.atds.n_cond}`,
+      `${Math.round(r.atds_tol1.hit_cond * 100)} / ${Math.round(r.atds.hit_cond * 100)} %`, `${r.atds_tol1.chance} / ${r.atds.chance} %`]));
+})();
+
+// Figure 7: all rules, fair baselines
+(() => {
+  const rows = EX4.U1;
+  ciFigure(["f7a", "f7b"], [["fixed", "Published 60/±30/±1", "var(--fixed)"], ["rescaled", "Rescaled by hand", "var(--v1)"], ["atds", "aTDS", "var(--atds)"], ["oracle", "Oracle (upper bound)", "var(--ink-3)"]], rows);
+  table("t7", ["r", "setting", "window / lag / tol", "AUC [95 %]", "delay found [95 %]", "coupled %", "chance % (95th pct)"],
+    rows.flatMap(r => ["fixed", "rescaled", "atds", "oracle"].map(k => [r.r, { fixed: "published", rescaled: "rescaled by hand", atds: "aTDS", oracle: "oracle" }[k],
+      `${r.params[k].window} / ±${r.params[k].max_lag} / ±${r.params[k].tol}`, `${r[k].auc} [${r[k].auc_ci.join(", ")}]`, `${Math.round(r[k].hit * 100)} % [${r[k].hit_ci.map(v => Math.round(v * 100)).join(", ")}]`, r[k].coupled, `${r[k].chance} (${r[k].chance_p95})`]))
+      .concat(rows.map(r => { const d = r.diff_rescaled, eq = d.ci90[0] >= -0.05 && d.ci90[1] <= 0.05, bt = d.ci95[0] > 0, wo = d.ci95[1] < 0;
+        return [r.r, "aTDS − rescaled", "", `90 %: ${d.ci90.join(" to ")} · 95 %: ${d.ci95.join(" to ")}`, eq ? "equivalent (±0.05)" : bt ? "aTDS better" : wo ? "rescaled better" : "undecided", "", ""]; })));
+})();
+
+// Table 3: network links with FDR (999 rotations)
+(() => {
+  const R = EX5.V2, sum = (a, f) => a.reduce((s, r) => s + f(r), 0);
+  const rows = [];
+  [["disjoint", "Disjoint links"], ["driver", "Common driver"]].forEach(([k, nm]) => [true, false].forEach(cp => {
+    const v = R.filter(r => r.kind === k && r.coupled === cp);
+    rows.push([`${nm}, ${cp ? "coupled" : "uncoupled"} (10)`, cp ? `${sum(v, r => r.true_found)} of ${sum(v, r => r.n_true)}` : "—",
+      `${sum(v, r => r.false_other)} of ${sum(v, r => r.n_other)}`, `${sum(v, r => r.raw_fp_other)} of ${sum(v, r => r.n_other)} (${(100 * sum(v, r => r.raw_fp_other) / sum(v, r => r.n_other)).toFixed(1)} %)`,
+      k === "driver" && cp ? `${sum(v, r => r.indirect_flagged)} of 10` : "—", v.filter(r => r.false_other).length,
+      `${Math.min(...v.map(r => r.window))}–${Math.max(...v.map(r => r.window))} / ±${Math.min(...v.map(r => r.tol))}–${Math.max(...v.map(r => r.tol))}`]);
+  }));
+  table("t8", ["networks", "true links found", "false links (after FDR)", "uncoupled links with raw p ≤ 0.05", "indirect link reported", "networks with a false link", "window / tol"], rows);
+})();
+
+// Looping step animations for the algorithm section
+(() => {
+  const root = document.documentElement;
+  const css = n => getComputedStyle(root).getPropertyValue(n).trim();
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let seed = 11;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const gauss = () => Math.sqrt(-2 * Math.log(rnd() || 1e-9)) * Math.cos(2 * Math.PI * rnd());
+  function ar1(n, tc) { const phi = Math.exp(-1 / tc); let x = 0; const o = []; for (let i = 0; i < n + 300; i++) { x = phi * x + gauss(); if (i >= 300) o.push(x); } const m = o.reduce((a, b) => a + b) / n, s = Math.sqrt(o.reduce((a, b) => a + (b - m) ** 2, 0) / n); return o.map(v => (v - m) / s); }
+  const N = 12000, DEL = 20, X = ar1(N, 8), E = ar1(N, 2);
+  const Y = X.map((_, i) => 0.6 * X[(i - DEL + N) % N] + 0.8 * E[i]);
+  function bart(S_) { const r = []; for (let k = 0; k <= 400; k++) { let s = 0; for (let t = 0; t + k < N; t++) s += S_[t] * S_[t + k]; r.push(s); }
+    const r0 = r[0]; for (let k = 0; k < r.length; k++) r[k] /= r0;
+    let K_ = r.findIndex(v => v <= 0); if (K_ < 0) K_ = r.length;
+    const Bc_ = [1]; for (let k = 1; k < r.length; k++) Bc_.push(Bc_[k - 1] + (k < K_ ? 2 * r[k] ** 2 : 0));
+    return { r, K: K_, Bc: Bc_, B: Bc_[Bc_.length - 1] }; }
+  const AX = bart(X), AY = bart(Y);
+  const B = Math.max(AX.B, AY.B), L = Math.round(30 * B), LAG = Math.floor((L - 1) / 2), STEP = Math.floor(L / 2);
+  const font = (s, w) => `${w || 400} ${s}px "IBM Plex Sans", system-ui, sans-serif`;
+  const mono = s => `${s}px "IBM Plex Mono", ui-monospace, monospace`;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const ease = t => t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+  function trace(ctx, arr, x0, x1, yMid, amp, col, lw, xs) {
+    ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = lw || 1.5;
+    arr.forEach((v, i) => { const x = xs ? xs(i) : x0 + i / (arr.length - 1) * (x1 - x0), y = yMid - v * amp; if (x == null) { ctx.stroke(); ctx.beginPath(); return; } i && xs == null ? ctx.lineTo(x, y) : ctx.moveTo(x, y); if (xs && i) ctx.lineTo(x, y); });
+    ctx.stroke();
+  }
+  function label(ctx, txt, x, y, col, f, align) { ctx.fillStyle = col; ctx.font = f || font(12); ctx.textAlign = align || "left"; ctx.fillText(txt, x, y); }
+
+  function anim(id, dur, draw, HH) {
+    const cv = document.getElementById(id); if (!cv) return;
+    const ctx = cv.getContext("2d"), W = 680, H = HH || 240;
+    const d = window.devicePixelRatio || 1; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+    let paused = reduce, t = reduce ? dur * 0.999 : 0, prev = null, vis = true;
+    const btn = document.querySelector(`[data-anim="${id}"]`);
+    const setBtn = () => { if (btn) { btn.textContent = paused ? "Play" : "Pause"; btn.setAttribute("aria-pressed", String(paused)); } };
+    if (btn) btn.addEventListener("click", () => { paused = !paused; prev = null; setBtn(); });
+    setBtn();
+    if ("IntersectionObserver" in window) new IntersectionObserver(es => { vis = es[0].isIntersecting; }).observe(cv);
+    const render = () => { ctx.clearRect(0, 0, W, H); ctx.fillStyle = css("--surface"); ctx.fillRect(0, 0, W, H); draw(ctx, t, W, H); };
+    render();
+    function frame(now) {
+      if (!paused && vis) { if (prev != null) t = (t + (now - prev) / 1000) % dur; prev = now; render(); } else prev = null;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+  }
+
+  // Step 1: autocorrelation of BOTH signals -> Bartlett factors -> slowest signal sets the window
+  anim("a1", 11, (ctx, t, W, H) => {
+    const ink = css("--ink"), ink2 = css("--ink-2"), ink3 = css("--ink-3"), acc = css("--accent"), or = css("--atds"), grid = css("--grid");
+    const SH = 600, x0 = 40, x1 = 640, sx = i => x0 + i / (SH - 1) * (x1 - x0);
+    label(ctx, "Two signals of one system (first 600 samples)", x0, 16, ink2, font(12, 600));
+    trace(ctx, X.slice(0, SH), x0, x1, 48, 8, ink, 1.2); label(ctx, "x", x1 + 8, 52, ink, font(12, 600));
+    trace(ctx, Y.slice(0, SH), x0, x1, 84, 8, acc, 1.2); label(ctx, "y", x1 + 8, 88, acc, font(12, 600));
+    const KS = Math.max(AX.K, AY.K) + 8, p1 = clamp(t / 4.5, 0, 1), kNow = Math.floor(p1 * KS);
+    const bx0 = 40, bx1 = 380, bw = (bx1 - bx0) / KS, bh = 34;
+    label(ctx, "Step 0 · autocorrelation r(k) of each signal", bx0, 126, ink2, font(12, 600));
+    [[AX, 170, ink, "x"], [AY, 222, acc, "y"]].forEach(([A, y0, col, nm]) => {
+      ctx.strokeStyle = ink3; ctx.beginPath(); ctx.moveTo(bx0, y0); ctx.lineTo(bx1, y0); ctx.stroke();
+      label(ctx, nm, bx0 - 14, y0 - 4, col, font(12, 600));
+      for (let k = 0; k <= Math.min(kNow, KS - 1); k++) { const h = A.r[k] * bh; ctx.fillStyle = col; ctx.globalAlpha = k < A.K ? 0.9 : 0.25; ctx.fillRect(bx0 + k * bw, h >= 0 ? y0 - h : y0, Math.max(1, bw - 0.6), Math.abs(h)); }
+      ctx.globalAlpha = 1;
+      if (kNow >= A.K) { const xk = bx0 + A.K * bw; ctx.setLineDash([3, 3]); ctx.strokeStyle = ink3; ctx.beginPath(); ctx.moveTo(xk, y0 - bh); ctx.lineTo(xk, y0 + 4); ctx.stroke(); ctx.setLineDash([]); label(ctx, `K = ${A.K}`, xk + 4, y0 - bh + 9, ink3, font(10)); }
+    });
+    label(ctx, "lag k", bx1, 238, ink3, font(10), "right");
+    const bNow = A => A.Bc[Math.max(0, Math.min(kNow, A.K - 1))];
+    label(ctx, "Step 1 · B = 1 + 2 Σ r(k)²", 410, 136, ink2, mono(12));
+    label(ctx, `B of x = ${bNow(AX).toFixed(1)}`, 410, 160, ink, mono(13));
+    label(ctx, `B of y = ${bNow(AY).toFixed(1)}`, 410, 180, acc, mono(13));
+    if (t > 4.7) label(ctx, `slowest: x, use B = ${B.toFixed(1)}`, 410, 202, ink, mono(12, 600));
+    const p3 = clamp((t - 5.4) / 4, 0, 1);
+    if (p3 > 0) {
+      const n = Math.round(p3 * 30), a0 = 30, Lc = n * B;
+      ctx.fillStyle = or; ctx.globalAlpha = 0.1; ctx.fillRect(sx(a0), 32, sx(a0 + Lc) - sx(a0), 68); ctx.globalAlpha = 1;
+      ctx.strokeStyle = or; ctx.lineWidth = 2; ctx.strokeRect(sx(a0), 32, sx(a0 + Lc) - sx(a0), 68); ctx.lineWidth = 1;
+      ctx.fillStyle = or; for (let j = 0; j < n; j++) { ctx.beginPath(); ctx.arc(sx(a0 + (j + 0.5) * B), 106, 2.3, 0, 7); ctx.fill(); }
+      label(ctx, `${n} independent samples (dots)`, 410, 222, or, mono(12));
+      label(ctx, n < 30 ? `${n} × B = ${n} × ${B.toFixed(1)} = ${Math.round(Lc)}` : `L = 30 × ${B.toFixed(1)} = ${L} samples`, 410, 242, or, mono(12, 600));
+    }
+  }, 250);
+
+  // Step 2: lag sweep inside one window
+  const s0 = 800, xw = X.slice(s0, s0 + L), yw = Y.slice(s0, s0 + L);
+  const z = a => { const m = a.reduce((p, q) => p + q) / a.length, s = Math.sqrt(a.reduce((p, q) => p + (q - m) ** 2, 0) / a.length); return a.map(v => (v - m) / s); };
+  const xz = z(xw), yz = z(yw), C = {};
+  for (let k = -LAG; k <= LAG; k++) { let s = 0; for (let i = 0; i < L; i++) s += xz[((i + k) % L + L) % L] * yz[i]; C[k] = s / L; }
+  let kPk = 0; for (let k = -LAG; k <= LAG; k++) if (Math.abs(C[k]) > Math.abs(C[kPk])) kPk = k;
+  anim("a2", 9, (ctx, t, W, H) => {
+    const ink = css("--ink"), ink2 = css("--ink-2"), ink3 = css("--ink-3"), acc = css("--accent"), or = css("--atds"), grid = css("--grid"), tint = css("--tint");
+    const x0 = 40, x1 = 660, p = clamp(t / 6.5, 0, 1), kNow = Math.round(-LAG + p * 2 * LAG);
+    const kShow = t > 6.5 ? kPk : kNow;
+    label(ctx, `One window (L = ${L}): x fixed, y shifted by k`, x0, 16, ink2, font(12, 600));
+    const sx = i => x0 + i / (L - 1) * (x1 - x0);
+    trace(ctx, xz, x0, x1, 48, 9, ink, 1.3);
+    ctx.beginPath(); ctx.strokeStyle = acc; ctx.lineWidth = 1.3; let prevX = null;
+    yz.forEach((v, i) => { const j = ((i + kShow) % L + L) % L, X_ = sx(j), Y_ = 98 - v * 9; if (prevX == null || X_ < prevX) ctx.moveTo(X_, Y_); else ctx.lineTo(X_, Y_); prevX = X_; });
+    ctx.stroke(); ctx.lineWidth = 1;
+    label(ctx, "x", x1 + 6, 52, ink2, font(12)); label(ctx, "y", x1 + 6, 102, acc, font(12));
+    const cy0 = 182, ch = 42, cx = k => x0 + (k + LAG) / (2 * LAG) * (x1 - x0);
+    ctx.fillStyle = tint; ctx.fillRect(cx(-30), cy0 - ch - 4, cx(30) - cx(-30), 2 * ch + 8);
+    label(ctx, "fixed ±30", cx(0), cy0 + ch + 16, ink3, font(11), "center");
+    ctx.strokeStyle = grid; ctx.beginPath(); ctx.moveTo(x0, cy0); ctx.lineTo(x1, cy0); ctx.stroke();
+    ctx.beginPath(); ctx.strokeStyle = or; ctx.lineWidth = 2;
+    for (let k = -LAG; k <= (t > 6.5 ? LAG : kNow); k++) { const X_ = cx(k), Y_ = cy0 - C[k] * ch / 0.7; k === -LAG ? ctx.moveTo(X_, Y_) : ctx.lineTo(X_, Y_); }
+    ctx.stroke(); ctx.lineWidth = 1;
+    label(ctx, `−${LAG}`, x0, cy0 + ch + 16, ink3, mono(11)); label(ctx, `+${LAG}`, x1, cy0 + ch + 16, ink3, mono(11), "right");
+    label(ctx, "C(k), aTDS lag range ±(L−1)/2", x0, 132, ink2, font(12, 600));
+    if (t <= 6.5) { ctx.strokeStyle = ink3; ctx.beginPath(); ctx.moveTo(cx(kNow), cy0 - ch - 4); ctx.lineTo(cx(kNow), cy0 + ch + 4); ctx.stroke(); label(ctx, `k = ${kNow}`, x1, 132, ink, mono(13), "right"); }
+    else { const X_ = cx(kPk), Y_ = cy0 - C[kPk] * ch / 0.7; ctx.fillStyle = or; ctx.beginPath(); ctx.arc(X_, Y_, 5, 0, 7); ctx.fill(); label(ctx, `τ₀ = ${kPk}: largest |C|`, x1, 132, or, mono(13), "right"); }
+  });
+
+  // Step 3: rotated copies -> tau0 per window -> stable windows at tol -> copy scores -> C(tol)
+  function tau0(s1, s2) {
+    const z_ = a_ => { const m = a_.reduce((p, q) => p + q) / a_.length, s = Math.sqrt(a_.reduce((p, q) => p + (q - m) ** 2, 0) / a_.length) || 1; return a_.map(v => (v - m) / s); };
+    const out = [];
+    for (let s = 0; s + L <= N; s += STEP) {
+      const u = z_(s1.slice(s, s + L)), v = z_(s2.slice(s, s + L)); let best = 0, bk = 0;
+      for (let k = -LAG; k <= LAG; k++) { let c = 0; for (let q = 0; q < L; q++) c += u[((q + k) % L + L) % L] * v[q]; if (Math.abs(c) > best) { best = Math.abs(c); bk = k; } }
+      out.push(bk);
+    }
+    return out;
+  }
+  function stable(tau, tol) {
+    const lab = tau.map(() => false);
+    for (let i = 0; i + 5 <= tau.length; i++) { const w = tau.slice(i, i + 5);
+      for (const c of new Set(w)) { const near = w.map(v => Math.abs(v - c) <= tol); if (near.filter(Boolean).length >= 4) near.forEach((ok, q) => { if (ok) lab[i + q] = true; }); } }
+    return lab;
+  }
+  const NC = 8, aSh = Math.max(L, Math.floor(N / 10)), shifts = [], nullT = [];
+  for (let j = 0; j < NC; j++) { const h = aSh + Math.floor(rnd() * (N - 2 * aSh)); shifts.push(h); const yr = Y.map((_, i) => Y[((i - h) % N + N) % N]); nullT.push(tau0(X, yr)); }
+  const TM = Math.max(1, Math.floor(LAG / 4)), SC = [], CT = [], UB = [];
+  for (let tol = 0; tol <= TM; tol++) { const sc = nullT.map(tt => { const lb = stable(tt, tol); return 100 * lb.filter(Boolean).length / lb.length; }); SC.push(sc); const m_ = sc.reduce((p, q) => p + q) / NC; CT.push(m_); UB.push(m_ + 2 * Math.sqrt(sc.reduce((p, q) => p + (q - m_) ** 2, 0) / (NC - 1)) / Math.sqrt(NC)); }
+  let pick = 0, stop = TM; for (let tol = 0; tol <= TM; tol++) { if (UB[tol] <= 5) pick = tol; else { stop = tol; break; } }
+  function vlabel(ctx, txt, x, y, col) { ctx.save(); ctx.translate(x, y); ctx.rotate(-Math.PI / 2); label(ctx, txt, 0, 0, col, font(11), "center"); ctx.restore(); }
+  function axisX(ctx, x0, x1, y, ticks, fx, col, title, tcol) {
+    ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+    ticks.forEach(v => { const X_ = fx(v); ctx.beginPath(); ctx.moveTo(X_, y); ctx.lineTo(X_, y + 4); ctx.stroke(); label(ctx, String(v), X_, y + 15, tcol, mono(10), "center"); });
+    if (title) label(ctx, title, (x0 + x1) / 2, y + 28, tcol, font(11), "center");
+  }
+  function axisY(ctx, x, y0, y1, ticks, fy, col, title, tcol, fmt_) {
+    ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke();
+    ticks.forEach(v => { const Y_ = fy(v); ctx.beginPath(); ctx.moveTo(x - 4, Y_); ctx.lineTo(x, Y_); ctx.stroke(); label(ctx, fmt_ ? fmt_(v) : String(v), x - 6, Y_ + 3, tcol, mono(10), "right"); });
+    if (title) vlabel(ctx, title, x - 34, (y0 + y1) / 2, tcol);
+  }
+  anim("a3", 13, (ctx, t, W, H) => {
+    const ink = css("--ink"), ink2 = css("--ink-2"), ink3 = css("--ink-3"), acc = css("--accent"), or = css("--atds"), bl = css("--fixed"), grid = css("--grid");
+    // Panel A: the two signals, y rotated
+    const x0 = 70, x1 = 650, SH = 600, h = Math.round(ease(clamp(t / 2.5, 0, 1)) * shifts[0]);
+    label(ctx, h ? `A · Rotate y by ${h} samples: each signal unchanged, coupling destroyed` : "A · x and y, coupled", 20, 14, ink2, font(12, 600));
+    trace(ctx, X.slice(0, SH), x0, x1, 38, 7, ink, 1.1);
+    const yr = []; for (let i = 0; i < SH; i++) yr.push(Y[((i - h) % N + N) % N]);
+    trace(ctx, yr, x0, x1, 70, 7, acc, 1.1);
+    label(ctx, "x", x0 - 10, 42, ink, font(12, 600), "right"); label(ctx, "y", x0 - 10, 74, acc, font(12, 600), "right");
+    axisX(ctx, x0, x1, 90, [0, 200, 400, 600], v => x0 + v / (SH - 1) * (x1 - x0), ink3, "time (samples)", ink3);
+    if (t < 2.6) return;
+    const steps = stop + 1, p = clamp((t - 2.8) / 7, 0, 1), tol = t > 10 ? pick : Math.min(stop, Math.floor(p * steps));
+    // Panel B: tau0 of copy 1, stable windows filled
+    const tt = nullT[0], lb = stable(tt, tol), mx0 = 70, mx1 = 410, my0 = 150, my1 = 232, nW = tt.length;
+    label(ctx, `B · Copy 1: τ₀ in each window (filled = stable at ±${tol})`, 20, 138, ink2, font(12, 600));
+    const fyB = v => my1 - (v + LAG) / (2 * LAG) * (my1 - my0), fxB = i => mx0 + i / (nW - 1) * (mx1 - mx0);
+    ctx.strokeStyle = grid; ctx.beginPath(); ctx.moveTo(mx0, fyB(0)); ctx.lineTo(mx1, fyB(0)); ctx.stroke();
+    axisY(ctx, mx0, my0, my1, [-LAG, 0, LAG], fyB, ink3, "τ₀ (samples)", ink3);
+    axisX(ctx, mx0, mx1, my1 + 6, [1, Math.round(nW / 2), nW], v => fxB(v - 1), ink3, "window number", ink3);
+    tt.forEach((v, i) => { ctx.beginPath(); ctx.arc(fxB(i), fyB(v), 2.6, 0, 7); if (lb[i]) { ctx.fillStyle = bl; ctx.fill(); } else { ctx.strokeStyle = ink3; ctx.stroke(); } });
+    label(ctx, `score of copy 1 = ${lb.filter(Boolean).length} / ${nW} windows = ${SC[tol][0].toFixed(1)} %`, mx0, 286, ink, mono(11));
+    // Panel C: scores of all copies and their mean
+    const rx0 = 500, rx1 = 660, ry1 = 232, ry0 = 150, smax = 20, bw = (rx1 - rx0) / NC;
+    const fyC = v => ry1 - Math.min(v, smax) / smax * (ry1 - ry0);
+    label(ctx, `C · Score of each copy`, 450, 138, ink2, font(12, 600));
+    axisY(ctx, rx0, ry0, ry1, [0, 5, 10, 15, 20], fyC, ink3, "score (%)", ink3);
+    SC[tol].forEach((v, j) => { const Y_ = fyC(v); ctx.fillStyle = j === 0 ? bl : ink3; ctx.globalAlpha = j === 0 ? 1 : 0.55; ctx.fillRect(rx0 + j * bw + 3, Y_, bw - 6, ry1 - Y_); });
+    ctx.globalAlpha = 1;
+    axisX(ctx, rx0, rx1, ry1 + 6, [], null, ink3, "copy number 1 … " + NC, ink3);
+    for (let j = 0; j < NC; j++) label(ctx, String(j + 1), rx0 + (j + 0.5) * bw, ry1 + 21, ink3, mono(10), "center");
+    const yM = fyC(CT[tol]); ctx.strokeStyle = or; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(rx0, yM); ctx.lineTo(rx1, yM); ctx.stroke(); ctx.lineWidth = 1;
+    label(ctx, `mean (orange) = C(±${tol}) = ${CT[tol].toFixed(1)} %`, 450, 286, or, mono(11, 600));
+    // Panel D: C(tol) curve
+    const gx0 = 70, gx1 = 400, gy1 = 392, gy0 = 322, tmx = Math.min(TM, stop + 4), ymax = 10;
+    const fxD = v => gx0 + v / tmx * (gx1 - gx0), fyD = v => gy1 - Math.min(v, ymax) / ymax * (gy1 - gy0);
+    label(ctx, "D · C(tol) (dot) and its upper bound C + 2 SE (bar top)", 20, 310, ink2, font(12, 600));
+    axisY(ctx, gx0, gy0, gy1, [0, 5, 10], fyD, ink3, "C(tol) (%)", ink3);
+    const tks = []; for (let q = 0; q <= tmx; q += Math.max(1, Math.round(tmx / 5))) tks.push(q);
+    axisX(ctx, gx0, gx1, gy1, tks, fxD, ink3, "tolerance (± samples)", ink3);
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = ink3; ctx.beginPath(); ctx.moveTo(gx0, fyD(5)); ctx.lineTo(gx1, fyD(5)); ctx.stroke(); ctx.setLineDash([]);
+    label(ctx, "5 % budget", gx1 + 4, fyD(5) + 4, ink3, mono(10));
+    const upto = t > 10 ? stop : tol;
+    for (let q = 0; q <= upto; q++) { ctx.strokeStyle = UB[q] > 5 ? ink : bl; ctx.beginPath(); ctx.moveTo(fxD(q), fyD(CT[q])); ctx.lineTo(fxD(q), fyD(UB[q])); ctx.stroke(); ctx.beginPath(); ctx.moveTo(fxD(q) - 3, fyD(UB[q])); ctx.lineTo(fxD(q) + 3, fyD(UB[q])); ctx.stroke(); ctx.beginPath(); ctx.arc(fxD(q), fyD(CT[q]), 3.5, 0, 7); ctx.fillStyle = UB[q] > 5 ? ink : bl; ctx.fill(); }
+    const over = UB[t > 10 ? stop : tol] > 5;
+    label(ctx, `tol ±${tol}: C ${CT[tol].toFixed(1)}, C+2SE ${UB[tol].toFixed(1)} %`, 470, 340, ink, mono(11));
+    label(ctx, UB[tol] <= 5 ? "C+2SE ≤ 5 %: keep, try wider" : "C+2SE > 5 %: stop", 470, 360, ink2, mono(11));
+    if (t > 10 || (over && tol === stop)) label(ctx, `chosen: ±${pick} (last one ≤ 5 %)`, 470, 384, or, mono(12, 600));
+  }, 430);
+})();
+
+</script>

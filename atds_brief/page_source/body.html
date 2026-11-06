@@ -1,0 +1,636 @@
+<title>Adaptive TDS Brief</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+__STYLE__
+<style>
+.methods { border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; font-size: 0.92rem; color: var(--ink-2); background: var(--surface); }
+.methods p { max-width: none; }
+.verdict { font-size: 0.9rem; color: var(--ink-2); }
+ol.steps { margin: 6px 0; padding-left: 1.3em; display: grid; gap: 3px; }
+section > h3 { margin-top: 6px; }
+.anim { display: grid; gap: 6px; }
+.anim canvas { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+.anim-bar { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; font-size: 0.86rem; color: var(--ink-2); }
+.anim-bar p { max-width: none; }
+.anim-bar button { font: inherit; font-size: 0.8rem; color: var(--accent); background: transparent; border: 1px solid var(--rule); border-radius: 4px; padding: 2px 10px; cursor: pointer; flex: none; }
+.anim-bar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+pre.algo { margin: 0; font-family: var(--f-mono); font-size: 0.84rem; line-height: 1.6; background: var(--tint); color: var(--ink); border-radius: 6px; padding: 14px 16px; overflow-x: auto; }
+pre.algo .c { color: var(--ink-3); }
+.step { display: grid; gap: 10px; }
+.step h3 { font-size: 1rem; }
+.formula { font-family: var(--f-display); font-size: 1.05rem; padding: 4px 0; overflow-x: auto; }
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Idea for review · Asaf Markuza · 31 October 2026</div>
+  <h1>Adaptive TDS: Time Delay Stability that chooses its own parameters</h1>
+  <p class="lede">TDS needs a window, a lag range and a tolerance, and nobody knows the right values for a new system. aTDS measures them from the signals. This brief tests each of the three rules against signals whose coupling and delay are known. It does not yet show whether aTDS changes or sharpens sleep-stage contrasts in real sleep networks; that is untested.</p>
+</header>
+
+<section>
+  <h2>The idea</h2>
+  <p>Time Delay Stability (Bashan et al. 2012) links two signals when the delay τ₀ that best aligns them stays nearly constant over consecutive windows. A window counts as stable when at least 4 of 5 neighbouring delays agree within a tolerance. The TDS score is the percentage of stable windows.</p>
+  <p>The result depends on three numbers: the <b>window</b>, the <b>lag range</b> searched and the <b>tolerance</b>. The published values (60 / ±30 / ±1 samples) were chosen for 1&#8209;Hz sleep recordings. They are counted in samples, so they mean something different for every system and every sampling rate. For a new system they are a guess.</p>
+  <div class="claim">
+    <p><strong>aTDS: you give it the signals, and it sets all three numbers itself.</strong></p>
+    <p>The 4-of-5 stability rule stays as published. The three rules use only each signal's own structure and coupling-free copies; they never use which pairs are coupled or what the delay is. (A coupled signal's own autocorrelation partly reflects its partner, so B is not entirely blind to coupling.)</p>
+  </div>
+  <figure>
+    <div class="fig-title">Figure 1 · Same coupled pair, two parameter sets</div>
+    <div class="chart" id="f1"></div>
+    <figcaption>
+      <p>Signal y follows x with a true delay of 20 samples (memory τ<sub>c</sub> = 8 samples, coupling strength 0.6). Each dot is τ₀ in one window, over the first 12 000 samples. Filled dots are stable windows and hollow dots unstable ones. The dashed line is the true delay (τ = −20; negative means x leads). Top: fixed parameters (window 60, lag ±30, tolerance ±1). Bottom: aTDS, which chose window 259, lag ±129 and tolerance ±13 by itself, on a separate training pair of the same kind.</p>
+      <p class="proves"><b>What it shows:</b> the coupling is identical in both panels; only the parameters differ. With the fixed window, τ₀ scatters and rarely holds for 4 of 5 windows: score <b>5.2 %</b>, with τ₀ within ±2 samples of the true delay in 28 % of windows. With the aTDS parameters, τ₀ sits on the true delay: score <b>91.3 %</b>, within ±2 samples in 90 % of windows. Most of this gain comes from the window and lag range (Figure 5).</p>
+      <details><summary>Show data</summary><div class="tbl" id="t1"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>How aTDS chooses the three parameters</h2>
+  <div class="rules">
+    <div class="rule-card">
+      <h3>Window</h3>
+      <div class="eq">L = 30 · B</div>
+      <p>B = 1 + 2 Σ r(k)², summed over the autocorrelation r(k) up to its first zero crossing (the Bartlett factor). For a smooth signal, B neighbouring samples carry about one sample's worth of new information. So L holds about <b>30 independent samples</b> of the slowest signal in the system. Limits: at least 61 samples (so the lag range is never narrower than the published ±30), at most 10 % of the recording. Optional: if the user knows the longest plausible delay d<sub>max</sub>, the window is at least 2·d<sub>max</sub> + 1.</p>
+      <p>Why 30: with n independent samples each correlation value has a random error of about 1/√n (±0.18 at n = 30). 30 is a convention that balances reliability against time resolution; Figure 3b tests it.</p>
+      <p class="test">Tested in Figures 2, 3 and 3b.</p>
+    </div>
+    <div class="rule-card">
+      <h3>Lag range and step</h3>
+      <div class="eq">τ<sub>max</sub> = (L − 1) / 2</div>
+      <p>The same ratio as the published setting (±30 in a 60-sample window). Step = L / 2, the published 50 % overlap. If a signal has a rhythm with period P, τ<sub>max</sub> ≤ P / 2, because beyond half a cycle a delay d and d − P look the same.</p>
+      <p class="test">Tested in Figure 4.</p>
+    </div>
+    <div class="rule-card">
+      <h3>Tolerance</h3>
+      <div class="eq">largest tol with chance + 2 SE ≤ 5 %</div>
+      <p>One signal is circularly shifted by a large random amount. That keeps each signal's own structure but destroys the coupling. TDS is scored on these shifted copies at tolerance 0, 1, 2, …, and the largest tolerance whose mean chance score, plus two standard errors, stays ≤ 5 % is kept. Rotations are pooled over all recordings available (for a cohort, all subjects). If even 0 exceeds 5 %, the result is flagged <code>calibration_failed</code>.</p>
+      <p class="test">Tested in Figures 5 and 6.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The algorithm</h2>
+  <p>Input: the signals of one system, s<sub>1</sub> … s<sub>n</sub>, each T samples long. Output: one parameter set used for every pair in the system. The stability rule (4 of 5 windows) is not changed. Constants: 30 independent samples per window, 5 % chance budget, window between 61 samples and 10 % of T, 20 random shifts per pair.</p>
+
+  <div class="step">
+    <h3>Step 0 · Autocorrelation of each signal</h3>
+    <div class="formula">r<sub>i</sub>(k) = Σ<sub>t</sub> x<sub>i</sub>(t) x<sub>i</sub>(t+k) / Σ<sub>t</sub> x<sub>i</sub>(t)², &nbsp; x<sub>i</sub> = s<sub>i</sub> − mean(s<sub>i</sub>), &nbsp; k = 0 … T/4</div>
+  </div>
+
+  <div class="step">
+    <h3>Step 1 · Window</h3>
+    <div class="formula">B<sub>i</sub> = 1 + 2 Σ<sub>k=1</sub><sup>K<sub>i</sub>−1</sup> r<sub>i</sub>(k)², &nbsp; K<sub>i</sub> = first k with r<sub>i</sub>(k) ≤ 0</div>
+    <div class="formula">L = clip( round(30 · max<sub>i</sub> B<sub>i</sub>), L<sub>min</sub>, 0.1 T ), &nbsp; step = ⌊L / 2⌋</div>
+    <div class="formula">L<sub>min</sub> = 61, &nbsp; or max(61, 2·d<sub>max</sub> + 1) if the longest plausible delay d<sub>max</sub> is given (optional)</div>
+    <p><b>The only input is the signals.</b> d<sub>max</sub> is optional. Without it, aTDS searches at least ±30 samples, the published range; with it, the lag range is guaranteed to reach d<sub>max</sub> (Table 2, fast signal with delay 50).</p>
+    <p><b>What B means.</b> Neighbouring samples of a smooth signal nearly repeat each other. B<sub>i</sub> (the Bartlett factor) says how many consecutive samples of signal i carry as much new information as one independent sample: B = 1 for white noise, B = 8 means every 8 samples count as one. A window of L samples therefore holds L / B<sub>i</sub> independent samples of signal i.</p>
+    <p><b>Both signals, one window.</b> B is computed for <i>every</i> signal in the system (for a pair, for x and for y). The largest B, i.e. the slowest signal, sets the window, so every signal, and every pair built from them, has at least 30 independent samples in each window. One window is used for all pairs so that all scores are measured on the same ruler. When signals differ strongly in speed, this gives fast pairs a longer window and a wider tolerance than they need; per-pair windows are the alternative (Table 2).</p>
+    <p><b>Why 30.</b> Each value of C(τ) in a window carries a random error of about 1/√n, where n = L / B is the number of independent samples (Bartlett's formula): ±0.18 at n = 30, ±1 at n = 1. But τ₀ is the <i>largest</i> of roughly 30 independent lags, and the largest of 30 pure-noise values is higher, about 0.18 · √(2 ln 30) ≈ 0.47. So a weak coupling (0.3) does not stand out in every single window. What separates it from noise is the 4-of-5 stability rule: noise peaks land at random lags, while the true peak keeps returning to the same lag. More independent samples make τ₀ more reliable but leave fewer windows, and so a coarser picture over time. 30 is a fixed design constant chosen as a balance, not an optimum: with on/off coupling, 45–60 did slightly better (Figure 3b).</p>
+    <div class="anim">
+      <canvas id="a1" width="680" height="250" role="img" aria-label="Animation: the autocorrelation of x and of y is built one lag at a time and each B is summed up to its first zero crossing (K). The larger B (the slower signal, here x) is used. Then the window is built from independent samples: each dot is one independent sample, worth B samples, until there are 30."></canvas>
+      <div class="anim-bar"><p>Animation: the autocorrelation of x and of y is built one lag at a time and each B is summed up to its first zero crossing (K). The larger B (the slower signal, here x) is used. Then the window is built from independent samples: each dot is one independent sample, worth B samples, until there are 30.</p><button type="button" data-anim="a1">Pause</button></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 2 · Lag range</h3>
+    <div class="formula">τ<sub>max</sub> = ⌊(L − 1) / 2⌋</div>
+    <div class="formula">if some signal has a rhythm with period P<sub>i</sub>: &nbsp; τ<sub>max</sub> = min(τ<sub>max</sub>, ⌊min<sub>i</sub> P<sub>i</sub> / 2⌋)</div>
+    <p>Rhythm test: after the first zero crossing of r<sub>i</sub>, take the highest autocorrelation peak; if it is at least 0.3 and not at the edge of the range, its lag is P<sub>i</sub>. Otherwise the signal is treated as not rhythmic.</p>
+    <div class="anim">
+      <canvas id="a2" width="680" height="240" role="img" aria-label="Animation: inside one window, y is shifted against x across the whole lag range while C(k) is drawn; the largest |C| gives τ₀ = −20, the true delay."></canvas>
+      <div class="anim-bar"><p>Animation: inside one window, y is shifted against x across the whole lag range while C(k) is drawn; the largest |C| gives τ₀ = −20, the true delay.</p><button type="button" data-anim="a2">Pause</button></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 3 · Tolerance</h3>
+    <p><b>1 · Make coupling-free copies.</b> Rotate y in time by a large random amount h (the end wraps around to the start). Each signal keeps its own shape and rhythm, but y no longer follows x, so any stability found between them is pure chance. Repeat with 20 different h. When several recordings of the same kind are available (a cohort), pool the rotated copies of all of them.</p>
+    <p><b>2 · Score each copy at tolerance tol.</b> For copy j, find τ₀ in every window (the same window and lag range as above), apply the 4-of-5 rule with this tolerance, and count the stable windows:</p>
+    <div class="formula">score<sub>j</sub>(tol) = 100 % × (stable windows of copy j) / (all windows of copy j)</div>
+    <p><b>3 · Average over the copies.</b></p>
+    <div class="formula">C(tol) = mean<sub>j</sub> score<sub>j</sub>(tol)</div>
+    <p>Because the copies contain no coupling, every stable window in them is a false alarm. C(tol) is therefore the false-alarm rate of TDS at that tolerance: the score you would get from uncoupled signals just by luck.</p>
+    <p><b>4 · Choose the tolerance.</b> Try tol = 0, 1, 2, … and keep the largest tol whose upper bound, C(tol) plus two standard errors of that mean, is ≤ 5 %:</p>
+    <div class="formula">tol* = max { tol : C(tol) + 2 · SE(tol) ≤ 5 % }, &nbsp; SE = SD<sub>j</sub>(score<sub>j</sub>) / √(number of copies)</div>
+    <p>The upper bound is used, not the mean alone, so that the budget also holds on new recordings, not only on the copies used to choose the tolerance. With the mean alone, the chance score on new pairs reached 6.7 %; with the upper bound and pooled rotations it stayed at 3.3–4.4 % (Figure 6).</p>
+    <p><b>Why a wider tolerance is wanted at all.</b> A real delay is never perfectly constant; it wobbles from window to window. A wider tolerance lets TDS accept that wobble and see real coupling, but it also lets random τ₀ values agree by luck. The tolerance has to be as wide as possible without letting luck take over.</p>
+    <p><b>What the 5 % means.</b> It is a design budget for false stability: on coupling-free copies, at most 5 % of windows on average may be labelled stable. It is <i>not</i> the probability that a link is false. Whether a particular link is significant still needs its own test (its score against its own rotated copies) and, in a network, a correction for testing many links at once. The 5 % is a fixed design constant; a stricter user could use 1 %.</p>
+    <p><b>Why stopping at the first tol above 5 % is right.</b> A wider tolerance can only add stable windows, never remove them, so C(tol) only goes up. Once it passes 5 %, every larger tolerance is also above 5 %, and the previous one is the widest tolerance inside the budget. (The upper bound behaves the same way in practice.)</p>
+    <div class="anim">
+      <canvas id="a3" width="680" height="430" role="img" aria-label="Animation: y is rotated to destroy the coupling (8 rotated copies here; aTDS uses 20). For each tolerance, the middle row shows copy 1: τ₀ in every window, filled where 4 of 5 neighbouring windows agree within the tolerance; that fraction is the copy's score. The bars are the scores of all copies, and their mean is C(tol). The tolerance rises until the upper bound C + 2 SE passes 5 %; the last tolerance at or under 5 % is kept."></canvas>
+      <div class="anim-bar"><p>Animation: y is rotated to destroy the coupling (8 rotated copies here; aTDS uses 20). For each tolerance, the middle row shows copy 1: τ₀ in every window, filled where 4 of 5 neighbouring windows agree within the tolerance; that fraction is the copy's score. The bars are the scores of all copies, and their mean is C(tol). The tolerance rises until the upper bound C + 2 SE passes 5 %; the last tolerance at or under 5 % is kept.</p><button type="button" data-anim="a3">Pause</button></div>
+    </div>
+  </div>
+
+  <pre class="algo">aTDS_parameters(s<sub>1</sub> … s<sub>n</sub>):
+    <span class="c"># Step 1: window</span>
+    for each signal i:
+        r<sub>i</sub> = autocorrelation(s<sub>i</sub>)
+        K<sub>i</sub> = first k where r<sub>i</sub>(k) ≤ 0
+        B<sub>i</sub> = 1 + 2 · sum(r<sub>i</sub>(k)² for k = 1 … K<sub>i</sub>−1)
+    Lmin = 61   (or max(61, 2·d_max + 1) if the optional d_max is given)
+    L    = clip(round(30 · max(B)), Lmin, 0.1·T)   # Lmin wins if 0.1·T &lt; Lmin
+    step = L // 2
+
+    <span class="c"># Step 2: lag range</span>
+    lag = (L − 1) // 2
+    P   = [dominant_period(r<sub>i</sub>) for each signal, if rhythmic]
+    if P not empty: lag = max(1, min(lag, min(P) // 2))
+
+    <span class="c"># Step 3: tolerance</span>
+    null = []
+    for each pair (i, j) in the system, in every recording available (at most 50 pairs):
+        repeat 20 times:
+            h = random integer in [a, T − a),  a = max(L, T // 10)
+            null.append( τ₀ series of (s<sub>i</sub>, rotate(s<sub>j</sub>, h)) with L, step, lag )
+    tol = 0
+    for t = 0, 1, 2, … up to max(1, lag // 4):
+        s  = [ TDS score of each null series, 4-of-5 rule, tolerance t ]
+        C  = mean(s);  SE = sd(s) / √len(s)
+        if C + 2·SE ≤ 5 %: tol = t
+        else: break
+    calibration_failed = (C + 2·SE at t = 0) &gt; 5 %
+
+    return window = L, step, max_lag = lag, tolerance = tol</pre>
+</section>
+
+<section>
+  <h2>How to read this brief</h2>
+  <p>Everything in the tests below is measured the same way. This section explains each term once, so no figure needs guessing.</p>
+  <dl class="status">
+    <dt>Known answer</dt><dd>Most tests use synthetic signals that we generate ourselves. We decide whether a pair is coupled, and with what delay, so we can check whether a method gets it right. One test uses a real EEG pair, where only detection can be checked.</dd>
+    <dt>Coupled / uncoupled pair</dt><dd>A coupled pair: y copies part of x with a delay d, y(t) = c · x(t − d) + noise, with coupling strength c between 0 and 1. An uncoupled pair is generated the same way with c = 0, so y has no link to x. Each test scores many coupled and many uncoupled pairs.</dd>
+    <dt>TDS score</dt><dd>The percentage of windows labelled stable (4 of 5 neighbouring delays agree within the tolerance). A score well above the chance score of the same data indicates a stable delay, and so coupling. The score alone says nothing about whether the delay is right (Figure 4), and aTDS scores are not comparable with published TDS scores.</dd>
+    <dt>Chance score</dt><dd>The TDS score a pair gets when the coupling is destroyed by rotating y in time (its end wraps to its start). It tells how high a score luck alone gives. "Chance" in the tables is the mean over many uncoupled pairs or rotated copies; "95th pct" is the value only 5 % of them exceed.</dd>
+    <dt>AUC</dt><dd>How well the TDS score separates coupled from uncoupled pairs: the probability that a randomly chosen coupled pair scores higher than a randomly chosen uncoupled one. 1 = always (perfect), 0.5 = no better than a coin flip. Example: AUC 0.9 means a coupled pair outscores an uncoupled one 9 times out of 10.</dd>
+    <dt>Delay found</dt><dd>The share of coupled pairs for which the method reports the right delay: at least 3 stable windows, and the median τ₀ of those windows within 10 % of the true delay (at least ±1 sample).</dd>
+    <dt>95 % interval</dt><dd>The range the true value very likely lies in, given the finite number of pairs. For AUC: 1 000 bootstrap resamples (draw the pairs again with replacement, recompute, take the middle 95 %). For shares such as "delay found": the Wilson interval. If two methods' intervals do not overlap, the difference is significant at roughly the 5 % level. For methods scored on the same pairs the proper test is the interval of the paired difference (next entry); overlapping intervals do not mean "no difference".</dd>
+    <dt>"Better", "equivalent", "undecided"</dt><dd>For two methods scored on the same pairs, we compute the interval of the <i>difference</i> in AUC. "Better": the 95 % interval of the difference is entirely above 0. "Equivalent": the 90 % interval lies inside ±0.05, i.e. any difference is smaller than 0.05 AUC (an equivalence test, TOST). "Undecided": neither.</dd>
+    <dt>Training vs scored pairs</dt><dd>aTDS chooses its parameters on separate training pairs (or, for the EEG, the first half of the record) and is then scored on new pairs it never saw, so the parameters cannot fit the answer by accident. In Table 3, calibration is label-free on the scored network itself (rotations only), as in a real analysis.</dd>
+    <dt>Slow-down factor r</dt><dd>One test system made r times slower: memory 2r samples and delay 5r samples. This is what happens when the same physical system is recorded r times faster. At r = 1 the published values fit; the larger r, the worse they fit.</dd>
+  </dl>
+  <h3>The four settings compared</h3>
+  <dl class="status">
+    <dt>Published</dt><dd>The fixed TDS setting of Bashan et al. (2012): window 60, step 30, lag ±30 (±29 effective in pyTDS's circular cross-correlation), tolerance ±1, the same for every system.</dd>
+    <dt>Rescaled by hand</dt><dd>The published setting multiplied by the slow-down factor r: window 60r, step 30r, lag ±30r, tolerance ±r (at r = 4: 240 / ±120 / ±4). It is what a careful analyst would choose <i>if told</i> how much slower the system is. In real data nobody knows r, so this is a fair but generous baseline.</dd>
+    <dt>aTDS</dt><dd>The method of this brief: only the two signals go in (optionally the longest plausible delay d<sub>max</sub>; for a network, all of its signals), and it sets window, lag range and tolerance itself.</dd>
+    <dt>Oracle</dt><dd>The best of 91 grid settings, chosen by checking the answers on labelled training pairs. It is a practical upper bound, not a method anyone can use, because it needs to know which pairs are coupled; a setting outside the grid could do even better (at r = 16 the oracle reaches only AUC 0.84). <b>How it is computed</b>, for each slow-down factor r:
+      <ol class="steps">
+        <li>Generate 20 coupled and 20 uncoupled <i>training</i> pairs, separate from the pairs that are scored later.</li>
+        <li>Try every combination of 7 windows (30, 60, 120, 240, 480, 960, 1 920 samples; lag range (L − 1)/2 each) and 13 tolerances (0, 1, 2, 3, 5, 8, 12, 18, 27, 40, 60, 90, 135; tolerances larger than the lag range are skipped): up to 91 settings.</li>
+        <li>For each setting, score the 40 training pairs and compute the AUC.</li>
+        <li>Keep the setting with the highest training AUC (the first one if several tie).</li>
+        <li>Score the same 100 + 100 test pairs as the other three settings with it.</li>
+      </ol>
+      <b>How it is shown:</b> grey line in Figure 7; the setting it chose at each r is in the Figure 7 data table. If aTDS is close to the oracle, little is left to gain by tuning; if it is far below, better parameters exist.</dd>
+  </dl>
+  <h3>Signals used</h3>
+  <dl class="status">
+    <dt>AR(1)</dt><dd>Smooth random noise whose memory fades exponentially; τ<sub>c</sub> is how many samples it takes to forget its past. The main test signal.</dd>
+    <dt>fGn (long memory)</dt><dd>Fractional Gaussian noise: memory that fades slowly, like heart rate or EEG power. Its Hurst exponent H (0.5 = no memory, closer to 1 = long memory) equals the DFA exponent α used in physiology.</dd>
+    <dt>AR(2) (rhythm)</dt><dd>A noisy oscillator with a period of about 40 samples, like breathing.</dd>
+    <dt>Rulkov neurons</dt><dd>A standard model of two bursting neurons; neuron 0 drives neuron 1 with a delay.</dd>
+    <dt>EEG pair</dt><dd>Real sleep EEG δ- and σ-band power of one night at 1 Hz, from the pyTDS repository. The original MATLAB result on it, 43.6 %, is reproduced by pyTDS only with the causal stability anchor (43.5 %); the default anchor, used everywhere else in this brief, gives 58.1 %.</dd>
+  </dl>
+  <h3>Other terms</h3>
+  <dl class="status">
+    <dt>B, independent samples</dt><dd>B (Bartlett factor) is how many consecutive samples count as one independent sample. A window of L samples holds L / B independent samples. B<sub>xy</sub> is the same for a pair of signals.</dd>
+    <dt>Balanced accuracy</dt><dd>Used in Figure 3b: the average of two hit rates. While coupling is on, a window counts as correct only if it is labelled stable <i>and</i> its τ₀ is within ±2 samples of the true delay; while coupling is off, a window counts as correct if it is not labelled stable. 0.5 = guessing, 1 = perfect.</dd>
+    <dt>Per-link p-value, FDR</dt><dd>Used in Table 3. A link's p-value is p = (1 + number of its 999 rotated copies that score at least as high as the real pair) / 1 000; the smallest possible value is 0.001. When many links are tested at once, some pass by luck; the Benjamini–Hochberg procedure keeps the expected share of false links among the reported ones (the false-discovery rate) at most 5 %, assuming the links are independent or positively dependent.</dd>
+    <dt>v2.1</dt><dd>The current version of the aTDS rules, described in the algorithm section (minimum window 61; tolerance from the upper bound of the chance score).</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Test 1 · Window</h2>
+  <figure>
+    <div class="fig-title">Figure 2 · A fixed window holds less information as the signal gets slower</div>
+    <div class="chart" id="f2"></div>
+    <figcaption>
+      <p>The x-axis says how slow a signal is. Its correlation time τ<sub>c</sub> is the number of samples it takes for the signal to "forget" its past (for its autocorrelation to fall to 1/e ≈ 0.37). τ<sub>c</sub> = 1 is a fast, noisy signal; τ<sub>c</sub> = 64 is a slow, smooth one, for example the same signal recorded 64 times faster. For each τ<sub>c</sub>, B is the median over 5 test signals of 30 000 samples. The y-axis gives the number of independent samples a window holds, L / B.</p>
+      <p class="proves"><b>What it shows:</b> with a fixed 60-sample window, slower systems are measured with less information, down to 0.93 independent samples at τ<sub>c</sub> = 64. The orange line is flat at 30 by construction, since aTDS sets L = 30 · B; the figure illustrates the rule, it does not test it. Figures 3 and 7 test what the window does to detection.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t2"></div></details>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 3 · Detection against window length, with the aTDS choice marked (100 pairs per class)</div>
+    <div class="chart" id="f3"></div>
+    <figcaption>
+      <p>Two systems with known weak coupling (strength 0.3): a faster one (τ<sub>c</sub> = 4, delay 10) and one 4× slower (τ<sub>c</sub> = 16, delay 40). For each window length, 100 coupled and 100 uncoupled pairs were scored. The lag range is (L − 1)/2 and the tolerance is calibrated for every window length, including the 60-sample point, so only the window varies. AUC measures how well the score separates coupled from uncoupled pairs (1 = perfect, 0.5 = guessing); whiskers are bootstrap 95 % intervals. Vertical lines: the fixed window (dashed, 60) and the window aTDS chose for each system separately (121 for the faster, 515 for the slower system), in that system's colour; the orange dots are the AUC measured at exactly those windows.</p>
+      <p class="proves"><b>What it shows:</b> the window aTDS picks moves with the time scale (4× longer for the 4× slower system). At its own windows aTDS reaches AUC 0.97 [0.95, 0.99] for the faster and 0.79 [0.73, 0.85] for the slower system, against 0.83 and 0.51 at 60 samples. Detection keeps rising past the aTDS choice: with coupling that is always on, a longer window is always better (0.99 at 1 920 samples for the slower system). The aTDS choice is a compromise with time resolution, not the best window for detection.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t3"></div></details>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 3b · When coupling switches on and off: is 30 independent samples the right window?</div>
+    <div class="chart" id="f3b"></div>
+    <figcaption>
+      <p>Coupling (strength 0.6, τ<sub>c</sub> = 8, delay 20) switched on and off in blocks of 1 000, 2 000 or 4 000 samples (about 125, 250 and 500 independent samples per block), 40 000 samples, 20 pairs per point. A window is scored as right when, during coupling, it is labelled stable <i>and</i> its τ₀ is within ±2 samples of the true delay (the same strict criterion for every window length), or, when coupling is off, it is not labelled stable. The y-axis is the balanced accuracy of these labels (0.5 = guessing). The x-axis is the number of independent samples per window, L / B. The vertical line marks the aTDS choice of 30.</p>
+      <p class="proves"><b>What it shows:</b> the trade-off behind the window rule is real, and the best window depends on how long the coupling episodes last. For the shortest blocks the best is 45 independent samples (0.87; 30 gives 0.85), for 2 000-sample blocks 60 (0.92; 30 gives 0.88), and for the longest blocks a plateau of 0.94–0.95 from 45 on (30 gives 0.91). 30 is within 0.015–0.05 of the best in all three cases and on the short side. It is a convention that favours time resolution, not an optimum.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t3b"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Test 2 · Lag range</h2>
+  <figure>
+    <div class="fig-title">Figure 4 · Only the lag range changes: ±30 vs the aTDS lag range</div>
+    <div class="pair">
+      <div class="chart" id="f4a"></div>
+      <div class="chart" id="f4b"></div>
+    </div>
+    <figcaption>
+      <p>Slow coupled signals (τ<sub>c</sub> = 16, coupling strength 0.6) with true delays from 5 to 160 samples, 10 pairs per delay. For each delay, aTDS set its parameters on 5 separate training pairs (window 454–514, tolerance ±23 to ±29). Both variants use that window and tolerance; only the lag range differs: the published ±30, or the aTDS range (L − 1)/2, here ±226 to ±256. Left: the delay each variant reports (the most frequent τ₀ among its stable windows; positive = x leads). The diagonal is a perfect answer. Right: the TDS score of the same runs. Filled dots reported the right delay; hollow dots a wrong one.</p>
+      <p class="proves"><b>What it shows:</b> with the aTDS lag range, the reported delay is exact for all 90 pairs, from 5 to 160 samples, sign included. With ±30, all 50 pairs with delays beyond 30 report a wrong delay at the edge of the search (±30, once 18), 16 of them with the wrong sign, and their TDS scores stay high (72–96 %). <b>With a fixed lag range, a high TDS score can come with a wrong delay:</b> the TDS score measures how stable the delay is, not whether it is right.</p>
+      <p><b>Why aTDS scores fall at long delays.</b> The longer the delay, the smaller the part of each window in which x and the delayed y overlap, so the correlation peak gets weaker and fewer windows pass the 4-of-5 rule (scores 27–62 % at delay 160). The delay reported from those windows is still right. Within ±30 both variants are right, and the narrow range scores somewhat higher (94–100 % vs 82–99 %) because it has fewer lags to pick wrongly by chance. The tolerance (±23 to ±29) is wider than the shortest delays; it only decides which windows count as stable. Direction comes from the reported delay itself, which was right in every aTDS pair.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t4"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Test 3 · Tolerance</h2>
+  <figure>
+    <div class="fig-title">Figure 5 · How the tolerance is chosen</div>
+    <div class="pair">
+      <div class="chart" id="f5a"></div>
+      <div class="chart" id="f5b"></div>
+    </div>
+    <figcaption>
+      <p>The pair from Figure 1, with the aTDS window. Left: the chance score C(tol), the mean TDS of 20 circularly rotated copies of this pair (blue), and its upper bound C + 2 SE (dashed blue), at each tolerance. Right: the real, unshifted pair at the same tolerances. aTDS chose ±13 from rotations of its 5 separate training pairs; on this pair the upper bound crosses 5 % between ±12 and ±13.</p>
+      <p class="proves"><b>What it shows:</b> the tolerance comes from the coupling-free copies alone. Here the real score barely depends on it (90.0 % at tolerance 0, 91.3 % at ±13), so the jump from 5.2 % to 91.3 % in Figure 1 comes from the window and lag range, not from the tolerance. The tolerance's job is to cap false stability while allowing the delay to wobble.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t5"></div></details>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <div class="fig-title">Figure 6 · Only the tolerance changes: ±1 vs calibrated, 100 pairs per class, 95 % intervals</div>
+    <div class="pair">
+      <div class="chart" id="f6a"></div>
+      <div class="chart" id="f6b"></div>
+    </div>
+    <figcaption>
+      <p><b>The slow-down factor r.</b> One test system is made slower step by step: at r = 1 its memory is τ<sub>c</sub> = 2 samples and its delay 5 samples, a case the fixed parameters fit well. At factor r both are multiplied by r (memory 2r, delay 5r), so r = 16 means memory 32 and delay 80 samples. This is what happens when the same physical system is recorded r times faster (for example at 16 Hz instead of 1 Hz). The coupling is weak (strength 0.3). Both variants use the same aTDS window and lag range, set on 5 separate training pairs; only the tolerance differs. 100 coupled and 100 uncoupled pairs per r. Left: AUC with bootstrap 95 % intervals. Right: share of coupled pairs where the stable windows report the true delay (within 10 %), with Wilson 95 % intervals.</p>
+      <p class="proves"><b>What it shows:</b> calibrating the tolerance helps slow systems find the right delay: 85 % vs 66 % of pairs at r = 8 (intervals do not overlap), 88 % vs 77 % at r = 4 and 42 % vs 26 % at r = 16 (intervals overlap). The AUC gain (+0.04 at r = 4 and 8) is not significant at 95 %; at r = 1 the calibrated tolerance is very slightly worse (−0.005, interval −0.012 to −0.001). The gain comes from having enough stable windows: with ±1, only 77, 66 and 26 of 100 coupled pairs at r = 4, 8, 16 have 3 or more stable windows, and those few are almost always right (100 %); calibrated, 98, 93 and 53 pairs have them, of which 90 %, 91 % and 79 % are right. The mean chance score on new pairs is 3.3–4.4 % at every r, inside the 5 % budget.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t6"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>All three rules together, against fair baselines</h2>
+  <figure>
+    <div class="fig-title">Figure 7 · aTDS against the published setting, the setting rescaled by hand, and an oracle</div>
+    <div class="pair">
+      <div class="chart" id="f7a"></div>
+      <div class="chart" id="f7b"></div>
+    </div>
+    <figcaption>
+      <p>The same slow-down test as Figure 6 (r = 1 to 16, 100 coupled and 100 uncoupled pairs per r). Four settings:</p>
+      <ul class="limits">
+        <li><b>Published:</b> 60 / ±30 / ±1, the same at every r.</li>
+        <li><b>Rescaled by hand:</b> the published setting multiplied by the slow-down factor r: window 60r, step 30r, lag ±30r, tolerance ±r (at r = 4: 240 / ±120 / ±4). Nothing is tuned; the formula is applied once per r. It is what a careful analyst would choose <i>if told</i> that the system is exactly r times slower than the 1-Hz case the published values were made for. In real data nobody knows r, so this baseline is fair but generous. aTDS is not told r.</li>
+        <li><b>aTDS:</b> all three rules (v2.1), set on 5 separate training pairs.</li>
+        <li><b>Oracle:</b> the best window and tolerance from a grid of 7 windows × 13 tolerances, chosen by AUC on 20 + 20 separate, <i>labelled</i> training pairs. It uses knowledge no real analysis has: an upper bound.</li>
+      </ul>
+      <p class="proves"><b>What it shows:</b> aTDS is far better than the published setting once the system is slower than that setting assumes (AUC 0.92 vs 0.59 at r = 4; 95 % interval of the difference +0.24 to +0.42). Against the setting rescaled by hand, with an equivalence margin of ±0.05 AUC (90 % interval of the difference inside ±0.05): <b>equivalent at r = 1 and 2</b> (at r = 2 the rescaled setting is marginally higher, 0.99 vs 0.98), <b>better at r = 8</b> (0.88 vs 0.81; 95 % interval +0.007 to +0.142; true delay found in 85 % vs 60 % of pairs), and <b>undecided at r = 4 and 16</b> (90 % intervals −0.064 to +0.003 and −0.105 to +0.018). The oracle is better than aTDS at every r ≥ 2 (0.99 vs 0.88 at r = 8), mostly by choosing much longer windows. The v2.1 rule (stricter tolerance) cost some detection at r = 16: AUC 0.65, against 0.72 with the earlier rule and 0.69 for the rescaled setting. The published setting is close to chance from r = 4 on (AUC 0.51–0.59), with chance scores of 0.6–0.9 %.</p>
+      <details><summary>Show data</summary><div class="tbl" id="t7"></div></details>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Test 4 · Other kinds of signals, and one real recording</h2>
+  <p>The tests above use one kind of signal: smooth noise with short memory (AR(1)) and a constant delay. Physiological signals often have long memory (heart rate, EEG band power), rhythms (breathing, heartbeat), bursts (neurons), mixed speeds, or change their dynamics over time (sleep stages). Table 2 runs aTDS against the published setting on each of these, and on the real sleep-EEG benchmark pair in the repository. In every row aTDS set its parameters on data that were not scored.</p>
+  <div class="tbl">
+    <table class="t2">
+      <thead><tr><th>Signals (known answer)</th><th>Published 60 / ±30 / ±1</th><th>aTDS v2.1</th><th>Reading</th></tr></thead>
+      <tbody>
+        <tr><td>Long memory, H = 0.6 (fGn), delay 20, weak coupling 0.2</td><td>AUC 0.60 [0.47, 0.72], delay found 28 %</td><td>AUC 0.59 [0.45, 0.71], 23 % (window 61, lag ±30)</td><td>Equal. The old minimum window of 20 gave window 32, lag ±15 and AUC 0.47; the new minimum of 61 fixes that failure.</td></tr>
+        <tr><td>Long memory, H = 0.75, delay 20, coupling 0.2</td><td>AUC 0.70 [0.59, 0.81], 33 %</td><td>AUC 0.65 [0.53, 0.77], 23 % (window 73)</td><td>Not distinguishable (intervals overlap).</td></tr>
+        <tr><td>Long memory, H = 0.9, delay 20, coupling 0.2</td><td>AUC 0.46 [0.33, 0.58], 15 %</td><td><b>AUC 0.82</b> [0.73, 0.91], <b>85 %</b> (window 614, tol ±34)</td><td>aTDS better. B depends on record length here (13 → 23 → 84 for 5 000 → 20 000 → 80 000 samples).</td></tr>
+        <tr><td>Rhythm, period ≈ 40, delay 8 (below half a period)</td><td>AUC 0.97, delay found 43 %</td><td><b>AUC 1.00, 100 %</b> (period found 41, lag capped at ±20)</td><td>aTDS better.</td></tr>
+        <tr><td>Rhythm, period ≈ 40, delay 30 (beyond half a period)</td><td>AUC 0.46, 0 %</td><td>AUC 0.995, delay 0 %: reports 11</td><td>Coupling detected, delay wrong. 30 is outside the capped lag range (±20); the largest |C| inside it is the anti-phase lobe (in 93 % of pairs the first stable window has negative C), about half a period from the true delay, with the right sign.</td></tr>
+        <tr><td>Rulkov neurons, one-way coupling, delays 16 and 32</td><td>AUC 0.73 and 0.79; median delay reported 0 and 15.5</td><td><b>AUC 1.00 and 1.00</b>; median delay reported 19 and 35</td><td>aTDS detects better and reports the true delay plus a constant 3 steps at both delays, probably the map's response latency. (By the 10 % rule this counts as found at 32 and missed at 16; it is the same result.) Calibration did not fail with one-way coupling.</td></tr>
+        <tr><td>Fast signal (τ<sub>c</sub> = 1) with a long delay, 50, coupling 0.5, 100 + 100 pairs</td><td>AUC 0.56, delay found 0 %</td><td>default (window 61, lag ±30): AUC 0.56, 0 %; <b>with the optional d<sub>max</sub> = 60</b> (window 121, lag ±60): <b>AUC 1.00, 100 %</b></td><td>A delay beyond ±30 in a fast signal needs the optional input. At delay 20 all three settings are perfect.</td></tr>
+        <tr><td>Changing dynamics: memory τ<sub>c</sub> = 4 in the first half, 16 in the second, delay 10, coupling 0.4</td><td>first half AUC 0.98; second half 0.71, 45 %</td><td>one window for the whole record (252): 1.00 and 0.96, 90 %; a window per half, using the known change point (124 / 484): 1.00 and 0.98, 100 %</td><td>aTDS better; setting it per segment is slightly better still.</td></tr>
+        <tr><td>Mixed system: slow pair (τ<sub>c</sub> 32, delay 40) + fast pair (τ<sub>c</sub> 2, delay 5), coupling 0.4</td><td>slow AUC 0.44, fast 1.00</td><td>one window (972): slow 0.99, fast 1.00, but fast pair tol ±56; per-pair windows: fast 64, tol ±3</td><td>A system-wide window costs fast pairs delay precision.</td></tr>
+        <tr><td>Coupled fast–slow pair: slow x (τ<sub>c</sub> 32) drives fast y (τ<sub>c</sub> 2), delay 10, coupling 0.5</td><td>AUC 0.83, delay found 57 %</td><td>window from max B (939, ±51): AUC 1.00, 100 %, chance 5.2 %; window from the pair's joint B<sub>xy</sub> (339, ±19): AUC 1.00, 100 %, chance 3.9 %</td><td>The joint B<sub>xy</sub> = 1 + 2Σ r<sub>x</sub>r<sub>y</sub> (here 11.3, between B<sub>x</sub> 31.3 and B<sub>y</sub> 5.0) gives the same detection with a window 2.8× shorter and a tolerance 2.7× tighter.</td></tr>
+        <tr><td>Real: sleep EEG δ and σ power, 1 Hz; parameters from the first half (14 970 s), scored on the second half</td><td>50.8 % vs chance 1.2 % (95th pct 2.6); 37.3 % with the causal anchor</td><td>window 652 (11 min), lag ±325, tol ±22, 44 windows: 95.5 % vs chance 2.1 % (95th pct 11.4); capped at 300 s (lag ±149, tol ±9): 82.7 % vs 2.3 %</td><td>Both detect the known strong coupling (p ≤ 0.01, the smallest possible with 100 rotations), delay 0 in both. No ground truth beyond detection, so this row is not counted for or against aTDS.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="verdict">Long-memory signals: fractional Gaussian noise with Hurst exponent H (DFA α = H), 40 + 40 pairs. Rhythms: noisy AR(2) oscillators, 30 + 30 pairs. Rulkov: two Rulkov map neurons, neuron 1 driven by neuron 0 with the given delay (coupling 0.12 vs 0), 20 + 20 pairs. Changing dynamics, mixed system and fast–slow pair: 40 + 40. Intervals in brackets are bootstrap 95 %. The EEG reference value 43.6 % from the original MATLAB code is reproduced by pyTDS only with the causal stability anchor (43.5 % on the whole record); every other result on this page uses the default anchor.</p>
+
+  <figure>
+    <div class="fig-title">Table 3 · Links in a network: a per-link test with false-discovery-rate control</div>
+    <div class="tbl" id="t8"></div>
+    <figcaption>
+      <p>Networks of 6 signals (τ<sub>c</sub> = 8, 10 000 samples), 15 possible links. Two designs, 10 coupled and 10 uncoupled networks each: <b>disjoint</b> (3 separate true links: 0→1, 2→3, 4→5, delays 10, 20, 15) and <b>common driver</b> (signal 0 drives 1 with delay 10 and 2 with delay 20, plus 3→4 with delay 15). A common driver creates an <i>indirect</i> link between 1 and 2 (delay 10) that is not a direct coupling. Coupling 0.4. aTDS sets one parameter set from the network's own signals by rotation only (no labels). Each link gets a p-value from its score against 999 rotated copies of the same pair; the 15 links are tested together with the Benjamini–Hochberg procedure at q = 0.05.</p>
+      <p class="proves"><b>What it shows:</b> the per-link test is calibrated: on links that are not coupled, 2.7–5.8 % reach p ≤ 0.05, close to the nominal 5 %. After FDR control there is no false link in any of the 20 uncoupled networks. In the coupled networks aTDS finds 27 of 30 true links (disjoint) and 26 of 30 (common driver); the false-discovery proportion averages 8.3 % and 2.5 %, against the 5 % target (10 networks each, so these are noisy). The indirect link of the common driver was not reported in any network (raw p ≤ 0.05 in 1 of 10): at coupling 0.4 the indirect correlation is only about 0.4 × 0.4 = 0.16. Pairwise TDS cannot tell an indirect link from a direct one, so with stronger drivers indirect links are expected to appear.</p>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Verdict</h2>
+  <div class="claim">
+    <p><strong>aTDS does automatically what a careful analyst would do by hand: it scales the TDS parameters to the system, without being told the system's time scale.</strong></p>
+    <p>Against the published setting it is much better whenever the system is slower than that setting assumes. Against the setting rescaled by hand it is equivalent or better where the tests can decide (r = 1, 2, 8), and undecided elsewhere. It does not find the best possible parameters: an oracle that looks at labelled data does better. Its value is automation with a false-alarm budget that held on new data in the main test.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Comparison</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>aTDS vs published 60 / ±30 / ±1 (Fig. 7)</td><td><b>aTDS better from r = 2 on</b> (AUC difference, 95 %: +0.05 to +0.14 at r = 2, +0.24 to +0.42 at r = 4, +0.03 to +0.25 at r = 16); equal at r = 1.</td></tr>
+        <tr><td>aTDS vs the setting rescaled by hand (Fig. 7)</td><td><b>Equivalent</b> (±0.05 AUC) at r = 1 and 2; <b>aTDS better</b> at r = 8; <b>undecided</b> at r = 4 and 16. aTDS is not told r.</td></tr>
+        <tr><td>aTDS vs oracle grid (Fig. 7)</td><td><b>Oracle better</b> at r ≥ 2, mostly through longer windows.</td></tr>
+        <tr><td>Lag range only (Fig. 4)</td><td>±30 gives a wrong delay for all 50 pairs with delays beyond 30 (16 with the wrong sign) at scores of 72–96 %; <b>aTDS exact in all 90 pairs</b>.</td></tr>
+        <tr><td>Tolerance only (Fig. 6)</td><td>Delay found more often at r = 8 (85 vs 66 %, significant), also higher at r = 4 and 16 (not significant); AUC gain not significant; chance 3.3–4.4 % on new pairs.</td></tr>
+        <tr><td>Window and on/off coupling (Fig. 3b)</td><td>30 independent samples is within 0.015–0.05 of the best balanced accuracy for all three episode lengths, on the short side.</td></tr>
+        <tr><td>Other signals (Table 2)</td><td><b>Better</b> on long memory H = 0.9, rhythms with delay below half a period, changing dynamics, and Rulkov detection (delay reported with a constant +3 offset). <b>Equal or not distinguishable</b> on H = 0.6 and 0.75. <b>Wrong delay</b> (coupling still detected) on rhythms with delay beyond half a period. A fast signal with delay 50 needs the optional d<sub>max</sub>; with it, AUC 1.00.</td></tr>
+        <tr><td>Network links (Table 3)</td><td>Per-link rotation test (999 rotations) + FDR: 0 false links in 20 uncoupled networks; 87–90 % of true links found; false-discovery proportion 2.5–8.3 %; the common driver's indirect link not reported.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Limits</h2>
+  <ul class="limits">
+    <li><b>Not optimal, only scaled.</b> With coupling that is always on, longer windows detect better than aTDS (Figures 3 and 7, oracle). 30 independent samples trades some detection for time resolution; for longer coupling episodes, 45–60 did slightly better (Figure 3b).</li>
+    <li><b>The minimum window sets a minimum lag range.</b> In v2.1 the window is never shorter than 61 samples, so the lag range is never narrower than ±30, the published range. Delays longer than half the window still cannot be found: a fast signal with delay 50 was missed by default (AUC 0.56). The optional longest plausible delay d<sub>max</sub> fixes this (AUC 1.00 with d<sub>max</sub> = 60). Nothing in the output warns the user when a delay is out of reach: for the fast signal with delay 50 the default score was 4.8 % against a chance score of 4.4 %, which reads as "no coupling". d<sub>max</sub> is the only safeguard for long delays in fast signals. d<sub>max</sub> was tested only with a correct value (60 for a true delay of 50): an overstated d<sub>max</sub> makes the window longer than needed (coarser timing), an understated one leaves the delay out of reach. The minimum of 61 also has a cost: in recordings shorter than about 600 samples, 61 is more than 10 % of the record and takes precedence over the 10 % cap, so there are fewer than 19 windows; and for very fast signals the windows are longer than the 30 · B rule asks, so there are fewer of them.</li>
+    <li><b>One answer per window, so short events can be missed.</b> aTDS uses longer windows for slow signals (259 samples instead of 60 in Figure 1; 11 minutes on the EEG pair). A maximum window can be set, trading reliability for finer timing. For records whose dynamics change, setting the parameters per segment helped (Table 2).</li>
+    <li><b>The delay is pinned down only within the tolerance.</b> The calibrated tolerance grows with the time scale (±13 in Figure 1, up to ±56 at r = 16) and can exceed the delay itself. The reported delay was right in Figure 4, but the stability judgement is coarse.</li>
+    <li><b>5 % is a budget for the mean, not a significance level.</b> With rotations pooled over several recordings and the upper-bound rule, the mean chance score on new data stayed ≤ 5 % in all rows except one (5.2 %, fast–slow pair with the max-B window). Single recordings still exceed it by luck (95th percentile up to 20 %), so each link needs its own test (Table 3).</li>
+    <li><b>B depends on the record length for long-memory signals.</b> For H = 0.9, B grew from 13 to 84 as the record grew from 5 000 to 80 000 samples, so the window depends on how long one records.</li>
+    <li><b>Rhythms and bursts.</b> Delays longer than half a cycle are reported wrongly (as the anti-phase lobe); for Rulkov neurons the delay is reported 3 steps too long. Such signals should first be turned into cycle-by-cycle series.</li>
+    <li><b>One window for all pairs.</b> Setting the window from the slowest signal keeps all scores on one ruler, but fast pairs then get a wide tolerance (±56 instead of ±3). For pairs whose two signals differ in speed, the pair's joint B<sub>xy</sub> gave the same detection with a much shorter window (Table 2).</li>
+    <li><b>Scores are not comparable with published TDS numbers.</b> Compare an aTDS score with the aTDS chance level of the same data.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Not tested here</h2>
+  <ul class="limits">
+    <li><b>Coupling that switches with the regime.</b> No test switches the coupling itself on in one regime and off in another (the sleep-stage case); the changing-dynamics test changes only the signals' memory.</li>
+    <li><b>Sleep stages in real cohorts.</b> Whether parameters should be set per stage or frozen per cohort, and how that changes stage contrasts, needs staged multi-subject recordings, which are not in this repository. The synthetic changing-dynamics test (Table 2) is only a first step.</li>
+    <li><b>The original surrogate test.</b> Bashan et al. (2012) build the null by mixing signals across subjects within the same sleep stage. That null keeps stage-driven co-modulation, which rotating one signal within a recording removes, so the rotation null can be too lenient on real data. Comparing both nulls needs multi-subject data.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Next steps</h2>
+  <ul class="limits">
+    <li>A public staged sleep cohort: per-stage networks under aTDS and the published setting, with cross-subject, stage-matched surrogates next to the rotation null.</li>
+    <li>Make the pair's joint B<sub>xy</sub> the window rule for pairs of different speed, and retest Figures 3–7 with it.</li>
+    <li>Networks with stronger common drivers and chains, to measure how often indirect links appear, and whether partial (conditional) TDS is needed.</li>
+    <li>A regime-switching test in which the coupling itself is on in one regime and off in another, scored per regime (the sleep-stage case).</li>
+    <li>A standard error clustered by recording in the tolerance rule, since rotations of one recording are not independent.</li>
+    <li>A weaker-coupling fast–slow pair (to compare the max-B and B<sub>xy</sub> windows on detection, not only on window length), and long-memory signals with stronger coupling.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Methods</h2>
+  <div class="methods">
+    <p><b>Signals.</b> AR(1): x has correlation time τ<sub>c</sub> (φ = e<sup>−1/τc</sup>), z-scored; the coupled partner is y(t) = c · x(t − d) + √(1 − c²) · η(t), where η is an independent AR(1) process with the same τ<sub>c</sub>; uncoupled pairs use c = 0. Long memory: fractional Gaussian noise (exact circulant-embedding method) with Hurst exponent H. Rhythms: AR(2) with period 40 and pole radius 0.97. Rulkov: two Rulkov maps, neuron 1 driven by neuron 0 through delayed diffusive coupling. Changing dynamics: two AR(1) halves with τ<sub>c</sub> 4 and 16. Real data: the δ and σ power series in <code>pyTDS/data</code>. Records are 20 000 samples long unless stated (30 000 in Figures 1, 2 and 5; 40 000 in Figure 3b; 6 000 for Rulkov; 10 000 in Table 3). Every pair has its own fixed random seed.</p>
+    <p><b>aTDS v2.1.</b> As in the algorithm section, with two changes made in this revision: the minimum window is 61 samples (was 20), optionally max(61, 2·d<sub>max</sub> + 1), and the tolerance is the largest value for which the mean chance score plus 2 standard errors, over rotations pooled across all available training recordings, stays ≤ 5 % (was: the mean over 20 rotations of one recording). In every figure and table, aTDS sets its parameters on separate training data that are not scored: 5 training pairs in the synthetic tests, the first half of the record for the EEG pair. In Table 3 the calibration is label-free on the scored network itself (rotations only, no knowledge of which links are true), as it would be in a real analysis.</p>
+    <p><b>Baselines.</b> Published: window 60, step 30, lag ±30 (±29 effective), tolerance ±1. Rescaled by hand: window 60r, step 30r, lag ±30r, tolerance ±r, using the true slow-down factor r. Oracle: windows 30–1 920 × tolerances 0–135, chosen by AUC on 20 + 20 labelled training pairs.</p>
+    <p><b>TDS.</b> pyTDS, circular cross-correlation, z-scored windows, τ₀ = lag of the largest |C(τ)|, stability rule 4 of 5 windows, default (non-causal) stability anchor.</p>
+    <p><b>Statistics.</b> AUC: probability that a coupled pair outscores an uncoupled one. Intervals: 1 000 bootstrap resamples of the pairs (paired across methods for differences); Wilson intervals for shares. Equivalence: two one-sided tests, i.e. the 90 % interval of the AUC difference inside ±0.05. Delay found: at least 3 stable windows and their median τ₀ within 10 % (at least ±1 sample) of the true delay. Network links: p = (1 + number of rotations scoring at least the real score) / 1 000, Benjamini–Hochberg at q = 0.05. Rulkov delay: median τ₀ of the stable windows, as for all other rows.</p>
+    <p><b>Scope.</b> Synthetic signals with known answers and one real benchmark pair. No staged sleep cohort and no cross-subject surrogates.</p>
+  </div>
+</section>
+
+<footer>Bashan A, Bartsch RP, Kantelhardt JW, Havlin S, Ivanov PCh. Network physiology reveals relations between network topology and physiological function. Nature Communications 3:702 (2012). · Bartlett MS. On the theoretical specification and sampling properties of autocorrelated time-series. J. R. Stat. Soc. Suppl. 8:27–41 (1946).</footer>
+</main>
+
+<script>
+const D = __DATA__;
+const T = __TESTS__;
+const T2 = __TESTS2__;
+const EX = __EXP3__;
+const EX4 = __EXP4__;
+const EX5 = __EXP5__;
+__LIB__
+const pct = v => v + " %";
+
+// Figure 1: worked example, two stacked panels
+(() => {
+  const c = document.getElementById("f1"), E = EX4.U12[0].example;
+  legend(c, [{ n: "Stable window", c: "var(--ink-2)", k: "dot" }, { n: "Unstable window", c: "var(--ink-2)", k: "ring" }, { n: "True delay (−20)", c: "", k: "dash" }]);
+  [["fixed", "Fixed TDS · window 60, lag ±30, tol ±1 · score 5.2 %", "var(--fixed)"],
+   ["atds", "aTDS · window 259, lag ±129, tol ±13 · score 91.3 %", "var(--atds)"]].forEach(([k, title, col], idx) => {
+    const S = E[k];
+    const p = plot(c, { h: 230, title, aria: title, m: { b: idx ? 48 : 30 },
+      x: { min: 0, max: 12000, ticks: [0, 2000, 4000, 6000, 8000, 10000, 12000], label: idx ? "Time (samples)" : "" },
+      y: { min: -130, max: 130, ticks: [-120, -60, 0, 60, 120], label: "τ₀ (samples)" } });
+    el("line", { x1: p.x(0), x2: p.x(12000), y1: p.y(-20), y2: p.y(-20), class: "ref" }, p.layer);
+    S.t.forEach((t, i) => {
+      const st = S.stable[i] === 1, cx = p.x(t), cy = p.y(S.tau[i]);
+      el("circle", { cx, cy, r: k === "fixed" ? 3 : 4.2, fill: st ? col : "var(--surface)", stroke: col, "stroke-width": st ? 1 : 1.5 }, p.layer);
+      p.pts.push({ px: cx, py: cy, html: `t = ${fmt(t)} · τ₀ = <b>${S.tau[i]}</b><br>${st ? "stable" : "unstable"}` });
+    });
+    attachTip(p);
+  });
+  table("t1", ["", "window", "step", "lag range", "tolerance", "TDS score", "τ₀ within ±2 of true delay"],
+    [["Fixed TDS", 60, 30, "±30", "±1", pct(E.fixed.score), pct(E.fixed.near_true)],
+     ["aTDS", E.atds.params.window, E.atds.params.step, "±" + E.atds.params.max_lag, "±" + E.atds.params.tol, pct(E.atds.score), pct(E.atds.near_true)]]);
+})();
+
+// Figure 2: independent samples per window
+(() => {
+  const c = document.getElementById("f2"), M = D.memory;
+  legend(c, [{ n: "Fixed window (60 samples)", c: "var(--fixed)" }, { n: "aTDS window (30 · B)", c: "var(--atds)" }, { n: "1 independent sample", c: "", k: "dash" }]);
+  const p = plot(c, { aria: "Independent samples per window versus signal memory",
+    x: { min: 0.8, max: 80, log: true, ticks: [1, 2, 4, 8, 16, 32, 64], label: "How slow the signal is: correlation time τc (samples, log)" },
+    y: { min: 0.5, max: 80, log: true, ticks: [0.5, 1, 2, 5, 10, 30, 60], label: "Independent samples per window (log)" } });
+  el("line", { x1: p.x(0.8), x2: p.x(80), y1: p.y(1), y2: p.y(1), class: "ref" }, p.layer);
+  line(p, M.map(r => [r.tc, r.indep_fixed]), "var(--fixed)", { tip: v => { const r = M.find(q => q.tc === v[0]); return `τc = ${r.tc} · B = ${r.B}<br>fixed 60: <b>${r.indep_fixed}</b> independent samples`; } });
+  line(p, M.map(r => [r.tc, r.indep_atds]), "var(--atds)", { tip: v => { const r = M.find(q => q.tc === v[0]); return `τc = ${r.tc} · aTDS window ${fmt(r.atds_window)}<br><b>${r.indep_atds}</b> independent samples`; } });
+  const last = M[M.length - 1];
+  el("text", { x: p.x(last.tc) - 8, y: p.y(last.indep_fixed) + 18, "text-anchor": "end", class: "direct" }, p.layer).textContent = "fixed: 0.93";
+  el("text", { x: p.x(last.tc) - 8, y: p.y(30) - 10, "text-anchor": "end", class: "direct" }, p.layer).textContent = "aTDS: 30";
+  attachTip(p);
+  table("t2", ["τc (samples)", "Bartlett B", "indep. in 60", "aTDS window", "indep. in aTDS"], M.map(r => [r.tc, r.B, r.indep_fixed, fmt(r.atds_window), r.indep_atds]));
+})();
+
+// Figure 3: AUC vs window length (n = 100 per class), AUC at the aTDS windows
+(() => {
+  const c = document.getElementById("f3"), A = EX4.U2, at = EX4.U2m;
+  const sys = [[2, "Faster system (τc 4, delay 10)", "var(--fixed)"], [8, "4× slower system (τc 16, delay 40)", "var(--v1)"]];
+  legend(c, sys.map(s => ({ n: s[1], c: s[2] })).concat([{ n: "Fixed window (60), both systems", c: "", k: "dash" }, { n: "AUC at the aTDS window", c: "var(--atds)", k: "dot" }]));
+  const p = plot(c, { aria: "AUC versus window length",
+    x: { min: 24, max: 2400, log: true, ticks: [30, 60, 120, 240, 480, 960, 1920], label: "Window length (samples, log scale)" },
+    y: { min: 0.4, max: 1.02, ticks: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], label: "AUC (coupled vs uncoupled)" } });
+  el("line", { x1: p.x(60), x2: p.x(60), y1: p.y(0.4), y2: p.y(1.02), class: "ref" }, p.layer);
+  el("text", { x: p.x(60) + 5, y: p.y(0.43), class: "ref-label" }, p.layer).textContent = "fixed 60";
+  sys.forEach(([r, n, col]) => ciSeries(p, A.filter(a => a.r === r).map(a => [a.L, a.auc, a.auc_ci[0], a.auc_ci[1]]), col, 1,
+    row => { const a = A.find(q => q.r === r && q.L === row[0]); return `${n}<br>window ${a.L} · tol ±${a.tol}<br>AUC <b>${a.auc.toFixed(2)}</b> [${a.auc_ci.join(", ")}]`; }));
+  [[2, "var(--fixed)"], [8, "var(--v1)"]].forEach(([r, col]) => {
+    const m = at.find(q => q.r === r);
+    el("line", { x1: p.x(m.L), x2: p.x(m.L), y1: p.y(0.4), y2: p.y(1.02), stroke: col, "stroke-width": 2, "stroke-opacity": 0.6 }, p.layer);
+    el("circle", { cx: p.x(m.L), cy: p.y(m.auc), r: 6, fill: "var(--atds)", stroke: "var(--surface)", "stroke-width": 2 }, p.layer);
+    el("text", { x: p.x(m.L) + 9, y: p.y(m.auc) + (r === 2 ? 18 : 4), class: "direct" }, p.layer).textContent = `aTDS ${m.L}: ${m.auc.toFixed(2)}`;
+    p.pts.push({ px: p.x(m.L), py: p.y(m.auc), html: `aTDS window ${m.L} (tol ±${m.tol})<br>AUC <b>${m.auc.toFixed(2)}</b> [${m.auc_ci.join(", ")}]` });
+  });
+  attachTip(p);
+  const Ls = [...new Set(A.map(a => a.L))];
+  const rows = Ls.map(L => { const f = A.find(a => a.r === 2 && a.L === L), s = A.find(a => a.r === 8 && a.L === L); return [L, `${f.auc.toFixed(2)} [${f.auc_ci.join(", ")}]`, "±" + f.tol, `${s.auc.toFixed(2)} [${s.auc_ci.join(", ")}]`, "±" + s.tol]; });
+  const f2_ = at.find(q => q.r === 2), s2_ = at.find(q => q.r === 8);
+  rows.push([`aTDS ${f2_.L} / ${s2_.L}`, `${f2_.auc.toFixed(2)} [${f2_.auc_ci.join(", ")}]`, "±" + f2_.tol, `${s2_.auc.toFixed(2)} [${s2_.auc_ci.join(", ")}]`, "±" + s2_.tol]);
+  table("t3", ["window", "AUC faster [95 %]", "tol faster", "AUC slower [95 %]", "tol slower"], rows);
+})();
+
+// Figure 3b: on/off coupling, three block lengths, fixed +-2 criterion
+(() => {
+  const c = document.getElementById("f3b"), R = EX4.U3;
+  const S_ = [[1000, "Blocks of 1 000 samples", "var(--fixed)"], [2000, "Blocks of 2 000", "var(--v1)"], [4000, "Blocks of 4 000", "var(--atds)"]];
+  legend(c, S_.map(s => ({ n: s[1], c: s[2] })).concat([{ n: "aTDS choice (30)", c: "", k: "dash" }]));
+  const p = plot(c, { aria: "Balanced accuracy versus independent samples per window",
+    x: { min: 4, max: 150, log: true, ticks: [5, 10, 15, 20, 30, 45, 60, 90, 120], label: "Independent samples per window, L / B (log scale)" },
+    y: { min: 0.4, max: 1.0, ticks: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], label: "Balanced accuracy of the stable labels" } });
+  el("line", { x1: p.x(30), x2: p.x(30), y1: p.y(0.4), y2: p.y(1.0), class: "ref" }, p.layer);
+  el("line", { x1: p.x(4), x2: p.x(150), y1: p.y(0.5), y2: p.y(0.5), stroke: "var(--ink-3)", "stroke-width": 1 }, p.layer);
+  el("text", { x: p.x(150) - 4, y: p.y(0.5) - 6, "text-anchor": "end", class: "ref-label" }, p.layer).textContent = "guessing (0.5)";
+  S_.forEach(([bl, n, col]) => line(p, R.filter(r => r.block === bl).map(r => [r.neff, r.bal_acc]), col,
+    { tip: v => { const r = R.find(q => q.block === bl && q.neff === v[0]); return `${n} · ${r.neff} independent samples<br>window ${r.window}, tol ±${r.tol}<br>balanced accuracy <b>${r.bal_acc}</b> (sd ${r.sd})`; } }));
+  attachTip(p);
+  table("t3b", ["indep. samples", "window", "blocks 1 000", "blocks 2 000", "blocks 4 000"],
+    [...new Set(R.map(r => r.neff))].map(ne => { const g = bl => R.find(r => r.neff === ne && r.block === bl); return [ne, g(1000).window, g(1000).bal_acc, g(2000).bal_acc, g(4000).bal_acc]; }));
+})();
+
+// Figure 4: lag range only
+(() => {
+  const B = EX4.U4;
+  const V = [["lag30", "var(--fixed)", "Lag ±30"], ["atds", "var(--atds)", "aTDS lag range"]];
+  const a = document.getElementById("f4a");
+  legend(a, V.map(v => ({ n: v[2], c: v[1], k: "dot" })).concat([{ n: "Perfect answer", c: "", k: "dash" }]));
+  const p = plot(a, { w: 340, h: 300, m: { l: 50, r: 12 }, aria: "Delay reported versus true delay",
+    x: { min: 0, max: 170, ticks: [0, 40, 80, 120, 160], label: "True delay (samples)" },
+    y: { min: -40, max: 170, ticks: [-40, 0, 40, 80, 120, 160], label: "Delay reported (samples)" } });
+  el("line", { x1: p.x(0), x2: p.x(170), y1: p.y(0), y2: p.y(170), class: "ref" }, p.layer);
+  const b = document.getElementById("f4b");
+  legend(b, V.map(v => ({ n: v[2], c: v[1], k: "dot" })).concat([{ n: "Wrong delay reported", c: "var(--fixed)", k: "ring" }]));
+  const q = plot(b, { w: 340, h: 300, m: { l: 50, r: 12 }, aria: "TDS score versus true delay",
+    x: { min: 0, max: 170, ticks: [0, 40, 80, 120, 160], label: "True delay (samples)" },
+    y: { min: 0, max: 100, ticks: [0, 25, 50, 75, 100], label: "TDS score (%)" } });
+  B.forEach(r => V.forEach(([k, col, n], vi) => {
+    const off = (vi ? 1.8 : -1.8) + (r.k - 4.5) * 0.35, v = r[k], ok = v.found === r.d;
+    const html = `true delay ${r.d} · ${n} (±${v.max_lag})<br>reports <b>${v.found}</b> · score ${v.score} %<br>${ok ? "right delay" : "<b>wrong delay</b>"}`;
+    [[p, v.found], [q, v.score]].forEach(([pl, yv]) => {
+      const cx = pl.x(r.d + off), cy = pl.y(yv);
+      el("circle", { cx, cy, r: 3.6, fill: ok ? col : "var(--surface)", stroke: ok ? "var(--surface)" : col, "stroke-width": ok ? 1.2 : 1.8, "fill-opacity": 0.9 }, pl.layer);
+      pl.pts.push({ px: cx, py: cy, html });
+    });
+  }));
+  attachTip(p); attachTip(q);
+  const ds = [...new Set(B.map(r => r.d))];
+  table("t4", ["true delay", "window", "tol", "lag ±30: reported", "lag ±30: score %", "aTDS lag: reported", "aTDS lag: score %"],
+    ds.map(d => { const r = B.filter(x => x.d === d); return [d, r[0].window, "±" + r[0].tol, r.map(x => x.lag30.found).join(", "), r.map(x => x.lag30.score).join(", "), r.map(x => x.atds.found).join(", "), r.map(x => x.atds.score).join(", ")]; }));
+})();
+
+// Figure 5: tolerance calibration, with the upper bound
+(() => {
+  const C = EX4.U12[0].tol_curve, pick = EX4.U12[0].example_info.tol;
+  const a = document.getElementById("f5a");
+  legend(a, [{ n: "Chance score C(tol)", c: "var(--fixed)" }, { n: "Upper bound C + 2 SE", c: "var(--v1)" }, { n: "5 % budget", c: "", k: "dash" }]);
+  const p = plot(a, { w: 340, h: 280, m: { l: 50, r: 12 }, aria: "Chance score versus tolerance",
+    x: { min: 0, max: 30, ticks: [0, 5, 10, 15, 20, 25, 30], label: "Tolerance (± samples)" },
+    y: { min: 0, max: 25, ticks: [0, 5, 10, 15, 20, 25], label: "Chance TDS score (%)" } });
+  el("line", { x1: p.x(0), x2: p.x(30), y1: p.y(5), y2: p.y(5), class: "ref" }, p.layer);
+  el("line", { x1: p.x(pick), x2: p.x(pick), y1: p.y(0), y2: p.y(25), stroke: "var(--atds)", "stroke-width": 1.5 }, p.layer);
+  el("text", { x: p.x(pick) - 5, y: p.y(22), "text-anchor": "end", class: "direct" }, p.layer).textContent = `aTDS chose ±${pick}`;
+  line(p, C.map(r => [r.tol, r.ub]), "var(--v1)", { dots: false, dash: "5 3", tip: v => `tol ±${v[0]}<br>upper bound <b>${v[1]} %</b>` });
+  line(p, C.map(r => [r.tol, r.null]), "var(--fixed)", { dots: false, tip: v => `tol ±${v[0]}<br>chance score <b>${v[1]} %</b>` });
+  attachTip(p);
+  const b = document.getElementById("f5b");
+  legend(b, [{ n: "Real pair score", c: "var(--atds)" }]);
+  const q = plot(b, { w: 340, h: 280, m: { l: 50, r: 12 }, aria: "Real pair score versus tolerance",
+    x: { min: 0, max: 30, ticks: [0, 5, 10, 15, 20, 25, 30], label: "Tolerance (± samples)" },
+    y: { min: 0, max: 100, ticks: [0, 25, 50, 75, 100], label: "Real TDS score (%)" } });
+  el("line", { x1: q.x(pick), x2: q.x(pick), y1: q.y(0), y2: q.y(100), stroke: "var(--atds)", "stroke-width": 1.5, "stroke-dasharray": "2 3" }, q.layer);
+  line(q, C.map(r => [r.tol, r.real]), "var(--atds)", { dots: false, tip: v => `tol ±${v[0]}<br>real score <b>${v[1]} %</b>` });
+  attachTip(q);
+  table("t5", ["tolerance", "chance score %", "upper bound %", "real score %"], C.filter(r => r.tol % 2 === 0 || r.tol === 13 || r.tol === 15).map(r => ["±" + r.tol, r.null, r.ub, r.real]));
+})();
+
+// CI series helper: points with 95 % whiskers, x offset in log space
+function ciSeries(p, rows, col, off, tip) {
+  const pts = rows.map(r => [r[0] * off, r[1], r[2], r[3]]);
+  const d = pts.map((v, i) => (i ? "L" : "M") + p.x(v[0]).toFixed(1) + " " + p.y(v[1]).toFixed(1)).join(" ");
+  el("path", { d, fill: "none", stroke: col, "stroke-width": 2 }, p.layer);
+  pts.forEach((v, i) => {
+    const cx = p.x(v[0]);
+    el("line", { x1: cx, x2: cx, y1: p.y(v[2]), y2: p.y(v[3]), stroke: col, "stroke-width": 1.5 }, p.layer);
+    [v[2], v[3]].forEach(e => el("line", { x1: cx - 3, x2: cx + 3, y1: p.y(e), y2: p.y(e), stroke: col, "stroke-width": 1.5 }, p.layer));
+    el("circle", { cx, cy: p.y(v[1]), r: 4, fill: col, stroke: "var(--surface)", "stroke-width": 1.5 }, p.layer);
+    p.pts.push({ px: cx, py: p.y(v[1]), html: tip(rows[i]) });
+  });
+}
+function ciFigure(ids, M, rows) {
+  const R = rows.map(r => r.r);
+  [[ids[0], "auc", "auc_ci", "AUC (coupled vs uncoupled)", 0.4, 1.02, [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]],
+   [ids[1], "hit", "hit_ci", "True delay found (share of pairs)", 0, 1.02, [0, 0.25, 0.5, 0.75, 1.0]]].forEach(([id, key, ci, lab, lo, hi, ticks]) => {
+    const c = document.getElementById(id);
+    legend(c, M.map(m => ({ n: m[1], c: m[2], k: m[3] || "" })));
+    const p = plot(c, { w: 340, h: 300, m: { l: 50, r: 14 }, aria: lab,
+      x: { min: 0.75, max: 21, log: true, ticks: R, label: "Slow-down factor r: system r× slower (log)" },
+      y: { min: lo, max: hi, ticks, label: lab } });
+    if (key === "auc") el("line", { x1: p.x(0.75), x2: p.x(21), y1: p.y(0.5), y2: p.y(0.5), class: "ref" }, p.layer);
+    M.forEach(([k, n, col], mi) => {
+      const off = Math.pow(1.06, mi - (M.length - 1) / 2);
+      ciSeries(p, rows.map(r => [r.r, r[k][key], r[k][ci][0], r[k][ci][1]]), col, off,
+        row => { const r = rows.find(q => q.r === row[0]), v = r[k], pp = r.params[k]; return `r = ${r.r} · ${n}<br>${key === "auc" ? "AUC" : "delay found"} <b>${row[1]}</b> [${row[2]}, ${row[3]}]<br>window ${pp.window}, lag ±${pp.max_lag}, tol ±${pp.tol}<br>coupled ${v.coupled} % · chance ${v.chance} %`; });
+    });
+    attachTip(p);
+  });
+}
+
+// Figure 6: tolerance only
+(() => {
+  const rows = EX4.U1;
+  ciFigure(["f6a", "f6b"], [["atds_tol1", "Tolerance ±1", "var(--fixed)"], ["atds", "Calibrated tolerance", "var(--atds)"]], rows);
+  table("t6", ["r", "window / lag", "calibrated tol", "AUC ±1", "AUC calibrated", "AUC diff (95 %)", "delay found ±1", "delay found cal.", "pairs ≥ 3 stable: ±1 / cal.", "right among those: ±1 / cal.", "chance ±1 / cal."],
+    rows.map(r => [r.r, `${r.params.atds.window} / ±${r.params.atds.max_lag}`, "±" + r.params.atds.tol, `${r.atds_tol1.auc} [${r.atds_tol1.auc_ci.join(", ")}]`, `${r.atds.auc} [${r.atds.auc_ci.join(", ")}]`,
+      r.diff_atds_tol1.ci95.join(" to "), `${Math.round(r.atds_tol1.hit * 100)} %`, `${Math.round(r.atds.hit * 100)} %`, `${r.atds_tol1.n_cond} / ${r.atds.n_cond}`,
+      `${Math.round(r.atds_tol1.hit_cond * 100)} / ${Math.round(r.atds.hit_cond * 100)} %`, `${r.atds_tol1.chance} / ${r.atds.chance} %`]));
+})();
+
+// Figure 7: all rules, fair baselines
+(() => {
+  const rows = EX4.U1;
+  ciFigure(["f7a", "f7b"], [["fixed", "Published 60/±30/±1", "var(--fixed)"], ["rescaled", "Rescaled by hand", "var(--v1)"], ["atds", "aTDS", "var(--atds)"], ["oracle", "Oracle (upper bound)", "var(--ink-3)"]], rows);
+  table("t7", ["r", "setting", "window / lag / tol", "AUC [95 %]", "delay found [95 %]", "coupled %", "chance % (95th pct)"],
+    rows.flatMap(r => ["fixed", "rescaled", "atds", "oracle"].map(k => [r.r, { fixed: "published", rescaled: "rescaled by hand", atds: "aTDS", oracle: "oracle" }[k],
+      `${r.params[k].window} / ±${r.params[k].max_lag} / ±${r.params[k].tol}`, `${r[k].auc} [${r[k].auc_ci.join(", ")}]`, `${Math.round(r[k].hit * 100)} % [${r[k].hit_ci.map(v => Math.round(v * 100)).join(", ")}]`, r[k].coupled, `${r[k].chance} (${r[k].chance_p95})`]))
+      .concat(rows.map(r => { const d = r.diff_rescaled, eq = d.ci90[0] >= -0.05 && d.ci90[1] <= 0.05, bt = d.ci95[0] > 0, wo = d.ci95[1] < 0;
+        return [r.r, "aTDS − rescaled", "", `90 %: ${d.ci90.join(" to ")} · 95 %: ${d.ci95.join(" to ")}`, eq ? "equivalent (±0.05)" : bt ? "aTDS better" : wo ? "rescaled better" : "undecided", "", ""]; })));
+})();
+
+// Table 3: network links with FDR (999 rotations)
+(() => {
+  const R = EX5.V2, sum = (a, f) => a.reduce((s, r) => s + f(r), 0);
+  const rows = [];
+  [["disjoint", "Disjoint links"], ["driver", "Common driver"]].forEach(([k, nm]) => [true, false].forEach(cp => {
+    const v = R.filter(r => r.kind === k && r.coupled === cp);
+    rows.push([`${nm}, ${cp ? "coupled" : "uncoupled"} (10)`, cp ? `${sum(v, r => r.true_found)} of ${sum(v, r => r.n_true)}` : "—",
+      `${sum(v, r => r.false_other)} of ${sum(v, r => r.n_other)}`, `${sum(v, r => r.raw_fp_other)} of ${sum(v, r => r.n_other)} (${(100 * sum(v, r => r.raw_fp_other) / sum(v, r => r.n_other)).toFixed(1)} %)`,
+      k === "driver" && cp ? `${sum(v, r => r.indirect_flagged)} of 10` : "—", v.filter(r => r.false_other).length,
+      `${Math.min(...v.map(r => r.window))}–${Math.max(...v.map(r => r.window))} / ±${Math.min(...v.map(r => r.tol))}–${Math.max(...v.map(r => r.tol))}`]);
+  }));
+  table("t8", ["networks", "true links found", "false links (after FDR)", "uncoupled links with raw p ≤ 0.05", "indirect link reported", "networks with a false link", "window / tol"], rows);
+})();
+
+__ANIM__
+</script>
