@@ -17,6 +17,8 @@ main { max-width: 720px; gap: 34px; }
 .why b { color: var(--ink); }
 .step { display: grid; gap: 12px; }
 .step h3 { font-size: 1.05rem; }
+pre.algo { margin: 0; font-family: var(--f-mono); font-size: 0.84rem; line-height: 1.6; background: var(--tint); color: var(--ink); border-radius: 6px; padding: 14px 16px; overflow-x: auto; }
+pre.algo .c { color: var(--ink-3); }
 ol.steps { margin: 4px 0; padding-left: 1.3em; display: grid; gap: 3px; }
 __ANIMCSS__
 </style>
@@ -90,6 +92,40 @@ __ANIMCSS__
       <p><b>Why 5 %.</b> A false-alarm budget, not a significance level: on average at most 5 % of windows of uncoupled signals may look stable. It is a design constant; 1 % would be stricter. Whether a link is significant still needs its own rotation test.</p>
       <p><b>Why two standard errors.</b> With the mean alone, the chance score on <i>new</i> pairs reached 6.7 %. With the margin, and rotations pooled over all recordings available, it stayed at 3.3–4.4 %.</p>
     </div>
+  </div>
+  <div class="step">
+    <h3>The whole algorithm in pseudocode</h3>
+    <p>The three steps together, exactly as used in all tests. Inputs: the signals s<sub>1</sub> … s<sub>n</sub> of one system, each T samples long, and optionally d<sub>max</sub>.</p>
+    <pre class="algo">aTDS_parameters(s<sub>1</sub> … s<sub>n</sub>):
+    <span class="c"># Step 1: window</span>
+    for each signal i:
+        r<sub>i</sub> = autocorrelation(s<sub>i</sub>)
+        K<sub>i</sub> = first k where r<sub>i</sub>(k) ≤ 0
+        B<sub>i</sub> = 1 + 2 · sum(r<sub>i</sub>(k)² for k = 1 … K<sub>i</sub>−1)
+    Lmin = 61   (or max(61, 2·d_max + 1) if the optional d_max is given)
+    L    = clip(round(30 · max(B)), Lmin, 0.1·T)   # Lmin wins if 0.1·T &lt; Lmin
+    step = L // 2
+
+    <span class="c"># Step 2: lag range</span>
+    lag = (L − 1) // 2
+    P   = [dominant_period(r<sub>i</sub>) for each signal, if rhythmic]
+    if P not empty: lag = max(1, min(lag, min(P) // 2))
+
+    <span class="c"># Step 3: tolerance</span>
+    null = []
+    for each pair (i, j) in the system, in every recording available (at most 50 pairs):
+        repeat 20 times:
+            h = random integer in [a, T − a),  a = max(L, T // 10)
+            null.append( τ₀ series of (s<sub>i</sub>, rotate(s<sub>j</sub>, h)) with L, step, lag )
+    tol = 0
+    for t = 0, 1, 2, … up to max(1, lag // 4):
+        s  = [ TDS score of each null series, 4-of-5 rule, tolerance t ]
+        C  = mean(s);  SE = sd(s) / √len(s)
+        if C + 2·SE ≤ 5 %: tol = t
+        else: break
+    calibration_failed = (C + 2·SE at t = 0) &gt; 5 %
+
+    return window = L, step, max_lag = lag, tolerance = tol</pre>
   </div>
 </section>
 
