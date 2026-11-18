@@ -1,0 +1,31 @@
+{
+    "Originality": 3,
+    "Quality": 3,
+    "Clarity": 3,
+    "Significance": 3,
+    "Ethical Concerns": false,
+    "Soundness": 3,
+    "Presentation": 3,
+    "Contribution": 3,
+    "Overall": 6,
+    "Decision": "Accept",
+    "Summary": "aTDS: data-driven TDS window, lag range and tolerance with careful synthetic validation, one EEG pair and network tests; v2 adds minor clarifications on time resolution, out-of-range diagnostics and scope of per-link power.",
+    "Strengths": [
+        "Principled, fully specified rules addressing a real reproducibility problem.",
+        "Careful evaluation with fair baselines.",
+        "Transparent limitations and practical guidance."
+    ],
+    "Weaknesses": [
+        "No staged or multi-subject real data.",
+        "Constants other than 30 not varied; null biases qualitative.",
+        "Joint B_xy supported by one configuration."
+    ],
+    "Questions": [
+        "Per-stage calibration on a real cohort?",
+        "Per-link power in the slow-down setting?"
+    ],
+    "Limitations": [
+        "Synthetic evidence dominates."
+    ],
+    "Confidence": 4
+}

@@ -1,0 +1,42 @@
+{
+    "Summary": "The paper introduces adaptive Time Delay Stability (aTDS), which sets the TDS window (30 independent samples of the slowest signal via the Bartlett factor), lag range (half the window, capped at half a rhythm period) and tolerance (rotation-surrogate calibration with a 5% mean false-stability budget) from the signals. It evaluates each rule and the full method on synthetic signals with known coupling against published, hand-rescaled and oracle settings, on several signal classes, one real EEG pair and synthetic networks with a per-link rotation test and BH-FDR.",
+    "Strengths": [
+        "Addresses a genuine reproducibility and transferability problem of the field's standard coupling measure.",
+        "Principled, fully specified rules with explicit rationale.",
+        "Careful, fair evaluation with isolated ablations, generous baselines, paired intervals and equivalence testing.",
+        "Important negative result: fixed \u00b130 lag ranges produce high scores with wrong delays.",
+        "Candid limitations and full code/data release."
+    ],
+    "Weaknesses": [
+        "Validation is almost entirely synthetic; no staged or multi-subject real data, so practical benefit is not demonstrated.",
+        "The default max-B window is not aligned with the joint B_xy suggested by Bartlett's formula; the joint rule is tested once.",
+        "Rotation null and independent-rotation SE are optimistic for real, non-stationary data; biases are not discussed quantitatively.",
+        "Mixed results against the hand-rescaled setting and large oracle headroom; the contribution is automation rather than accuracy.",
+        "Long windows limit time resolution; practical usage guidance (reporting, d_max, rhythmic signals, per-segment calibration, diagnostics) is scattered or missing.",
+        "Dense presentation with many numbers in running text."
+    ],
+    "Originality": 3,
+    "Quality": 3,
+    "Clarity": 2,
+    "Significance": 3,
+    "Questions": [
+        "Why is max_i B_i the default rather than the joint B_xy?",
+        "What are the direction and expected size of the bias of the rotation null and of the unclustered SE?",
+        "What maximum window and reporting format do the authors recommend for staged sleep analyses?",
+        "Can a run-time diagnostic flag delays outside the lag range?",
+        "How sensitive are results to the 5% budget and the 61-sample floor?"
+    ],
+    "Limitations": [
+        "Synthetic evidence dominates; one real pair.",
+        "Rotation null ignores shared non-stationarity.",
+        "Time resolution limited by long windows.",
+        "Rhythmic and bursting signals need preprocessing."
+    ],
+    "Ethical Concerns": false,
+    "Soundness": 3,
+    "Presentation": 2,
+    "Contribution": 3,
+    "Overall": 6,
+    "Confidence": 4,
+    "Decision": "Reject"
+}

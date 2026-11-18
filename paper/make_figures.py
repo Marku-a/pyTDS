@@ -112,7 +112,7 @@ def fig_window():
     b.set_ylabel("AUC (coupled vs uncoupled)")
     b.set_ylim(0.4, 1.03)
     b.set_title("(b) detection vs window", loc="left")
-    b.legend(loc="lower right")
+    b.legend(loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0)
     fig.tight_layout()
     save(fig, "fig_window_rule")
 
@@ -211,7 +211,8 @@ def fig_slowdown():
     a.set_ylabel("AUC")
     a.set_ylim(0.4, 1.03)
     a.set_title("(a) detection", loc="left")
-    a.legend(loc="lower left")
+    h, lab = a.get_legend_handles_labels()
+    fig.legend(h, lab, loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.06))
     b.set_ylabel("true delay found (%)")
     b.set_title("(b) delay recovery", loc="left")
     fig.tight_layout()

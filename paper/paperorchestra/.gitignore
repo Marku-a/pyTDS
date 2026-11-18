@@ -1,2 +1,9 @@
 work/
 output/latex_writeup/*.aux
+final/*.aux
+final/*.log
+final/*.out
+final/*.blg
+final/*.bbl
+output/**/*.aux
+output/**/*.log

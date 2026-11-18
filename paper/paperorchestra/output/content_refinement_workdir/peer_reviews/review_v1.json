@@ -1,0 +1,38 @@
+{
+    "Summary": "The paper introduces adaptive Time Delay Stability (aTDS), data-driven rules for the TDS window, lag range and tolerance, and evaluates them on synthetic signals with known coupling against published, hand-rescaled and oracle settings, across signal classes, on one EEG pair and in synthetic networks with per-link rotation tests and BH-FDR. The revision adds a justification of the default window rule, a discussion of null-model biases and of the oracle, practical guidance and a summary of the evidence.",
+    "Strengths": [
+        "Addresses a genuine reproducibility and transferability problem of TDS with principled, fully specified rules.",
+        "Careful evaluation with isolated ablations, generous baselines, paired intervals and equivalence testing.",
+        "Important negative result on fixed lag ranges.",
+        "Revised version is transparent about null-model biases and gives concrete usage guidance.",
+        "Honest scope; code and data released."
+    ],
+    "Weaknesses": [
+        "No staged or multi-subject real data; practical benefit for sleep networks not demonstrated.",
+        "Design constants other than 30 not varied.",
+        "Null-model and SE biases described only qualitatively.",
+        "Joint B_xy supported by one configuration.",
+        "Even capped windows span several sleep epochs; not stated explicitly."
+    ],
+    "Originality": 3,
+    "Quality": 3,
+    "Clarity": 3,
+    "Significance": 3,
+    "Questions": [
+        "How would per-stage calibration on a staged cohort change network contrasts?",
+        "What is the per-link power in the slow-down experiment?",
+        "Can the out-of-range diagnostic be automated?"
+    ],
+    "Limitations": [
+        "Synthetic evidence dominates; one real pair.",
+        "Rotation null ignores shared non-stationarity.",
+        "Time resolution coarser than sleep epochs."
+    ],
+    "Ethical Concerns": false,
+    "Soundness": 3,
+    "Presentation": 3,
+    "Contribution": 3,
+    "Overall": 6,
+    "Confidence": 4,
+    "Decision": "Accept"
+}

@@ -1,0 +1,161 @@
+{
+    "v1": {
+        "round": 1,
+        "agent_plan": {
+            "addressed_weaknesses": [
+                "Justified the max-B default against the joint B_xy suggested by Bartlett's formula and recommended B_xy for pairs of different speed (meta-review weakness 2)",
+                "Stated the direction of the biases of the rotation null and of the unclustered SE, with the observed chance scores (weakness 3)",
+                "Made the automation-not-accuracy framing explicit by discussing the oracle's long-window/tight-tolerance choice (weakness 4)",
+                "Added a Practical guidance subsection on reporting, d_max, B_xy, time resolution and rhythmic signals (weakness 5)",
+                "Added a summary-of-evidence table to reduce numbers in running text (weakness 6)",
+                "Framed the 8.3 % FDP as inconclusive with 10 networks"
+            ],
+            "integrated_answers": [
+                "Why max B instead of B_xy: answered in Methods (window rule)",
+                "Bias of the null and SE: answered in Discussion",
+                "Recommended maximum window and reporting format: Practical guidance (300 s cap result from the log)",
+                "Run-time diagnostic for out-of-range delays: tau0 pile-up at the lag edges noted in Practical guidance",
+                "Computational cost of calibration: derived from the algorithm (about 1000 cross-correlation passes)",
+                "Sensitivity to the 5 % budget and 61-sample floor: stated as not varied (no new experiments added)"
+            ],
+            "actions_taken": [
+                "Inserted 'Why the slowest signal, and not the pair' paragraph in Section 3 (Window)",
+                "Inserted 'Cost' paragraph in Section 3 (Tolerance)",
+                "Inserted 'Relation to the oracle' and 'Biases of the null model' paragraphs in Discussion",
+                "Added Practical guidance subsection and Table 'Summary of the evidence' in Discussion",
+                "Revised the network results paragraph and the Limitations paragraph"
+            ]
+        },
+        "scores_before": {
+            "Originality": 3.0,
+            "Quality": 3.0,
+            "Clarity": 2.0,
+            "Significance": 3.0,
+            "Soundness": 3.0,
+            "Presentation": 2.0,
+            "Contribution": 3.0,
+            "Overall": 6.0,
+            "Confidence": 4.0
+        },
+        "scores_after": {
+            "Originality": 3.0,
+            "Quality": 3.0,
+            "Clarity": 3.0,
+            "Significance": 3.0,
+            "Soundness": 3.0,
+            "Presentation": 3.0,
+            "Contribution": 3.0,
+            "Overall": 6.0,
+            "Confidence": 4.0
+        },
+        "deltas": {
+            "Originality": 0.0,
+            "Quality": 0.0,
+            "Clarity": 1.0,
+            "Significance": 0.0,
+            "Soundness": 0.0,
+            "Presentation": 1.0,
+            "Contribution": 0.0
+        },
+        "total_gain": 2.0,
+        "total_drop": 0.0,
+        "outcome": "ACCEPTED_NEUTRAL_IMPROVEMENT"
+    },
+    "v2": {
+        "round": 2,
+        "agent_plan": {
+            "addressed_weaknesses": [
+                "Stated explicitly that even capped windows span several 30-s sleep epochs (meta-review weakness 5)",
+                "Stated that per-link power was measured only in the network test (reviewer 2)"
+            ],
+            "integrated_answers": [
+                "Automating the out-of-range diagnostic: added to Practical guidance as the share of stable windows with tau0 at the lag edge",
+                "Clustered SE and per-link power: added to Next steps (no new experiments)"
+            ],
+            "actions_taken": [
+                "Edited Practical guidance bullets on time resolution and long delays",
+                "Extended the Limitations and Next steps paragraphs"
+            ]
+        },
+        "scores_before": {
+            "Originality": 3.0,
+            "Quality": 3.0,
+            "Clarity": 3.0,
+            "Significance": 3.0,
+            "Soundness": 3.0,
+            "Presentation": 3.0,
+            "Contribution": 3.0,
+            "Overall": 6.0,
+            "Confidence": 4.0
+        },
+        "scores_after": {
+            "Originality": 3.0,
+            "Quality": 3.0,
+            "Clarity": 3.0,
+            "Significance": 3.0,
+            "Soundness": 3.0,
+            "Presentation": 3.0,
+            "Contribution": 3.0,
+            "Overall": 6.0,
+            "Confidence": 4.0
+        },
+        "deltas": {
+            "Originality": 0.0,
+            "Quality": 0.0,
+            "Clarity": 0.0,
+            "Significance": 0.0,
+            "Soundness": 0.0,
+            "Presentation": 0.0,
+            "Contribution": 0.0
+        },
+        "total_gain": 0.0,
+        "total_drop": 0.0,
+        "outcome": "ACCEPTED_NEUTRAL_IMPROVEMENT"
+    },
+    "v3": {
+        "round": 3,
+        "agent_plan": {
+            "addressed_weaknesses": [
+                "Sign conventions for tau0 versus the reported delay were easy to confuse (round-1 reviewer 1): added a notation table with both conventions in bold"
+            ],
+            "integrated_answers": [],
+            "actions_taken": [
+                "Inserted Table 'Notation and sign conventions' at the start of the aTDS overview in Methods"
+            ]
+        },
+        "scores_before": {
+            "Originality": 3.0,
+            "Quality": 3.0,
+            "Clarity": 3.0,
+            "Significance": 3.0,
+            "Soundness": 3.0,
+            "Presentation": 3.0,
+            "Contribution": 3.0,
+            "Overall": 6.0,
+            "Confidence": 4.0
+        },
+        "scores_after": {
+            "Originality": 3.0,
+            "Quality": 3.0,
+            "Clarity": 3.0,
+            "Significance": 3.0,
+            "Soundness": 3.0,
+            "Presentation": 3.0,
+            "Contribution": 3.0,
+            "Overall": 6.0,
+            "Confidence": 4.0
+        },
+        "deltas": {
+            "Originality": 0.0,
+            "Quality": 0.0,
+            "Clarity": 0.0,
+            "Significance": 0.0,
+            "Soundness": 0.0,
+            "Presentation": 0.0,
+            "Contribution": 0.0
+        },
+        "total_gain": 0.0,
+        "total_drop": 0.0,
+        "outcome": "ACCEPTED_NEUTRAL_IMPROVEMENT"
+    }
+}

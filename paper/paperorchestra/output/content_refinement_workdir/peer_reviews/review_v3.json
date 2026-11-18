@@ -1,0 +1,29 @@
+{
+    "Originality": 3,
+    "Quality": 3,
+    "Clarity": 3,
+    "Significance": 3,
+    "Ethical Concerns": false,
+    "Soundness": 3,
+    "Presentation": 3,
+    "Contribution": 3,
+    "Overall": 6,
+    "Decision": "Accept",
+    "Summary": "aTDS: principled data-driven TDS parameters with careful synthetic validation; v3 adds a notation table resolving sign-convention ambiguity.",
+    "Strengths": [
+        "Addresses a real reproducibility problem with fully specified rules.",
+        "Careful evaluation with fair baselines.",
+        "Transparent limitations, guidance and notation."
+    ],
+    "Weaknesses": [
+        "No staged or multi-subject real data.",
+        "Constants other than 30 not varied; null biases qualitative."
+    ],
+    "Questions": [
+        "Per-stage calibration on a real cohort?"
+    ],
+    "Limitations": [
+        "Synthetic evidence dominates."
+    ],
+    "Confidence": 4
+}

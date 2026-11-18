@@ -1,0 +1,63 @@
+{
+    "v1": {
+        "outcome": "ACCEPTED_COMPILE_SUCCESS",
+        "formatting_feedback": {
+            "figure_and_tables": {
+                "Figure 1": {
+                    "detected_issue": "None (fits text width; legend sits just above panel (a) title but does not overlap data).",
+                    "suggested_fix": "None"
+                },
+                "Figure 2": {
+                    "detected_issue": "Within margins. In panel (b) the legend overlaps the green error bar at L = 2^6-2^7 (image content, not LaTeX layout).",
+                    "suggested_fix": "None in LaTeX; regenerate the PNG with the legend moved (image-level fix)."
+                },
+                "Figure 3": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 4": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 5": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 6": {
+                    "detected_issue": "Within margins. In panel (a) the legend overlaps the published-setting curve and error bars at r = 4-8 (image content).",
+                    "suggested_fix": "None in LaTeX; regenerate the PNG with the legend outside the axes or below the panels (image-level fix)."
+                },
+                "Table 1": {
+                    "detected_issue": "None (float placed at top of page 4, above its subsection heading; acceptable).",
+                    "suggested_fix": "None"
+                },
+                "Table 2": {
+                    "detected_issue": "None (scaled to text width).",
+                    "suggested_fix": "None"
+                },
+                "Table 3": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Table 4": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                }
+            },
+            "other_issues": [
+                {
+                    "page": 15,
+                    "element": "References [10], [14], [20], [22]",
+                    "detected_issue": "BibTeX lower-cases proper names and acronyms: 'Tdspy', 'pearson's', '(roc) curve', 'hurst effect'; authors of [22] printed in capitals ('R. B. DAVIES and D. S. HARTE').",
+                    "suggested_fix": "In references.bib protect capitals with braces: {TDSpy}, {Pearson}'s, ({ROC}), {Hurst}; write authors of [22] as 'Davies, R. B. and Harte, D. S.'."
+                },
+                {
+                    "page": 16,
+                    "element": "Reference [24]",
+                    "detected_issue": "Venue string is malformed: 'Physical review. E, Statistical, nonlinear, and soft matter physics, 65 4 Pt 1:041922'.",
+                    "suggested_fix": "Set journal = {Physical Review E}, volume = {65}, pages = {041922}."
+                }
+            ]
+        }
+    }
+}
