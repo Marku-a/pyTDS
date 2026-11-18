@@ -1,3 +1,21 @@
+diff --git a/utils/gemini_utils.py b/utils/gemini_utils.py
+index a3ef680..e75b7e5 100644
+--- a/utils/gemini_utils.py
++++ b/utils/gemini_utils.py
+@@ -41,6 +41,13 @@ def get_genai_client() -> genai.Client:
+     them). Vertex AI takes precedence over GEMINI_API_KEY when both are set.
+     """
+     global _genai_client
++    if os.getenv("GEMINI_BACKEND") == "manual":  # file-queue backend (see manual_backend.py)
++        import sys as _sys
++        _sys.path.insert(0, os.environ["PO_MANUAL_BACKEND_DIR"])
++        from manual_backend import ManualClient
++        if _genai_client is None:
++            _genai_client = ManualClient()
++        return _genai_client
+     if _genai_client is None:
+         with _genai_client_lock:
+             if _genai_client is None:
 diff --git a/utils/scholar_utils.py b/utils/scholar_utils.py
 index 7ecdbf1..ef01b55 100644
 --- a/utils/scholar_utils.py
