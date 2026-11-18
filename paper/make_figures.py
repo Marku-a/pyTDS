@@ -44,6 +44,9 @@ theory, exp4 = load("theory"), load("exp4")
 
 def save(fig, name):
     fig.savefig(OUT / f"{name}.pdf")
+    po = ROOT / "paper" / "paperorchestra" / "raw_materials" / "figures"
+    po.mkdir(parents=True, exist_ok=True)
+    fig.savefig(po / f"{name}.png", dpi=200)
     plt.close(fig)
     print("wrote", OUT / f"{name}.pdf")
 

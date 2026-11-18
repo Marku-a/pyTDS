@@ -1,0 +1,36 @@
+diff --git a/utils/scholar_utils.py b/utils/scholar_utils.py
+index 7ecdbf1..ef01b55 100644
+--- a/utils/scholar_utils.py
++++ b/utils/scholar_utils.py
+@@ -59,16 +59,21 @@ def s2_title_search(
+             return True
+ 
+     try:
+-        rsp = requests.get(
+-            "https://api.semanticscholar.org/graph/v1/paper/search",
+-            headers=headers,
+-            params={
+-                "query": title_query,
+-                "limit": 3,
+-                "fields": "title,authors,venue,year,abstract,citationCount,journal,publicationDate",
+-            },
+-            timeout=5,
+-        )
++        import random, time as _time
++        for _attempt in range(8):  # retry on rate limit (public S2 tier)
++            rsp = requests.get(
++                "https://api.semanticscholar.org/graph/v1/paper/search",
++                headers=headers,
++                params={
++                    "query": title_query,
++                    "limit": 3,
++                    "fields": "title,authors,venue,year,abstract,citationCount,journal,publicationDate",
++                },
++                timeout=20,
++            )
++            if rsp.status_code not in (429, 500, 502, 503, 504):
++                break
++            _time.sleep(min(60, 2 ** _attempt) + random.uniform(0, 1.5))
+         if rsp.status_code != 200:
+             return None
+         results = rsp.json().get("data", [])
