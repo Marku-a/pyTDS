@@ -36,3 +36,14 @@ The formatting agent inspected page images: all 6 figures and 4 tables fit the m
 - Literature agent: keep verified records that have no abstract in the index (marked as such) instead of dropping them; this kept 34 papers instead of 12.
 - Google Search grounding (Gemini-only) replaced by Claude's own web search plus a reference list verified earlier by web search.
 - Plotting agent (Gemini image model) not used; the six figures are drawn from the raw JSON results by `paper/make_figures.py`.
+
+## Independent fact check after the run
+
+A separate reviewer agent checked the final paper against the raw JSON results, the experiment log, the code and the bibliography. All numbers matched. Six wording problems in the new sections were fixed in `atds_paperorchestra.tex` after the run:
+
+1. The 60 s / 30 s window setting is now cited to Rizzo 2020 only.
+2. Removed an unsupported claim that other TDS studies "carried over" the original parameters.
+3. The edge-of-lag-range check is now marked untested, and the text notes it would miss the at-chance fast-signal case.
+4. The joint B_xy recommendation now states it rests on one configuration (both rules at AUC 1.00).
+5. Rotation keeps autocorrelations exactly only in the circular sense.
+6. "Often with the wrong sign" is now "in 16 of 50 cases".
