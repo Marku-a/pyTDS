@@ -17,10 +17,10 @@ index a3ef680..e75b7e5 100644
          with _genai_client_lock:
              if _genai_client is None:
 diff --git a/utils/scholar_utils.py b/utils/scholar_utils.py
-index 7ecdbf1..ef01b55 100644
+index 7ecdbf1..3c270ef 100644
 --- a/utils/scholar_utils.py
 +++ b/utils/scholar_utils.py
-@@ -59,16 +59,21 @@ def s2_title_search(
+@@ -59,19 +59,25 @@ def s2_title_search(
              return True
  
      try:
@@ -34,8 +34,11 @@ index 7ecdbf1..ef01b55 100644
 -            },
 -            timeout=5,
 -        )
+-        if rsp.status_code != 200:
+-            return None
+-        results = rsp.json().get("data", [])
 +        import random, time as _time
-+        for _attempt in range(8):  # retry on rate limit (public S2 tier)
++        for _attempt in range(3):  # retry on rate limit (public S2 tier)
 +            rsp = requests.get(
 +                "https://api.semanticscholar.org/graph/v1/paper/search",
 +                headers=headers,
@@ -49,6 +52,50 @@ index 7ecdbf1..ef01b55 100644
 +            if rsp.status_code not in (429, 500, 502, 503, 504):
 +                break
 +            _time.sleep(min(60, 2 ** _attempt) + random.uniform(0, 1.5))
-         if rsp.status_code != 200:
++        if rsp.status_code == 200:
++            results = rsp.json().get("data", [])
++        else:  # S2 unavailable or rate-limited: verify against Crossref instead
++            results = _crossref_search(title_query, year_hint=year_hint)
+         if not results:
              return None
-         results = rsp.json().get("data", [])
+ 
+@@ -98,3 +104,39 @@ def s2_title_search(
+     except Exception as e:
+         print(f"      ⚠️ S2 Error for '{title_query}': {e}")
+         return None
++
++def _crossref_search(title_query: str, rows: int = 10, year_hint: int = None) -> list:
++    """Crossref fallback returning records in Semantic Scholar's field layout."""
++    import re as _re
++    try:
++        params = {"query.bibliographic": title_query, "rows": rows,
++                  "select": "title,author,issued,container-title,abstract,is-referenced-by-count,DOI"}
++        if year_hint:
++            params["filter"] = f"from-pub-date:{year_hint - 1},until-pub-date:{year_hint + 1}"
++        r = requests.get(
++            "https://api.crossref.org/works",
++            params=params,
++            headers={"User-Agent": "paper-orchestra-crossref-fallback/0.1"},
++            timeout=30,
++        )
++        if r.status_code != 200:
++            return []
++        out = []
++        for it in r.json().get("message", {}).get("items", []):
++            title = (it.get("title") or [""])[0]
++            parts = (it.get("issued", {}).get("date-parts") or [[None]])[0]
++            year = parts[0] if parts else None
++            pdate = "-".join(f"{v:02d}" if i else str(v) for i, v in enumerate(parts)) if len(parts) == 3 else None
++            venue = (it.get("container-title") or [""])[0]
++            abstract = _re.sub(r"<[^>]+>", " ", it.get("abstract") or "")
++            abstract = " ".join(abstract.split())
++            authors = [{"name": " ".join(x for x in (a.get("given"), a.get("family")) if x)}
++                       for a in it.get("author", [])]
++            out.append({"title": title, "authors": authors, "venue": venue, "year": year,
++                        "abstract": abstract, "citationCount": it.get("is-referenced-by-count", 0),
++                        "journal": {"name": venue}, "publicationDate": pdate,
++                        "externalIds": {"DOI": it.get("DOI")}})
++        return out
++    except Exception as e:
++        print(f"      ⚠️ Crossref Error for '{title_query}': {e}")
++        return []

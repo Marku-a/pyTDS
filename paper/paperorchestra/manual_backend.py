@@ -116,15 +116,26 @@ class _Models:
         if sys_inst is not None:
             parts.append("## SYSTEM INSTRUCTION\n" + "\n".join(_serialize(q, n, sys_inst)))
         parts.append("## USER CONTENTS\n" + "\n\n---\n\n".join(_serialize(q, n, contents)))
-        req.write_text(f"# REQUEST {n:04d}\n```json\n{json.dumps(meta)}\n```\n\n" + "\n\n".join(parts))
+        body = f"```json\n{json.dumps(meta)}\n```\n\n" + "\n\n".join(parts)
+        req.write_text(f"# REQUEST {n:04d}\n" + body)
         resp = q / f"resp_{n:04d}.txt"
+        # Replay an earlier answer to an identical request (e.g. after a restart).
+        cache = q / "cache"
+        cache.mkdir(exist_ok=True)
+        key = hashlib.sha1(body.encode()).hexdigest()
+        hit = cache / f"{key}.txt"
+        if hit.exists() and not resp.exists():
+            resp.write_text(hit.read_text())
         t0 = time.time()
         while not resp.exists():
             time.sleep(2)
             if time.time() - t0 > float(os.environ.get("PO_TIMEOUT", "21600")):
                 raise TimeoutError(f"no response for request {n}")
         time.sleep(0.5)  # let the writer finish
-        return _Resp(resp.read_text())
+        text = resp.read_text()
+        if not hit.exists():
+            hit.write_text(text)
+        return _Resp(text)
 
 
 class ManualClient:
