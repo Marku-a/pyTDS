@@ -1,3 +1,21 @@
+diff --git a/methods/agents/literature_review_agent.py b/methods/agents/literature_review_agent.py
+index f449b11..48fb52f 100644
+--- a/methods/agents/literature_review_agent.py
++++ b/methods/agents/literature_review_agent.py
+@@ -342,7 +342,12 @@ class HybridLiteratureAgent:
+                     return
+ 
+                 if not s2_data.get("abstract", ""):
+-                    return
++                    # Verified record without an abstract in the index (common for
++                    # Crossref and pre-1990 papers): keep it, say so, never invent one.
++                    s2_data["abstract"] = (
++                        "[Abstract not available in the bibliographic index; record verified "
++                        f"by title/year. Cited for: {cand_reason}]"
++                    )
+ 
+                 authors_list = [a["name"] for a in s2_data.get("authors", [])]
+                 j_info = s2_data.get("journal") or {}
 diff --git a/utils/gemini_utils.py b/utils/gemini_utils.py
 index a3ef680..e75b7e5 100644
 --- a/utils/gemini_utils.py
