@@ -1,0 +1,10 @@
+params regime {'published': {'window': 60, 'step': 30, 'max_lag': 30, 'tol': 1}, 'atds': {'window': 516, 'step': 258, 'max_lag': 257, 'tol': 29}, 'atds_cap1000': {'window': 516, 'step': 258, 'max_lag': 257, 'tol': 29}, 'regime_A': {'window': 251, 'step': 125, 'max_lag': 125, 'tol': 13}, 'regime_B': {'window': 1000, 'step': 500, 'max_lag': 499, 'tol': 53}, 'rescaled_est': {'window': 480, 'step': 240, 'max_lag': 240, 'tol': 8}, 'atds_bh': {'window': 1332, 'step': 666, 'max_lag': 665, 'tol': 75}} B_bh 44.42
+published A auc 0.944 0.942 B coup/ctrl 0.89 0.81 margin 0.89 0.77
+atds A auc 1.0 1.0 B coup/ctrl 8.12 5.78 margin 3.75 5.5
+atds_cap1000 A auc 1.0 1.0 B coup/ctrl 8.12 5.78 margin 3.75 5.5
+atds_per_regime A auc 1.0 1.0 B coup/ctrl 9.0 4.5 margin None None
+rescaled_est A auc 1.0 1.0 B coup/ctrl 1.96 0.27 margin 0.38 0.19
+atds_bh A auc 0.937 None B coup/ctrl 11.5 2.5 margin None None
+{'published': (8.52, 0.3), 'atds': (86.51, 0.25), 'atds_cap1000': (86.51, 0.25), 'rescaled_est': (84.59, 0.24), 'atds_bh': (99.78, 0.25)}
+item 3 38s
+X7 item 3 wall 38s

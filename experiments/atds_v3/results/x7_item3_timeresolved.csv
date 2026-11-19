@@ -1,0 +1,18 @@
+case,method,params_window,params_step,params_max_lag,params_tol,margin,n_pairs_with_A_windows,mean_windows_A,mean_windows_B,auc,auc_ci,regimeA_coupled_mean,regimeA_control_mean,false_stability_B_coupled_mean,false_stability_B_control_mean,n_pairs_with_B_windows,hit,hit_ci,n,params_A_window,params_A_step,params_A_max_lag,params_A_tol,params_B_window,params_B_step,params_B_max_lag,params_B_tol,note,score_mean,score_sd,n_stable_windows,median_abs_err_pooled,tc_hat,r_hat,B_bh,calib_failed
+regime_switching,published,60,30,30,1,False,40,329.0,327.0,0.944,"[0.89, 0.987]",5.62,0.71,0.89,0.81,40,0.95,"[0.835, 0.986]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds,516,258,257,29,False,40,33.0,32.0,1.0,"[1.0, 1.0]",98.94,4.39,8.12,5.78,40,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds_cap1000,516,258,257,29,False,40,33.0,32.0,1.0,"[1.0, 1.0]",98.94,4.39,8.12,5.78,40,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds_per_regime,,,,,False,40,75.0,15.0,1.0,"[1.0, 1.0]",84.33,3.6,9.0,4.5,40,1.0,"[0.912, 1.0]",40,251,125,125,13,1000,500,499,53,,,,,,,,,
+regime_switching,rescaled_est,480,240,240,8,False,40,36.0,37.0,1.0,"[1.0, 1.0]",97.85,0.69,1.96,0.27,40,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds_bh,1332,666,665,75,False,40,10.0,10.0,0.937,"[0.875, 0.983]",40.0,2.0,11.5,2.5,40,0.675,"[0.52, 0.799]",40,,,,,,,,,,,,,,,,,
+regime_switching,published,60,30,30,1,True,40,305.0,305.0,0.942,"[0.884, 0.989]",5.8,0.7,0.89,0.77,40,0.95,"[0.835, 0.986]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds,516,258,257,29,True,40,8.0,10.0,1.0,"[1.0, 1.0]",100.0,4.69,3.75,5.5,40,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds_cap1000,516,258,257,29,True,40,8.0,10.0,1.0,"[1.0, 1.0]",100.0,4.69,3.75,5.5,40,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds_per_regime,,,,,True,40,45.0,0.0,1.0,"[1.0, 1.0]",86.06,3.44,,,0,1.0,"[0.912, 1.0]",40,251,125,125,13,1000,500,499,53,,,,,,,,,
+regime_switching,rescaled_est,480,240,240,8,True,40,14.0,13.0,1.0,"[1.0, 1.0]",99.46,0.89,0.38,0.19,40,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,,
+regime_switching,atds_bh,1332,666,665,75,True,0,0.0,0.0,,,,,,,0,0.0,"[-0.0, 0.088]",40,,,,,,,,,no window inside a regime-A block after the margin: not reportable,,,,,,,,
+drifting_delay,published,60,30,30,1,,,,,,,,,,,,,,,,,,,,,,,,8.52,2.56,2267,0.3,,,,
+drifting_delay,atds,244,122,121,13,,,,,,,,,,,,,,,,,,,,,,,,86.51,3.04,5606,0.25,,,,
+drifting_delay,atds_cap1000,244,122,121,13,,,,,,,,,,,,,,,,,,,,,,,,86.51,3.04,5606,0.25,,,,
+drifting_delay,rescaled_est,240,120,120,4,,,,,,,,,,,,,,,,,,,,,,,,84.59,2.87,5583,0.24,8.0,4,,
+drifting_delay,atds_bh,581,290,290,33,,,,,,,,,,,,,,,,,,,,,,,,99.78,0.54,2674,0.25,,,19.38,False

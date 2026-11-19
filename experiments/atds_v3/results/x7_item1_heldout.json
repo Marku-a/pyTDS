@@ -1,0 +1,593 @@
+{
+ "1": {
+  "r": 1,
+  "n": 100,
+  "r_hat": 2,
+  "tc_hat": 3.0,
+  "B_bh": 4.24,
+  "calib_failed": {
+   "atds": false,
+   "atds_bh": false
+  },
+  "params": {
+   "published": {
+    "window": 60,
+    "step": 30,
+    "max_lag": 30,
+    "tol": 1
+   },
+   "rescaled_est": {
+    "window": 120,
+    "step": 60,
+    "max_lag": 60,
+    "tol": 2
+   },
+   "atds": {
+    "window": 66,
+    "step": 33,
+    "max_lag": 32,
+    "tol": 3
+   },
+   "atds_bh": {
+    "window": 127,
+    "step": 63,
+    "max_lag": 63,
+    "tol": 6
+   }
+  },
+  "methods": {
+   "published": {
+    "auc": 1.0,
+    "auc_ci": [
+     0.999,
+     1.0
+    ],
+    "hit": 1.0,
+    "hit_ci": [
+     0.963,
+     1.0
+    ],
+    "n": 100,
+    "chance": 0.884
+   },
+   "rescaled_est": {
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "hit": 1.0,
+    "hit_ci": [
+     0.963,
+     1.0
+    ],
+    "n": 100,
+    "chance": 0.461
+   },
+   "atds": {
+    "auc": 0.999,
+    "auc_ci": [
+     0.998,
+     1.0
+    ],
+    "hit": 1.0,
+    "hit_ci": [
+     0.963,
+     1.0
+    ],
+    "n": 100,
+    "chance": 3.924
+   },
+   "atds_bh": {
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "hit": 1.0,
+    "hit_ci": [
+     0.963,
+     1.0
+    ],
+    "n": 100,
+    "chance": 3.405
+   }
+  },
+  "diff_atds_bh_minus": {
+   "atds": {
+    "diff": 0.001,
+    "ci95": [
+     0.0,
+     0.002
+    ]
+   },
+   "rescaled_est": {
+    "diff": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "published": {
+    "diff": 0.0,
+    "ci95": [
+     0.0,
+     0.001
+    ]
+   }
+  }
+ },
+ "2": {
+  "r": 2,
+  "n": 100,
+  "r_hat": 2,
+  "tc_hat": 5.0,
+  "B_bh": 8.94,
+  "calib_failed": {
+   "atds": false,
+   "atds_bh": false
+  },
+  "params": {
+   "published": {
+    "window": 60,
+    "step": 30,
+    "max_lag": 30,
+    "tol": 1
+   },
+   "rescaled_est": {
+    "window": 120,
+    "step": 60,
+    "max_lag": 60,
+    "tol": 2
+   },
+   "atds": {
+    "window": 129,
+    "step": 64,
+    "max_lag": 64,
+    "tol": 6
+   },
+   "atds_bh": {
+    "window": 268,
+    "step": 134,
+    "max_lag": 133,
+    "tol": 14
+   }
+  },
+  "methods": {
+   "published": {
+    "auc": 0.877,
+    "auc_ci": [
+     0.828,
+     0.919
+    ],
+    "hit": 0.85,
+    "hit_ci": [
+     0.767,
+     0.907
+    ],
+    "n": 100,
+    "chance": 0.707
+   },
+   "rescaled_est": {
+    "auc": 0.989,
+    "auc_ci": [
+     0.978,
+     0.998
+    ],
+    "hit": 0.99,
+    "hit_ci": [
+     0.946,
+     0.998
+    ],
+    "n": 100,
+    "chance": 0.566
+   },
+   "atds": {
+    "auc": 0.973,
+    "auc_ci": [
+     0.95,
+     0.989
+    ],
+    "hit": 0.98,
+    "hit_ci": [
+     0.93,
+     0.994
+    ],
+    "n": 100,
+    "chance": 3.559
+   },
+   "atds_bh": {
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "hit": 1.0,
+    "hit_ci": [
+     0.963,
+     1.0
+    ],
+    "n": 100,
+    "chance": 3.845
+   }
+  },
+  "diff_atds_bh_minus": {
+   "atds": {
+    "diff": 0.027,
+    "ci95": [
+     0.01,
+     0.047
+    ]
+   },
+   "rescaled_est": {
+    "diff": 0.011,
+    "ci95": [
+     0.002,
+     0.021
+    ]
+   },
+   "published": {
+    "diff": 0.123,
+    "ci95": [
+     0.078,
+     0.174
+    ]
+   }
+  }
+ },
+ "4": {
+  "r": 4,
+  "n": 100,
+  "r_hat": 4,
+  "tc_hat": 8.5,
+  "B_bh": 19.48,
+  "calib_failed": {
+   "atds": false,
+   "atds_bh": false
+  },
+  "params": {
+   "published": {
+    "window": 60,
+    "step": 30,
+    "max_lag": 30,
+    "tol": 1
+   },
+   "rescaled_est": {
+    "window": 240,
+    "step": 120,
+    "max_lag": 120,
+    "tol": 4
+   },
+   "atds": {
+    "window": 248,
+    "step": 124,
+    "max_lag": 123,
+    "tol": 13
+   },
+   "atds_bh": {
+    "window": 584,
+    "step": 292,
+    "max_lag": 291,
+    "tol": 30
+   }
+  },
+  "methods": {
+   "published": {
+    "auc": 0.598,
+    "auc_ci": [
+     0.524,
+     0.672
+    ],
+    "hit": 0.24,
+    "hit_ci": [
+     0.167,
+     0.332
+    ],
+    "n": 100,
+    "chance": 0.642
+   },
+   "rescaled_est": {
+    "auc": 0.949,
+    "auc_ci": [
+     0.914,
+     0.975
+    ],
+    "hit": 0.93,
+    "hit_ci": [
+     0.863,
+     0.966
+    ],
+    "n": 100,
+    "chance": 0.352
+   },
+   "atds": {
+    "auc": 0.903,
+    "auc_ci": [
+     0.859,
+     0.94
+    ],
+    "hit": 0.89,
+    "hit_ci": [
+     0.814,
+     0.937
+    ],
+    "n": 100,
+    "chance": 4.45
+   },
+   "atds_bh": {
+    "auc": 0.996,
+    "auc_ci": [
+     0.991,
+     0.999
+    ],
+    "hit": 0.99,
+    "hit_ci": [
+     0.946,
+     0.998
+    ],
+    "n": 100,
+    "chance": 3.537
+   }
+  },
+  "diff_atds_bh_minus": {
+   "atds": {
+    "diff": 0.093,
+    "ci95": [
+     0.056,
+     0.141
+    ]
+   },
+   "rescaled_est": {
+    "diff": 0.047,
+    "ci95": [
+     0.022,
+     0.079
+    ]
+   },
+   "published": {
+    "diff": 0.398,
+    "ci95": [
+     0.32,
+     0.476
+    ]
+   }
+  }
+ },
+ "8": {
+  "r": 8,
+  "n": 100,
+  "r_hat": 8,
+  "tc_hat": 16.5,
+  "B_bh": 31.83,
+  "calib_failed": {
+   "atds": false,
+   "atds_bh": false
+  },
+  "params": {
+   "published": {
+    "window": 60,
+    "step": 30,
+    "max_lag": 30,
+    "tol": 1
+   },
+   "rescaled_est": {
+    "window": 480,
+    "step": 240,
+    "max_lag": 240,
+    "tol": 8
+   },
+   "atds": {
+    "window": 489,
+    "step": 244,
+    "max_lag": 244,
+    "tol": 26
+   },
+   "atds_bh": {
+    "window": 955,
+    "step": 477,
+    "max_lag": 477,
+    "tol": 61
+   }
+  },
+  "methods": {
+   "published": {
+    "auc": 0.515,
+    "auc_ci": [
+     0.436,
+     0.592
+    ],
+    "hit": 0.0,
+    "hit_ci": [
+     0.0,
+     0.037
+    ],
+    "n": 100,
+    "chance": 0.6
+   },
+   "rescaled_est": {
+    "auc": 0.842,
+    "auc_ci": [
+     0.795,
+     0.888
+    ],
+    "hit": 0.72,
+    "hit_ci": [
+     0.625,
+     0.799
+    ],
+    "n": 100,
+    "chance": 0.402
+   },
+   "atds": {
+    "auc": 0.836,
+    "auc_ci": [
+     0.78,
+     0.888
+    ],
+    "hit": 0.71,
+    "hit_ci": [
+     0.615,
+     0.79
+    ],
+    "n": 100,
+    "chance": 3.95
+   },
+   "atds_bh": {
+    "auc": 0.931,
+    "auc_ci": [
+     0.893,
+     0.959
+    ],
+    "hit": 0.91,
+    "hit_ci": [
+     0.838,
+     0.952
+    ],
+    "n": 100,
+    "chance": 5.725
+   }
+  },
+  "diff_atds_bh_minus": {
+   "atds": {
+    "diff": 0.095,
+    "ci95": [
+     0.033,
+     0.159
+    ]
+   },
+   "rescaled_est": {
+    "diff": 0.089,
+    "ci95": [
+     0.036,
+     0.149
+    ]
+   },
+   "published": {
+    "diff": 0.416,
+    "ci95": [
+     0.336,
+     0.5
+    ]
+   }
+  }
+ },
+ "16": {
+  "r": 16,
+  "n": 100,
+  "r_hat": 16,
+  "tc_hat": 32.0,
+  "B_bh": 136.58,
+  "calib_failed": {
+   "atds": false,
+   "atds_bh": false
+  },
+  "params": {
+   "published": {
+    "window": 60,
+    "step": 30,
+    "max_lag": 30,
+    "tol": 1
+   },
+   "rescaled_est": {
+    "window": 960,
+    "step": 480,
+    "max_lag": 480,
+    "tol": 16
+   },
+   "atds": {
+    "window": 1316,
+    "step": 658,
+    "max_lag": 657,
+    "tol": 69
+   },
+   "atds_bh": {
+    "window": 2000,
+    "step": 1000,
+    "max_lag": 999,
+    "tol": 117
+   }
+  },
+  "methods": {
+   "published": {
+    "auc": 0.491,
+    "auc_ci": [
+     0.416,
+     0.569
+    ],
+    "hit": 0.0,
+    "hit_ci": [
+     0.0,
+     0.037
+    ],
+    "n": 100,
+    "chance": 0.935
+   },
+   "rescaled_est": {
+    "auc": 0.711,
+    "auc_ci": [
+     0.661,
+     0.762
+    ],
+    "hit": 0.42,
+    "hit_ci": [
+     0.328,
+     0.518
+    ],
+    "n": 100,
+    "chance": 0.1
+   },
+   "atds": {
+    "auc": 0.73,
+    "auc_ci": [
+     0.667,
+     0.79
+    ],
+    "hit": 0.59,
+    "hit_ci": [
+     0.492,
+     0.681
+    ],
+    "n": 100,
+    "chance": 4.655
+   },
+   "atds_bh": {
+    "auc": 0.803,
+    "auc_ci": [
+     0.746,
+     0.856
+    ],
+    "hit": 0.67,
+    "hit_ci": [
+     0.573,
+     0.754
+    ],
+    "n": 100,
+    "chance": 5.158
+   }
+  },
+  "diff_atds_bh_minus": {
+   "atds": {
+    "diff": 0.073,
+    "ci95": [
+     -0.006,
+     0.15
+    ]
+   },
+   "rescaled_est": {
+    "diff": 0.092,
+    "ci95": [
+     0.031,
+     0.15
+    ]
+   },
+   "published": {
+    "diff": 0.312,
+    "ci95": [
+     0.21,
+     0.408
+    ]
+   }
+  }
+ },
+ "wall_seconds": 57
+}

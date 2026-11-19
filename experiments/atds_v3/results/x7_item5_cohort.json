@@ -1,0 +1,42 @@
+{
+ "n_subjects": 35,
+ "B_default_median_of_max": 228.21,
+ "B_bh_median_of_max": 893.5,
+ "B_default_per_channel_median": {
+  "HR": 64.62,
+  "Resp": 25.0,
+  "Chin": 5.5,
+  "Leg": 3.67,
+  "Eye": 7.31,
+  "delta": 166.47,
+  "theta": 73.08,
+  "alpha": 30.03,
+  "sigma": 13.54,
+  "beta": 11.37
+ },
+ "B_bh_per_channel_median": {
+  "HR": 424.16,
+  "Resp": 205.6,
+  "Chin": 21.59,
+  "Leg": 13.4,
+  "Eye": 61.01,
+  "delta": 657.95,
+  "theta": 463.34,
+  "alpha": 240.9,
+  "sigma": 148.7,
+  "beta": 68.77
+ },
+ "window_uncapped_default": 2868,
+ "window_uncapped_bh": 2868,
+ "window_cap300_default": 300,
+ "window_cap300_bh": 300,
+ "window_changes_under_cap300": false,
+ "cohort_reanalysis": "window, step, lag identical (300 / 150 / 149); calibration inputs (seed, 50 pairs, p0) identical, so atds_bh_cap300 == atds_cap300 by construction and every cohort number (stage means, effects) is unchanged",
+ "atds_cap300_params": {
+  "window": 300,
+  "step": 150,
+  "max_lag": 149,
+  "tolerance": 14
+ },
+ "wall_seconds": 127
+}
