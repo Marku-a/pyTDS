@@ -1,0 +1,91 @@
+THOUGHT:
+The paper proposes adaptive TDS (aTDS), three data-driven rules for the window length, lag range and tolerance of Time Delay Stability. The window holds 30 Bartlett-effective samples of the slowest signal. The lag range is half the window, capped at half a detected rhythm period. The tolerance is the largest one that keeps the mean chance score of circularly rotated copies, plus 2 SE, at or below 5 %. The 4-of-5 stability rule is kept unchanged.
+
+My first impression is that this is an unusually careful and honest validation paper with a modest methodological core. Each rule is tested in isolation, against a manually rescaled setting, a data-rescaled setting and an oracle. Negative and null results are reported prominently: there is no gain on 1-Hz sleep data, a weaker wake contrast, the oracle is clearly better, the seasonal catchment fails, there is no delay for fuel prices, and the rhythm cap excludes delays beyond half a period. Table 9 is an exemplary summary. Claims are generally hedged appropriately.
+
+The central question for significance is what aTDS adds beyond the obvious fix of rescaling the fixed parameters by the time scale. The authors confront this themselves. Rescaled fixed TDS, a one-factor rescaling estimated from the 1/e correlation time, matches aTDS in AUC in the slow-down test (slightly better at r = 2 and 4, worse at r = 8 and 16) and on the ECG cohort (0.962 vs 0.963). The remaining claimed advantages are:
+- delay recovery at r = 8 (85 % vs 60 %);
+- the ECG control level (95th percentile 39 % vs 1.3 %) and therefore 50 vs 43 patients above the control threshold.
+
+The ECG advantage rests on a baseline that has an uncalibrated tolerance (±8 samples) and no rhythm cap. A natural ablation is missing: rescaled window plus rhythm cap plus calibrated tolerance, or equivalently aTDS with the window replaced by the rescaled one. Without it, the contribution of the Bartlett-based window over a simpler 1/e-time-based window is not demonstrated. The added value may lie entirely in the tolerance-calibration and rhythm-cap components, which are fairly standard ideas (surrogate calibration, period cap).
+
+The 43 vs 50 patient comparison is also not tested statistically, and it is relative to a 95th percentile estimated from only 53 controls.
+
+The ECG task itself is fairly easy. ECG and PPG of the same patient share the heart rate, while controls pair patients with different heart rates. Any full-record coherence or cross-correlation would likely separate them. No simple full-record baseline is reported, although the authors concede that full-record estimators are preferable for constant delays.
+
+In the per-pair setting, calibration failed in 12 of 53 true pairs because rotations of a periodic signal stay aligned by chance. This exposes a structural weakness of the rotation null for rhythmic signals.
+
+Other technical points:
+- Truncating the Bartlett sum at the first zero crossing is a heuristic, and it fails for seasonal and long-memory signals, as the authors acknowledge.
+- The design constants (30, 61, 10 % of T, 0.3 rhythm threshold, 5 %, z = 2, 50 pairs, 20 rotations) are conventions. The sensitivity analysis shows AUC depends strongly on the constant 30 at slow scales (0.717 at 15, 0.991 at 60 for r = 4), so "30" is a substantive tuning choice rather than a neutral default.
+- The calibrated tolerance grows with time scale (±136 s in the uncapped sleep analysis, ±56 at r = 16). TDS scores then mean something different and cannot be compared with the literature. This undermines one of the stated motivations, reproducibility and comparability.
+- The 5 % budget controls the mean window-level false stability, not link-level error, and this is correctly noted.
+- The uncapped window is useless for stage-resolved sleep analysis (48 min). The method therefore needs an analyst-chosen cap in the main application domain, so it is not fully parameter-free.
+- The benchmark reproduction depends on the causal versus non-causal anchor (43.5 vs 58.1 %). Disclosing this is good, but it means the default pyTDS does not reproduce the original MATLAB implementation.
+- No comparison with established time-delay estimators (generalised cross-correlation, Knapp–Carter) or other coupling measures, even as context for delay accuracy.
+
+Presentation is clear but extremely dense with numbers. Some counts are hard to reconcile across text, tables and figures:
+- ECG delay agreement appears as 40/53 per pair in Table 6 and Table 9 and as 38/50 for one set (Table 3, Table 9).
+- Fig. 10 says aTDS reported delays for 53 patients, but which setting is meant is unclear.
+
+The abstract is long and reads like a results list. The sleep cohort comes from the author's MSc project and is not redistributed.
+
+Overall, the work is thorough and honest, and it is a useful practical contribution for TDS users and software. The methodological novelty is limited, though. The paper's own evidence shows that a simple one-factor rescaling captures most of the benefit, and the specific value of the Bartlett-based window is not isolated. On 1-Hz physiological data, the domain of TDS, there is no gain. I lean toward a borderline reject (5) for a selective venue. It would be a reasonable fit for a methods or software journal after the missing ablation and a simple full-record baseline are added.
+
+REVIEW JSON:
+```json
+{
+  "Summary": "The paper introduces adaptive Time Delay Stability (aTDS), which replaces the fixed sample-based TDS parameters (window 60, lag range ±30, tolerance ±1, designed for 1-Hz sleep data) with three data-driven rules. (1) The window contains 30 effective independent samples of the slowest signal, using a Bartlett factor truncated at the first zero crossing of the autocorrelation. (2) The lag range is half the window, capped at half a detected rhythm period. (3) The tolerance is the largest value for which the mean chance score of circularly rotated, coupling-free copies plus 2 SE stays within a 5 % false-stability budget. Each rule is evaluated in isolation on simulated data (AR(1), fGn, AR(2) rhythms, Rulkov maps). The combined method is compared with fixed TDS, manually rescaled TDS, a data-rescaled one-factor TDS and a labelled-data oracle in a slow-down test, and on five time-varying delay patterns. On recorded data, the paper reproduces the original TDS benchmark with a causal stability anchor (43.53 vs 43.61 %). On a 35-subject sleep cohort, aTDS reproduces the sleep-stage contrasts without improving on fixed TDS. On 53 ICU ECG/PPG recordings at 125 Hz, aTDS detects coupling in 50 of 53 patients (AUC 0.96) versus 14 (AUC 0.69) for unchanged fixed parameters, and with control levels far below those of data-rescaled TDS at equal AUC. On hydrological and energy records, aTDS recovers known delays (8 h rainfall to flow, 1 h temperature to demand). The paper also reports failures: a seasonal catchment, weekly fuel prices, and delays beyond half a rhythm period.",
+  "Strengths": [
+    "Addresses a real and practically important problem: TDS parameters are expressed in samples and are routinely applied unchanged outside their 1-Hz design regime. The silent-failure demonstration (high TDS scores of 72–96 % with incorrect, sometimes sign-flipped delays when the true delay exceeds the lag range) is a valuable warning for the field.",
+    "Careful experimental design. Each rule is evaluated in isolation, and the combined method is compared against fixed, manually rescaled, data-rescaled and oracle settings, with bootstrap intervals, equivalence testing (TOST), Wilson intervals and train/test separation.",
+    "Exceptional transparency about negative results: no gain on 1-Hz sleep data, a weaker wake contrast, the oracle outperforming aTDS, the cost of the rhythm cap, failures on the seasonal catchment and fuel prices, and inherited stability near regime boundaries. Table 9 is a model summary of wins, ties and losses.",
+    "The authors include a strong data-rescaled baseline and openly acknowledge that it captures most of the detection gain, which sharpens the paper's actual claims.",
+    "Delay accuracy is evaluated separately from detection, including time-varying delay patterns (jump, drift, harmonic, on/off) where aTDS tracks the delay in 86–90 % of windows with a median error of 0.",
+    "Clarifies a reproducibility issue in TDS implementations (causal vs non-causal stability anchor: 43.5 vs 58.1 % on the benchmark).",
+    "Code, scripts, seeds and raw results are reported as publicly available, and public datasets are used where possible."
+  ],
+  "Weaknesses": [
+    "Limited methodological novelty. The rules combine standard ideas: Bartlett/Bayley–Hammersley effective sample size, a Nyquist-like lag limit under circular correlation, a period cap, and surrogate-based calibration. The paper's own evidence shows that a one-factor data-driven rescaling matches aTDS in AUC in the slow-down test and on the ECG cohort.",
+    "The specific contribution of the Bartlett-based window rule over a simpler correlation-time rescaling is not isolated. The ECG advantage of aTDS over rescaled fixed TDS (control 95th percentile 1.3 % vs 39 %; 50 vs 43 patients) is compared against a baseline with neither a calibrated tolerance nor a rhythm cap. An ablation is needed: rescaled window plus rhythm cap plus calibrated tolerance.",
+    "The 50 vs 43 patients above the controls' 95th percentile comparison has no statistical test. That percentile is estimated from only 53 controls.",
+    "The ECG/PPG task is relatively easy, because true pairs share a heart rate and controls do not. No simple full-record baseline is reported (full-record cross-correlation, coherence, or generalised cross-correlation), so it is unclear whether windowed TDS of any kind is needed there.",
+    "The rotation null is fragile for rhythmic signals: per-pair calibration failed in 12 of 53 ECG pairs, which were then scored at tolerance 0. Rotation also does not preserve nonstationary structure or cross-spectral properties unrelated to coupling.",
+    "The method is not truly parameter-free. The design constants (30 effective samples, Lmin = 61, the 10 % cap, the 0.3 rhythm threshold, the 5 % budget, z = 2, 50 pairs, 20 rotations) are conventions. The constant 30 has a large effect at slow time scales (r = 4 AUC 0.717 at 15 vs 0.991 at 60). Stage-resolved and seasonal analyses still require an analyst-chosen window cap.",
+    "The calibrated tolerance grows with the time scale (e.g. ±136 s in the uncapped sleep analysis, ±56 samples at r = 16). aTDS scores therefore have a different meaning from classical TDS scores and cannot be compared with prior studies, which partly conflicts with the reproducibility and comparability motivation.",
+    "Truncating the Bartlett sum at the first zero crossing is an unprovable heuristic. It fails for seasonal and long-memory signals, so the window can become far too long, as in the 48-minute sleep window and the three-year catchment window.",
+    "In the primary domain of TDS (1-Hz sleep networks), aTDS brings no improvement and weakens the wake contrast in significant links.",
+    "The manuscript is very dense with numbers, and several counts are hard to reconcile across text, tables and figures (e.g. ECG delay agreement 40/53 per pair vs 38/50 with one set, and which setting Fig. 10 shows). The abstract reads as a long list of results.",
+    "The sleep cohort comes from the author's MSc project and is not redistributed, which limits external verification of the sleep results."
+  ],
+  "Originality": 2,
+  "Quality": 3,
+  "Clarity": 3,
+  "Significance": 2,
+  "Questions": [
+    "Can you report an ablation on the ECG cohort and the slow-down test that combines the rescaled-fixed-TDS window (60·r̂) with the rhythm cap and the calibrated tolerance? This would isolate whether the Bartlett-based window rule contributes anything beyond a 1/e correlation-time rescaling.",
+    "How does a simple full-record estimator (cross-correlation peak, magnitude-squared coherence, or generalised cross-correlation with a rotation null) perform on the ECG/PPG controls vs true pairs and on the slow-down test?",
+    "Is the difference of 50 vs 43 patients above the controls' 95th percentile statistically significant? How stable is that percentile, estimated from 53 controls, under bootstrap?",
+    "For the 12 ECG pairs where calibration failed even at tolerance 0, what fraction of their scores is attributable to chance alignment of the rhythms? Would a rotation exclusion zone tied to the detected period, or a phase-randomised null, behave better?",
+    "Given the strong dependence on the constant 30 at slow time scales (Table 2), what principle should a user apply to choose it? Could it be tied to a desired temporal resolution or to the expected episode length, as in your stage-aware sleep analysis?",
+    "How does the Bartlett factor behave for nonstationary physiological signals whose autocorrelation varies across the record? Should the window be estimated locally?",
+    "Please reconcile the ECG delay counts across Table 3, Table 6, Table 9 and Fig. 10, and state which aTDS setting (per pair or one set) each figure shows.",
+    "Do you recommend the causal or the non-causal anchor as the pyTDS default, given that only the causal one reproduces the original MATLAB benchmark?"
+  ],
+  "Limitations": [
+    "Most of the detection gain over fixed TDS reflects a time-scale mismatch that simple rescaling also fixes. The specific value of each aTDS rule beyond rescaling is shown on limited data.",
+    "The window, rhythm-cap and seasonal heuristics need analyst intervention (window caps) for rhythmic, seasonal and stage-resolved analyses.",
+    "Calibrated tolerances change the meaning of TDS scores, so they cannot be compared with prior TDS literature.",
+    "The rotation-based null can fail for strongly periodic signals and only controls the mean window-level false stability, not link-level false positives. Per-link testing with FDR control is needed separately.",
+    "Pairwise TDS cannot distinguish direct from indirect coupling. This is tested in only a single configuration.",
+    "No obvious negative societal impacts. The clinical ECG/PPG analysis uses public, de-identified PhysioNet data, and results should not be interpreted clinically without further validation."
+  ],
+  "Ethical Concerns": false,
+  "Soundness": 3,
+  "Presentation": 3,
+  "Contribution": 2,
+  "Overall": 5,
+  "Confidence": 4,
+  "Decision": "Reject"
+}
+```
