@@ -12,7 +12,7 @@ pair itself. Reference delay: median beat-by-beat PAT from the R peak to the ste
 full-record cross-correlation peak within half a beat (the waveform alignment). Because the heartbeat repeats,
 a delay is only defined modulo one beat period; delays are compared modulo the median RR interval.
 
-    python experiments/atds_real/bidmc.py <bidmc_csv_dir> [out_dir] [--common]
+    python experiments/atds_real/bidmc.py <bidmc_csv_dir> [out_dir] [--common | --rescaled]
 
 <bidmc_csv_dir> holds bidmc_XX_Signals.csv from https://physionet.org/files/bidmc/1.0.0/bidmc_csv/
 TDS via this repo's pyTDS only (through atds21).
@@ -220,9 +220,54 @@ def main_common(d, out_dir):
     print(json.dumps(S, indent=1))
 
 
+# ---------------------------------------------------------------- fixed TDS rescaled by an estimated time scale
+def _first_below_e(x):
+    """First lag at which the autocorrelation falls below 1/e (as experiments/atds_v3/common.py)."""
+    r = A.acf(x, len(x) // 4); k = np.nonzero(r < np.exp(-1.0))[0]
+    return float(k[0]) if len(k) else float(len(r) - 1)
+
+
+def _rhat(i):
+    x, y = _pair_signals((i, i))
+    tc = max(_first_below_e(x), _first_below_e(y))   # slower signal, as x6_followups.tc_slow
+    return max(1, int(round(tc / 2)))                 # as x6_followups.r_hat_from
+
+
+def main_rescaled(d, out_dir):
+    """Fixed TDS (60/30/30/1) multiplied by r_hat estimated from the data: one common r_hat (median over patients),
+    applied to all 106 pairs, as the common-parameter aTDS run."""
+    global DIR
+    DIR = d
+    t0 = time.time()
+    with Pool(A.WORKERS) as pool:
+        rh = pool.map(_rhat, IDS)
+    r = int(np.median(rh))
+    from dataclasses import replace
+    p = replace(A.PUBLISHED, window=60 * r, overlap=30 * r, max_lag=30 * r, tolerance=r)
+    jobs = [(i, i) for i in IDS] + [(i, IDS[(k + SHIFT) % len(IDS)]) for k, i in enumerate(IDS)]
+    with Pool(A.WORKERS) as pool:
+        rows = pool.map(_score_common, [(ij, p) for ij in jobs])
+    ref = {q["ecg"]: q for q in json.load(open(os.path.join(out_dir, "bidmc_ecg_ppg.json")))["records"] if q["coupled"]}
+    c = [q for q in rows if q["coupled"]]; u = [q for q in rows if not q["coupled"]]
+    a = [q["score"] for q in c]; b = [q["score"] for q in u]; thr = float(np.percentile(b, 95))
+    ex = [wrap(q["delay"] - ref[q["ecg"]]["xcorr_delay"], ref[q["ecg"]]["rr_samples"]) / FS for q in c if q["delay"] is not None]
+    S = {"r_hat_per_patient_median": r, "r_hat_range": [int(min(rh)), int(max(rh))],
+         "params": {"window": p.window, "step": p.overlap, "max_lag": p.max_lag, "tolerance": p.tolerance},
+         "max_lag_s": p.max_lag / FS, "median_rr_s": float(np.median([q["rr_samples"] for q in ref.values()]) / FS),
+         "coupled_mean": float(np.mean(a)), "coupled_median": float(np.median(a)), "control_mean": float(np.mean(b)),
+         "control_95pct": thr, "auc": auc(a, b), "auc_ci95": boot_auc(a, b),
+         "n_coupled_above_control95": int(sum(x > thr for x in a)), "n_with_delay": len(ex),
+         "n_within_0p04s_of_xcorr": int(sum(abs(e) <= 0.04 for e in ex)),
+         "err_vs_xcorr_s_median": float(np.median(ex)) if ex else None, "wall_seconds": time.time() - t0}
+    json.dump({"summary": S, "records": rows}, open(os.path.join(out_dir, "bidmc_rescaled_est.json"), "w"), indent=1)
+    print(json.dumps(S, indent=1))
+
+
 if __name__ == "__main__":
     out = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("--") else os.path.join(HERE, "results")
     if "--common" in sys.argv:
         main_common(sys.argv[1], out)
+    elif "--rescaled" in sys.argv:
+        main_rescaled(sys.argv[1], out)
     else:
         main(sys.argv[1], out)
