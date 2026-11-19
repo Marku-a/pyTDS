@@ -25,7 +25,7 @@ plt.rcParams.update({
 d = pd.read_csv(RES / "ncom_subject_stage.csv")
 stages = ["W", "LS", "REM", "DS"]
 labels = {"W": "wake", "LS": "light", "REM": "REM", "DS": "deep"}
-settings = [("published", C_PUB, "o", "published 60/±30/±1"),
+settings = [("published", C_PUB, "o", "fixed TDS 60/±30/±1"),
             ("atds_cap300", C_ATDS, "s", "aTDS, window capped at 300 s")]
 fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.6))
 for ax, col, title in [(axes[0], "mean_link_tds", "(a) mean TDS over 45 links (%)"),

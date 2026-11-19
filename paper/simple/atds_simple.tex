@@ -26,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-Time Delay Stability (TDS) links two physiological signals when the delay that best aligns them stays nearly constant over consecutive windows. TDS has three parameters---the window, the lag range searched and the stability tolerance---counted in samples, with original values (60, $\pm30$, $\pm1$) chosen for sleep recordings at 1\,Hz. For any other time scale or sampling rate these values are a guess, and a fixed choice can fail silently: with a fixed $\pm30$ lag range, every coupled pair with a delay beyond 30 samples reported a wrong delay, in 16 of 50 cases with the wrong sign, at TDS scores of 72--96\,\%. Adaptive TDS (aTDS) sets all three parameters from the signals themselves: the window holds 30 independent samples of the slowest signal, the lag range is half the window (capped at half a rhythm period), and the tolerance is the widest value whose chance score on coupling-free, circularly rotated copies stays within a 5\,\% false-stability budget. On simulated signals with known coupling, aTDS restores detection where fixed TDS fails (AUC 0.92 vs 0.59 when the system is four times slower), reports the correct delay, and follows coupling that switches on and off and delays that drift. On real data, pyTDS reproduces the original TDS benchmark (43.53 vs 43.61\,\%); in 35 overnight polysomnograms aTDS detects the physiological network and reproduces the known sleep-stage pattern, agreeing with fixed TDS, which was designed for this data; on ECG and finger-pulse recordings of 53 intensive-care patients at 125\,Hz, data not analysed with TDS before to our knowledge, aTDS detects the heart-to-pulse coupling in 49 of 53 patients (AUC 0.95) where fixed TDS detects it in 14 (AUC 0.69); and in records from other fields it finds the known delays where fixed TDS does not---8\,h from rainfall to river flow and 1\,h from temperature to electricity demand. aTDS thus makes TDS usable, with a stated false-alarm budget, for any system and sampling rate.
+Time Delay Stability (TDS) links two physiological signals when the delay that best aligns them stays nearly constant over consecutive windows. TDS has three parameters---the window, the lag range searched and the stability tolerance---counted in samples, with original values (60, $\pm30$, $\pm1$) chosen for sleep recordings at 1\,Hz. For any other time scale or sampling rate these values are a guess, and a fixed choice can fail silently: with a fixed $\pm30$ lag range, every coupled pair with a delay beyond 30 samples reported a wrong delay, in 16 of 50 cases with the wrong sign, at TDS scores of 72--96\,\%. Adaptive TDS (aTDS) sets all three parameters from the signals themselves: the window holds 30 independent samples of the slowest signal, the lag range is half the window (capped at half a rhythm period), and the tolerance is the widest value whose chance score on coupling-free, circularly rotated copies stays within a 5\,\% false-stability budget. On simulated signals with known coupling, aTDS restores detection where fixed TDS fails (AUC 0.92 vs 0.59 when the system is four times slower), and follows the true delay when it is fixed, jumps, drifts, oscillates or switches on and off (99\,\% of stable windows within 3 samples of the true delay). On real data, pyTDS reproduces the original TDS benchmark (43.53 vs 43.61\,\%); in 35 overnight polysomnograms aTDS detects the physiological network and reproduces the known sleep-stage pattern, agreeing with fixed TDS, which was designed for this data; on ECG and finger-pulse recordings of 53 intensive-care patients at 125\,Hz, data not analysed with TDS before to our knowledge, aTDS detects the heart-to-pulse coupling in 49 of 53 patients (AUC 0.95) where fixed TDS detects it in 14 (AUC 0.69); and in records from other fields aTDS, given only the two signals, finds the known delays---8\,h from rainfall to river flow, 1\,h from temperature to electricity demand. aTDS thus makes TDS usable, with a stated false-alarm budget, for any system and sampling rate.
 %%%%%%%%% ABSTRACT %%%%%%%%%
 \end{abstract}
 
@@ -113,7 +113,7 @@ with $L_{\min} = 61$, or $\max(61, 2 d_{\max} + 1)$ if a longest plausible delay
 
 \emph{Why 30.} With $n$ independent samples each value of $C(\tau)$ has a random error of about $1/\sqrt{n}$, i.e.\ $\pm0.18$ at $n = 30$. Because $\tau_0$ is the maximum over roughly 30 independent lags, the largest pure-noise value is higher, about $0.18\sqrt{2\ln 30} \approx 0.47$, so a weak coupling does not stand out in every single window; it is the 4-of-5 rule that separates a peak returning to the same lag from noise peaks at random lags. More independent samples per window make $\tau_0$ more reliable but leave fewer windows and a coarser time resolution. The constant 30 is a convention that balances the two, not an optimum; \cref{sec:res-window} tests it.
 
-\emph{Why 61.} The floor guarantees that the lag range is never narrower than the published $\pm30$.
+\emph{Why 61.} The floor guarantees that the lag range is never narrower than the fixed $\pm30$.
 
 \emph{What the window does not capture.} The Bartlett sum is truncated at the first zero crossing of the autocorrelation, so negative lobes are ignored, and for long-memory signals $B$ grows with the record length (\cref{sec:conclusion}); the window is therefore a property of the record as measured, not an intrinsic constant of the system. A user who needs a given time resolution can impose a maximum window; aTDS then sets the lag range and tolerance for that window.
 
@@ -290,7 +290,34 @@ $r$ & Fixed TDS & Rescaled & aTDS & Oracle & aTDS parameters & Oracle parameters
 
 \subsection{Delay patterns: fixed, jumping, drifting, oscillating, on and off}
 \label{sec:res-patterns}
-PATTERNS_PLACEHOLDER
+Real couplings rarely keep one delay for ever. We therefore simulated five delay patterns with the same signals (AR(1), $\tau_c = 8$, coupling 0.6, 20\,000 samples; $y(t) = 0.6\,x(t - d(t)) + $ noise): a fixed delay of 20 samples; a delay that jumps from 10 to 30 halfway; a delay drifting linearly from 10 to 30; a harmonic delay $d(t) = 20 + 10\sin(2\pi t / 10\,000)$; and coupling at delay 20 that switches on and off in blocks of 2\,000 samples. For each pattern, aTDS set its parameters on 5 training pairs and scored 40 coupled pairs and 40 uncoupled controls; the true delay was compared with $\tau_0$ in every stable window, at the window centre.
+
+\Cref{fig:patterns} shows the result for one pair of each pattern and \cref{tab:patterns} the averages. In every pattern aTDS follows the true delay through the whole record: 86--90\,\% of windows are stable (in the on/off pattern, of windows inside coupled blocks), and 99\,\% of the stable windows report the true delay within 3 samples, with a median error of 0. Fixed TDS also reports the right delay where it finds a stable window, but it finds them in only 6--11\,\% of windows, so the delay can be read at only a few moments. Both settings separate coupled from uncoupled pairs (AUC 1.0; 0.90 for fixed TDS in the on/off pattern) at this strong coupling. The cost of aTDS is a higher, but budgeted, false stability: 4.0--4.3\,\% of windows in uncoupled controls against under 1\,\% for fixed TDS, and 6.1\,\% in the uncoupled blocks of the on/off pattern, where windows next to a coupled block inherit its stable delay.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig_delay_patterns.png}
+\caption{Five delay patterns, one simulated pair each (the first scored pair, not selected): delay found in each window by fixed TDS (left) and aTDS (right). Coloured: stable windows; grey: unstable; shaded band: lag range searched (clipped for aTDS); dashed: the true delay; grey blocks (bottom): coupling on.}
+\label{fig:patterns}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Delay patterns, 40 coupled pairs and 40 uncoupled controls each, fixed TDS / aTDS. Stable: \% of windows labelled stable in coupled pairs (on/off: inside coupled blocks). On delay: \% of stable windows with $|\tau_0 - \text{true delay}| \le 3$ samples. False stable: \% of windows labelled stable in controls. AUC: coupled vs controls on the whole-record score.}
+\label{tab:patterns}
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+Pattern & aTDS $L$ / $\tau_{\max}$ / tol & Stable (\%) & On delay (\%) & False stable (\%) & AUC \\
+\midrule
+Fixed delay (20) & 265 / $\pm$132 / $\pm$13 & 6.5 / 89.9 & 95 / 99 & 0.9 / 4.1 & 1.00 / 1.00 \\
+Jump (10 $\to$ 30) & 251 / $\pm$125 / $\pm$13 & 10.8 / 87.3 & 97 / 99 & 0.8 / 4.1 & 1.00 / 1.00 \\
+Drift (10 $\to$ 30) & 252 / $\pm$125 / $\pm$13 & 8.6 / 86.7 & 96 / 99 & 0.8 / 4.0 & 1.00 / 1.00 \\
+Harmonic ($20 \pm 10$) & 258 / $\pm$128 / $\pm$13 & 8.7 / 85.6 & 97 / 99 & 0.7 / 4.3 & 1.00 / 1.00 \\
+On/off (20, blocks of 2\,000) & 260 / $\pm$129 / $\pm$14 & 5.7 / 87.0 & 94 / 99 & 0.9 / 4.2 & 0.90 / 1.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Other signal classes}
 \Cref{fig:classes} runs aTDS against fixed TDS on signal classes typical of physiology. In every case aTDS set its parameters on data that were not scored. aTDS is better for strongly long-memory signals ($H = 0.9$), rhythms with delays below half a period, changing dynamics and Rulkov neurons, and equal or not distinguishable for $H = 0.6$ and 0.75. For a rhythm with a delay beyond half a period the coupling is detected but the delay is wrong, as expected from the lag cap. For a fast signal with a long delay (50 samples), the default lag range ($\pm30$) is too short and the optional $d_{\max}$ is needed.
@@ -423,7 +450,7 @@ Outside physiology the fixed parameters were never meant to apply, so here we do
 
 \Cref{fig:fieldstraces} shows the delay aTDS found in every window and \cref{fig:fieldssummary} the delay found against the expected one. aTDS finds the expected delay in three of the five records: 8\,h from rainfall to river flow in the hourly catchment, 2 days in the daily catchment L0123001 (expected 0--3 days), and 1\,h from temperature to electricity demand. In these records the stable windows form a steady line at the expected delay over years of data. For crude oil and gasoline aTDS detects strong coupling (92.5\,\%, $p = 0.005$) but reports no delay, where 1--2 weeks are expected: in weekly changes the cross-correlation already peaks at lag 0 ($r = 0.55$, partly because the two prices are recorded on different weekdays; lag 1: $r = 0.39$), so a delay of one or two weeks cannot be resolved at weekly sampling. The fifth record fails, as described next.
 
-\paragraph{The failing catchment.} In L0123002 aTDS is not significant ($p = 0.10$) and reports 162 days. Its river flow is strongly seasonal (autocorrelation 0.62 at a lag of one year); the first-zero Bartlett factor of the flow (38.8) ignores the seasonal lobe and gives a window of about three years with only 19 windows, of which 4 were stable. Capping the window at 120 days recovered the expected 1-day delay (score 10.3\,\% vs a 95th percentile of 7.4\,\%, $p = 0.015$); capping it at 365 days did not (no stable window). Seasonal signals, like rhythmic ones, need a window cap below the seasonal period.
+\paragraph{The failing catchment.} In L0123002 aTDS is not significant ($p = 0.10$) and reports 162 days. Its river flow is strongly seasonal (autocorrelation 0.62 at a lag of one year); the first-zero Bartlett factor of the flow (38.8) ignores the seasonal lobe and gives a window of about three years with only 19 windows, of which 4 were stable. This catchment has no domain value for the delay; the full-record cross-correlation peaks at +1 day ($r = 0.054$). Capping the window at 120 days recovered this 1-day delay (score 10.3\,\% vs a 95th percentile of 7.4\,\%, $p = 0.015$); capping it at 365 days did not (no stable window). Seasonal signals, like rhythmic ones, need a window cap below the seasonal period.
 
 \begin{table}[t]
 \centering
@@ -437,7 +464,7 @@ Record & Expected delay & aTDS parameters ($L$ / $\tau_{\max}$ / tol) & Score (n
 \midrule
 Rainfall $\to$ river flow, hourly (L0123003) & about 8\,h & 79.8\,d / 39.8\,d / 1.8\,d & 79.5\,\% (9.1) & 0.005 & \textbf{8\,h} \\
 Rainfall $\to$ river flow, daily (L0123001) & 0--3 days & 501 / 250 / 20 days & 97.6\,\% (12.3) & 0.005 & \textbf{2 days} \\
-Rainfall $\to$ river flow, daily (L0123002) & 0--3 days & 1\,059 / 367 / 9 days & 21.1\,\% (21.1) & 0.10 & 162 days (fails) \\
+Rainfall $\to$ river flow, daily (L0123002) & 1 day (xcorr peak) & 1\,059 / 367 / 9 days & 21.1\,\% (21.1) & 0.10 & 162 days (fails) \\
 \quad window capped at 120 days & & & 10.3\,\% (7.4) & 0.015 & 1 day \\
 Temperature $\to$ electricity demand & about 1\,h & 27.1\,d / 13.5\,d / 1.0\,d & 100\,\% (21.1) & 0.005 & \textbf{1\,h} \\
 Crude oil $\to$ gasoline, weekly changes & 1--2 weeks & 64 / 31 / 3 weeks & 92.5\,\% (15.1) & 0.005 & 0 weeks \\
@@ -462,28 +489,32 @@ Crude oil $\to$ gasoline, weekly changes & 1--2 weeks & 64 / 31 / 3 weeks & 92.5
 \clearpage
 \section{Conclusion}
 \label{sec:conclusion}
-\Cref{tab:scoreboard} collects every comparison of the paper between aTDS and fixed TDS.
+\Cref{tab:scoreboard} collects every comparison between aTDS and fixed TDS in this paper. Records from other fields are not included, because fixed TDS was never meant for them.
 
 \begin{table}[!htbp]
 \centering
-\caption{Scoreboard: every comparison in this paper between fixed TDS (60 / $\pm30$ / $\pm1$ samples) and aTDS. ``Better'' and ``worse'' require non-overlapping 95\,\% intervals, a paired 95\,\% interval of the difference that excludes zero, or a clear difference in counts; otherwise ``equal''. In Part 1 ``published'' means the fixed value of the rule tested, with the other two rules as in aTDS.}
+\caption{Scoreboard: every comparison in this paper between fixed TDS (60 / $\pm30$ / $\pm1$ samples) and aTDS. ``Better'' and ``worse'' require non-overlapping 95\,\% intervals, a paired 95\,\% interval of the difference that excludes zero, or a clear difference in counts; otherwise ``equal''. In the first block ``fixed TDS'' means the fixed value of the rule tested, with the other two rules as in aTDS.}
 \label{tab:scoreboard}
 \scriptsize
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{1.45cm}}
 \toprule
 Test & Fixed TDS & aTDS & aTDS is \\
 \midrule
-\multicolumn{4}{l}{\emph{Part 1: each rule on its own (fixed value of that rule only)}} \\
+\multicolumn{4}{l}{\emph{Each rule on its own (fixed value of that rule only)}} \\
 Window, 4$\times$ slower system & AUC 0.51 & 0.79 & better \\
 Lag range, delays beyond 30 samples & wrong delay in 50 / 50 (16 wrong sign) & right in 50 / 50 & better \\
 Tolerance, $r = 8$ (delay found) & 66\,\% & 85\,\% & better \\
 Tolerance, $r = 1$ (AUC change) & -- & $-0.005$ [$-0.012$, $-0.001$] & worse (tiny) \\
 Tolerance, chance score on new data & -- & 3.3--4.4\,\% (budget 5\,\%) & as designed \\
 \midrule
-\multicolumn{4}{l}{\emph{Part 2: simulated data}} \\
+\multicolumn{4}{l}{\emph{Simulated data}} \\
 Slow-down, $r = 1$ (original scale) & AUC 0.997 & 0.995 & equal \\
 Slow-down, $r = 2$ / 4 / 8 & 0.89 / 0.59 / 0.54 & 0.98 / 0.92 / 0.88 & better \\
 Slow-down, $r = 16$ & 0.51 & 0.65 (paired $+0.14$ [0.03, 0.25]) & better \\
+Delay patterns (5), stable windows & 6--11\,\% & 86--90\,\% & better \\
+\quad stable windows on the true delay & 94--97\,\% & 99\,\% & equal \\
+\quad false stability in controls & 0.7--0.9\,\% & 4.0--4.3\,\% (budget 5\,\%) & worse \\
+\quad AUC & 1.00 (on/off 0.90) & 1.00 & equal \\
 Long memory, $H = 0.6$ / 0.75 & 0.60 / 0.70 & 0.59 / 0.65 & equal \\
 Long memory, $H = 0.9$ & 0.46 & 0.82 & better \\
 Rhythm, $d = 8$ & 0.97, delay 43\,\% & 1.00, 100\,\% & better \\
@@ -493,26 +524,14 @@ Fast signal, $d = 50$ (default) & 0.56 & 0.56 (1.00 with $d_{\max}$) & equal \\
 Mixed system, slow pair & 0.44 & 0.99 & better \\
 Slow $x$ drives fast $y$ & 0.83, delay 57\,\% & 1.00, 100\,\% & better \\
 Changing dynamics, 2nd half & 0.71, delay 45\,\% & 0.96, 90\,\% & better \\
-Coupling that switches (regime A stable) & 5.6\,\% & 98.9\,\% & better \\
-\quad false stability in uncoupled regime & 0.9\,\% & 8.1\,\% (3.8\,\% with margin) & worse \\
-Drifting delay (stable windows) & 8.5\,\% & 86.5\,\% & better \\
-Per-link test, $r = 2$ / 4 / 8 (power) & 52 / 8 / 2\,\% & 94 / 66 / 48\,\% & better \\
-\quad false positives & 2 / 4 / 4\,\% & 0 / 6 / 4\,\% & equal \\
-Monotone nonlinear coupling & AUC 0.997 & 1.0 & equal \\
-Non-monotone coupling & 0.80 & 0.75 & equal \\
 \midrule
-\multicolumn{4}{l}{\emph{Part 3: real data}} \\
-EEG benchmark pair & detected (50.8\,\%) & detected (95.5\,\%) & equal \\
+\multicolumn{4}{l}{\emph{Physiological data}} \\
+EEG benchmark pair (delay 0) & detected (50.8\,\%), delay 0 & detected (95.5\,\%), delay 0 & equal \\
+ECG $\to$ finger pulse, 125\,Hz, 53 patients & AUC 0.69, 14 / 53 & 0.95, 49 / 53 & better \\
+\quad delay vs full-record alignment & 22 / 41 & 40 / 53 & better \\
+\quad delay vs pulse arrival time & 32 / 41 & 24 / 53 & worse \\
 35-subject sleep cohort, stage contrasts & reproduced & reproduced, no gain & equal \\
 \quad wake vs deep sleep, significant links & $d_z$ 1.16 & 0.34 (gain $-1.17$ [$-1.65$, $-0.77$]) & worse \\
-ECG $\to$ finger pulse, 125\,Hz, 53 patients & AUC 0.69, 14 / 53 & 0.95, 49 / 53 & better \\
-\quad delay vs pulse arrival time & 32 / 41 & 24 / 53 & worse \\
-\quad delay vs full-record alignment & 22 / 41 & 40 / 53 & better \\
-Rainfall $\to$ river, hourly & 13\,h (wrong) & 8\,h (right) & better \\
-Rainfall $\to$ river, daily L0123001 & 1 day & 2 days & equal \\
-Rainfall $\to$ river, daily L0123002 & 1 day & not significant & worse \\
-Temperature $\to$ electricity & 0 (wrong) & 1\,h (right) & better \\
-Crude oil $\to$ gasoline & 0 weeks & 0 weeks & equal \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -521,9 +540,9 @@ Crude oil $\to$ gasoline & 0 weeks & 0 weeks & equal \\
 
 \paragraph{Why it is needed.} The fixed parameters are counted in samples and were chosen for 1-Hz sleep recordings. On any other time scale or sampling rate they hold too little information per window, search too narrow a lag range and accept too little wobble of the delay. The result is not only lower detection but silent errors: a fixed lag range returned high TDS scores (72--96\,\%) with wrong delays, some of them with the wrong sign, and fixed TDS lost almost all detection once the system was four times slower than it assumes.
 
-\paragraph{Verdict.} aTDS does what it was designed to do. Of the 34 comparisons with fixed TDS in \cref{tab:scoreboard}, aTDS is better in 19, equal in 10 and worse in 5: false stability next to regime boundaries, the wake contrast of the sleep cohort, delay precision on the heartbeat data, a negligible AUC loss at the original 1-Hz time scale, and one seasonal river catchment. Each of its three rules was tested on its own and works: the window keeps the information per window constant, the lag range reports the true delay where a fixed range fails, and the tolerance keeps false stability within its budget on new data. On simulated signals aTDS restores detection and correct delays where fixed TDS fails, follows coupling that switches with the regime and delays that drift. On real data it reproduces the original TDS benchmark, detects the physiological network of 35 sleep recordings and reproduces the known sleep-stage pattern---agreeing with the fixed parameters exactly where they were designed to fit---on ECG and finger-pulse recordings at 125\,Hz, which, to our knowledge, TDS had not been applied to, it detects the heart-to-pulse coupling in 49 of 53 patients against 14 with fixed TDS; and it finds the known delays in river and electricity records where fixed TDS does not. aTDS makes TDS a reproducible tool for any system and sampling rate, with a stated false-alarm budget.
+\paragraph{Verdict.} aTDS does what it was designed to do. Of the 26 comparisons with fixed TDS in \cref{tab:scoreboard}, aTDS is better in 15, equal in 7 and worse in 4: a higher (but budgeted) false stability, the wake contrast of the sleep cohort, delay precision against the beat-by-beat pulse arrival time, and a negligible AUC loss at the original 1-Hz time scale. Each of its three rules was tested on its own and works: the window keeps the information per window constant, the lag range reports the true delay where a fixed range fails, and the tolerance keeps false stability within its budget on new data. On simulated signals aTDS restores detection where fixed TDS fails and follows the true delay whether it is fixed, jumps, drifts, oscillates or switches on and off. On real data it reproduces the original TDS benchmark, detects the physiological network of 35 sleep recordings and reproduces the known sleep-stage pattern---agreeing with the fixed parameters exactly where they were designed to fit---on ECG and finger-pulse recordings at 125\,Hz, which, to our knowledge, TDS had not been applied to, it detects the heart-to-pulse coupling in 49 of 53 patients against 14 with fixed TDS; and, outside physiology, it finds the known delays in river and electricity records without being told their time scale. aTDS makes TDS a reproducible tool for any system and sampling rate, with a stated false-alarm budget.
 
-\paragraph{Limitations.} aTDS scales the parameters; it does not optimise them: with permanent coupling, longer windows detect better, and an oracle tuned on labelled data did better. Because matching the time scale is what matters, any rule that tracks it helps: in our simulations, multiplying the fixed parameters by a factor estimated from the correlation time performed similarly to aTDS on the slow-down test. This is expected and supports the premise of aTDS rather than weakening it; aTDS in addition sets the lag range and the tolerance from the data with a stated false-alarm budget instead of copying the fixed ratios. Full-record delay estimators are better when the delay is constant and the coupling always on. On 1-Hz sleep networks aTDS brought no gain over fixed TDS, which was designed for them, and the uncapped window was too long to resolve sleep stages, so stage-resolved analyses need a window cap. Near the boundaries of coupled regimes, long windows inherit stability (8--9\,\% false stability without a boundary margin). The calibrated tolerance grows with the time scale, so aTDS scores should be compared with the aTDS chance level of the same data, not with TDS values from earlier studies. Seasonal and rhythmic signals need a window cap below their period, and correlation-based TDS does not capture non-monotone coupling.
+\paragraph{Limitations.} aTDS scales the parameters; it does not optimise them: with permanent coupling, longer windows detect better, and an oracle tuned on labelled data did better. Because matching the time scale is what matters, any rule that tracks it helps: in our simulations, multiplying the fixed parameters by a factor estimated from the correlation time performed similarly to aTDS on the slow-down test. This is expected and supports the premise of aTDS rather than weakening it; aTDS in addition sets the lag range and the tolerance from the data with a stated false-alarm budget instead of copying the fixed ratios. Full-record delay estimators are better when the delay is constant and the coupling always on. On 1-Hz sleep networks aTDS brought no gain over fixed TDS, which was designed for them, and the uncapped window was too long to resolve sleep stages, so stage-resolved analyses need a window cap. Near the boundaries of coupled regimes, long windows inherit stability (6.1\,\% false stability in the uncoupled blocks of the on/off pattern), so regime-resolved scores need a boundary margin. In weekly fuel prices aTDS found no delay where 1--2 weeks are expected, and one seasonal catchment failed without a window cap. The calibrated tolerance grows with the time scale, so aTDS scores should be compared with the aTDS chance level of the same data, not with TDS values from earlier studies. Seasonal and rhythmic signals need a window cap below their period, and correlation-based TDS does not capture non-monotone coupling.
 
 \section*{Code and data availability}
 pyTDS, the aTDS experiment scripts, their raw results (JSON) and the figure scripts are available at \url{https://github.com/Marku-a/pyTDS}. All random seeds are fixed. The 35 polysomnographic recordings are research data that are not redistributed; only derived results are made public. The rainfall--runoff, electricity-demand and fuel-price records are public (sources in \texttt{experiments/atds\_real/data\_fields/MANIFEST.json}). The ECG and finger-pulse recordings are the public BIDMC data set on PhysioNet (\url{https://physionet.org/content/bidmc/1.0.0/}); the analysis is \texttt{experiments/atds\_real/bidmc.py}.

@@ -56,7 +56,7 @@ def fig_example():
     ex = exp4["U12"][0]["example"]
     fig, axes = plt.subplots(2, 1, figsize=(6.6, 3.4), sharex=True)
     for ax, key, col, title in [
-        (axes[0], "fixed", C_FIXED, "(a) published"),
+        (axes[0], "fixed", C_FIXED, "(a) fixed TDS"),
         (axes[1], "atds", C_ATDS, "(b) aTDS"),
     ]:
         d = ex[key]
@@ -191,7 +191,7 @@ def fig_slowdown():
     r = np.array([x["r"] for x in rows])
     fig, (a, b) = plt.subplots(1, 2, figsize=(6.6, 2.6))
     for key, mk, col, lab, ls in [
-        ("fixed", "o", C_FIXED, "published 60/±30/±1", "-"),
+        ("fixed", "o", C_FIXED, "fixed TDS 60/±30/±1", "-"),
         ("rescaled", "^", C_RESC, "rescaled by hand (knows r)", "-"),
         ("atds", "s", C_ATDS, "aTDS", "-"),
         ("oracle", "D", C_ORACLE, "oracle (labelled grid)", ":"),

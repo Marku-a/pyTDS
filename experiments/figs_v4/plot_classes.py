@@ -105,7 +105,7 @@ axes[0].set_yticks(ypos, [r["label"] for r in rows], fontsize=7.4)
 axes[0].tick_params(axis="y", length=0)
 axes[1].tick_params(axis="y", length=0)
 axes[0].set_title("(a) AUC", loc="left"); axes[1].set_title("(b) delay found", loc="left")
-h = [plt.Line2D([], [], marker="o", color=COL["published"], ls="", ms=4.5, label="published (60 / $\\pm$30 / $\\pm$1)"),
+h = [plt.Line2D([], [], marker="o", color=COL["published"], ls="", ms=4.5, label="fixed TDS (60 / $\\pm$30 / $\\pm$1)"),
      plt.Line2D([], [], marker="o", color=COL["atds"], ls="", ms=4.5, label="aTDS"),
      plt.Line2D([], [], marker="o", mfc="white", mec=COL["atds"], mew=1.2, color=COL["atds"], ls="", ms=5.2,
                 label="aTDS variant: $d_{\\max}$ = 60 (fast); per-half window (memory); joint $B_{xy}$ (slow$\\to$fast)")]

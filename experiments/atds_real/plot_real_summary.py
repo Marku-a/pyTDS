@@ -22,7 +22,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 INK, MUTED = "#262624", "#8a8a85"
 COL = {"published": "#2a78d6", "atds": "#eb6834"}
-LAB = {"published": "published", "atds": "aTDS"}
+LAB = {"published": "fixed TDS", "atds": "aTDS"}
 plt.rcParams.update({
     "font.family": "serif", "font.size": 8, "axes.titlesize": 8.5, "legend.fontsize": 7.2,
     "axes.spines.top": False, "axes.spines.right": False, "axes.edgecolor": MUTED, "axes.grid": True,
@@ -56,7 +56,7 @@ def fig_bidmc(out):
     p = np.array([r["published_score"] for r in c]); q = np.array([r["atds_score"] for r in c])
     b.plot([0, 100], [0, 100], color=MUTED, lw=0.8, ls="--")
     b.scatter(p, q, s=10, color=COL["atds"], lw=0)
-    b.set_xlabel("published score (%)"); b.set_ylabel("aTDS score (%)")
+    b.set_xlabel("fixed TDS score (%)"); b.set_ylabel("aTDS score (%)")
     b.set_xlim(-3, 103); b.set_ylim(-3, 103)
     b.set_title(f"(b) per patient (aTDS higher in {int(np.sum(q > p))}/53)", loc="left")
     fig.savefig(out, dpi=200)
