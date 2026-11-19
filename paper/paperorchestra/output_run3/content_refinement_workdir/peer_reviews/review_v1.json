@@ -1,0 +1,57 @@
+{
+    "Summary": "The paper proposes adaptive Time Delay Stability (aTDS), which replaces the fixed, sample-counted TDS parameters (window 60, lag \u00b130, tolerance \u00b11) with three data-driven rules. (i) The window holds about 30 effective independent samples of the slowest signal, using a first-zero-truncated Bartlett-type factor or, in the aTDS-BH variant, a Bayley\u2013Hammersley factor, clipped between 61 samples and 10% of the record. (ii) The lag range is half the window, capped at half a detected rhythm period. (iii) The tolerance is the widest value whose chance score on circularly rotated surrogates (mean + 2 SE) stays within a 5% false-stability budget. Baselines are the published setting, rescaling by the true or an estimated time scale, an oracle grid, and full-record cross-correlation and GCC-PHAT. Synthetic tests cover AR(1) slow-down, long-memory, rhythmic, bursting, mixed-speed, regime-switching, nonlinear and drifting-delay systems, plus networks with rotation-based per-link tests and FDR control. Real-data tests cover the original EEG benchmark pair, a 35-subject sleep cohort, and hydrology, energy and fuel-price records. aTDS clearly beats the published setting for slow systems and exposes a silent wrong-delay failure of a fixed lag range. It roughly matches an estimated rescaling, while aTDS-BH beats it on held-out seeds. Full-record estimators dominate on stationary data, and there is no gain on 1-Hz sleep networks.",
+    "Strengths": [
+        "Addresses a real reproducibility problem: TDS parameters are counted in samples and have had no principled rule for new time scales or sampling rates.",
+        "Simple, label-free rules with an explicit rationale and a clearly specified algorithm.",
+        "Very broad and fair evaluation: per-rule ablations, oracle upper bound, true and estimated rescaling, full-record xcorr and GCC-PHAT baselines, paired bootstrap AUCs, TOST equivalence tests, Wilson intervals, sensitivity analysis of design constants, and held-out validation of aTDS-BH.",
+        "Identifies a concrete, practically important failure mode: a fixed \u00b130 lag range yields high TDS scores (72\u201396%) with wrong, sometimes sign-flipped, delays.",
+        "Rotation-surrogate tolerance calibration and per-link tests with BH-FDR make TDS outputs more interpretable.",
+        "Exceptionally candid reporting of negative results and limitations.",
+        "Good reproducibility: fixed seeds, released code and raw results, reproduction of the original MATLAB benchmark."
+    ],
+    "Weaknesses": [
+        "Limited novelty: scaling windows to an effective sample size and calibrating thresholds on circular-shift surrogates are standard ideas. The contribution is mainly their packaging for TDS.",
+        "Little gain over a trivial baseline: rescaling the published setting by an estimated correlation time matches default aTDS on the main benchmark and several other tests, and beats it under regime switching (2.0% vs 8.1% false stability) and on the long-delay rhythm. Gains over the published setting are largely built into the slow-down benchmark.",
+        "The headline gains rely on aTDS-BH. It was selected on the benchmark and validated only on new seeds of the same AR(1) generator. Its advantage may simply reflect longer windows, it exceeds the 5% budget at r=8 and r=16, and it degrades under regime-limited coupling.",
+        "Tension with TDS's purpose. Time resolution is the argued advantage over full-record estimators, yet aTDS lengthens windows, needs manual caps for stage-resolved analysis, leaks false stability near regime boundaries, and is not compared with sliding-window xcorr or GCC-PHAT.",
+        "No improvement on the motivating application (35-subject 1-Hz sleep cohort), where the wake contrast in significant links is even weaker.",
+        "The window rule is heuristic: the first-zero-truncated 1+2\u03a3r\u00b2 factor is neither the Bartlett cross-correlation factor \u03a3 r_x r_y nor the variance-of-mean factor. It ignores later lobes and depends on record length for long-memory signals, and the target of 30 samples is a convention.",
+        "Calibrated tolerances reach about \u00b156 samples, sometimes wider than the delay itself. This changes what 'stable' means and makes aTDS scores incomparable with published TDS values.",
+        "Null-model simplifications (rotations destroy shared slow co-modulation, and the SE treats correlated rotations as independent) bias tolerances upward and p-values downward. Single recordings exceed the budget substantially (95th percentile up to 20%).",
+        "All main results use a non-causal stability anchor, which differs substantially from the reference implementation (58.1% vs 43.6%).",
+        "Real-data delay recovery is thin and partly circular, since 'known' delays partly come from full-record xcorr peaks. One catchment fails and one record does not discriminate.",
+        "The presentation is very dense, and the many variants and conditional recommendations obscure the recommended default."
+    ],
+    "Originality": 2,
+    "Quality": 3,
+    "Clarity": 2,
+    "Significance": 2,
+    "Questions": [
+        "Can aTDS-BH be validated on a generator family not used in its selection (e.g. fGn, AR(2), nonlinear oscillators, physiological simulators)?",
+        "Is the aTDS-BH advantage more than a longer window? How does first-zero aTDS with 60 effective samples compare?",
+        "Why use max_i of the single-series factor rather than the pairwise Bartlett factor \u03a3 r_x r_y? Can the 30-sample target be derived from the reliability of the argmax lag?",
+        "How does aTDS compare with sliding-window cross-correlation or GCC-PHAT using the same adaptive window and a surrogate threshold, especially on regime-switching and drifting-delay tests?",
+        "In which concrete scenario does default aTDS beat estimated rescaling with statistical support?",
+        "Do the main conclusions hold with the causal stability anchor of the original method?",
+        "Could the tolerance be tied to the theoretical variance of the delay estimate (e.g. Carter's bound) to keep scores comparable across settings?",
+        "How would block or IAAFT bivariate surrogates that preserve shared co-modulation change the calibrated tolerances and per-link p-values on the sleep data?",
+        "How were the 'known' delays of the field records established independently of the full-record cross-correlation peak?",
+        "Can regime-boundary margins be applied without knowing the boundaries in advance?"
+    ],
+    "Limitations": [
+        "aTDS is a scaling heuristic, not an optimal parameter choice. Estimated rescaling achieves much of the benefit, and full-record estimators or longer windows detect constant coupling better.",
+        "Long windows reduce time resolution. Regime- or stage-resolved analyses need user-chosen caps, and windows near regime boundaries inflate false stability.",
+        "The 5% false-stability budget holds only on average, and the rotation null ignores shared co-modulation.",
+        "Wide calibrated tolerances make aTDS scores incomparable with published TDS values.",
+        "The window rule fails for seasonal or rhythmic signals with strong later lobes, and delays beyond half the window are missed unless d_max is supplied.",
+        "Correlation-based pairwise TDS cannot capture non-monotone coupling or separate direct from indirect links.",
+        "There is no gain in the main physiological application. No major negative societal impact is foreseen, although over-interpreting coupling scores in clinical settings could mislead."
+    ],
+    "Ethical Concerns": false,
+    "Soundness": 3,
+    "Presentation": 2,
+    "Contribution": 2,
+    "Overall": 5,
+    "Confidence": 4,
+    "Decision": "Reject"
+}
