@@ -1,0 +1,30 @@
+[
+  {
+    "name": "fig_example_fixed_vs_atds.png",
+    "caption": "The same coupled pair ($\\tau_c = 8$, true delay 20 samples, coupling 0.6) under the published fixed parameters (a) and the parameters chosen by aTDS on a separate training pair (b). Each dot is $\\tau_0$ in one window over the first 12\\,000 samples; filled dots are stable windows. The dashed line is the true delay ($\\tau = -20$; negative means $x$ leads)."
+  },
+  {
+    "name": "fig_window_rule.png",
+    "caption": "Window rule. (a) Independent samples per window, $L/B$, against the correlation time $\\tau_c$ (median $B$ over 5 signals of 30\\,000 samples). (b) AUC against window length for a faster and a four-times slower system with weak coupling (100 coupled and 100 uncoupled pairs per point; bootstrap 95\\,\\% intervals). Dotted lines and diamonds: the window chosen by aTDS for each system; dashed line: $L = 60$."
+  },
+  {
+    "name": "fig_onoff_tradeoff.png",
+    "caption": "Coupling switched on and off in blocks of 1\\,000--4\\,000 samples. Balanced accuracy of the window labels against the number of independent samples per window; dashed line: the aTDS constant 30."
+  },
+  {
+    "name": "fig_lag_range.png",
+    "caption": "Only the lag range changes. (a) Reported delay ($-\\tau_0$, with $\\tau_0$ the most frequent value among stable windows; positive means $x$ leads) against the true delay; the dashed diagonal is a perfect answer. (b) TDS score of the same runs. Filled markers: right delay; hollow: wrong delay. Points are jittered horizontally."
+  },
+  {
+    "name": "fig_tolerance_calibration.png",
+    "caption": "Tolerance calibration for the pair of the motivating-example figure with the aTDS window. (a) Chance score $C(\\tol)$ of circularly rotated copies and its upper bound $C + 2\\,\\mathrm{SE}$; dotted line: 5\\,\\% budget. (b) TDS score of the real, unrotated pair at the same tolerances."
+  },
+  {
+    "name": "fig_slowdown_baselines.png",
+    "caption": "Slow-down test ($\\tau_c = 2r$, $d = 5r$, coupling 0.3; 100 coupled and 100 uncoupled pairs per $r$). (a) AUC with bootstrap 95\\,\\% intervals. (b) Share of coupled pairs whose stable windows report the true delay, with Wilson 95\\,\\% intervals. The rescaled setting is given the true $r$; the oracle tunes on labelled pairs; aTDS is given neither."
+  },
+  {
+    "name": "fig_cohort_stages.png",
+    "caption": "35 overnight recordings, 10 physiological signals, 45 links. (a) Mean TDS over the 45 links per subject and sleep stage; (b) number of links whose TDS exceeds the 95th percentile of the cross-subject, stage-matched null. Small dots: subjects; large markers: mean with 95 % interval. Published setting vs aTDS with the window capped at 300 s. Scores of the two settings are not comparable in (a) because aTDS uses a wider tolerance; (b) is calibrated against each setting's own null."
+  }
+]
