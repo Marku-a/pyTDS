@@ -12,7 +12,7 @@ pair itself. Reference delay: median beat-by-beat PAT from the R peak to the ste
 full-record cross-correlation peak within half a beat (the waveform alignment). Because the heartbeat repeats,
 a delay is only defined modulo one beat period; delays are compared modulo the median RR interval.
 
-    python experiments/atds_real/bidmc.py <bidmc_csv_dir> [out_dir]
+    python experiments/atds_real/bidmc.py <bidmc_csv_dir> [out_dir] [--common]
 
 <bidmc_csv_dir> holds bidmc_XX_Signals.csv from https://physionet.org/files/bidmc/1.0.0/bidmc_csv/
 TDS via this repo's pyTDS only (through atds21).
@@ -164,5 +164,65 @@ def main(d, out_dir):
     print(json.dumps(S, indent=1))
 
 
+
+
+# ---------------------------------------------------------------- one parameter set for the whole cohort
+def _pair_signals(ij):
+    i, j = ij
+    ex, _ = load(DIR, i); _, py = load(DIR, j)
+    x, y = bp(ex, 0.5, 30), bp(py, 0.5, 8); n = min(len(x), len(y))
+    return x[:n], y[:n]
+
+
+def _pair_window(i):
+    x, y = _pair_signals((i, i))
+    p = A.window_params([x, y])
+    return p.window, p.max_lag
+
+
+def _score_common(args):
+    ij, p = args
+    x, y = _pair_signals(ij)
+    s, dl, ns, nw = run(p, x, y)
+    return {"ecg": ij[0], "ppg": ij[1], "coupled": ij[0] == ij[1], "score": s, "delay": dl, "n_stable": ns}
+
+
+def main_common(d, out_dir):
+    """aTDS with ONE parameter set for all 106 pairs: window and lag = median over patients of the per-patient
+    aTDS values (rhythm cap included); tolerance calibrated on rotations pooled over the true pairs (calib uses
+    at most 50 pairs, seeded). Fixed TDS for reference. Delays compared with the per-patient reference of main()."""
+    global DIR
+    DIR = d
+    t0 = time.time()
+    with Pool(A.WORKERS) as pool:
+        wl = pool.map(_pair_window, IDS)
+    L = int(np.median([w for w, _ in wl])); lag = int(np.median([g for _, g in wl]))
+    from dataclasses import replace
+    p0 = replace(A.PUBLISHED, window=L, overlap=L // 2, max_lag=min(lag, (L - 1) // 2), tolerance=0)
+    pairs = [_pair_signals((i, i)) for i in IDS]
+    p, fail = A.calib(p0, pairs)
+    del pairs
+    jobs = [(i, i) for i in IDS] + [(i, IDS[(k + SHIFT) % len(IDS)]) for k, i in enumerate(IDS)]
+    with Pool(A.WORKERS) as pool:
+        rows = pool.map(_score_common, [(ij, p) for ij in jobs])
+    ref = {r["ecg"]: r for r in json.load(open(os.path.join(out_dir, "bidmc_ecg_ppg.json")))["records"] if r["coupled"]}
+    c = [r for r in rows if r["coupled"]]; u = [r for r in rows if not r["coupled"]]
+    a = [r["score"] for r in c]; b = [r["score"] for r in u]; thr = float(np.percentile(b, 95))
+    ex = [wrap(r["delay"] - ref[r["ecg"]]["xcorr_delay"], ref[r["ecg"]]["rr_samples"]) / FS for r in c if r["delay"] is not None]
+    S = {"params": {"window": p.window, "step": p.overlap, "max_lag": p.max_lag, "tolerance": p.tolerance,
+                    "calibration_failed": bool(fail)},
+         "coupled_mean": float(np.mean(a)), "coupled_median": float(np.median(a)), "control_mean": float(np.mean(b)),
+         "control_95pct": thr, "auc": auc(a, b), "auc_ci95": boot_auc(a, b),
+         "n_coupled_above_control95": int(sum(x > thr for x in a)), "n_with_delay": len(ex),
+         "n_within_0p04s_of_xcorr": int(sum(abs(e) <= 0.04 for e in ex)),
+         "err_vs_xcorr_s_median": float(np.median(ex)) if ex else None, "wall_seconds": time.time() - t0}
+    json.dump({"summary": S, "records": rows}, open(os.path.join(out_dir, "bidmc_common_params.json"), "w"), indent=1)
+    print(json.dumps(S, indent=1))
+
+
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, "results"))
+    out = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("--") else os.path.join(HERE, "results")
+    if "--common" in sys.argv:
+        main_common(sys.argv[1], out)
+    else:
+        main(sys.argv[1], out)
