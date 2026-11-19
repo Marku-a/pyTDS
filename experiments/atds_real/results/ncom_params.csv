@@ -1,0 +1,4 @@
+setting,calibration_failed,window,step,max_lag,tolerance
+published,False,60,30,30,1
+atds,False,2868,1434,1433,136
+atds_cap300,False,300,150,149,14
