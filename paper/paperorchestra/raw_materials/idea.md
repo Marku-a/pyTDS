@@ -6,15 +6,23 @@ Time Delay Stability (TDS; Bashan et al., Nature Communications 2012) is the sta
 ## Core Hypothesis
 All three TDS parameters can be set from the signals themselves - from each signal's own autocorrelation and from coupling-free circularly rotated copies - without any coupling labels or known delays, so that TDS behaves consistently across time scales and sampling rates while keeping a fixed false-stability budget.
 
+## Required paper structure
+1. Idea and algorithm (Methods): TDS, the three aTDS rules, the full algorithm.
+2. Results on simulated data (synthetic signals with known coupling and delay).
+3. Results on real data (benchmark, sleep cohort, other fields).
+4. Discussion (limitations, practical guidance, not tested) and Conclusion.
+
 ## Contributions
 1. A window rule: L = 30 x max_i B_i, with B the Bartlett variance-inflation factor of each signal's autocorrelation, so every window holds ~30 independent samples of the slowest signal (floor 61 samples, cap 10 % of the record; optional longest plausible delay d_max).
 2. A lag-range rule: tau_max = (L-1)/2 (the published ratio and the circular-correlation aliasing limit), capped at half the shortest detected rhythm period.
 3. A tolerance rule: the widest tolerance whose chance score on circularly rotated copies, mean + 2 SE, stays <= 5 %.
 4. A controlled evaluation against the published setting, a hand-rescaled setting told the true slow-down factor, and a labelled-data oracle, plus a per-link rotation test with Benjamini-Hochberg FDR control for networks.
-5. Open-source implementation on top of pyTDS with all scripts, raw JSON results and fixed seeds.
+5. Real-data validation: a 35-subject sleep cohort with a stage-matched null and three records from other fields with known delays.
+6. Open-source implementation on top of pyTDS with all scripts, raw JSON results and fixed seeds.
 
 ## Scope (must be respected by the paper)
-- Evidence is synthetic signals with known answers plus ONE real sleep-EEG pair (delta/sigma power, 1 Hz). No staged multi-subject sleep cohort; no cross-subject stage-matched surrogates; coupling that switches with physiological regime is untested.
+- Evidence has two parts: (1) synthetic signals and simulations with known answers (experimental log, Part 1); (2) real data (Part 2): the TDS benchmark pair, a 35-subject polysomnography cohort with scored sleep stages analysed with the cross-subject stage-matched null, and three public records from hydrology, energy and economics with known delays. Real-data results are mixed for sleep networks and must be reported as such. Coupling that switches with physiological regime and per-stage calibration are untested.
+- All TDS computations use the author's pyTDS implementation (github.com/Marku-a/pyTDS).
 - aTDS automates a time-scale-consistent parameter choice with a false-alarm budget; it is NOT optimal (an oracle tuned on labels does better) and the 5 % is a budget for the mean chance score, NOT a significance level.
 - aTDS scores are not comparable with published TDS scores.
 - Limitations listed in the experimental log must be reported, not hidden.

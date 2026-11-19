@@ -3,6 +3,8 @@
 All numbers below come from fixed-seed runs; raw JSON in the pyTDS repository, atds_brief/results/. Do not report any number that is not in this log.
 
 
+# PART 1: SIMULATED DATA (synthetic signals with known coupling and delay)
+
 ## How to read this brief
 
 Everything in the tests below is measured the same way. This section explains each term once, so no figure needs guessing.
@@ -292,3 +294,53 @@ Bashan A, Bartsch RP, Kantelhardt JW, Havlin S, Ivanov PCh. Network physiology r
 | 8 | 515 | 25 | 0.79 | [0.728, 0.85] |
 
 (The last two rows are the windows aTDS chose: 121 and 515.)
+
+---
+
+# PART 2: REAL DATA (all TDS computed with the author's pyTDS; scripts and raw results in experiments/atds_real/)
+
+## R1. Benchmark reproduction
+pyTDS with the published setting and the causal stability anchor gives 43.53 % on the benchmark delta-sigma sleep-EEG pair (data/data-delta.txt, data/data-sigma.txt, 29 941 s at 1 Hz); the original MATLAB implementation gives 43.6052 %. With the default (non-causal) anchor pyTDS gives 58.1 %. Every other analysis uses the default anchor.
+
+## R2. Sleep cohort: 35 overnight polysomnograms (author's MSc project data, prepared to reproduce the network analysis of Bashan et al. 2012)
+Data: 35 recordings, 23 150-31 752 s (median 28 680 s), 10 channels at 1 Hz: heart rate, respiratory rate, chin EMG std, leg EMG std, EOG std, delta, theta, alpha, sigma, beta EEG power. Per-second sleep stages: wake (W), light sleep (LS), deep sleep (DS), REM. 45 links per subject.
+
+Settings (one parameter set per setting for the whole cohort):
+- published: window 60 s, step 30 s, lag +-30 s, tolerance +-1 s.
+- aTDS (uncapped): window from the median over subjects of max_i B_i = 228 -> 30 x 228 = 6 846 s, clipped to 10 % of the median length: L = 2 868 s (48 min), step 1 434, lag +-1 433 s, tolerance +-136 s (calibrated on rotations pooled over 50 random subject-pair combinations, 20 rotations each; calibration did not fail).
+- aTDS capped at 300 s: L = 300 s, step 150, lag +-149 s, tolerance +-14 s.
+
+Stage assignment: delay series and stability labels computed over the whole night; a window is assigned to a stage if >= 80 % of its seconds carry that stage; per-stage TDS = % stable among assigned windows; at least 3 windows required.
+Significance: cross-subject, stage-matched null as in Bashan et al. 2012: per link, 100 surrogate pairs (channel i of subject a, channel j of subject b, a != b, truncated to the shorter length, stages of subject a); link significant if TDS > 95th percentile of its null (per link, stage, setting).
+Effects: paired Cohen dz across subjects, 95 % bootstrap intervals (5 000 resamples of subjects); gain = paired difference of dz between settings.
+
+Results:
+- Uncapped aTDS: no subject had >= 3 windows that are >= 80 % wake, REM or deep sleep; only 24 subjects had >= 3 in light sleep. The uncapped window cannot resolve sleep stages.
+- Mean over subjects (published / aTDS-300): mean link TDS W 16.90 / 40.15, LS 19.76 / 46.91, REM 11.44 / 36.64, DS 13.73 / 35.82 %; significant links (of 45) W 25.23 / 26.63, LS 34.20 / 38.20, REM 23.66 / 28.51, DS 18.31 / 23.03. Subjects with enough windows under aTDS-300: LS 35, REM 35, DS 34, W 27 (8 subjects lack three pure 300-s wake windows). Raw scores are not comparable across settings (aTDS tolerance is wider); significant links against each setting's own null are the fair comparison.
+
+| Measure | Contrast | Published dz [95 % CI] (% subjects positive) | aTDS-300 dz [95 % CI] (% positive) (n) | Gain aTDS-300 minus published [95 % CI] |
+|---|---|---|---|---|
+| Mean link TDS | LS-DS | 1.37 [1.02, 1.91] (91 %) | 1.65 [1.27, 2.25] (94 %) (34) | +0.31 [-0.06, 0.75] |
+| | W-DS | 0.57 [0.25, 0.97] (69 %) | 0.29 [-0.09, 0.76] (65 %) (26) | -0.28 [-0.70, 0.13] |
+| | REM-DS | -0.50 [-0.88, -0.17] (40 %) | 0.11 [-0.25, 0.42] (47 %) (34) | +0.67 [0.40, 0.98] |
+| | LS-REM | 1.90 [1.53, 2.53] (100 %) | 1.37 [0.97, 1.97] (91 %) (35) | -0.53 [-1.18, 0.05] |
+| Significant links | LS-DS | 2.58 [2.11, 3.41] (100 %) | 2.47 [1.95, 3.34] (100 %) (34) | -0.14 [-0.74, 0.47] |
+| | W-DS | 1.16 [0.69, 1.88] (89 %) | 0.34 [-0.04, 0.95] (69 %) (26) | -1.17 [-1.65, -0.77] |
+| | REM-DS | 0.75 [0.45, 1.13] (74 %) | 0.88 [0.58, 1.25] (74 %) (34) | +0.15 [-0.20, 0.50] |
+| | LS-REM | 1.67 [1.26, 2.40] (94 %) | 1.75 [1.35, 2.39] (94 %) (35) | +0.08 [-0.48, 0.54] |
+
+Reading: both settings show the strong LS > DS contrast; aTDS-300 gives no significant gain. Under the published setting REM has LOWER mean link TDS than DS (dz -0.50) but MORE significant links (dz 0.75); aTDS-300 removes the mean-TDS inversion (gain +0.67) and leaves the significant-link contrast unchanged. The W-DS contrast is weaker under aTDS-300 (significant links gain -1.17) and rests on 26 subjects. On real staged data aTDS does not uniformly sharpen sleep-stage contrasts; it needs a window cap, and per-stage calibration was not tested (parameters frozen per cohort). Tolerance calibration still used within-recording rotations.
+
+## R3. Three public records from other fields with known delays
+Delays known from the domain and from the peak of the full-record cross-correlation (sources and preprocessing in experiments/atds_real/data_fields/MANIFEST.json). aTDS calibrated on rotations of each record itself (20 rotations); significance from 200 rotations, p = (1+k)/(1+N). Delay = most frequent tau0 among stable windows, signed so the driver leads.
+
+| Record | Samples | Known delay | Setting | L / lag / tol | Score (null95) | p | Delay found |
+|---|---|---|---|---|---|---|---|
+| Hourly catchment rainfall -> river flow (airGR catchment L0123003, hydrology) | 43 848 h | about 8 h | published | 60 h / 30 h / 1 h | 1.2 % (1.1) | 0.02 | 13 h (wrong) |
+| | | | aTDS | 79.8 d / 39.8 d / 1.79 d | 79.5 % (9.1) | 0.005 | 8 h (correct) |
+| Melbourne temperature -> Victoria electricity demand, summer, mean daily profile removed (energy) | 13 008 half-hours | about 1 h | published | 30 h / 15 h / 30 min | 11.8 % (3.0) | 0.005 | 0 (wrong) |
+| | | | aTDS | 27.1 d / 13.5 d / 1.02 d | 100 % (21.1) | 0.005 | 1 h (correct) |
+| Weekly changes, WTI crude oil -> US retail gasoline (economics) | 1 746 weeks | 1-2 weeks | published | 60 / 30 / 1 weeks | 86.0 % (7.0) | 0.005 | 0 weeks |
+| | | | aTDS | 64 / 31 / 3 weeks | 92.5 % (15.1) | 0.005 | 0 weeks |
+
+Reading: both settings detect coupling in all three (published only marginally for rainfall-runoff). aTDS reports the known delay for rainfall-runoff and temperature-demand; the published setting does not. Oil-gasoline does not discriminate: in weekly changes the cross-correlation already peaks at lag 0 (r = 0.55, partly because WTI and retail prices are recorded on different weekdays; lag 1: r = 0.39). aTDS windows are long (80 and 27 days), acceptable because these delays are constant.

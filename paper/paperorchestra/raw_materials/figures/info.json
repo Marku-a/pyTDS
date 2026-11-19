@@ -22,5 +22,9 @@
   {
     "name": "fig_slowdown_baselines.png",
     "caption": "Slow-down test ($\\tau_c = 2r$, $d = 5r$, coupling 0.3; 100 coupled and 100 uncoupled pairs per $r$). (a) AUC with bootstrap 95\\,\\% intervals. (b) Share of coupled pairs whose stable windows report the true delay, with Wilson 95\\,\\% intervals. The rescaled setting is given the true $r$; the oracle tunes on labelled pairs; aTDS is given neither."
+  },
+  {
+    "name": "fig_cohort_stages.png",
+    "caption": "35 overnight recordings, 10 physiological signals, 45 links. (a) Mean TDS over the 45 links per subject and sleep stage; (b) number of links whose TDS exceeds the 95th percentile of the cross-subject, stage-matched null. Small dots: subjects; large markers: mean with 95 % interval. Published setting vs aTDS with the window capped at 300 s. Scores of the two settings are not comparable in (a) because aTDS uses a wider tolerance; (b) is calibrated against each setting's own null."
   }
 ]

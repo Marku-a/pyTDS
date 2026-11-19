@@ -30,8 +30,8 @@ fi
 cd "$WORK/paper-orchestra"
 "$WORK/venv/bin/python" paper_writing_cli.py \
   --raw_materials_dir "$HERE/raw_materials" \
-  --latex_template_dir "$HERE/templates/netphys" \
-  --output_dir "$HERE/output" \
+  --latex_template_dir "$HERE/templates/${PO_TEMPLATE:-netphys}" \
+  --output_dir "$HERE/${PO_OUTPUT:-output}" \
   --idea_filename idea.md \
   --experimental_log_filename experimental_log.md \
   --writer_model_name "$WRITER_MODEL" \

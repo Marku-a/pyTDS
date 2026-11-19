@@ -1,0 +1,90 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalize]{cleveref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+
+%%%%%%%%% TITLE - PLEASE UPDATE TITLE HERE
+\title{My Title}
+
+\author{Asaf Markuza}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+%%%%%%%%% ABSTRACT %%%%%%%%%
+Abstract here.
+%%%%%%%%% ABSTRACT %%%%%%%%%
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+%%%%%%%%% INTRODUCTION %%%%%%%%%
+Introduction here.
+%%%%%%%%% INTRODUCTION %%%%%%%%%
+
+\section{Related Work}
+\label{sec:related_work}
+%%%%%%%%% RELATED WORK %%%%%%%%%
+Related work here.
+%%%%%%%%% RELATED WORK %%%%%%%%%
+
+\section{Idea and algorithm}
+\label{sec:method}
+%%%%%%%%% METHOD %%%%%%%%%
+The idea of aTDS, Time Delay Stability, the three rules and the full algorithm here.
+%%%%%%%%% METHOD %%%%%%%%%
+
+\section{Results on simulated data}
+\label{sec:simulation}
+%%%%%%%%% SIMULATION %%%%%%%%%
+Synthetic signals and simulations with known coupling and delay: design, metrics and results here.
+%%%%%%%%% SIMULATION %%%%%%%%%
+
+\section{Results on real data}
+\label{sec:realdata}
+%%%%%%%%% REAL DATA %%%%%%%%%
+Benchmark reproduction, the 35-subject sleep cohort, and records from other fields here.
+%%%%%%%%% REAL DATA %%%%%%%%%
+
+\section{Discussion}
+\label{sec:discussion}
+%%%%%%%%% DISCUSSION %%%%%%%%%
+Discussion, limitations and future work here.
+%%%%%%%%% DISCUSSION %%%%%%%%%
+
+\section{Conclusion}
+\label{sec:conclusion}
+%%%%%%%%% CONCLUSION %%%%%%%%%
+Conclusion here.
+%%%%%%%%% CONCLUSION %%%%%%%%%
+
+\section*{Code and data availability}
+pyTDS, the aTDS experiment scripts, their raw results (JSON) and the figure scripts are available at \url{https://github.com/Marku-a/pyTDS}. All random seeds are fixed.
+
+%%%%%%%%% REFERENCES %%%%%%%%%
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+%%%%%%%%% REFERENCES %%%%%%%%%
+
+%%%%%%%%% Appendix %%%%%%%%%
+% If you want to add appendix, uncomment the following lines:
+% \appendix
+% \section{xxx}
+%%%%%%%%% Appendix %%%%%%%%%
+
+\end{document}
