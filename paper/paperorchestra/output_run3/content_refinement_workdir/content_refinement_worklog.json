@@ -59,5 +59,66 @@
         "total_gain": 0.0,
         "total_drop": 2.0,
         "outcome": "ACCEPTED_NO_REVERT"
+    },
+    "v2": {
+        "round": 2,
+        "agent_plan": {
+            "addressed_weaknesses": [
+                "Positioning: the contribution is now stated as a family of data-driven parameter rules for TDS (estimated rescaling, aTDS, aTDS-BH) evaluated side by side, with guidance; each ingredient acknowledged as standard",
+                "Statistical basis: the window rule is justified by a Cauchy-Schwarz bound (max_i of the single-series factor bounds Bartlett's cross-correlation variance factor for every pair); the first-zero truncation is labelled an estimator choice; the Bayley-Hammersley-type factor is labelled an empirical window rule",
+                "Validation of aTDS-BH beyond the AR(1) family: new Table (generalise) with fGn, AR(2) rhythms, mixed-speed, changing-dynamics and Rulkov generators",
+                "aTDS-BH vs a longer window: stated explicitly that its gain equals first-zero aTDS with 60 independent samples",
+                "Default aTDS vs estimated rescaling: stated that no synthetic test shows a supported advantage; only the hourly rainfall-runoff delay",
+                "Known delays: their domain and cross-correlation sources stated, including the partial circularity",
+                "Density: three detailed tables moved to an appendix"
+            ],
+            "integrated_answers": [
+                "Why max_i B_i rather than the pairwise factor: Cauchy-Schwarz bound in Section 3",
+                "Generalisation of aTDS-BH: Table generalise",
+                "Longer window vs BH: Section 4.8",
+                "Boundary margins without known boundaries: guidance bullet",
+                "Causal anchor, Carter-bound tolerance, block/IAAFT nulls, sliding-window GCC-PHAT: already listed as not tested (no data in the log)"
+            ],
+            "actions_taken": [
+                "Rewrote the window-rule justification with a displayed inequality",
+                "Added the generalisation table and two clarifying paragraphs in Sections 4.8-4.9",
+                "Edited Introduction positioning, field-record description and guidance",
+                "Added Appendix A with the sensitivity, signal-class and all-settings real-record tables"
+            ]
+        },
+        "scores_before": {
+            "Originality": 2.0,
+            "Quality": 3.0,
+            "Clarity": 2.0,
+            "Significance": 2.0,
+            "Soundness": 3.0,
+            "Presentation": 2.0,
+            "Contribution": 2.0,
+            "Overall": 5.0,
+            "Confidence": 4.0
+        },
+        "scores_after": {
+            "Originality": 2.0,
+            "Quality": 2.0,
+            "Clarity": 3.0,
+            "Significance": 2.0,
+            "Soundness": 2.0,
+            "Presentation": 3.0,
+            "Contribution": 2.0,
+            "Overall": 4.0,
+            "Confidence": 4.0
+        },
+        "deltas": {
+            "Originality": 0.0,
+            "Quality": -1.0,
+            "Clarity": 1.0,
+            "Significance": 0.0,
+            "Soundness": -1.0,
+            "Presentation": 1.0,
+            "Contribution": 0.0
+        },
+        "total_gain": 2.0,
+        "total_drop": 2.0,
+        "outcome": "ACCEPTED_NO_REVERT"
     }
 }
