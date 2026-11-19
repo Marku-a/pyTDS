@@ -74,6 +74,18 @@
                 "Reviews or perspectives on the field of network physiology (Ivanov 2021 Frontiers in Network Physiology; Ivanov, Liu, Bartsch 2016 New Journal of Physics)",
                 "Applications of TDS to brain-muscle, brain-heart or cardio-respiratory coupling, including clinical populations",
                 "Open-source implementations of TDS and reproducibility of TDS results across implementations (TDSpy)"
+            ],
+            "citation_candidates": [
+                "Steinbrinker2024TdspyOpensource",
+                "Liu2015PlasticityBrain",
+                "Bartsch2012PhaseTransitions",
+                "Bashan2012NetworkPhysiology",
+                "Ivanov2016FocusEmerging",
+                "Rizzo2022DynamicNetworks",
+                "Lin2016DelaycorrelationLandscape",
+                "Liu2015MajorComponent",
+                "Bartsch2015NetworkPhysiology",
+                "Ivanov2021NewField"
             ]
         },
         "related_work_strategy": {
@@ -88,7 +100,16 @@
                         "time delay stability window length choice physiological signals",
                         "delay-correlation landscape brain rhythms heart interactions"
                     ],
-                    "bridge_to_our_method": "aTDS derives window, lag range and tolerance from each signal's autocorrelation and from coupling-free copies."
+                    "bridge_to_our_method": "aTDS derives window, lag range and tolerance from each signal's autocorrelation and from coupling-free copies.",
+                    "citation_candidates": [
+                        "Rizzo2020NetworkPhysiology",
+                        "Knapp1976GeneralizedCorrelation",
+                        "Carter1987CoherenceTime",
+                        "Granger1969InvestigatingCausal",
+                        "Schreiber2000MeasuringInformation",
+                        "Sugihara2012DetectingCausality",
+                        "Stankovski2017CouplingFunctions"
+                    ]
                 },
                 {
                     "subsection_title": "2.2 Effective sample size of autocorrelated series",
@@ -99,7 +120,13 @@
                         "Bartlett 1946 sampling properties autocorrelated time series",
                         "effective number of independent observations autocorrelated time series"
                     ],
-                    "bridge_to_our_method": "aTDS sets L = 30 x max Bartlett factor so each window holds about 30 independent samples."
+                    "bridge_to_our_method": "aTDS sets L = 30 x max Bartlett factor so each window holds about 30 independent samples.",
+                    "citation_candidates": [
+                        "Bartlett1946TheoreticalSpecification",
+                        "Bayley1946EffectiveNumber",
+                        "Pyper1998ComparisonMethods",
+                        "Afyouni2019EffectiveDegrees"
+                    ]
                 },
                 {
                     "subsection_title": "2.3 Surrogate data and multiple testing",
@@ -110,7 +137,16 @@
                         "method of surrogate data testing nonlinearity time series",
                         "surrogate data hypothesis testing physical systems review"
                     ],
-                    "bridge_to_our_method": "aTDS uses circularly rotated copies both to set the tolerance under a 5 % false-stability budget and for per-link p-values with FDR control."
+                    "bridge_to_our_method": "aTDS uses circularly rotated copies both to set the tolerance under a 5 % false-stability budget and for per-link p-values with FDR control.",
+                    "citation_candidates": [
+                        "Lancaster2018SurrogateData",
+                        "Schreiber2000SurrogateTime",
+                        "Theiler1992TestingNonlinearity",
+                        "Andrzejak2003BivariateSurrogate",
+                        "Benjamini1995ControllingFalse",
+                        "Schreiber1996ImprovedSurrogate",
+                        "Prichard1994GeneratingSurrogate"
+                    ]
                 }
             ]
         }
@@ -128,7 +164,7 @@
                         "State scope: simulated signals with known answers plus real data (35-subject sleep cohort with mixed results; three records from other fields where aTDS recovers known delays).",
                         "Report the new evidence honestly: full-record estimators win on stationary data; aTDS wins for regime-limited and drifting coupling; no gain on 1-Hz sleep networks even stage-aware."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 }
             ]
         },
@@ -142,11 +178,7 @@
                         "Contributions list from idea.md (three rules, controlled evaluation, per-link test, open code).",
                         "Scope of claims."
                     ],
-                    "citation_hints": [
-                        "Bashan et al. (Network physiology reveals relations between network topology and physiological function)",
-                        "Bartsch et al. (Network physiology: how organ systems dynamically interact)",
-                        "Steinbrinker et al. (TDSpy: An open-source implementation of time delay stability analysis)"
-                    ]
+                    "citation_candidates": []
                 }
             ]
         },
@@ -158,34 +190,21 @@
                     "content_bullets": [
                         "TDS definition context and applications; generalized cross-correlation delay estimation; other coupling measures (Granger causality, transfer entropy, convergent cross mapping) and why they are complementary."
                     ],
-                    "citation_hints": [
-                        "Knapp and Carter (The generalized correlation method for estimation of time delay)",
-                        "Granger (Investigating causal relations by econometric models and cross-spectral methods)",
-                        "Schreiber (Measuring information transfer)",
-                        "Sugihara et al. (Detecting causality in complex ecosystems)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "2.2 Effective sample size of autocorrelated series",
                     "content_bullets": [
                         "Bartlett variance inflation; effective number of independent observations."
                     ],
-                    "citation_hints": [
-                        "Bartlett (On the theoretical specification and sampling properties of autocorrelated time-series)",
-                        "Bayley and Hammersley (The effective number of independent observations in an autocorrelated time series)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "2.3 Surrogate data and multiple testing",
                     "content_bullets": [
                         "Surrogate-data testing, cyclic-shift nulls, cross-subject nulls of Bashan et al.; Benjamini-Hochberg FDR."
                     ],
-                    "citation_hints": [
-                        "Theiler et al. (Testing for nonlinearity in time series: the method of surrogate data)",
-                        "Schreiber and Schmitz (Surrogate time series)",
-                        "Lancaster et al. (Surrogate data for hypothesis testing of physical systems)",
-                        "Benjamini and Hochberg (Controlling the false discovery rate: a practical and powerful approach to multiple testing)"
-                    ]
+                    "citation_candidates": []
                 }
             ]
         },
@@ -197,9 +216,7 @@
                     "content_bullets": [
                         "Formalise windowed z-scored circular cross-correlation C_nu(tau) = (1/L) sum_i x((i+tau) mod L) y(i), tau0 = argmax |C|, 4-of-5 stability rule within \u00b1tol, TDS score; aliasing limit tau_max <= (L-1)/2; sign convention (negative tau0: x leads)."
                     ],
-                    "citation_hints": [
-                        "Bashan et al. (Network physiology reveals relations between network topology and physiological function)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "3.2 Window rule",
@@ -207,16 +224,14 @@
                         "Autocorrelation r_i(k) for k = 0..T/4; Bartlett factor B_i = 1 + 2 sum_{k<K_i} r_i(k)^2 to first zero crossing; L = clip(round(30 max_i B_i), L_min, 0.1T) with L_min = 61 or max(61, 2 d_max + 1), floor wins; step L/2.",
                         "Why 30: error 1/sqrt(n) = \u00b10.18 at n = 30, max of 30 noise lags ~0.47, 4-of-5 rule separates; convention not optimum. Why 61: lag never narrower than \u00b130."
                     ],
-                    "citation_hints": [
-                        "Bartlett (On the theoretical specification and sampling properties of autocorrelated time-series)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "3.3 Lag-range rule",
                     "content_bullets": [
                         "tau_max = floor((L-1)/2), capped at max(1, min(P_i)/2) for rhythmic signals; rhythm test: highest autocorrelation peak after first zero crossing >= 0.3 and not at the edge."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "3.4 Tolerance rule",
@@ -224,9 +239,7 @@
                         "Circular rotations (20 per pair, shift in [a, T-a), a = max(L, T/10), up to 50 pairs pooled over recordings); C(t) mean and SE; tol* = max t with C + 2 SE <= 5 %, scan t = 0..max(1, tau_max/4), stop at first failure; calibration_failed flag; 5 % is a budget, not a significance level; upper bound vs mean (6.7 % on new pairs with mean only).",
                         "Algorithm box with the full pseudocode from idea.md."
                     ],
-                    "citation_hints": [
-                        "Theiler et al. (Testing for nonlinearity in time series: the method of surrogate data)"
-                    ]
+                    "citation_candidates": []
                 }
             ]
         },
@@ -240,14 +253,14 @@
                         "Slow-down factor r (tau_c = 2r, d = 5r). Settings: published, rescaled by hand, aTDS, oracle grid (7 windows x 13 tolerances on 20+20 labelled pairs).",
                         "Train/test separation; metrics: AUC with bootstrap CIs, delay found with Wilson intervals, better/equivalent (TOST \u00b10.05)/undecided; per-link p-values with 999 rotations and BH at q = 0.05."
                     ],
-                    "citation_hints": [
-                        "Davies and Harte (Tests for Hurst effect)",
-                        "Peng et al. (Quantification of scaling exponents and crossover phenomena in nonstationary heartbeat time series)",
-                        "Rulkov (Modeling of spiking-bursting neural behavior using two-dimensional map)",
-                        "Hanley and McNeil (The meaning and use of the area under a receiver operating characteristic (ROC) curve)",
-                        "Efron (Bootstrap methods: another look at the jackknife)",
-                        "Wilson (Probable inference, the law of succession, and statistical inference)",
-                        "Schuirmann (A comparison of the two one-sided tests procedure and the power approach for assessing the equivalence of average bioavailability)"
+                    "citation_candidates": [
+                        "Davies1987TestsHurst",
+                        "Hanley1982MeaningUse",
+                        "Peng1995QuantificationScaling",
+                        "Rulkov2002ModelingSpikingbursting",
+                        "Efron1979BootstrapMethods",
+                        "Wilson1927ProbableInference",
+                        "Schuirmann1987ComparisonTwo"
                     ]
                 },
                 {
@@ -255,7 +268,7 @@
                     "content_bullets": [
                         "fig_example_fixed_vs_atds numbers: 5.2 % vs 91.3 %, 28 % vs 90 % within \u00b12."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.3 Window",
@@ -263,14 +276,14 @@
                         "fig_window_rule: 0.93 independent samples at tau_c = 64; aTDS windows 121 and 515; AUC 0.97 [0.95,0.99] and 0.79 [0.73,0.85] vs 0.83 and 0.51 at 60; 0.99 at 1920; compromise with time resolution.",
                         "fig_onoff_tradeoff: best 45/60/plateau; 30 within 0.015-0.05."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.4 Lag range",
                     "content_bullets": [
                         "fig_lag_range: aTDS exact for 90/90; \u00b130 wrong for all 50 pairs beyond 30, 16 wrong sign, scores 72-96 %; aTDS scores fall at long delays 27-62 %."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.5 Tolerance",
@@ -278,54 +291,49 @@
                         "fig_tolerance_calibration: crossing between \u00b112 and \u00b113; real score 90.0 % to 91.3 %.",
                         "Tolerance-only ablation: delay found 85 vs 66 % at r = 8 etc.; AUC gain not significant; r = 1 -0.005; chance 3.3-4.4 %."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.6 All three rules against baselines",
                     "content_bullets": [
                         "fig_slowdown_baselines and a booktabs table from the U1 raw data: AUC with CIs and chosen parameters per r; verdicts better/equivalent/undecided with the exact intervals; oracle better at r >= 2; v2.1 cost at r = 16."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.7 Baselines beyond TDS settings",
                     "content_bullets": [
                         "Experimental log Part 3 X1: full-record xcorr and GCC-PHAT (AUC 1.0 at every r) and estimated rescaling (matches true-r rescaling); aTDS minus baseline CIs; reading: full-record estimators win on stationary constant-delay data but give no time resolution."
                     ],
-                    "citation_hints": [
-                        "Knapp and Carter (The generalized correlation method for estimation of time delay)",
-                        "Carter (Coherence and time delay estimation)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.8 Sensitivity of the design constants",
                     "content_bullets": [
                         "Log X2: one constant at a time; n_eff matters most; budget, z, floor, rotations robust; rhythm threshold trade-off."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.9 Other signal classes and a real recording",
                     "content_bullets": [
                         "Table 2 from experimental_log.md rows: long memory H = 0.6/0.75/0.9, rhythms d = 8/30, Rulkov, fast signal with d = 50 and d_max, changing dynamics, mixed system, fast-slow pair with joint B_xy, real EEG."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.10 Networks with per-link tests and FDR",
                     "content_bullets": [
                         "Table 3 numbers: calibrated per-link test 2.7-5.8 %; 0 false links in 20 uncoupled networks; 27/30 and 26/30 true links; FDP 8.3 % and 2.5 %; indirect link not reported."
                     ],
-                    "citation_hints": [
-                        "Benjamini and Hochberg (Controlling the false discovery rate: a practical and powerful approach to multiple testing)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "4.11 Regime-switching, nonlinear and drifting coupling",
                     "content_bullets": [
                         "Log X3 and fig_baselines_regimes (b): regime switching (99 % vs 5.6 % stable in the coupled regime; false stability 8-9 % above budget), nonlinear monotone vs non-monotone, drifting delay (86.5 % vs 8.5 %)."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 }
             ]
         },
@@ -337,9 +345,7 @@
                     "content_bullets": [
                         "pyTDS reproduces the MATLAB TDS value on the benchmark delta-sigma pair: 43.53 % vs 43.6052 % (causal anchor); default anchor 58.1 % (experimental log R1)."
                     ],
-                    "citation_hints": [
-                        "Bashan et al. (Network physiology reveals relations between network topology and physiological function)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "5.2 Sleep networks in a 35-subject cohort",
@@ -347,19 +353,14 @@
                         "Data, three settings with their parameters, stage assignment rule, cross-subject stage-matched null, effect sizes (log R2).",
                         "Uncapped window too long for staging; Table of contrasts; fig_cohort_stages; mixed reading: LS-DS no significant gain, REM mean-TDS inversion removed, wake contrast weaker."
                     ],
-                    "citation_hints": [
-                        "Bashan et al. (Network physiology reveals relations between network topology and physiological function)",
-                        "Bartsch et al. (Network physiology: how organ systems dynamically interact)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "5.3 Stage-aware aTDS in the cohort",
                     "content_bullets": [
                         "Log X4: episode lengths; window 150 s, per-stage tolerance from the stage-matched null; same signs as published, no significant gain, wake loss in significant links; reading: published setting suits 1-Hz sleep data."
                     ],
-                    "citation_hints": [
-                        "Bashan et al. (Network physiology reveals relations between network topology and physiological function)"
-                    ]
+                    "citation_candidates": []
                 },
                 {
                     "subsection_title": "5.4 Known delays in other fields",
@@ -367,7 +368,7 @@
                         "Three records (hydrology, energy, economics) with known delays; table; aTDS recovers 8 h and 1 h where published does not; oil-gasoline non-discriminating (log R3).",
                         "Log X5: three airGR catchments: aTDS right where the published window is too short (hourly), equal on daily L0123001, fails on L0123002."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 }
             ]
         },
@@ -382,7 +383,7 @@
                         "Not tested: regime-switching coupling, staged cohorts, cross-subject stage-matched null.",
                         "Next steps from experimental_log.md."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 }
             ]
         },
@@ -394,7 +395,7 @@
                     "content_bullets": [
                         "Summarise rules, main evidence and scope."
                     ],
-                    "citation_hints": []
+                    "citation_candidates": []
                 }
             ]
         }

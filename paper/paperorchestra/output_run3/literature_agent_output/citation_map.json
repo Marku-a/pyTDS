@@ -1,0 +1,420 @@
+{
+    "Bashan2012NetworkPhysiology": {
+        "citation_key": "Bashan2012NetworkPhysiology",
+        "title": "Network physiology reveals relations between network topology and physiological function",
+        "authors": [
+            "Amir Bashan",
+            "Ronny P. Bartsch",
+            "Jan. W. Kantelhardt",
+            "Shlomo Havlin",
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "Nature Communications",
+        "year": 2012,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Introduces Time Delay Stability and sleep-stage physiological networks; the method aTDS adapts.]"
+    },
+    "Bartsch2015NetworkPhysiology": {
+        "citation_key": "Bartsch2015NetworkPhysiology",
+        "title": "Network Physiology: How Organ Systems Dynamically Interact",
+        "authors": [
+            "Ronny P. Bartsch",
+            "Kang K. L. Liu",
+            "Amir Bashan",
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "PLOS ONE",
+        "year": 2015,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Defines the TDS algorithm in detail (window 60, overlap, tolerance) and applies it to multichannel sleep recordings.]"
+    },
+    "Bartsch2012PhaseTransitions": {
+        "citation_key": "Bartsch2012PhaseTransitions",
+        "title": "Phase transitions in physiologic coupling",
+        "authors": [
+            "Ronny P. Bartsch",
+            "Aicko Y. Schumann",
+            "Jan W. Kantelhardt",
+            "Thomas Penzel",
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "Proceedings of the National Academy of Sciences",
+        "year": 2012,
+        "abstract": "Integrated physiological systems, such as the cardiac and the respiratory system, exhibit complex dynamics that are further influenced by intrinsic feedback mechanisms controlling their interaction. To probe how the cardiac and the respiratory system adjust their rhythms, despite continuous fluctuations in their dynamics, we study the phase synchronization of heartbeat intervals and respiratory cycles. The nature of this interaction, its physiological and clinical relevance, and its relation to mechanisms of neural control is not well understood. We investigate whether and how cardiorespiratory phase synchronization (CRPS) responds to changes in physiological states and conditions. We find that the degree of CRPS in healthy subjects dramatically changes with sleep-stage transitions and exhibits a pronounced stratification pattern with a 400% increase from rapid eye movement sleep and wake, to light and deep sleep, indicating that sympatho-vagal balance strongly influences CRPS. For elderly subjects, we find that the overall degree of CRPS is reduced by approximately 40%, which has important clinical implications. However, the sleep-stage stratification pattern we uncover in CRPS does not break down with advanced age, and surprisingly, remains stable across subjects. Our results show that the difference in CRPS between sleep stages exceeds the difference between young and elderly, suggesting that sleep regulation has a significantly stronger effect on cardiorespiratory couplin... [Truncated]"
+    },
+    "Liu2015PlasticityBrain": {
+        "citation_key": "Liu2015PlasticityBrain",
+        "title": "Plasticity of brain wave network interactions and evolution across physiologic states",
+        "authors": [
+            "Kang K. L. Liu",
+            "Ronny P. Bartsch",
+            "Aijing Lin",
+            "Rosario N. Mantegna",
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "Frontiers in Neural Circuits",
+        "year": 2015,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Applies TDS to brain-wave networks across sleep stages.]"
+    },
+    "Liu2015MajorComponent": {
+        "citation_key": "Liu2015MajorComponent",
+        "title": "Major component analysis of dynamic networks of physiologic organ interactions",
+        "authors": [
+            "Kang K L Liu",
+            "Ronny P Bartsch",
+            "Qianli D Y Ma",
+            "Plamen Ch Ivanov"
+        ],
+        "venue": "Journal of Physics: Conference Series",
+        "year": 2015,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Analyses dynamic TDS networks of organ interactions.]"
+    },
+    "Ivanov2016FocusEmerging": {
+        "citation_key": "Ivanov2016FocusEmerging",
+        "title": "Focus on the emerging new fields of network physiology and network medicine",
+        "authors": [
+            "Plamen Ch Ivanov",
+            "Kang K L Liu",
+            "Ronny P Bartsch"
+        ],
+        "venue": "New Journal of Physics",
+        "year": 2016,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Field-defining editorial on network physiology.]"
+    },
+    "Ivanov2021NewField": {
+        "citation_key": "Ivanov2021NewField",
+        "title": "The New Field of Network Physiology: Building the Human Physiolome",
+        "authors": [
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "Frontiers in Network Physiology",
+        "year": 2021,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Review/perspective of network physiology, motivating general-purpose coupling measures.]"
+    },
+    "Rizzo2022DynamicNetworks": {
+        "citation_key": "Rizzo2022DynamicNetworks",
+        "title": "Dynamic networks of physiologic interactions of brain waves and rhythms in muscle activity",
+        "authors": [
+            "Rossella Rizzo",
+            "Sergi Garcia-Retortillo",
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "Human Movement Science",
+        "year": 2022,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: TDS brain-muscle networks across sleep stages.]"
+    },
+    "Lin2016DelaycorrelationLandscape": {
+        "citation_key": "Lin2016DelaycorrelationLandscape",
+        "title": "Delay-correlation landscape reveals characteristic time delays of brain rhythms and heart interactions",
+        "authors": [
+            "Aijing Lin",
+            "Kang K. L. Liu",
+            "Ronny P. Bartsch",
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences",
+        "year": 2016,
+        "abstract": "Within the framework of \u2018Network Physiology\u2019, we ask a fundamental question of how modulations in cardiac dynamics emerge from networked brain\u2013heart interactions. We propose a generalized time-delay approach to identify and quantify dynamical interactions between physiologically relevant brain rhythms and the heart rate. We perform empirical analysis of synchronized continuous EEG and ECG recordings from 34 healthy subjects during night-time sleep. For each pair of brain rhythm and heart interaction, we construct a delay-correlation landscape (DCL) that characterizes how individual brain rhythms are coupled to the heart rate, and how modulations in brain and cardiac dynamics are coordinated in time. We uncover characteristic time delays and an ensemble of specific profiles for the probability distribution of time delays that underly brain\u2013heart interactions. These profiles are consistently observed in all subjects, indicating a universal pattern. Tracking the evolution of DCL across different sleep stages, we find that the ensemble of time-delay profiles changes from one physiologic state to another, indicating a strong association with physiologic state and function. The reported observations provide new insights on neurophysiological regulation of cardiac dynamics, with potential for broad clinical applications. The presented approach allows one to simultaneously capture key elements of dynamic interactions, including characteristic time delays and their time evolution, and... [Truncated]"
+    },
+    "Bartlett1946TheoreticalSpecification": {
+        "citation_key": "Bartlett1946TheoreticalSpecification",
+        "title": "On the Theoretical Specification and Sampling Properties of Autocorrelated Time-Series",
+        "authors": [
+            "M. S. Bartlett"
+        ],
+        "venue": "Journal of the Royal Statistical Society Series B: Statistical Methodology",
+        "year": 1946,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Bartlett's variance formula for correlations between autocorrelated series; basis of the window rule.]"
+    },
+    "Bayley1946EffectiveNumber": {
+        "citation_key": "Bayley1946EffectiveNumber",
+        "title": "The \u201cEffective\u201d Number of Independent Observations in an Autocorrelated Time Series",
+        "authors": [
+            "G. V. Bayley",
+            "J. M. Hammersley"
+        ],
+        "venue": "Journal of the Royal Statistical Society Series B: Statistical Methodology",
+        "year": 1946,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Effective sample size of autocorrelated series.]"
+    },
+    "Pyper1998ComparisonMethods": {
+        "citation_key": "Pyper1998ComparisonMethods",
+        "title": "Comparison of methods to account for autocorrelation in correlation analyses of fish data",
+        "authors": [
+            "Brian J Pyper",
+            "Randall M Peterman"
+        ],
+        "venue": "Canadian Journal of Fisheries and Aquatic Sciences",
+        "year": 1998,
+        "abstract": "Autocorrelation in fish recruitment and environmental data can complicate statistical inference in correlation analyses. To address this problem, researchers often either adjust hypothesis testing procedures (e.g., adjust degrees of freedom) to account for autocorrelation or remove the autocorrelation using prewhitening or first-differencing before analysis. However, the effectiveness of methods that adjust hypothesis testing procedures has not yet been fully explored quantitatively. We therefore compared several adjustment methods via Monte Carlo simulation and found that a modified version of these methods kept Type I error rates near . In contrast, methods that remove autocorrelation control Type I error rates well but may in some circumstances increase Type II error rates (probability of failing to detect some environmental effect) and hence reduce statistical power, in comparison with adjusting the test procedure. Specifically, our Monte Carlo simulations show that prewhitening and especially first-differencing decrease power in the common situations where low-frequency (slowly changing) processes are important sources of covariation in fish recruitment or in environmental variables. Conversely, removing autocorrelation can increase power when low-frequency processes account for only some of the covariation. We therefore recommend that researchers carefully consider the importance of different time scales of variability when analyzing autocorrelated data."
+    },
+    "Afyouni2019EffectiveDegrees": {
+        "citation_key": "Afyouni2019EffectiveDegrees",
+        "title": "Effective degrees of freedom of the Pearson's correlation coefficient under autocorrelation",
+        "authors": [
+            "Soroosh Afyouni",
+            "Stephen M. Smith",
+            "Thomas E. Nichols"
+        ],
+        "venue": "NeuroImage",
+        "year": 2019,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Modern treatment of variance inflation of correlation under autocorrelation.]"
+    },
+    "Steinbrinker2024TdspyOpensource": {
+        "citation_key": "Steinbrinker2024TdspyOpensource",
+        "title": "TDSpy: An open-source implementation of time delay stability analysis",
+        "authors": [
+            "Tabea F.A. Steinbrinker",
+            "Dagmar Krefting",
+            "Ronny P. Bartsch",
+            "Jan W. Kantelhardt",
+            "Nicolai Spicher"
+        ],
+        "venue": "SoftwareX",
+        "year": 2024,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Open-source TDS implementation; notes parameter differences across implementations hamper reproducibility.]"
+    },
+    "Rizzo2020NetworkPhysiology": {
+        "citation_key": "Rizzo2020NetworkPhysiology",
+        "title": "Network Physiology of Cortico\u2013Muscular Interactions",
+        "authors": [
+            "Rossella Rizzo",
+            "Xiyun Zhang",
+            "Jilin W. J. L. Wang",
+            "Fabrizio Lombardi",
+            "Plamen Ch. Ivanov"
+        ],
+        "venue": "Frontiers in Physiology",
+        "year": 2020,
+        "abstract": "Skeletal muscle activity is continuously modulated across physiologic states to provide coordination, flexibility and responsiveness to body tasks and external inputs. Despite the central role the muscular system plays in facilitating vital body functions, the network of brain-muscle interactions required to control hundreds of muscles and synchronize their activation in relation to distinct physiologic states has not been investigated. Recent approaches have focused on general associations between individual brain rhythms and muscle activation during movement tasks. However, the specific forms of coupling, the functional network of cortico-muscular coordination, and how network structure and dynamics are modulated by autonomic regulation across physiologic states remains unknown. To identify and quantify the cortico-muscular interaction network and uncover basic features of neuro-autonomic control of muscle function, we investigate the coupling between synchronous bursts in cortical rhythms and peripheral muscle activation during sleep and wake. Utilizing the concept of time delay stability and a novel network physiology approach, we find that the brain-muscle network exhibits complex dynamic patterns of communication involving multiple brain rhythms across cortical locations and different electromyographic frequency bands. Moreover, our results show that during each physiologic state the cortico-muscular network is characterized by a specific profile of network links streng... [Truncated]"
+    },
+    "Knapp1976GeneralizedCorrelation": {
+        "citation_key": "Knapp1976GeneralizedCorrelation",
+        "title": "The generalized correlation method for estimation of time delay",
+        "authors": [
+            "C. Knapp",
+            "G. Carter"
+        ],
+        "venue": "IEEE Transactions on Acoustics, Speech, and Signal Processing",
+        "year": 1976,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Classical time-delay estimation by cross-correlation; reliability depends on record length and spectra.]"
+    },
+    "Carter1987CoherenceTime": {
+        "citation_key": "Carter1987CoherenceTime",
+        "title": "Coherence and time delay estimation",
+        "authors": [
+            "G.C. Carter"
+        ],
+        "venue": "Proceedings of the IEEE",
+        "year": 1987,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Review of time-delay estimation accuracy vs coherence and observation time.]"
+    },
+    "Lancaster2018SurrogateData": {
+        "citation_key": "Lancaster2018SurrogateData",
+        "title": "Surrogate data for hypothesis testing of physical systems",
+        "authors": [
+            "Gemma Lancaster",
+            "Dmytro Iatsenko",
+            "Aleksandra Pidde",
+            "Valentina Ticcinelli",
+            "Aneta Stefanovska"
+        ],
+        "venue": "Physics Reports",
+        "year": 2018,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Comprehensive review of surrogate testing for coupling and nonlinearity.]"
+    },
+    "Schreiber2000SurrogateTime": {
+        "citation_key": "Schreiber2000SurrogateTime",
+        "title": "Surrogate time series",
+        "authors": [
+            "Thomas Schreiber",
+            "Andreas Schmitz"
+        ],
+        "venue": "Physica D: Nonlinear Phenomena",
+        "year": 2000,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Review of surrogate methods.]"
+    },
+    "Theiler1992TestingNonlinearity": {
+        "citation_key": "Theiler1992TestingNonlinearity",
+        "title": "Testing for nonlinearity in time series: the method of surrogate data",
+        "authors": [
+            "James Theiler",
+            "Stephen Eubank",
+            "Andr\u00e9 Longtin",
+            "Bryan Galdrikian",
+            "J. Doyne Farmer"
+        ],
+        "venue": "Physica D: Nonlinear Phenomena",
+        "year": 1992,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Foundational surrogate-data method.]"
+    },
+    "Andrzejak2003BivariateSurrogate": {
+        "citation_key": "Andrzejak2003BivariateSurrogate",
+        "title": "Bivariate surrogate techniques: necessity, strengths, and caveats.",
+        "authors": [
+            "R. Andrzejak",
+            "A. Kraskov",
+            "H. St\u00f6gbauer",
+            "F. Mormann",
+            "T. Kreuz"
+        ],
+        "venue": "Physical review. E, Statistical, nonlinear, and soft matter physics",
+        "year": 2003,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Surrogates for testing coupling between two signals.]"
+    },
+    "Benjamini1995ControllingFalse": {
+        "citation_key": "Benjamini1995ControllingFalse",
+        "title": "Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing",
+        "authors": [
+            "Yoav Benjamini",
+            "Yosef Hochberg"
+        ],
+        "venue": "Journal of the Royal Statistical Society Series B: Statistical Methodology",
+        "year": 1995,
+        "abstract": "SUMMARY The common approach to the multiplicity problem calls for controlling the familywise error rate (FWER). This approach, though, has faults, and we point out a few. A different approach to problems of multiple significance testing is presented. It calls for controlling the expected proportion of falsely rejected hypotheses \u2014 the false discovery rate. This error rate is equivalent to the FWER when all hypotheses are true but is smaller otherwise. Therefore, in problems where the control of the false discovery rate rather than that of the FWER is desired, there is potential for a gain in power. A simple sequential Bonferronitype procedure is proved to control the false discovery rate for independent test statistics, and a simulation study shows that the gain in power is substantial. The use of the new procedure and the appropriateness of the criterion are illustrated with examples."
+    },
+    "Granger1969InvestigatingCausal": {
+        "citation_key": "Granger1969InvestigatingCausal",
+        "title": "Investigating causal relations by econometric models and cross-spectral methods",
+        "authors": [
+            "C. Granger"
+        ],
+        "venue": "arXiv",
+        "year": 1969,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Granger causality, a complementary lag-based coupling measure.]"
+    },
+    "Schreiber2000MeasuringInformation": {
+        "citation_key": "Schreiber2000MeasuringInformation",
+        "title": "Measuring Information Transfer",
+        "authors": [
+            "Thomas Schreiber"
+        ],
+        "venue": "Physical Review Letters",
+        "year": 2000,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Transfer entropy, a complementary directed coupling measure.]"
+    },
+    "Sugihara2012DetectingCausality": {
+        "citation_key": "Sugihara2012DetectingCausality",
+        "title": "Detecting Causality in Complex Ecosystems",
+        "authors": [
+            "George Sugihara",
+            "Robert May",
+            "Hao Ye",
+            "Chih-hao Hsieh",
+            "Ethan Deyle",
+            "Michael Fogarty",
+            "Stephan Munch"
+        ],
+        "venue": "Science",
+        "year": 2012,
+        "abstract": "Cause or Correlation? Three centuries ago, Bishop Berkeley's 1710 classic \u201cA treatise on the nature of human knowledge,\u201d first spelled out the \u201ccorrelation vs. causation\u201d dilemma. Sugihara et al. (p. 496 , published online 20 September) present an approach to this conundrum, and extend current discussions about causation to dynamic systems with weak to moderate coupling (such as ecosystems). The resulting method, convergent cross mapping can detect causal linkages between time series."
+    },
+    "Stankovski2017CouplingFunctions": {
+        "citation_key": "Stankovski2017CouplingFunctions",
+        "title": "Coupling functions: Universal insights into dynamical interaction mechanisms",
+        "authors": [
+            "Tomislav Stankovski",
+            "Tiago Pereira",
+            "Peter V.\u2009E. McClintock",
+            "Aneta Stefanovska"
+        ],
+        "venue": "Reviews of Modern Physics",
+        "year": 2017,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Review of coupling-detection methods in physiological oscillators.]"
+    },
+    "Schreiber1996ImprovedSurrogate": {
+        "citation_key": "Schreiber1996ImprovedSurrogate",
+        "title": "Improved Surrogate Data for Nonlinearity Tests",
+        "authors": [
+            "Thomas Schreiber",
+            "Andreas Schmitz"
+        ],
+        "venue": "Physical Review Letters",
+        "year": 1996,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Iterative amplitude-adjusted surrogates.]"
+    },
+    "Prichard1994GeneratingSurrogate": {
+        "citation_key": "Prichard1994GeneratingSurrogate",
+        "title": "Generating surrogate data for time series with several simultaneously measured variables",
+        "authors": [
+            "Dean Prichard",
+            "James Theiler"
+        ],
+        "venue": "Physical Review Letters",
+        "year": 1994,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Multivariate surrogates preserving cross-spectra.]"
+    },
+    "Davies1987TestsHurst": {
+        "citation_key": "Davies1987TestsHurst",
+        "title": "Tests for Hurst effect",
+        "authors": [
+            "R. B. DAVIES",
+            "D. S. HARTE"
+        ],
+        "venue": "Biometrika",
+        "year": 1987,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Exact paper named by the hint: Davies and Harte (Tests for Hurst effect)]"
+    },
+    "Hanley1982MeaningUse": {
+        "citation_key": "Hanley1982MeaningUse",
+        "title": "The meaning and use of the area under a receiver operating characteristic (ROC) curve.",
+        "authors": [
+            "J A Hanley",
+            "B J McNeil"
+        ],
+        "venue": "Radiology",
+        "year": 1982,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Exact paper named by the hint: Hanley and McNeil (The meaning and use of the area under a receiver operating characteristic (ROC) curve)]"
+    },
+    "Peng1995QuantificationScaling": {
+        "citation_key": "Peng1995QuantificationScaling",
+        "title": "Quantification of scaling exponents and crossover phenomena in nonstationary heartbeat time series.",
+        "authors": [
+            "Chung-Kang Peng",
+            "S. Havlin",
+            "H. Stanley",
+            "A. Goldberger"
+        ],
+        "venue": "Chaos",
+        "year": 1995,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Exact paper named by the hint: Peng et al. (Quantification of scaling exponents and crossover phenomena in nonstationary heartbeat time series)]"
+    },
+    "Rulkov2002ModelingSpikingbursting": {
+        "citation_key": "Rulkov2002ModelingSpikingbursting",
+        "title": "Modeling of spiking-bursting neural behavior using two-dimensional map",
+        "authors": [
+            "Nikolai F. Rulkov"
+        ],
+        "venue": "Physical Review E",
+        "year": 2002,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Exact paper named by the hint: Rulkov (Modeling of spiking-bursting neural behavior using two-dimensional map)]"
+    },
+    "Efron1979BootstrapMethods": {
+        "citation_key": "Efron1979BootstrapMethods",
+        "title": "Bootstrap Methods: Another Look at the Jackknife",
+        "authors": [
+            "B. Efron"
+        ],
+        "venue": "The Annals of Statistics",
+        "year": 1979,
+        "abstract": "We discuss the following problem: given a random sample $\\mathbf{X} = (X_1, X_2, \\cdots, X_n)$ from an unknown probability distribution $F$, estimate the sampling distribution of some prespecified random variable $R(\\mathbf{X}, F)$, on the basis of the observed data $\\mathbf{x}$. (Standard jackknife theory gives an approximate mean and variance in the case $R(\\mathbf{X}, F) = \\theta(\\hat{F}) - \\theta(F), \\theta$ some parameter of interest.) A general method, called the \"bootstrap,\" is introduced, and shown to work satisfactorily on a variety of estimation problems. The jackknife is shown to be a linear approximation method for the bootstrap. The exposition proceeds by a series of examples: variance of the sample median, error rates in a linear discriminant analysis, ratio estimation, estimating regression parameters, etc."
+    },
+    "Wilson1927ProbableInference": {
+        "citation_key": "Wilson1927ProbableInference",
+        "title": "Probable Inference, the Law of Succession, and Statistical Inference",
+        "authors": [
+            "Edwin B. Wilson"
+        ],
+        "venue": "Journal of the American Statistical Association",
+        "year": 1927,
+        "abstract": "[Abstract not available in the bibliographic index; record verified by title/year. Cited for: Exact paper named by the hint: Wilson (Probable inference, the law of succession, and statistical inference)]"
+    },
+    "Schuirmann1987ComparisonTwo": {
+        "citation_key": "Schuirmann1987ComparisonTwo",
+        "title": "A comparison of the Two One-Sided Tests Procedure and the Power Approach for assessing the equivalence of average bioavailability",
+        "authors": [
+            "D. Schuirmann"
+        ],
+        "venue": "Journal of pharmacokinetics and biopharmaceutics",
+        "year": 1987,
+        "abstract": "The statistical test of the hypothesis of no difference between the average bioavailabilities of two drug formulations, usually supplemented by an assessment of what the power of the statistical test would have been if the true averages had been inequivalent, continues to be used in the statistical analysis of bioavailability/bioequivalence studies. In the present article, this Power Approach (which in practice usually consists of testing the hypothesis of no difference at level 0.05 and requiring an estimated power of 0.80) is compared to another statistical approach, the Two One-Sided Tests Procedure, which leads to the same conclusion as the approach proposed by Westlake (2) based on the usual (shortest) 1\u20132\u03b1 confidence interval for the true average difference. It is found that for the specific choice of \u03b1=0.05 as the nominal level of the one-sided tests, the two one-sided tests procedure has uniformly superior properties to the power approach in most cases. The only cases where the power approach has superior properties when the true averages are equivalent correspond to cases where the chance of concluding equivalence with the power approach when the true averages are notequivalent exceeds 0.05. With appropriate choice of the nominal level of significance of the one-sided tests, the two one-sided tests procedure always has uniformly superior properties to the power approach. The two one-sided tests procedure is compared to the procedure proposed by Hauck and Anderson (1)... [Truncated]"
+    }
+}
