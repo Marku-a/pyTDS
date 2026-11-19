@@ -1,0 +1,6 @@
+# downloaded/rebuilt field data and any private recordings stay out of git
+data_fields/*
+!data_fields/MANIFEST.json
+*.mat
+*.dat
+__pycache__/

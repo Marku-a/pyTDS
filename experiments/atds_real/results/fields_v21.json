@@ -1,0 +1,204 @@
+{
+ "hydrology_hourly": {
+  "n": 43848,
+  "sampling_interval_s": 3600.0,
+  "leader": "precipitation",
+  "follower": "river flow",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 8
+  },
+  "preprocessing": "Precip and flow as is; NaNs filled linearly (none present).",
+  "settings": {
+   "published": {
+    "score": 1.2328767123287672,
+    "n_windows": 1460,
+    "n_stable": 18,
+    "null_mean": 0.42226027397260274,
+    "null95": 1.095890410958904,
+    "p": 0.01990049751243781,
+    "n_null": 200,
+    "delay_samples": -13.0,
+    "delay_phys": "-13 h",
+    "expected_delay_samples": 8,
+    "match": false,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "2.5 days",
+     "step": "1.25 days",
+     "max_lag": "1.25 days",
+     "tolerance": "1 h"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 79.54545454545455,
+    "n_windows": 44,
+    "n_stable": 35,
+    "null_mean": 1.7045454545454544,
+    "null95": 9.090909090909092,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -8.0,
+    "delay_phys": "-8 h",
+    "expected_delay_samples": 8,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 1914,
+     "step": 957,
+     "max_lag": 956,
+     "tolerance": 43
+    },
+    "params_phys": {
+     "window": "79.8 days",
+     "step": "39.9 days",
+     "max_lag": "39.8 days",
+     "tolerance": "1.79 days"
+    },
+    "calibration_failed": false
+   }
+  }
+ },
+ "energy_vic_summer": {
+  "n": 13008,
+  "sampling_interval_s": 1800.0,
+  "leader": "temperature",
+  "follower": "electricity demand",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 2
+  },
+  "preprocessing": "Kept Dec/Jan/Feb only (local Melbourne time); subtracted the mean profile by (weekday/weekend, half-hour of day) from both. The summers are concatenated into one series.",
+  "settings": {
+   "published": {
+    "score": 11.805555555555555,
+    "n_windows": 432,
+    "n_stable": 51,
+    "null_mean": 0.9537037037037037,
+    "null95": 3.020833333333329,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "expected_delay_samples": 2,
+    "match": false,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "1.25 days",
+     "step": "15 h",
+     "max_lag": "15 h",
+     "tolerance": "30 min"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 100.0,
+    "n_windows": 19,
+    "n_stable": 19,
+    "null_mean": 1.9999999999999998,
+    "null95": 21.052631578947366,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-1 h",
+    "expected_delay_samples": 2,
+    "match": true,
+    "sign_ok": true,
+    "params_samples": {
+     "window": 1300,
+     "step": 650,
+     "max_lag": 649,
+     "tolerance": 49
+    },
+    "params_phys": {
+     "window": "27.1 days",
+     "step": "13.5 days",
+     "max_lag": "13.5 days",
+     "tolerance": "1.02 days"
+    },
+    "calibration_failed": false
+   }
+  }
+ },
+ "gasoline_weekly_diff": {
+  "n": 1746,
+  "sampling_interval_s": 604800.0,
+  "leader": "crude oil price",
+  "follower": "retail gasoline price",
+  "expected": {
+   "kind": "delay",
+   "value_samples": 1.5
+  },
+  "preprocessing": "Weekly first differences of both prices (NaN retail weeks interpolated linearly before differencing).",
+  "settings": {
+   "published": {
+    "score": 85.96491228070175,
+    "n_windows": 57,
+    "n_stable": 49,
+    "null_mean": 0.9210526315789473,
+    "null95": 7.017543859649122,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "expected_delay_samples": 1.5,
+    "match": false,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 weeks",
+     "step": "30 weeks",
+     "max_lag": "30 weeks",
+     "tolerance": "1 weeks"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 92.45283018867924,
+    "n_windows": 53,
+    "n_stable": 49,
+    "null_mean": 3.7547169811320757,
+    "null95": 15.09433962264151,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "expected_delay_samples": 1.5,
+    "match": false,
+    "sign_ok": false,
+    "params_samples": {
+     "window": 64,
+     "step": 32,
+     "max_lag": 31,
+     "tolerance": 3
+    },
+    "params_phys": {
+     "window": "64 weeks",
+     "step": "32 weeks",
+     "max_lag": "31 weeks",
+     "tolerance": "3 weeks"
+    },
+    "calibration_failed": false
+   }
+  }
+ },
+ "_wall_seconds": 13.825304508209229
+}
