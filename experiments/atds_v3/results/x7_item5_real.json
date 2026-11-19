@@ -1,0 +1,557 @@
+{
+ "L0123003_hourly": {
+  "n": 43848,
+  "B_default": 63.8,
+  "B_bh": 192.98,
+  "window_uncalibrated_default": 1914,
+  "window_uncalibrated_bh": 5789,
+  "tc_hat_slower_signal": 62.0,
+  "r_hat": 31,
+  "settings": {
+   "published": {
+    "score": 1.2328767123287672,
+    "n_windows": 1460,
+    "n_stable": 18,
+    "null_mean": 0.42226027397260274,
+    "null95": 1.095890410958904,
+    "p": 0.01990049751243781,
+    "n_null": 200,
+    "delay_samples": -13.0,
+    "delay_phys": "-13 h",
+    "delay_after_driver_samples": 13.0,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "2.5 days",
+     "step": "1.25 days",
+     "max_lag": "1.25 days",
+     "tolerance": "1 h"
+    },
+    "calibration_failed": false
+   },
+   "rescaled_est": {
+    "score": 65.21739130434783,
+    "n_windows": 46,
+    "n_stable": 30,
+    "null_mean": 0.5543478260869565,
+    "null95": 8.695652173913043,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -14.0,
+    "delay_phys": "-14 h",
+    "delay_after_driver_samples": 14.0,
+    "params_samples": {
+     "window": 1860,
+     "step": 930,
+     "max_lag": 930,
+     "tolerance": 31
+    },
+    "params_phys": {
+     "window": "77.5 days",
+     "step": "38.8 days",
+     "max_lag": "38.8 days",
+     "tolerance": "1.29 days"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 79.54545454545455,
+    "n_windows": 44,
+    "n_stable": 35,
+    "null_mean": 1.7045454545454544,
+    "null95": 9.090909090909092,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -8.0,
+    "delay_phys": "-8 h",
+    "delay_after_driver_samples": 8.0,
+    "params_samples": {
+     "window": 1914,
+     "step": 957,
+     "max_lag": 956,
+     "tolerance": 43
+    },
+    "params_phys": {
+     "window": "79.8 days",
+     "step": "39.9 days",
+     "max_lag": "39.8 days",
+     "tolerance": "1.79 days"
+    },
+    "calibration_failed": false
+   },
+   "atds_bh": {
+    "score": 84.21052631578947,
+    "n_windows": 19,
+    "n_stable": 16,
+    "null_mean": 3.789473684210526,
+    "null95": 21.052631578947366,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -8.0,
+    "delay_phys": "-8 h",
+    "delay_after_driver_samples": 8.0,
+    "params_samples": {
+     "window": 4384,
+     "step": 2192,
+     "max_lag": 2191,
+     "tolerance": 176
+    },
+    "params_phys": {
+     "window": "183 days",
+     "step": "91.3 days",
+     "max_lag": "91.3 days",
+     "tolerance": "7.33 days"
+    },
+    "calibration_failed": false
+   }
+  }
+ },
+ "L0123001_daily": {
+  "n": 10593,
+  "B_default": 16.7,
+  "B_bh": 44.6,
+  "window_uncalibrated_default": 501,
+  "window_uncalibrated_bh": 1338,
+  "tc_hat_slower_signal": 15.0,
+  "r_hat": 8,
+  "settings": {
+   "published": {
+    "score": 59.09090909090909,
+    "n_windows": 352,
+    "n_stable": 208,
+    "null_mean": 0.9829545454545456,
+    "null95": 2.5710227272727226,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -1.0,
+    "delay_phys": "-1 days",
+    "delay_after_driver_samples": 1.0,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 days",
+     "step": "30 days",
+     "max_lag": "30 days",
+     "tolerance": "1 days"
+    },
+    "calibration_failed": false
+   },
+   "rescaled_est": {
+    "score": 93.02325581395348,
+    "n_windows": 43,
+    "n_stable": 40,
+    "null_mean": 0.8720930232558141,
+    "null95": 9.30232558139535,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-2 days",
+    "delay_after_driver_samples": 2.0,
+    "params_samples": {
+     "window": 480,
+     "step": 240,
+     "max_lag": 240,
+     "tolerance": 8
+    },
+    "params_phys": {
+     "window": "480 days",
+     "step": "240 days",
+     "max_lag": "240 days",
+     "tolerance": "8 days"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 97.5609756097561,
+    "n_windows": 41,
+    "n_stable": 40,
+    "null_mean": 3.414634146341464,
+    "null95": 12.317073170731666,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-2 days",
+    "delay_after_driver_samples": 2.0,
+    "params_samples": {
+     "window": 501,
+     "step": 250,
+     "max_lag": 250,
+     "tolerance": 20
+    },
+    "params_phys": {
+     "window": "501 days",
+     "step": "250 days",
+     "max_lag": "250 days",
+     "tolerance": "20 days"
+    },
+    "calibration_failed": false
+   },
+   "atds_bh": {
+    "score": 100.0,
+    "n_windows": 19,
+    "n_stable": 19,
+    "null_mean": 0.10526315789473684,
+    "null95": 0.0,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-2 days",
+    "delay_after_driver_samples": 2.0,
+    "params_samples": {
+     "window": 1059,
+     "step": 529,
+     "max_lag": 529,
+     "tolerance": 18
+    },
+    "params_phys": {
+     "window": "1.06e+03 days",
+     "step": "529 days",
+     "max_lag": "529 days",
+     "tolerance": "18 days"
+    },
+    "calibration_failed": false
+   }
+  }
+ },
+ "L0123002_daily": {
+  "n": 10593,
+  "B_default": 38.84,
+  "B_bh": 60.12,
+  "window_uncalibrated_default": 1165,
+  "window_uncalibrated_bh": 1804,
+  "tc_hat_slower_signal": 38.0,
+  "r_hat": 19,
+  "settings": {
+   "published": {
+    "score": 32.38636363636363,
+    "n_windows": 352,
+    "n_stable": 114,
+    "null_mean": 0.7244318181818182,
+    "null95": 2.272727272727273,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -1.0,
+    "delay_phys": "-1 days",
+    "delay_after_driver_samples": 1.0,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 days",
+     "step": "30 days",
+     "max_lag": "30 days",
+     "tolerance": "1 days"
+    },
+    "calibration_failed": false
+   },
+   "rescaled_est": {
+    "score": 0.0,
+    "n_windows": 17,
+    "n_stable": 0,
+    "null_mean": 2.5294117647058822,
+    "null95": 23.52941176470588,
+    "p": 1.0,
+    "n_null": 200,
+    "delay_samples": null,
+    "delay_phys": null,
+    "delay_after_driver_samples": null,
+    "params_samples": {
+     "window": 1140,
+     "step": 570,
+     "max_lag": 570,
+     "tolerance": 19
+    },
+    "params_phys": {
+     "window": "1.14e+03 days",
+     "step": "570 days",
+     "max_lag": "570 days",
+     "tolerance": "19 days"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 21.052631578947366,
+    "n_windows": 19,
+    "n_stable": 4,
+    "null_mean": 2.2631578947368416,
+    "null95": 21.052631578947366,
+    "p": 0.1044776119402985,
+    "n_null": 200,
+    "delay_samples": -162.0,
+    "delay_phys": "-162 days",
+    "delay_after_driver_samples": 162.0,
+    "params_samples": {
+     "window": 1059,
+     "step": 529,
+     "max_lag": 367,
+     "tolerance": 9
+    },
+    "params_phys": {
+     "window": "1.06e+03 days",
+     "step": "529 days",
+     "max_lag": "367 days",
+     "tolerance": "9 days"
+    },
+    "calibration_failed": false
+   },
+   "atds_bh": {
+    "score": 21.052631578947366,
+    "n_windows": 19,
+    "n_stable": 4,
+    "null_mean": 2.2631578947368416,
+    "null95": 21.052631578947366,
+    "p": 0.1044776119402985,
+    "n_null": 200,
+    "delay_samples": -162.0,
+    "delay_phys": "-162 days",
+    "delay_after_driver_samples": 162.0,
+    "params_samples": {
+     "window": 1059,
+     "step": 529,
+     "max_lag": 367,
+     "tolerance": 9
+    },
+    "params_phys": {
+     "window": "1.06e+03 days",
+     "step": "529 days",
+     "max_lag": "367 days",
+     "tolerance": "9 days"
+    },
+    "calibration_failed": false
+   }
+  }
+ },
+ "energy_temp_electricity": {
+  "n": 13008,
+  "B_default": 77.65,
+  "B_bh": 195.17,
+  "window_uncalibrated_default": 2329,
+  "window_uncalibrated_bh": 5855,
+  "tc_hat_slower_signal": 63.0,
+  "r_hat": 32,
+  "settings": {
+   "published": {
+    "score": 11.805555555555555,
+    "n_windows": 432,
+    "n_stable": 51,
+    "null_mean": 0.9537037037037037,
+    "null95": 3.020833333333329,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "delay_after_driver_samples": -0.0,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "1.25 days",
+     "step": "15 h",
+     "max_lag": "15 h",
+     "tolerance": "30 min"
+    },
+    "calibration_failed": false
+   },
+   "rescaled_est": {
+    "score": 100.0,
+    "n_windows": 12,
+    "n_stable": 12,
+    "null_mean": 0.0,
+    "null95": 0.0,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-1 h",
+    "delay_after_driver_samples": 2.0,
+    "params_samples": {
+     "window": 1920,
+     "step": 960,
+     "max_lag": 960,
+     "tolerance": 32
+    },
+    "params_phys": {
+     "window": "40 days",
+     "step": "20 days",
+     "max_lag": "20 days",
+     "tolerance": "16 h"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 100.0,
+    "n_windows": 19,
+    "n_stable": 19,
+    "null_mean": 1.9999999999999998,
+    "null95": 21.052631578947366,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-1 h",
+    "delay_after_driver_samples": 2.0,
+    "params_samples": {
+     "window": 1300,
+     "step": 650,
+     "max_lag": 649,
+     "tolerance": 49
+    },
+    "params_phys": {
+     "window": "27.1 days",
+     "step": "13.5 days",
+     "max_lag": "13.5 days",
+     "tolerance": "1.02 days"
+    },
+    "calibration_failed": false
+   },
+   "atds_bh": {
+    "score": 100.0,
+    "n_windows": 19,
+    "n_stable": 19,
+    "null_mean": 1.9999999999999998,
+    "null95": 21.052631578947366,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-1 h",
+    "delay_after_driver_samples": 2.0,
+    "params_samples": {
+     "window": 1300,
+     "step": 650,
+     "max_lag": 649,
+     "tolerance": 49
+    },
+    "params_phys": {
+     "window": "27.1 days",
+     "step": "13.5 days",
+     "max_lag": "13.5 days",
+     "tolerance": "1.02 days"
+    },
+    "calibration_failed": false
+   }
+  }
+ },
+ "gasoline_weekly_diff": {
+  "n": 1746,
+  "B_default": 2.12,
+  "B_bh": 3.95,
+  "window_uncalibrated_default": 64,
+  "window_uncalibrated_bh": 119,
+  "tc_hat_slower_signal": 2.0,
+  "r_hat": 1,
+  "settings": {
+   "published": {
+    "score": 85.96491228070175,
+    "n_windows": 57,
+    "n_stable": 49,
+    "null_mean": 0.9210526315789473,
+    "null95": 7.017543859649122,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "delay_after_driver_samples": -0.0,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 weeks",
+     "step": "30 weeks",
+     "max_lag": "30 weeks",
+     "tolerance": "1 weeks"
+    },
+    "calibration_failed": false
+   },
+   "rescaled_est": {
+    "score": 85.96491228070175,
+    "n_windows": 57,
+    "n_stable": 49,
+    "null_mean": 0.9210526315789473,
+    "null95": 7.017543859649122,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "delay_after_driver_samples": -0.0,
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 weeks",
+     "step": "30 weeks",
+     "max_lag": "30 weeks",
+     "tolerance": "1 weeks"
+    },
+    "calibration_failed": false
+   },
+   "atds": {
+    "score": 92.45283018867924,
+    "n_windows": 53,
+    "n_stable": 49,
+    "null_mean": 3.7547169811320757,
+    "null95": 15.09433962264151,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "delay_after_driver_samples": -0.0,
+    "params_samples": {
+     "window": 64,
+     "step": 32,
+     "max_lag": 31,
+     "tolerance": 3
+    },
+    "params_phys": {
+     "window": "64 weeks",
+     "step": "32 weeks",
+     "max_lag": "31 weeks",
+     "tolerance": "3 weeks"
+    },
+    "calibration_failed": false
+   },
+   "atds_bh": {
+    "score": 96.42857142857143,
+    "n_windows": 28,
+    "n_stable": 27,
+    "null_mean": 2.821428571428571,
+    "null95": 14.285714285714285,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": 0.0,
+    "delay_phys": "0 s",
+    "delay_after_driver_samples": -0.0,
+    "params_samples": {
+     "window": 119,
+     "step": 59,
+     "max_lag": 59,
+     "tolerance": 6
+    },
+    "params_phys": {
+     "window": "119 weeks",
+     "step": "59 weeks",
+     "max_lag": "59 weeks",
+     "tolerance": "6 weeks"
+    },
+    "calibration_failed": false
+   }
+  }
+ }
+}

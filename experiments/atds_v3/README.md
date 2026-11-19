@@ -75,3 +75,29 @@ Headline numbers.
 - **Item 5** (power / FPR, 50 + 50 pairs, Wilson 95 % CIs in the CSV): r=2 published .52/.02, rescaled .98/.02, rescaled_est .96/.00, aTDS .94/.00; r=4 .08/.04, .82/.00, .82/.00, .66/.06; r=8 .02/.04, .48/.08, .48/.08, .48/.04.
 
 Deviations: item 4 reads "r = 1, 4, 8, 100 + 100 pairs" as r in {1, 4, 8} with 100 coupled + 100 uncoupled pairs; the margin variant requires >=1 window per regime (the 80 % purity rule >=3); rescaled_est in U9 is per pair (plus a system-wide variant `rescaled_est_system`).
+
+## X7 validation of the Bayley-Hammersley window (`SPEC_X7.md`, `x7_bh_validation.py`)
+
+```
+python experiments/atds_v3/x7_bh_validation.py <1|2|3|4|all> [--smoke]       # items 1-4
+python experiments/atds_v3/x7_bh_validation.py 5r <fields_data_dir>          # item 5, real records
+python experiments/atds_v3/x7_bh_validation.py 5s <cohort.mat>               # item 5, sleep cohort (private data, aggregates only)
+```
+`atds_bh` = aTDS (30 independent samples, floor 61, cap 10 %, lag (L-1)//2 with rhythm cap, same tolerance calibration) with the window from `B_BH = max(1, 1 + 2 sum_{k<=K} (1 - k/n) r(k))`, K = first lag with r <= 0, max over the signals (`x6_followups.B_bayley`, unchanged). Wall times (s, 4 workers; `results/logs/x7_times.txt`): item 1 57, item 2 70, item 3 38, item 4 1214, item 5 real 26, item 5 cohort 127.
+
+| Item | Files |
+|---|---|
+| 1 held-out slow-down set (all seeds + 5 000 000) | `x7_item1_heldout.json/.csv` |
+| 2 U5 / U6 / U9 / U10 / Rulkov V1 | `x7_item2_generators.json/.csv` |
+| 3 regime switching (with / without margin) and drift | `x7_item3_timeresolved.json/.csv` |
+| 4 per-link power | `x7_item4_power.json/.csv` |
+| 5 real records (200 rotations) and cohort window check | `x7_item5_real.json/.csv`, `x7_item5_cohort.json` |
+
+Headline numbers (AUC / delay found unless stated).
+- **Item 1** (r = 1, 2, 4, 8, 16): published .. / rescaled_est / atds / atds_bh AUC: r=1 1.0 / 1.0 / .999 / 1.0; r=2 .877 / .989 / .973 / 1.0; r=4 .598 / .949 / .903 / .996; r=8 .515 / .842 / .836 / .931; r=16 .491 / .711 / .730 / .803. atds_bh minus atds (95 % CI): +.001, +.027 [.010, .047], +.093 [.056, .141], +.095 [.033, .159], +.073 [-.006, .150]; minus rescaled_est: .000, +.011, +.047, +.089, +.092 [.031, .150]. Chance score (atds_bh) 3.4-5.8 %.
+- **Item 2**: atds_bh >= atds in every case; vs rescaled_est better for U5 (all H), U9 slow pair, U10 second half, equal for U6 d=8, U9 fast, fast-slow pair, Rulkov, worse for U6 d=30 hit (0 vs 1.0; reported delay is the rhythm-aliased one, as for atds).
+- **Item 3**: the BH window on the regime record is 1332 (B_BH 44.4), larger than half a block: regime-A AUC .937 (atds 1.0), regime-A hit .675 (atds 1.0), and with the one-window margin no window lies inside a block (not reportable). Drift: score 99.8 % (atds 86.5, rescaled_est 84.6), median |err| .25 (same).
+- **Item 4** (power / FPR): r=2 atds_bh 1.0/.04 (atds .94/.0, rescaled_est .96/.0); r=4 .96/.0 (.66/.06, .82/.0); r=8 .82/.02 (.48/.04, .48/.08).
+- **Item 5**: real records (score %, p, delay samples): see `x7_item5_real.csv`. BH changes the window on L0123003 (1914 -> 4384), L0123001 (501 -> 1059), gasoline (64 -> 119); unchanged on L0123002 (1059, both capped at 10 %; same 21.1 %, p .104, delay -162) and energy (1300). Sleep cohort: median-of-max B 228 (default) vs 894 (BH); the uncapped window is 2868 for both (10 % cap binds), so under cap 300 the window is 300 / 150 / 149 with tolerance 14 for both: `atds_bh_cap300` equals `atds_cap300` by construction and the cohort analysis was not rerun (all cohort numbers unchanged).
+
+Deviations: rescaled_est for the held-out set and the power item uses the E1 definition (median over both training signals), as in E1 / X6 item 5; elsewhere the X6 definition (slower signal); U10 rescaled_est (not in X6) is estimated on the whole training record (and per half for the per-segment variants); the cohort reanalysis is skipped because the window is identical.

@@ -1,0 +1,6 @@
+x7_item1 57
+x7_item2 70
+x7_item3 38
+x7_item4 1214
+x7_item5_real 26
+x7_item5_cohort 127
