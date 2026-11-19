@@ -1,0 +1,64 @@
+THOUGHT:
+All three reviewers recommend Reject (Overall 4, 5, 4; confidence 4 each). Reviews 1 and 3 are word-for-word identical, so in effect there are two independent opinions, and they agree closely. I weigh them that way and do not count the duplicated view twice.
+
+Points of consensus. The paper deals with a real practical problem: TDS parameters are counted in samples and tied to 1-Hz sleep data. It shows convincingly that a fixed +/-30 lag range can silently give high TDS scores with wrong delays, sometimes with the wrong sign. The evaluation is unusually broad and fair, with an oracle, true and estimated rescaling, full-record XCorr and GCC-PHAT, held-out seeds, sensitivity analyses and equivalence tests. Negative results are reported candidly, and the work is reproducible. All of these are real merits.
+
+The decisive weaknesses are also shared. (1) The method's novelty is low: it combines standard ingredients (effective sample size, the aliasing limit of circular correlation, surrogate calibration) into a parameter heuristic. (2) The default aTDS is statistically indistinguishable from simply rescaling the published setting by an estimated correlation time on every synthetic test. (3) The variant that does beat that baseline, aTDS-BH, was selected on the AR(1) benchmark and validated only on new seeds of the same generator. The paper itself says its gain comes from a longer window, which raising the constant from 30 to 60 independent samples reproduces. It also exceeds the 5% false-stability budget and degrades under regime-limited coupling. (4) Time resolution is the main reason to use TDS over full-record estimators, and the long windows undermine exactly that use case. There is no gain on the motivating 35-subject sleep cohort, and the wake contrast becomes weaker. (5) Positive real-data evidence is thin, with few windows and partly circular reference delays. (6) The calibrated tolerances are wide, which weakens the meaning of "stable delay" and makes scores incomparable with the published TDS literature. This works against the paper's own reproducibility motivation. (7) The rotation null and the SE simplification are anti-conservative. (8) The main results use a non-causal stability anchor that changes scores materially. Reviewer 1/3 also points out an inconsistency between the Limitations section and Table 5.
+
+My own judgement: this is a careful, honest empirical study that would be useful to TDS practitioners as a guidance and benchmarking paper. However, its central methodological claim, that data-driven rules improve on simple rescaling, is not supported for the default method. The improved variant is in effect a tuned window length. Novelty and significance for a top ML venue are limited. Reviewer 2 rates soundness slightly higher (3 vs 2), and I take a middle position: the experiments are sound, but the conclusions drawn for the headline variant are not. Overall 4, Reject. I encourage resubmission that validates the method across generator families, uses the causal anchor, ties the tolerance to the variance of the delay estimate, and compares against sliding-window time-resolved competitors.
+
+REVIEW JSON:
+```json
+{
+  "Summary": "The paper proposes adaptive Time Delay Stability (aTDS), which sets the three sample-counted TDS parameters from the data instead of using the published 60/+-30/+-1 setting for 1-Hz sleep data. The window holds about 30 effectively independent samples of the slowest signal (first-zero Bartlett factor, or a Bayley-Hammersley-type factor in the variant aTDS-BH). The lag range is half the window, capped at half a detected rhythm period. The tolerance is the widest value whose chance score on circularly rotated copies stays within a 5% false-stability budget. The methods are compared with the published setting, rescaling by the true and by an estimated slow-down factor, an oracle grid, and full-record cross-correlation and GCC-PHAT. Test cases include AR(1) slow-down benchmarks with held-out seeds, long-memory, rhythmic, bursting, mixed-speed and non-stationary signals, regime-switching, nonlinear and drifting coupling, FDR-controlled networks, a 35-subject polysomnography cohort and several non-physiological records. Findings: aTDS clearly beats the published setting on slow systems and avoids wrong delays caused by a too-narrow lag range. The default aTDS roughly matches estimated rescaling, and aTDS-BH detects better on slow or long-memory signals. Full-record estimators win for constant delays, and there is no gain on 1-Hz sleep networks.",
+  "Strengths": [
+    "Addresses a real, practical reproducibility problem: TDS parameters are counted in samples and lose their meaning across time scales and sampling rates.",
+    "Gives a convincing demonstration that a fixed +-30 lag range can produce high TDS scores (72-96%) with wrong delays, including wrong signs. This is a valuable warning to practitioners.",
+    "Each rule has a clear statistical rationale: effective sample size, the aliasing limit of circular cross-correlation, and surrogate calibration with an explicit false-stability budget.",
+    "The evaluation is unusually broad and fair: oracle, true and estimated rescaling baselines, full-record XCorr and GCC-PHAT, bootstrap CIs, equivalence tests, sensitivity analysis of every constant, held-out validation, regime-switching, and nonlinear and drifting coupling.",
+    "Negative results and limitations are reported very candidly (no gain on the sleep cohort, full-record estimators better for constant delays, budget exceeded in some settings).",
+    "Includes practical guidance, a per-link rotation test with BH-FDR for networks, and full reproducibility (fixed seeds, released scripts and raw outputs)."
+  ],
+  "Weaknesses": [
+    "Methodological novelty is limited: all ingredients are standard, and the contribution amounts to a parameter heuristic.",
+    "The default aTDS is not shown to beat a trivial baseline: rescaling the published setting by an estimated correlation time matches it on all synthetic tests.",
+    "aTDS-BH, the variant that does beat the baseline, was selected on the AR(1) slow-down benchmark and validated only on new seeds of the same generator family. Its gain comes from a longer window and is reproduced by raising the independent-sample constant from 30 to 60. It also exceeds the 5% budget at large slow-downs and degrades under regime-limited coupling. The abstract foregrounds aTDS-BH numbers, which overstates the advantage of the main method.",
+    "Long adaptive windows undermine time-resolved analysis, the main reason to prefer TDS over full-record estimators. In regime-switching tests, false stability leaks above budget and estimated rescaling performs better.",
+    "There is no benefit in the motivating application: on the 35-subject sleep cohort the uncapped window cannot resolve sleep stages, capped variants give no significant gain, and the wake contrast becomes weaker.",
+    "Positive real-data evidence is thin: few windows, reference delays partly defined by full-record cross-correlation (circular), and one catchment fails without a manual cap.",
+    "Calibrated tolerances become wide (up to +-56 samples), which coarsens the notion of stability and makes aTDS scores incomparable with the published TDS literature. This weakens the reproducibility motivation.",
+    "The rotation null ignores shared slow co-modulation, and the SE treats correlated rotations as independent. Both choices are anti-conservative.",
+    "Main results use a non-causal stability anchor that materially changes scores (58.1% vs 43.6% on the benchmark pair). The causal-anchor rerun is deferred.",
+    "Synthetic benchmarks are dominated by linear Gaussian AR(1) coupling. The text is very dense with numbers in prose, and there is an internal inconsistency between the Limitations section and Table 5 on per-link power."
+  ],
+  "Originality": 2,
+  "Quality": 2,
+  "Clarity": 3,
+  "Significance": 2,
+  "Questions": [
+    "Can aTDS-BH be validated on generator families not used for its selection, and with the causal stability anchor, before it is presented as the headline method?",
+    "Given that raising the target to 60 independent samples reproduces aTDS-BH's gain, what does the Bayley-Hammersley factor add? Would a single rule with an explicit time-resolution/detection trade-off be cleaner?",
+    "Is there any setting with multiple records where the default aTDS beats estimated rescaling with statistical support?",
+    "Can you report time-resolved accuracy (e.g., balanced accuracy on on/off coupling) for aTDS-BH and for estimated rescaling, and compare against sliding-window GCC-PHAT or cross-correlation with an effective-sample-size test?",
+    "Could the tolerance be tied to the theoretical variance of the delay estimate so that scores remain comparable to published TDS values?",
+    "How do results change with surrogates that preserve shared slow co-modulation (block or bivariate IAAFT) and with a recording-clustered SE?",
+    "How robust are the real-record delays (e.g., 8 h for rainfall-runoff) to the wide tolerance and to the small number of windows?",
+    "Please reconcile the Limitations statement about per-link power with Table 5."
+  ],
+  "Limitations": [
+    "Long adaptive windows reduce time resolution, and stage-resolved analyses require a manual cap.",
+    "False stability exceeds the 5% budget near regime boundaries and for aTDS-BH at large slow-downs. The budget controls only the mean, so single recordings can be far above it.",
+    "Delays beyond half the window or half a rhythm period are missed, or reported as the anti-phase lobe, without warning.",
+    "Data-dependent parameters and wide tolerances make scores non-comparable across studies unless parameters and chance levels are always reported.",
+    "Correlation-based pairwise TDS does not capture non-monotone coupling and cannot separate direct from indirect links. Ethics approval for the sleep data is not described.",
+    "No direct negative societal impact beyond the risk of over-interpreting physiological networks."
+  ],
+  "Ethical Concerns": false,
+  "Soundness": 2,
+  "Presentation": 3,
+  "Contribution": 2,
+  "Overall": 4,
+  "Confidence": 4,
+  "Decision": "Reject"
+}
+```

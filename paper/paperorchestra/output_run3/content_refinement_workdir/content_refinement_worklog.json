@@ -120,5 +120,57 @@
         "total_gain": 2.0,
         "total_drop": 2.0,
         "outcome": "ACCEPTED_NO_REVERT"
+    },
+    "v3": {
+        "round": 3,
+        "agent_plan": {
+            "addressed_weaknesses": [
+                "Abstract framing: it now reports the default aTDS first and states plainly that it is equivalent to the estimated rescaling on synthetic data; aTDS-BH is presented as a validated variant whose gain comes from longer windows, matched by first-zero aTDS with 60 independent samples",
+                "Validation scope stated precisely: new seeds and five other signal families",
+                "Costs of longer windows (budget slightly exceeded at large slow-down; regime-limited coupling) stated in the abstract",
+                "Conclusion aligned with the same framing"
+            ],
+            "integrated_answers": [
+                "Which method is the paper's method and how it compares with the simplest baseline: abstract and Conclusion"
+            ],
+            "actions_taken": [
+                "Rewrote the abstract",
+                "Edited the Conclusion sentence on the comparison with the estimated rescaling"
+            ]
+        },
+        "scores_before": {
+            "Originality": 2.0,
+            "Quality": 2.0,
+            "Clarity": 3.0,
+            "Significance": 2.0,
+            "Soundness": 2.0,
+            "Presentation": 3.0,
+            "Contribution": 2.0,
+            "Overall": 4.0,
+            "Confidence": 4.0
+        },
+        "scores_after": {
+            "Originality": 2.0,
+            "Quality": 3.0,
+            "Clarity": 2.0,
+            "Significance": 2.0,
+            "Soundness": 3.0,
+            "Presentation": 2.0,
+            "Contribution": 2.0,
+            "Overall": 5.0,
+            "Confidence": 4.0
+        },
+        "deltas": {
+            "Originality": 0.0,
+            "Quality": 1.0,
+            "Clarity": -1.0,
+            "Significance": 0.0,
+            "Soundness": 1.0,
+            "Presentation": -1.0,
+            "Contribution": 0.0
+        },
+        "total_gain": 2.0,
+        "total_drop": 2.0,
+        "outcome": "ACCEPTED_SCORE_INCREASE"
     }
 }
