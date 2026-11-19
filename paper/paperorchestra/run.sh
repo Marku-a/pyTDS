@@ -5,6 +5,7 @@
 #                    generativelanguage.googleapis.com (header x-goog-api-key)
 #                    is injected by the session proxy.
 #   WRITER_MODEL     default gemini-3.1-pro-preview (use a Flash model on free tier)
+#   PO_NO_REVERT=1   keep every revision even if its review score drops (all logged)
 #   GEMINI_BACKEND=manual  answer every model call from a file queue instead of
 #                    the Gemini API (see manual_backend.py); queue in $WORK/queue
 set -euo pipefail

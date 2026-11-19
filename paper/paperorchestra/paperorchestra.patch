@@ -1,3 +1,34 @@
+diff --git a/methods/agents/content_refinement_agent.py b/methods/agents/content_refinement_agent.py
+index c9ba81d..8d4b629 100644
+--- a/methods/agents/content_refinement_agent.py
++++ b/methods/agents/content_refinement_agent.py
+@@ -373,12 +373,21 @@ INSTRUCTION:
+                 print(f"    Sub-axes Deltas: {deltas}")
+ 
+                 # Case 1: Overall Increased -> SUCCESS -> ACCEPT & CONTINUE
+-                if new_metrics["Overall"] > old_metrics["Overall"]:
+-                    print(
+-                        " >> SUCCESS: Overall Score increased! Progressing to next iteration..."
+-                    )
++                # PO_NO_REVERT=1: always keep the revision and continue (all versions are logged).
++                no_revert = os.getenv("PO_NO_REVERT") == "1"
++                if new_metrics["Overall"] > old_metrics["Overall"] or no_revert:
++                    if new_metrics["Overall"] > old_metrics["Overall"]:
++                        print(
++                            " >> SUCCESS: Overall Score increased! Progressing to next iteration..."
++                        )
++                    else:
++                        print(" >> NO-REVERT MODE: keeping this revision and continuing...")
+ 
+-                    current_log_entry["outcome"] = "ACCEPTED_SCORE_INCREASE"
++                    current_log_entry["outcome"] = (
++                        "ACCEPTED_SCORE_INCREASE"
++                        if new_metrics["Overall"] > old_metrics["Overall"]
++                        else "ACCEPTED_NO_REVERT"
++                    )
+                     self.worklogs[f"v{i+1}"] = current_log_entry
+ 
+                     self.current_tex = new_tex
 diff --git a/methods/agents/literature_review_agent.py b/methods/agents/literature_review_agent.py
 index f449b11..48fb52f 100644
 --- a/methods/agents/literature_review_agent.py
