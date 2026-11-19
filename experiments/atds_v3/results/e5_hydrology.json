@@ -8,8 +8,13 @@
    "peak_lag_samples": 2,
    "peak_lag_phys": "2 days",
    "peak_abs_r": 0.301,
+   "peak_signed_r": 0.301,
+   "positive_peak_lag_samples": 2,
+   "positive_peak_lag_phys": "2 days",
+   "positive_peak_r": 0.301,
    "search_range_samples": 30,
-   "peak_at_search_edge": false
+   "peak_at_search_edge": false,
+   "note": ""
   },
   "settings": {
    "published": {
@@ -77,8 +82,13 @@
    "peak_lag_samples": -30,
    "peak_lag_phys": "-30 days",
    "peak_abs_r": 0.069,
+   "peak_signed_r": -0.069,
+   "positive_peak_lag_samples": 1,
+   "positive_peak_lag_phys": "1 days",
+   "positive_peak_r": 0.054,
    "search_range_samples": 30,
-   "peak_at_search_edge": true
+   "peak_at_search_edge": true,
+   "note": "|C| peak at the search edge: edge artefact; use the positive peak"
   },
   "settings": {
    "published": {
@@ -146,8 +156,13 @@
    "peak_lag_samples": 8,
    "peak_lag_phys": "8 h",
    "peak_abs_r": 0.499,
+   "peak_signed_r": 0.499,
+   "positive_peak_lag_samples": 8,
+   "positive_peak_lag_phys": "8 h",
+   "positive_peak_r": 0.499,
    "search_range_samples": 72,
-   "peak_at_search_edge": false
+   "peak_at_search_edge": false,
+   "note": ""
   },
   "settings": {
    "published": {
@@ -206,5 +221,5 @@
    }
   }
  },
- "_wall_seconds": 14
+ "_wall_seconds": 15
 }

@@ -393,8 +393,8 @@ Reading: the stage-aware setting keeps wake usable (33 subjects instead of 26 wi
 |---|---|---|---|---|---|
 | L0123001, daily (10 593 days) | 0-3 days (domain); xcorr peak +2 d | published | 59.1 % (2.6) | 0.005 | 1 day (in range) |
 | | | aTDS (window 501 d) | 97.6 % (12.3) | 0.005 | 2 days (in range) |
-| L0123002, daily | no domain expectation; xcorr peak at the edge of the search (unreliable) | published | 32.4 % (2.3) | 0.005 | 1 day |
+| L0123002, daily | no domain expectation; strongest positive cross-correlation at +1 day (r = 0.054, weak; the largest |C| is a negative edge artefact at -30 days) | published | 32.4 % (2.3) | 0.005 | 1 day (matches the positive xcorr peak) |
 | | | aTDS | 21.1 % (21.1) | 0.104 | 162 days (implausible) |
 | L0123003, hourly (Part 2) | about 8 h | published | 1.2 % (1.1) | 0.02 | 13 h (wrong) |
 | | | aTDS | 79.5 % (9.1) | 0.005 | 8 h (correct) |
-Reading: aTDS recovers the delay where the published window is far too short for the time scale (hourly data), matches the published setting on daily data, and fails on L0123002 (not significant, implausible delay; the full-record cross-correlation is also unreliable there).
+Reading: aTDS recovers the delay where the published window is far too short for the time scale (hourly data), matches the published setting on daily data, and fails on L0123002 (not significant, implausible delay), where the published setting reports 1 day, consistent with the weak positive cross-correlation peak.

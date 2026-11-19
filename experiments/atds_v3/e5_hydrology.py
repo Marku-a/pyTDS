@@ -54,10 +54,17 @@ def main(fd, out_dir):
     for name, loader, kind, exp_text, exp_range in DATA:
         t0 = time.time()
         d = loader(); s1, s2 = np.asarray(d["s1"], float), np.asarray(d["s2"], float); d["s1"], d["s2"] = s1, s2
-        sc, dl_x, _ = C.xcorr_full(s1, s2, XLAG[kind]); lag_x = -dl_x          # positive = flow lags rain
+        sc, dl_x, Cx = C.xcorr_full(s1, s2, XLAG[kind]); lag_x = -dl_x          # positive = flow lags rain
+        lags = np.arange(-XLAG[kind], XLAG[kind] + 1); kpos = int(np.argmax(Cx)); lag_pos = int(lags[kpos])
+        edge = bool(abs(lag_x) == XLAG[kind])
         entry = dict(n=len(s1), sampling_interval_s=d["dt"], preprocessing=d["prep"], domain_expectation=exp_text,
                      xcorr_full=dict(peak_lag_samples=lag_x, peak_lag_phys=F.phys(lag_x, d["dt"]), peak_abs_r=round(sc, 3),
-                                     search_range_samples=XLAG[kind], peak_at_search_edge=bool(abs(lag_x) == XLAG[kind])), settings={})
+                                     peak_signed_r=round(float(Cx[int(np.argmax(np.abs(Cx)))]), 3),
+                                     positive_peak_lag_samples=lag_pos, positive_peak_lag_phys=F.phys(lag_pos, d["dt"]),
+                                     positive_peak_r=round(float(Cx[kpos]), 3),
+                                     search_range_samples=XLAG[kind], peak_at_search_edge=edge,
+                                     note=("|C| peak at the search edge: edge artefact; use the positive peak" if edge else "")),
+                     settings={})
         p_atds, fail = A.calib(A.window_params([s1, s2]), [(s1, s2)], n_shift=20)
         for sname, p, f in (("published", A.PUBLISHED, False), ("atds", p_atds, fail)):
             res = F.run_setting(d, sname, p, f)
