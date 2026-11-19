@@ -1,0 +1,74 @@
+{
+ "n_samples": 29286,
+ "nan_counts": {
+  "HR": 2,
+  "Resp": 8,
+  "Chin": 0,
+  "Leg": 0,
+  "Eye": 0,
+  "delta": 0,
+  "theta": 0,
+  "alpha": 0,
+  "sigma": 0,
+  "beta": 0
+ },
+ "stage_epochs_30s": {
+  "LS": 559,
+  "REM": 180,
+  "DS": 145,
+  "awake": 93
+ },
+ "published_end_anchor": {
+  "tds": 34.46153846153846,
+  "matlab_reference": 43.6052
+ },
+ "published_default_anchor": {
+  "tds": 48.61538461538461
+ },
+ "cohort_vs_file": {
+  "len_cohort": 29252,
+  "len_file": 29286,
+  "best_lag_file_minus_cohort": 29,
+  "n_overlap_at_best_lag": 29252,
+  "pearson_r_at_best_lag": {
+   "HR": 0.9999999999999999,
+   "Resp": 1.0,
+   "Chin": 1.0,
+   "Leg": 1.0,
+   "Eye": 1.0,
+   "delta": 1.0,
+   "theta": 0.9999999999999999,
+   "alpha": 1.0,
+   "sigma": 0.9999999999999999,
+   "beta": 0.9999999999999999
+  },
+  "pearson_r_at_lag0": {
+   "HR": 0.49203899278979796,
+   "Resp": 0.0969656697271809,
+   "Chin": 0.0006416161126409037,
+   "Leg": -0.0003792333389692832,
+   "Eye": 0.06745191289622507,
+   "delta": 0.21044477556384333,
+   "theta": 0.059063172506742076,
+   "alpha": 0.11158343686074043,
+   "sigma": 0.03563187907377268,
+   "beta": 0.04485421044465135
+  }
+ },
+ "atds": {
+  "params": {
+   "window": 2928,
+   "step": 1464,
+   "max_lag": 1463,
+   "tolerance": 150,
+   "calibration_failed": false
+  },
+  "tds": 94.73684210526315,
+  "n_windows": 19,
+  "null_mean": 4.947368421052631,
+  "null95": 21.052631578947366,
+  "p": 0.004975124378109453,
+  "delay_samples": 0.0
+ },
+ "wall_seconds": 49.36190438270569
+}
