@@ -1,0 +1,14 @@
+benchmark,method,params_window,params_step,params_max_lag,params_tol,auc,auc_ci,regimeA_coupled_mean,regimeA_control_mean,false_stability_B_coupled_mean,false_stability_B_control_mean,hit,hit_ci,n,params_A_window,params_A_step,params_A_max_lag,params_A_tol,params_B_window,params_B_step,params_B_max_lag,params_B_tol,chance,params,score_mean,score_sd,n_stable_windows,median_abs_err_pooled,iqr_abs_err,median_of_pair_medians
+regime_switching,published,60,30,30,1,0.944,"[0.89, 0.987]",5.62,0.71,0.89,0.81,0.95,"[0.835, 0.986]",40,,,,,,,,,,,,,,,,
+regime_switching,atds,516,258,257,29,1.0,"[1.0, 1.0]",98.94,4.39,8.12,5.78,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,
+regime_switching,atds_cap1000,516,258,257,29,1.0,"[1.0, 1.0]",98.94,4.39,8.12,5.78,1.0,"[0.912, 1.0]",40,,,,,,,,,,,,,,,,
+regime_switching,atds_per_regime,,,,,1.0,"[1.0, 1.0]",84.33,3.6,9.0,4.5,1.0,"[0.912, 1.0]",40,251,125,125,13,1000,500,499,53,,,,,,,,
+nonlinear_monotone,published,60,30,30,1,0.997,"[0.992, 1.0]",,,,,1.0,"[0.963, 1.0]",100,,,,,,,,,0.744,,,,,,,
+nonlinear_monotone,atds,244,122,121,13,1.0,"[1.0, 1.0]",,,,,1.0,"[0.963, 1.0]",100,,,,,,,,,4.154,,,,,,,
+nonlinear_monotone,xcorr_full,,,,,1.0,"[1.0, 1.0]",,,,,1.0,"[0.963, 1.0]",100,,,,,,,,,0.062,,,,,,,
+nonlinear_non_monotone,published,60,30,30,1,0.803,"[0.746, 0.856]",,,,,0.74,"[0.646, 0.816]",100,,,,,,,,,0.719,,,,,,,
+nonlinear_non_monotone,atds,244,122,121,12,0.747,"[0.675, 0.81]",,,,,0.62,"[0.522, 0.709]",100,,,,,,,,,3.728,,,,,,,
+nonlinear_non_monotone,xcorr_full,,,,,0.341,"[0.263, 0.419]",,,,,0.01,"[0.002, 0.054]",100,,,,,,,,,0.062,,,,,,,
+drifting_delay,published,60,30,30,1,,,,,,,,,,,,,,,,,,,,8.52,2.56,2267,0.3,"[0.15, 0.44]",0.29
+drifting_delay,atds,244,122,121,13,,,,,,,,,,,,,,,,,,,,86.51,3.04,5606,0.25,"[0.13, 0.37]",0.25
+drifting_delay,atds_cap1000,244,122,121,13,,,,,,,,,,,,,,,,,,,,86.51,3.04,5606,0.25,"[0.13, 0.37]",0.25

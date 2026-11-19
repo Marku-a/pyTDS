@@ -1,0 +1,210 @@
+{
+ "L0123001_daily": {
+  "n": 10593,
+  "sampling_interval_s": 86400.0,
+  "preprocessing": "Precip and flow as is; 802 NaNs in flow filled linearly.",
+  "domain_expectation": "manifest: 0-3 days",
+  "xcorr_full": {
+   "peak_lag_samples": 2,
+   "peak_lag_phys": "2 days",
+   "peak_abs_r": 0.301,
+   "search_range_samples": 30,
+   "peak_at_search_edge": false
+  },
+  "settings": {
+   "published": {
+    "score": 59.09090909090909,
+    "n_windows": 352,
+    "n_stable": 208,
+    "null_mean": 0.9829545454545456,
+    "null95": 2.5710227272727226,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -1.0,
+    "delay_phys": "-1 days",
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 days",
+     "step": "30 days",
+     "max_lag": "30 days",
+     "tolerance": "1 days"
+    },
+    "calibration_failed": false,
+    "delay_after_rain_samples": 1.0,
+    "in_domain_range": true,
+    "matches_xcorr_peak_within_1_or_10pct": true
+   },
+   "atds": {
+    "score": 97.5609756097561,
+    "n_windows": 41,
+    "n_stable": 40,
+    "null_mean": 3.414634146341464,
+    "null95": 12.317073170731666,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -2.0,
+    "delay_phys": "-2 days",
+    "params_samples": {
+     "window": 501,
+     "step": 250,
+     "max_lag": 250,
+     "tolerance": 20
+    },
+    "params_phys": {
+     "window": "501 days",
+     "step": "250 days",
+     "max_lag": "250 days",
+     "tolerance": "20 days"
+    },
+    "calibration_failed": false,
+    "delay_after_rain_samples": 2.0,
+    "in_domain_range": true,
+    "matches_xcorr_peak_within_1_or_10pct": true
+   }
+  }
+ },
+ "L0123002_daily": {
+  "n": 10593,
+  "sampling_interval_s": 86400.0,
+  "preprocessing": "Precip and flow as is; 0 NaNs in flow filled linearly.",
+  "domain_expectation": "not given in the manifest",
+  "xcorr_full": {
+   "peak_lag_samples": -30,
+   "peak_lag_phys": "-30 days",
+   "peak_abs_r": 0.069,
+   "search_range_samples": 30,
+   "peak_at_search_edge": true
+  },
+  "settings": {
+   "published": {
+    "score": 32.38636363636363,
+    "n_windows": 352,
+    "n_stable": 114,
+    "null_mean": 0.7244318181818182,
+    "null95": 2.272727272727273,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -1.0,
+    "delay_phys": "-1 days",
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "60 days",
+     "step": "30 days",
+     "max_lag": "30 days",
+     "tolerance": "1 days"
+    },
+    "calibration_failed": false,
+    "delay_after_rain_samples": 1.0,
+    "in_domain_range": null,
+    "matches_xcorr_peak_within_1_or_10pct": false
+   },
+   "atds": {
+    "score": 21.052631578947366,
+    "n_windows": 19,
+    "n_stable": 4,
+    "null_mean": 2.2631578947368416,
+    "null95": 21.052631578947366,
+    "p": 0.1044776119402985,
+    "n_null": 200,
+    "delay_samples": -162.0,
+    "delay_phys": "-162 days",
+    "params_samples": {
+     "window": 1059,
+     "step": 529,
+     "max_lag": 367,
+     "tolerance": 9
+    },
+    "params_phys": {
+     "window": "1.06e+03 days",
+     "step": "529 days",
+     "max_lag": "367 days",
+     "tolerance": "9 days"
+    },
+    "calibration_failed": false,
+    "delay_after_rain_samples": 162.0,
+    "in_domain_range": null,
+    "matches_xcorr_peak_within_1_or_10pct": false
+   }
+  }
+ },
+ "L0123003_hourly": {
+  "n": 43848,
+  "sampling_interval_s": 3600.0,
+  "preprocessing": "Precip and flow as is; NaNs filled linearly (none present).",
+  "domain_expectation": "manifest: positive, several hours (Part F used 8 h)",
+  "xcorr_full": {
+   "peak_lag_samples": 8,
+   "peak_lag_phys": "8 h",
+   "peak_abs_r": 0.499,
+   "search_range_samples": 72,
+   "peak_at_search_edge": false
+  },
+  "settings": {
+   "published": {
+    "score": 1.2328767123287672,
+    "n_windows": 1460,
+    "n_stable": 18,
+    "null_mean": 0.42226027397260274,
+    "null95": 1.095890410958904,
+    "p": 0.01990049751243781,
+    "n_null": 200,
+    "delay_samples": -13.0,
+    "delay_phys": "-13 h",
+    "params_samples": {
+     "window": 60,
+     "step": 30,
+     "max_lag": 30,
+     "tolerance": 1
+    },
+    "params_phys": {
+     "window": "2.5 days",
+     "step": "1.25 days",
+     "max_lag": "1.25 days",
+     "tolerance": "1 h"
+    },
+    "calibration_failed": false,
+    "delay_after_rain_samples": 13.0,
+    "in_domain_range": null,
+    "matches_xcorr_peak_within_1_or_10pct": false
+   },
+   "atds": {
+    "score": 79.54545454545455,
+    "n_windows": 44,
+    "n_stable": 35,
+    "null_mean": 1.7045454545454544,
+    "null95": 9.090909090909092,
+    "p": 0.004975124378109453,
+    "n_null": 200,
+    "delay_samples": -8.0,
+    "delay_phys": "-8 h",
+    "params_samples": {
+     "window": 1914,
+     "step": 957,
+     "max_lag": 956,
+     "tolerance": 43
+    },
+    "params_phys": {
+     "window": "79.8 days",
+     "step": "39.9 days",
+     "max_lag": "39.8 days",
+     "tolerance": "1.79 days"
+    },
+    "calibration_failed": false,
+    "delay_after_rain_samples": 8.0,
+    "in_domain_range": null,
+    "matches_xcorr_peak_within_1_or_10pct": true
+   }
+  }
+ },
+ "_wall_seconds": 14
+}

@@ -8,8 +8,8 @@ All three TDS parameters can be set from the signals themselves - from each sign
 
 ## Required paper structure
 1. Idea and algorithm (Methods): TDS, the three aTDS rules, the full algorithm.
-2. Results on simulated data (synthetic signals with known coupling and delay).
-3. Results on real data (benchmark, sleep cohort, other fields).
+2. Results on simulated data (Part 1 and Part 3 X1-X3: synthetic benchmarks, baselines, sensitivity, regime switching, nonlinear and drifting coupling).
+3. Results on real data (Part 2 and Part 3 X4-X5: benchmark, sleep cohort incl. stage-aware analysis, other fields incl. three river catchments).
 4. Discussion (limitations, practical guidance, not tested) and Conclusion.
 
 ## Contributions
@@ -23,6 +23,8 @@ All three TDS parameters can be set from the signals themselves - from each sign
 ## Scope (must be respected by the paper)
 - Evidence has two parts: (1) synthetic signals and simulations with known answers (experimental log, Part 1); (2) real data (Part 2): the TDS benchmark pair, a 35-subject polysomnography cohort with scored sleep stages analysed with the cross-subject stage-matched null, and three public records from hydrology, energy and economics with known delays. Real-data results are mixed for sleep networks and must be reported as such. Coupling that switches with physiological regime and per-stage calibration are untested.
 - All TDS computations use the author's pyTDS implementation (github.com/Marku-a/pyTDS).
+- Part 3 of the experimental log adds: comparisons with full-record delay estimators (cross-correlation, GCC-PHAT) and with a published setting rescaled by an ESTIMATED time scale (both match or beat aTDS on the stationary benchmark); sensitivity of every design constant; regime-switching, nonlinear and drifting-delay benchmarks (aTDS strongly better for regime-limited and drifting coupling, but its false stability in the uncoupled regime exceeds the 5 % budget; not better for non-monotone coupling); a stage-aware cohort analysis (no significant gain over the published setting on 1-Hz sleep data); and three river catchments (aTDS right where the published window is too short, equal on daily data, fails on one catchment).
+- The honest framing: aTDS's value is a reproducible, time-scale-consistent, time-resolved TDS without hand-tuning, which matters most when the system's time scale differs from the 1-Hz sleep setting; it is not the best detector of a constant, always-on delay (full-record estimators are), and on 1-Hz sleep networks the published setting is already well matched. Report negative results plainly.
 - aTDS automates a time-scale-consistent parameter choice with a false-alarm budget; it is NOT optimal (an oracle tuned on labels does better) and the 5 % is a budget for the mean chance score, NOT a significance level.
 - aTDS scores are not comparable with published TDS scores.
 - Limitations listed in the experimental log must be reported, not hidden.

@@ -1,0 +1,4 @@
+setting,calibration_failed,window,step,max_lag,tolerance,tolerance_by_stage_W,tolerance_by_stage_LS,tolerance_by_stage_DS,tolerance_by_stage_REM,calibration_failed_by_stage_W,calibration_failed_by_stage_LS,calibration_failed_by_stage_DS,calibration_failed_by_stage_REM,median_episode_length
+published,False,60,30,30,1,,,,,,,,,
+atds_cap300,False,300,150,149,14,,,,,,,,,
+atds_stage,,150,75,74,,6,6,6,4,False,False,False,False,300.0

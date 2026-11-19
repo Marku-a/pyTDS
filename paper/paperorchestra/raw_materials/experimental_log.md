@@ -344,3 +344,57 @@ Delays known from the domain and from the peak of the full-record cross-correlat
 | | | | aTDS | 64 / 31 / 3 weeks | 92.5 % (15.1) | 0.005 | 0 weeks |
 
 Reading: both settings detect coupling in all three (published only marginally for rainfall-runoff). aTDS reports the known delay for rainfall-runoff and temperature-demand; the published setting does not. Oil-gasoline does not discriminate: in weekly changes the cross-correlation already peaks at lag 0 (r = 0.55, partly because WTI and retail prices are recorded on different weekdays; lag 1: r = 0.39). aTDS windows are long (80 and 27 days), acceptable because these delays are constant.
+
+---
+
+# PART 3: ADDITIONAL EXPERIMENTS (baselines, sensitivity, harder benchmarks, stage-aware cohort analysis, more records; scripts and raw results in experiments/atds_v3/; all TDS with pyTDS)
+
+## X1. Baselines beyond TDS settings (slow-down benchmark of Part 1: tc = 2r, d = 5r, c = 0.3, 100 + 100 pairs per r, same seeds)
+New methods: xcorr_full = full-record normalised cross-correlation, |lag| <= 1000, score = max |C|, delay = argmax; gccphat_full = full-record GCC-PHAT, same lag range; rescaled_est = published setting multiplied by r_hat = max(1, round(tc_hat/2)), tc_hat = median over the 5 training pairs of the first lag where the autocorrelation falls below 1/e (r_hat equalled the true r for r = 1-8 and was 15 at r = 16). Recomputed published / rescaled / aTDS AUCs reproduce Part 1 exactly.
+
+AUC by r (1 / 2 / 4 / 8 / 16):
+- published .997 / .888 / .590 / .541 / .509
+- rescaled (true r) .997 / .993 / .955 / .806 / .688
+- aTDS .995 / .979 / .923 / .877 / .645
+- rescaled_est .997 / .993 / .955 / .806 / .691 [.64, .74 at r=16]
+- xcorr_full 1.0 at every r; gccphat_full 1.0 at every r
+Delay found: aTDS 1.0 / .99 / .88 / .85 / .42; published 1.0 / .84 / .18 / 0 / 0; xcorr_full and gccphat_full 1.0 at every r.
+aTDS minus baseline AUC [95 % CI]: vs published +.091 [.05, .14] (r=2), +.333 [.24, .42] (r=4), +.336 [.25, .44] (r=8), +.136 [.03, .25] (r=16); vs rescaled -.014 [-.03, .00], -.032 [-.07, .01], +.071 [.007, .142], -.043 [-.12, .03]; vs xcorr_full -.021 [-.04, -.01], -.077 [-.12, -.04], -.123 [-.17, -.08], -.355 [-.43, -.29]. At r = 1 all differences include 0 except vs xcorr_full (-.005 [-.013, -.001]).
+Reading: on this stationary benchmark (one constant delay, coupling always on) full-record estimators are perfect and beat every windowed method, and a published setting rescaled by an estimated time scale is as good as aTDS. TDS (and aTDS) give a time-resolved answer, which full-record estimators cannot; see X3.
+
+## X2. Sensitivity of the design constants (slow-down benchmark, r = 1 / 4 / 8, 100 + 100 pairs; one constant varied at a time; default: n_eff 30, budget 5 %, z 2, floor 61, 20 rotations; default AUC .995 / .923 / .877, chance 3.3-4.4 %)
+- n_eff 15: AUC .997 / .717 / .684; n_eff 45: 1.0 / .946 / .899; n_eff 60: 1.0 / .991 / .954 (chance rises to 5.0-5.4 % at n_eff 45-60 for r = 4, 8; windows longer).
+- budget 1 %: 1.0 / .920 / .884 (chance 0.2-0.7 %); budget 10 %: .981 / .874 / .851.
+- z 0: .995 / .911 / .861; z 3: .995 / .923 / .881.
+- floor 31: identical to 61; floor 121: 1.0 / .923 / .877.
+- rotations 10: .995 / .921 / .888; rotations 40: .995 / .923 / .862.
+- Rhythm threshold (AR(2) rhythm, period about 40, delays 8 and 30, 30 + 30 pairs, window 316-318): threshold 0.2 and 0.3 -> rhythm detected, lag capped at +-20, tolerance 1: AUC 1.0 and .995, delay found 1.0 and 0 (delay 30 out of range); threshold 0.4 -> rhythm not detected, lag +-158, tolerance 16: AUC 1.0 and 1.0, delay found 1.0 and 1.0.
+Reading: results are robust to the budget, z, floor and number of rotations; the number of independent samples per window matters most (more = better detection, coarser time resolution, slightly higher chance); the rhythm cap trades delay range for alias protection.
+
+## X3. Harder synthetic benchmarks (20 000 samples)
+1. Regime switching (the sleep-stage case): blocks of 2 000 samples alternating regime A (tc 8; y = 0.6 x(t-20) + noise) and regime B (tc 32; uncoupled); controls uncoupled throughout; 40 + 40 pairs; scores per regime with the 80 % purity rule.
+   - published (60/30/30/1): regime-A score coupled 5.62 % vs control 0.71 %; AUC .944 [.89, .99]; delay found .95; regime-B false stability 0.89 % (control 0.81 %).
+   - aTDS whole record (window 516, lag 257, tol 29; the 1000 cap was not binding): regime-A score 98.94 % vs control 4.39 %; AUC 1.0; delay found 1.0; regime-B false stability 8.12 % (control 5.78 %).
+   - aTDS per regime (A: window 251, tol 13; B: window 1000, tol 53): regime-A score 84.33 % vs 3.60 %; AUC 1.0; delay found 1.0; regime-B false stability 9.00 % (control 4.50 %).
+   Reading: aTDS detects regime-limited coupling far more strongly (99 % vs 5.6 % of regime-A windows stable) but its false stability in the uncoupled regime (8-9 %) exceeds the 5 % budget, because windows near regime boundaries inherit stability.
+2. Nonlinear coupling (tc 8, d 20, 100 + 100 pairs): monotone (tanh): published AUC .997, aTDS 1.0, xcorr_full 1.0, delay found 1.0 for all. Non-monotone (quadratic; zero linear correlation): published AUC .803 (delay found .74), aTDS .747 (.62), xcorr_full .341 (.01). Cross-correlation-based TDS is not designed for non-monotone coupling; aTDS does not help there.
+3. Drifting delay (tc 8, c 0.6, delay drifting linearly 10 -> 30 samples, 40 pairs): published score 8.5 %, median absolute error of tau0 in stable windows 0.30 samples; aTDS score 86.5 %, error 0.25 samples (capped at 1000: identical). aTDS tracks a slowly drifting delay with nearly all windows stable.
+
+## X4. Stage-aware aTDS on the 35-subject sleep cohort (same data, stage assignment, 100-draw cross-subject stage-matched null and bootstrap as Part 2)
+Stage-episode lengths, median [IQR] in s: W 90 [60-210] (331 episodes), LS 420 [120-1118] (708), DS 480 [150-1050] (229), REM 480 [180-900] (305); all stages 300 [90-870] (1 573).
+Setting atds_stage: window = clip(0.5 x median episode length (all stages), 61, 300) = 150 s, lag +-74 s; tolerance per stage calibrated on 50 cross-subject stage-matched surrogates (mean + 2 SE <= 5 %): W 6, LS 6, DS 6, REM 4 s; no calibration failed.
+Per-stage mean link TDS (W / LS / DS / REM): published 16.9 / 19.8 / 13.7 / 11.4; atds_cap300 40.2 / 46.9 / 35.8 / 36.6; atds_stage 31.8 / 36.4 / 27.0 / 22.6.
+Effects, atds_stage dz [95 % CI] (n): mean link TDS LS-DS 1.62 [1.29, 2.13] (34); W-DS 0.53 [0.20, 0.97] (33); REM-DS -0.70 [-1.17, -0.36] (34); LS-REM 2.16 [1.63, 3.02] (35). Significant links LS-DS 2.55 [2.07, 3.37]; W-DS 0.47 [0.13, 0.92]; REM-DS 0.80 [0.48, 1.24]; LS-REM 1.43 [0.98, 2.24].
+Gains atds_stage minus published: mean link TDS LS-DS +0.28 [-0.01, 0.57], W-DS -0.05 [-0.33, 0.22], REM-DS -0.13 [-0.35, 0.03], LS-REM +0.26 [-0.21, 0.88]; significant links LS-DS -0.05 [-0.72, 0.57], W-DS -1.02 [-1.48, -0.68], REM-DS +0.07 [-0.31, 0.51], LS-REM -0.25 [-0.68, 0.25].
+Reading: the stage-aware setting keeps wake usable (33 subjects instead of 26 with the 300-s cap) and reproduces all published contrasts with the same signs, but gives no significant gain over the published setting and a significant loss on the wake contrast in significant links. The published 60-s setting suits this 1-Hz sleep data, for which it was designed.
+
+## X5. More records in one field: three airGR catchments (rainfall -> river flow; 200 rotations)
+| Catchment | Expected delay | Setting | Score (null95) | p | Delay found |
+|---|---|---|---|---|---|
+| L0123001, daily (10 593 days) | 0-3 days (domain); xcorr peak +2 d | published | 59.1 % (2.6) | 0.005 | 1 day (in range) |
+| | | aTDS (window 501 d) | 97.6 % (12.3) | 0.005 | 2 days (in range) |
+| L0123002, daily | no domain expectation; xcorr peak at the edge of the search (unreliable) | published | 32.4 % (2.3) | 0.005 | 1 day |
+| | | aTDS | 21.1 % (21.1) | 0.104 | 162 days (implausible) |
+| L0123003, hourly (Part 2) | about 8 h | published | 1.2 % (1.1) | 0.02 | 13 h (wrong) |
+| | | aTDS | 79.5 % (9.1) | 0.005 | 8 h (correct) |
+Reading: aTDS recovers the delay where the published window is far too short for the time scale (hourly data), matches the published setting on daily data, and fails on L0123002 (not significant, implausible delay; the full-record cross-correlation is also unreliable there).

@@ -1,0 +1,4 @@
+e2_sensitivity 146
+e3_synthetic 51
+e4 427
+e5 15
