@@ -2,7 +2,7 @@
 
 Goal: add real-world evidence to the aTDS paper. Two parts:
 
-- **Part A — NCOM cohort** (the user's MSc data: 35 overnight recordings, 10 channels at 1 Hz, per-second sleep stages) and **Part B — benchmark recording M001602** (same 10 channels; source of the 43.6 % TDS benchmark).
+- **Part A — NCOM cohort** (the user's MSc data: 35 overnight recordings, 10 channels at 1 Hz, per-second sleep stages) and **Part B — benchmark recording M001602** (same 10 channels; from the folder of the PLoS ONE 2015 Figure 2, but NOT the series behind the 43.6 % benchmark, which is `data/data-*.txt`).
 - **Part F — other fields**: the 8 public datasets with known delays from branch `claude/practical-mccarthy-n2mec6` (`experiments/adaptive/data_fields/MANIFEST.json`).
 
 **Hard rules**
@@ -45,7 +45,7 @@ Outputs (JSON + CSV in `<out_dir>`, `experiments/atds_real/results/` by default)
 
 `M001602.dat`: whitespace table, 10 columns in the order HR, Resp, Chin, Leg, Eye, delta, theta, alpha, sigma, beta, 1 Hz, NaN allowed (interpolate). Stages file: `time label_code label` per 30 s.
 
-1. Published setting with `stability_anchor="end"` on delta vs sigma: report TDS (MATLAB reference 43.6 %); also with the default anchor.
+1. Published setting with `stability_anchor="end"` on delta vs sigma: report TDS; the 43.6 % MATLAB reference is reported separately on `data/data-*.txt`; also with the default anchor.
 2. Check the M001602 table inside the cohort file equals this file (Pearson r per channel over the overlapping part).
 3. aTDS (window from the 10 channels of this subject, calibration on this subject's 45 pairs) on delta vs sigma: TDS, rotation null (200 rotations, p, null95), delay.
 

@@ -19,11 +19,16 @@
   "awake": 93
  },
  "published_end_anchor": {
-  "tds": 34.46153846153846,
-  "matlab_reference": 43.6052
+  "tds": 34.46153846153846
  },
  "published_default_anchor": {
   "tds": 48.61538461538461
+ },
+ "repo_txt_benchmark": {
+  "tds_end_anchor": 43.53059177532598,
+  "matlab_reference": 43.6052,
+  "n_samples": 29941,
+  "note": "data/data-*.txt (the 43.6 % benchmark) differ from the M001602.dat delta/sigma columns: lengths 29941 vs 29286, values ~1e7 vs ~1e4, correlation ~0 at shifts up to 800 s."
  },
  "cohort_vs_file": {
   "len_cohort": 29252,
@@ -70,5 +75,5 @@
   "p": 0.004975124378109453,
   "delay_samples": 0.0
  },
- "wall_seconds": 49.36190438270569
+ "wall_seconds": 44.078036069869995
 }

@@ -47,3 +47,14 @@ A separate reviewer agent checked the final paper against the raw JSON results, 
 4. The joint B_xy recommendation now states it rests on one configuration (both rules at AUC 1.00).
 5. Rotation keeps autocorrelations exactly only in the circular sense.
 6. "Often with the wrong sign" is now "in 16 of 50 cases".
+
+## Real-data update (after the PaperOrchestra run)
+
+Added in response to the reviewers' main weakness (no real staged data), with all TDS computed by pyTDS only (`experiments/atds_real/`):
+
+- **Section 4.8, Table 4, Figure 7:** 35-subject polysomnography cohort from the author's MSc project (10 channels, 1 Hz, scored stages), per-stage networks with the cross-subject stage-matched null.
+- **Section 4.9, Table 5:** three public records from hydrology, energy and fuel prices with known delays.
+- **Benchmark:** pyTDS reproduces the MATLAB 43.6 % benchmark (43.53 %) on `data/data-*.txt`; the M001602.dat columns are a different series.
+- **Revised:** abstract, Introduction scope, Limitations, Practical guidance, Not tested, Next steps, summary table, Conclusion, data availability.
+
+A reviewer agent checked the code against `experiments/atds_real/SPEC.md` (one labelling fix to the benchmark output). A second reviewer fact-checked the new text against the results files: all table values matched; one interval typo and five wording overstatements were fixed. The largest was that the "REM below deep sleep" inversion holds for mean TDS only, not for significant links.

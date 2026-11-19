@@ -59,8 +59,21 @@ def main(data_dir, out_dir, mat_path=None):
 
     # 1. published, end anchor and default anchor
     pe = replace(A.PUBLISHED, stability_anchor="end")
-    out["published_end_anchor"] = {"tds": float(pytds(d, s, pe)["score"]), "matlab_reference": 43.6052}
+    out["published_end_anchor"] = {"tds": float(pytds(d, s, pe)["score"])}
     out["published_default_anchor"] = {"tds": float(pytds(d, s, A.PUBLISHED)["score"])}
+
+    # The 43.6 % MATLAB benchmark belongs to data/data-delta.txt and data/data-sigma.txt in this
+    # repository, which are NOT the delta/sigma columns of M001602.dat (different length and scale,
+    # r ~ 0 at any shift). Report the benchmark on those files separately.
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    td = np.loadtxt(os.path.join(root, "data", "data-delta.txt"))
+    ts = np.loadtxt(os.path.join(root, "data", "data-sigma.txt"))
+    td, ts = td[:, 1], ts[:, 1]  # column 0 = time, column 1 = signal
+    out["repo_txt_benchmark"] = {
+        "tds_end_anchor": float(pytds(td, ts, pe)["score"]), "matlab_reference": 43.6052,
+        "n_samples": int(len(td)),
+        "note": "data/data-*.txt (the 43.6 % benchmark) differ from the M001602.dat delta/sigma "
+                "columns: lengths 29941 vs 29286, values ~1e7 vs ~1e4, correlation ~0 at shifts up to 800 s."}
 
     # 2. consistency with the cohort-file copy
     mats = glob.glob(os.path.join(data_dir, "*All_data_clean.mat"))
