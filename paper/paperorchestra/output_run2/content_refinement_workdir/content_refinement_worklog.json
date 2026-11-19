@@ -1,0 +1,63 @@
+{
+    "v1": {
+        "round": 1,
+        "agent_plan": {
+            "addressed_weaknesses": [
+                "Novelty: stated explicitly that each rule builds on a standard idea and that the contribution is their combination into one procedure plus its systematic evaluation",
+                "Wide tolerance: added 'How to read a score when the tolerance is wide' \u2014 tolerance is 4.5-10.4 % of the lag range in every setting; delay reported separately; scores compared only with aTDS chance levels",
+                "300-s cap: stated that the cap is the user's choice of time resolution, not a property of the signals; aTDS sets lag range and tolerance for the chosen window",
+                "REM inversion: no ground truth; the mean-TDS change may reflect the wider tolerance, the significant-link contrast did not change; no longer counted as an improvement (Results, abstract, summary table)",
+                "Bartlett truncation and record-length dependence: added 'What the window does not capture'",
+                "Untested constants and missing generic baselines: Limitations now list the 0.3 rhythm threshold, the first-zero truncation, and the absence of GCC/coherence-based comparisons",
+                "Removed version-history references (v2.1, earlier rule); fixed the Bartlett 1946 reference"
+            ],
+            "integrated_answers": [
+                "Interpretation of scores with large tolerance: Methods (tolerance as fraction of lag range)",
+                "Why widen tolerance rather than lengthen window: Methods paragraph, linked to the oracle results",
+                "External evidence for the REM change: none; stated in Results",
+                "Cap from stage-episode lengths: suggested in Practical guidance as untested",
+                "Null keeping shared co-modulation, GCC/PHAT comparison, sensitivity of constants: not in the experimental log; stated as limitations, no new experiments added"
+            ],
+            "actions_taken": [
+                "Inserted three paragraphs in Section 3 (Idea and algorithm)",
+                "Rewrote the closing reading of Section 5.2 and the abstract's sleep-cohort sentence",
+                "Extended Limitations and Practical guidance; edited summary table row",
+                "Edited Algorithm caption, experimental design and Table 3 header to remove version labels"
+            ]
+        },
+        "scores_before": {
+            "Originality": 2.0,
+            "Quality": 3.0,
+            "Clarity": 3.0,
+            "Significance": 2.0,
+            "Soundness": 3.0,
+            "Presentation": 3.0,
+            "Contribution": 2.0,
+            "Overall": 6.0,
+            "Confidence": 4.0
+        },
+        "scores_after": {
+            "Originality": 2.0,
+            "Quality": 3.0,
+            "Clarity": 3.0,
+            "Significance": 2.0,
+            "Soundness": 3.0,
+            "Presentation": 3.0,
+            "Contribution": 2.0,
+            "Overall": 5.0,
+            "Confidence": 4.0
+        },
+        "deltas": {
+            "Originality": 0.0,
+            "Quality": 0.0,
+            "Clarity": 0.0,
+            "Significance": 0.0,
+            "Soundness": 0.0,
+            "Presentation": 0.0,
+            "Contribution": 0.0
+        },
+        "total_gain": 0.0,
+        "total_drop": 0.0,
+        "outcome": "REJECTED_SCORE_DECREASE"
+    }
+}

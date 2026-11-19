@@ -1,0 +1,93 @@
+{
+    "v1": {
+        "outcome": "ACCEPTED_COMPILE_SUCCESS",
+        "formatting_feedback": {
+            "figure_and_tables": {
+                "Figure 1": {
+                    "detected_issue": "Within margins; the legend sits slightly over the end of panel (a)'s title (image content, not LaTeX).",
+                    "suggested_fix": "None in LaTeX."
+                },
+                "Figure 2": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 3": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 4": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 5": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 6": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Figure 7": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Table 1": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Table 2": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Table 3": {
+                    "detected_issue": "Column header reads 'aTDS v2.1', an internal version label not defined in the paper.",
+                    "suggested_fix": "Change the header to 'aTDS' (text change explicitly allowed)."
+                },
+                "Table 4": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Table 5": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                },
+                "Table 6": {
+                    "detected_issue": "None",
+                    "suggested_fix": "None"
+                }
+            },
+            "other_issues": [
+                {
+                    "page": 18,
+                    "element": "Reference [12] (Bartlett 1946)",
+                    "detected_issue": "Printed as 'In arXiv'; the paper appeared in the Supplement to the Journal of the Royal Statistical Society 8(1):27-41.",
+                    "suggested_fix": "Already corrected in references.bib; recompile with BibTeX."
+                },
+                {
+                    "page": 6,
+                    "element": "Algorithm 1 caption",
+                    "detected_issue": "Caption 'aTDS parameter selection (v2.1)' uses an undefined internal version label.",
+                    "suggested_fix": "Change to 'aTDS parameter selection' (text change explicitly allowed)."
+                },
+                {
+                    "page": 7,
+                    "element": "Section 4.1, Settings compared",
+                    "detected_issue": "'aTDS: v2.1 as in Section 3' uses an undefined version label.",
+                    "suggested_fix": "Change to 'aTDS: as in Section 3' (text change explicitly allowed)."
+                },
+                {
+                    "page": 10,
+                    "element": "Section 4.6, last sentences",
+                    "detected_issue": "'The stricter v2.1 tolerance ... against 0.72 with an earlier rule' refers to unexplained version history.",
+                    "suggested_fix": "Rephrase as 'The upper-bound tolerance rule costs some detection at r = 16 (AUC 0.65, against 0.72 when the tolerance was set from the mean chance score of a single recording, and 0.69 for the rescaled setting)' (text change explicitly allowed)."
+                },
+                {
+                    "page": 6,
+                    "element": "Section 3.6, paragraph after Eq. (7)",
+                    "detected_issue": "'in an earlier version that used the mean over 20 rotations of one recording' refers to unexplained version history.",
+                    "suggested_fix": "Rephrase as 'when the mean over 20 rotations of a single recording was used instead' (text change explicitly allowed)."
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,51 @@
+{
+    "Summary": "The paper proposes adaptive Time Delay Stability (aTDS), which sets the three sample-counted TDS parameters from the data. The window holds about 30 Bartlett-effective independent samples of the slowest signal (floor 61, cap 10% of the record). The lag range is half the window (the aliasing limit of circular cross-correlation), capped at half the shortest detected rhythm period. The tolerance is the widest value whose chance score on circularly rotated copies (mean + 2 SE) stays within a 5% false-stability budget. The 4-of-5 stability rule is unchanged. On synthetic AR(1) pairs with a slow-down factor r, aTDS clearly beats the published 60/\u00b130/\u00b11 setting for slow systems (e.g. AUC 0.92 vs 0.59 at r = 4). It is equivalent to or undecided against a setting rescaled by hand with the true r (better only at r = 8) and below a labelled oracle at every r >= 2. Further experiments cover fGn, AR(2) rhythms, Rulkov maps, mixed-speed and non-stationary signals; a lag-range experiment exposing silent wrong-delay failures of fixed TDS; and a per-link rotation test with BH-FDR on small networks. Real-data tests use the original TDS EEG benchmark, records from hydrology, energy and economics, and a 35-subject polysomnography cohort. In the cohort, the uncapped window is too long for sleep staging; capped at 300 s, aTDS gives no significant gain and a weaker wake contrast.",
+    "Strengths": [
+        "Addresses a real and practically relevant reproducibility problem: TDS parameters are counted in samples, and the published values are routinely reused on data with different time scales or sampling rates.",
+        "Each rule has an explicit, interpretable statistical rationale (Bartlett effective sample size, circular-correlation aliasing limit, surrogate-calibrated false-stability budget), and none uses coupling labels or true delays.",
+        "Convincingly exposes a silent failure mode of fixed TDS: with a \u00b130 lag range, all 50 pairs with longer delays report an edge delay at high TDS scores (72\u201396%), 16 of them with the wrong sign.",
+        "Rigorous evaluation design: a fair hand-rescaled baseline and an oracle upper bound, paired bootstrap AUC intervals, TOST equivalence testing, Wilson intervals, separate calibration data and ablations of each rule.",
+        "Broad coverage of signal classes (long memory, rhythms, bursting maps, mixed speeds, non-stationarity) and real records from several fields.",
+        "Exceptionally honest reporting of negative and mixed results (oracle superiority, no gain in the sleep cohort, weakened wake contrast, inconclusive FDP), with an extensive limitations and practical-guidance section; code, seeds and raw outputs are stated to be released."
+    ],
+    "Weaknesses": [
+        "Limited methodological novelty: every ingredient (Bartlett effective sample size, circular-correlation aliasing bound, circular-shift surrogates, BH-FDR) is standard; the contribution is mainly their combination for one coupling measure.",
+        "Modest gain over the fair baseline: against the setting rescaled by the true r, aTDS is equivalent or undecided except at r = 8, and the oracle (longer windows, tol = 0) beats it at every r >= 2. The benefit is mainly automation rather than better detection.",
+        "The main synthetic benchmark scales the delay together with the correlation time (linear AR(1), constant delay, permanent coupling). This matches the assumptions built into the window and lag rules, so success there is partly by construction. Long-delay/short-memory, nonlinear, intermittent and regime-switching coupling are barely tested, and the long-delay case fails silently without a user-supplied dmax.",
+        "The motivating physiological application is essentially negative. The uncapped 48-min window cannot resolve sleep stages. The manual 300-s cap undermines the parameter-free claim, and with it there is no significant gain and the wake significant-link contrast becomes significantly weaker.",
+        "Calibrated tolerances widen to 5\u201310% of the lag range (up to \u00b156 samples, sometimes larger than the delay). This changes what 'stable delay' means, makes aTDS scores incomparable with the published TDS literature (undercutting the reproducibility motivation), and brings no significant AUC benefit.",
+        "The rotation null is biased toward leniency: it removes shared slow co-modulation, and the SE treats correlated rotations as independent. Single recordings reach about 20% chance score, and the sleep-cohort tolerance is not calibrated with the stage-matched null.",
+        "Missing simple baselines: estimated-time-scale rescaling or downsampling of the published setting, full-record cross-correlation with a surrogate test, and standard delay estimators (GCC-PHAT, coherence-based).",
+        "Evidence from other fields rests on single records with very long windows (27\u201380 days), and the 'known' delays are partly defined by the full-record cross-correlation peak itself.",
+        "Design constants (5% budget, floor of 61, 2-SE margin, 20 rotations, 0.3 rhythm threshold, first-zero truncation of the Bartlett sum) are never varied. Train/test separation in the synthetic tests is weak. The network FDR experiment is small (10 networks per design), and its 8.3% FDP is inconclusive.",
+        "The default non-causal stability anchor departs from the original method (58.1% vs 43.6% on the benchmark pair) without sufficient justification, and there are minor inconsistencies in how the delay is defined (median vs mode). The presentation is dense and long relative to the core idea."
+    ],
+    "Originality": 2,
+    "Quality": 3,
+    "Clarity": 3,
+    "Significance": 2,
+    "Questions": [
+        "How does aTDS compare with a simple baseline that estimates the time scale (e.g. the Bartlett factor or correlation time) and rescales or downsamples the published 60/\u00b130/\u00b11 setting accordingly?",
+        "How does aTDS compare with GCC-PHAT, coherence-based estimation or full-record cross-correlation with a surrogate test, on the synthetic slow-down data and on the cross-field records?",
+        "How does aTDS behave when the delay is varied independently of the correlation time, and under nonlinear, intermittent or regime-switching coupling with drifting delays? Does the wide tolerance merge distinct delays or mask genuine drift?",
+        "In the sleep cohort, what happens if the tolerance is calibrated with the cross-subject, stage-matched null or with a recording-clustered SE? Does the weakened wake contrast persist?",
+        "How sensitive are the results to the 5% budget, the 2-SE margin, the number of rotations and the first-zero truncation of the Bartlett sum?",
+        "Why is the non-causal stability anchor the default, and do the main conclusions change with the causal anchor that reproduces the original 43.6%?",
+        "Can an automatic edge-of-range or out-of-range delay warning be designed and validated? Is there a principled, data-driven way to choose the window cap for stage-resolved analyses?"
+    ],
+    "Limitations": [
+        "aTDS selects scaled rather than optimal parameters; an oracle outperforms it, and the advantage over a well-rescaled fixed setting is small.",
+        "Long windows reduce time resolution; stage-resolved physiological analyses need a manual cap, so the method is not fully parameter-free in its main use case.",
+        "The within-recording rotation null can be anti-conservative when signals share slow co-modulation, which could produce spurious links in physiological networks.",
+        "Wide calibrated tolerances weaken the meaning of stability, and aTDS scores are not comparable with published TDS scores.",
+        "Delays beyond half the window are unreachable without dmax, with no automatic warning; pairwise TDS cannot distinguish direct from indirect links.",
+        "No direct negative societal impact. Misuse in clinical inference without proper null testing could yield spurious coupling claims. The manuscript was drafted with substantial LLM assistance and has not been reviewed by a human expert, so the numbers need independent verification."
+    ],
+    "Ethical Concerns": false,
+    "Soundness": 3,
+    "Presentation": 3,
+    "Contribution": 2,
+    "Overall": 5,
+    "Confidence": 4,
+    "Decision": "Reject"
+}

@@ -1,0 +1,71 @@
+THOUGHT:
+The paper proposes aTDS, three data-driven rules for the TDS parameters: a window of about 30 Bartlett-effective samples of the slowest signal, a lag range of half the window capped at half the shortest detected period, and a tolerance chosen as the widest value whose rotation-null chance score (mean + 2 SE) stays at or below 5 %. The problem is real. TDS parameters are fixed in samples and tuned for 1 Hz sleep data, and reproducibility across implementations is a known issue. The rules are reasonable and grounded in classical statistics (Bartlett/Bayley-Hammersley effective sample size, the circular-correlation aliasing limit, surrogate calibration). Methodologically, none of these is a deep novelty: each is a standard heuristic. The contribution is in putting them together and, above all, in the careful evaluation.
+
+The evaluation is the strongest part. It isolates each rule, compares against fair baselines (published, rescaled by hand with the true r, and a labelled oracle), uses paired bootstrap AUC with TOST equivalence, reports Wilson intervals, and has a train/test split for calibration. The lag-range finding is important and practically useful for the field: a fixed ±30 lag gives high TDS scores at a wrong edge delay, with the wrong sign in 16 of 50 cases. The network FDR test and the out-of-field records (rainfall-runoff, temperature-demand) add breadth. The paper is unusually honest. The oracle beats aTDS at every r ≥ 2, aTDS is undecided against the rescaled setting at r = 4 and 16, the sleep cohort shows no significant gain and a loss of wake contrast, and the uncapped window is unusable for staging.
+
+Concerns:
+(1) Tolerance widening dilutes the meaning of "stable delay". The tolerance reaches ±56 at r = 16 and ±136 s in the sleep cohort, and can exceed the delay itself. The chance score is controlled, but what TDS measures changes. Stability becomes coarse, and scores are not comparable to published TDS (the authors acknowledge this).
+(2) The rotation null ignores shared slow co-modulation and treats correlated rotations as independent. Both biases favour a wider tolerance. This is acknowledged but not fixed, and the 95th percentile of single-recording chance scores reaches 20 %.
+(3) The window rule is justified by "30 independent samples", but the oracle results show that this is not detection-optimal. The real criterion is a time-resolution trade-off that the rule does not encode, and the sleep application needed an ad hoc 300 s cap. This undermines the "signals choose the parameters" framing for the main target domain.
+(4) The Bartlett factor uses truncation at the first zero crossing and max over signals. For long-memory signals B depends on record length, so the window is not intrinsic.
+(5) The synthetic signals are mostly linear AR(1) with additive coupling. Physiological coupling is nonstationary, and the only real physiological validation (sleep) is mixed, with no ground truth.
+(6) The paper compares only against TDS variants, not against generic delay-estimation approaches (e.g. GCC/PHAT, or windowed coherence-based delay).
+(7) Minor points: reference [12] is cited "In arXiv" for a 1946 paper; Table 6 is split across pages; the paper is dense; the version labelling ("v2.1", "an earlier rule") leaks development history. The AI-drafting disclosure and the statement that no human expert has reviewed it are noted. They are not an ethical problem per se, but the author should verify everything carefully.
+
+Overall: a technically careful, well-scoped, moderately original methods paper with practical value for the network-physiology community, but limited conceptual novelty and an inconclusive gain on the main physiological application. Borderline. I lean slightly positive (6) because the claims are well supported and honestly scoped.
+
+REVIEW JSON:
+```json
+{
+  "Summary": "The paper proposes adaptive Time Delay Stability (aTDS), which sets the three sample-counted parameters of TDS from the data: (1) the window length L = 30 times the maximum Bartlett variance-inflation factor across signals, so that each window holds about 30 effective independent samples of the slowest signal (clipped between 61 samples and 10% of the record); (2) the lag range at half the window (the circular-correlation aliasing limit), capped at half the shortest detected rhythm period; (3) the tolerance as the widest value whose chance TDS score on circularly rotated, coupling-free copies (mean + 2 SE) stays within a 5% false-stability budget. The 4-of-5 stability rule is unchanged. On synthetic AR(1) signals slowed by a factor r, aTDS clearly beats the published 60/±30/±1 setting for r ≥ 2 (AUC 0.92 vs 0.59 at r = 4). It is equivalent to or better than a hand-rescaled setting where the tests can decide, and it is below a labelled oracle. Isolating the lag range shows that a fixed ±30 range reports wrong (edge) delays at high TDS scores. Further tests cover fGn, rhythms, Rulkov neurons, mixed-speed and nonstationary signals, and six-node networks with a per-link rotation test and BH-FDR control. On real data, aTDS recovers known delays in rainfall-runoff and temperature-demand records. In a 35-subject sleep cohort it needs a 300 s cap to resolve stages, and then reproduces the light vs deep sleep contrast without significant gain, removes a REM < DS inversion in mean TDS, and weakens the wake contrast.",
+  "Strengths": [
+    "Addresses a real and widely ignored reproducibility problem: TDS parameters are counted in samples and were tuned for 1 Hz sleep data, yet are reused across systems and sampling rates.",
+    "Each rule has an explicit statistical rationale (Bartlett effective sample size, the circular cross-correlation aliasing limit, surrogate-based false-stability budget), and no rule uses coupling labels or true delays.",
+    "Careful, well-controlled evaluation: each rule is isolated, and baselines are fair (published, rescaled with the true slow-down factor, labelled oracle). It uses paired bootstrap AUC differences, TOST equivalence testing, Wilson intervals and a train/test split for calibration.",
+    "The lag-range experiment exposes a practically important silent failure of fixed TDS: high scores (72-96%) with a wrong edge delay, sometimes with the wrong sign.",
+    "Broad test suite (long memory, rhythms, bursting, mixed speeds, nonstationary memory, networks with FDR control) and out-of-domain real records with known delays.",
+    "Unusually honest reporting of negative and mixed results (oracle superiority, undecided comparisons, no significant gain and lost wake contrast in the sleep cohort, uncapped window unusable for staging), with claims scoped accordingly.",
+    "Code, seeds and raw outputs are reportedly released, which supports reproducibility."
+  ],
+  "Weaknesses": [
+    "Limited conceptual novelty: each rule is a standard heuristic (effective sample size, half-window lag, surrogate-calibrated threshold). The contribution is mainly their combination and evaluation.",
+    "The calibrated tolerance grows with the time scale (±56 samples at r = 16, ±136 s in the sleep cohort) and can exceed the delay itself. This changes what 'stable delay' means. Chance is controlled, but the stability criterion becomes coarse, and scores are not comparable with published TDS.",
+    "The window rule's central constant (30 effective samples) is a convention, and the oracle shows it is not detection-optimal. The main physiological application required an ad hoc 300 s cap, which undercuts the claim that the signals choose the parameters.",
+    "The rotation null removes shared slow co-modulation (e.g., sleep-stage-driven) and treats correlated rotations as independent in the SE. Both effects bias toward a wider tolerance and too-small p-values, and single-recording chance scores reach 20% at the 95th percentile. These issues are acknowledged but not resolved.",
+    "The main real physiological evaluation (sleep cohort) shows no significant gain on the key contrast and a significant loss on the wake contrast for significant links. The removed REM < DS inversion is not validated against any ground truth, so it is unclear whether this is an improvement.",
+    "The synthetic benchmarks are mostly linear AR(1) processes with constant additive coupling. Regime-switching coupling, which is central to TDS's physiological use, is not tested (only on/off blocks with fixed delay).",
+    "No comparison with generic delay-estimation or coupling methods (e.g., generalized cross-correlation, windowed coherence-based delay estimation). The baselines are all TDS variants.",
+    "The Bartlett factor depends on record length for long-memory signals and on the first-zero truncation, so the window is not an intrinsic property of the system.",
+    "Several design constants (5% budget, 61-sample floor, 20 rotations, 2-SE margin, rhythm-detection threshold 0.3) are not varied, so their sensitivity is not tested.",
+    "Presentation is dense, with version-history references ('v2.1', 'an earlier rule'). There are small errors such as the Bartlett 1946 reference listed as 'In arXiv'."
+  ],
+  "Originality": 2,
+  "Quality": 3,
+  "Clarity": 3,
+  "Significance": 2,
+  "Questions": [
+    "How should a user interpret a TDS score when the calibrated tolerance is comparable to or larger than the delay? Would a relative tolerance (e.g., a fraction of the window or of the delay jitter expected under coupling) preserve the meaning of stability better?",
+    "Can you report the false-stability rate of the tolerance rule under a null that keeps shared slow co-modulation (e.g., a cross-subject stage-matched null or a nonstationary common driver) to quantify the bias you describe?",
+    "Since the oracle prefers long windows with tolerance 0, would a rule that fixes tol near 0 and lengthens the window to reach the same chance budget be competitive? Why prefer widening the tolerance over lengthening the window when time resolution is not critical?",
+    "In the sleep cohort, is there any external evidence that removing the REM < DS inversion in mean TDS is more physiologically correct, rather than an artefact of the wider tolerance?",
+    "How sensitive are the results to the rhythm-detection threshold (0.3) and to the first-zero truncation of the Bartlett sum, especially for signals with negative autocorrelation lobes?",
+    "How does aTDS compare with a standard windowed GCC/PHAT delay estimator, or with a coherence-based delay estimate, on the slow-down benchmark?",
+    "Could the window cap for stage-resolved analysis be derived from the distribution of stage-episode lengths, and how would that interact with the 30-effective-sample criterion?"
+  ],
+  "Limitations": [
+    "aTDS scales but does not optimize the parameters. The oracle is better at every r ≥ 2, and the window may be too long for time-resolved questions (48 min in the sleep cohort).",
+    "Delays beyond half the window are silently missed without the optional dmax, and dmax was tested only with a correct value.",
+    "The rotation null underestimates chance when signals share slow co-modulation, which can lead to a too-wide tolerance and too-small per-link p-values in real physiological data.",
+    "aTDS scores are not comparable with published TDS scores, which complicates comparison with the existing literature.",
+    "Pairwise TDS cannot distinguish indirect from direct links; stronger common drivers are expected to produce spurious links.",
+    "No direct negative societal impacts. A potential risk is overinterpreting automated physiological network results in clinical contexts without stage-aware calibration."
+  ],
+  "Ethical Concerns": false,
+  "Soundness": 3,
+  "Presentation": 3,
+  "Contribution": 2,
+  "Overall": 6,
+  "Confidence": 4,
+  "Decision": "Accept"
+}
+```
