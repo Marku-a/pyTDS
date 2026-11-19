@@ -1,0 +1,61 @@
+THOUGHT:
+The paper proposes aTDS, a set of three data-driven rules for the window length, lag range and stability tolerance of Time Delay Stability (TDS): window = 30 x max_i Bartlett factor (first-zero truncated), lag range = (L-1)/2 with a half-period cap for rhythmic signals, and tolerance = largest t such that the mean + 2 SE chance score of circularly rotated copies stays below 5 %. The 4-of-5 stability rule is kept. Evaluation spans synthetic AR(1)/fGn/AR(2)/Rulkov signals, a 1-Hz EEG benchmark pair, a 35-subject sleep cohort, 53 BIDMC ECG/PPG recordings at 125 Hz, and hydrology/energy/fuel-price records.
+
+My intuitions. (1) The paper is unusually candid: it reports where aTDS is equal or worse (1-Hz sleep regime, wake contrast, pulse-arrival-time reference, false stability 4 % vs <1 %), quantifies sensitivity to its design constants, separates calibration from scoring data, and gives bootstrap/Wilson/TOST statistics. That is to its credit. (2) But the core contribution is a heuristic rescaling of three parameters. Most of the headline wins are against fixed sample-based parameters applied far outside their design regime (e.g. 60 samples = 0.48 s at 125 Hz, less than one heartbeat), which is close to a strawman: no competent analyst would apply those values unchanged at 125 Hz. The relevant baseline is rescaling by an estimated time scale; the authors themselves state that this "performed similarly to aTDS in the slow-down test" and that it was "not compared in the other experiments". The manually rescaled reference (given the true r) is equivalent or undecided at most r, better for aTDS only at r = 8. So the incremental value of the specific rules over a one-line rescaling is not demonstrated on the real-data applications, which is exactly where it matters. (3) The rotation null is an elegant within-recording choice, but it breaks for quasi-periodic signals: in 12 of 53 ECG pairs calibration failed even at tolerance 0 because rotated heartbeat signals re-align by chance. The proposed fix (tolerance 0) is ad hoc. The "5 % false-stability budget" is a window-level mean, not a per-link error rate; this is stated, but it means the headline calibration has no direct inferential meaning and the link-level significance still relies on separate tests. (4) Internal inconsistency: Sec. 2.2 calls the non-causal anchor "the offline definition of Bashan et al.", yet the causal anchor is what reproduces the MATLAB benchmark (43.53 vs 43.61 %) while the non-causal anchor gives 58.1 %. Either the original implementation is causal or the description is wrong; the abstract's "reproduces the original TDS benchmark" uses a different anchor from every other analysis in the paper. (5) The Bartlett factor truncated at the first zero crossing lacks the guarantee the Cauchy–Schwarz argument gives for full sums, and the paper shows it fails on seasonal data (3-year window, 19 windows); the long-memory dependence on record length means the window is not a property of the system. (6) Delay accuracy claims ("99 % within 3 samples") are at strong coupling (c = 0.6); at weak coupling and large r the delay-found rate drops to 42 %. Tolerances up to ~10 % of the lag range (e.g. ±136 s in the uncapped sleep setting) make aTDS scores incomparable with the TDS literature, which the paper acknowledges but which weakens the network-physiology use case. (7) Sleep results: aTDS gives no gain, loses the wake contrast, and the uncapped window cannot resolve stages at all, requiring an analyst-chosen cap — i.e., in the field's main use case the method needs manual parameters anyway. (8) Table 8's vote count (14 of 21 "better") mixes non-independent comparisons and isolated-rule tests against single fixed values; it overstates the evidence. (9) Clarity: very dense, number-heavy prose; sign conventions (tau0 vs reported delay) are confusing; some figures are referenced with details only in captions. Sleep cohort data are not public.
+
+Overall: well executed and honest, practically useful as a software default, but modest originality and the key baseline (estimated rescaling) is missing from most experiments; several real-data wins are against an unrealistic configuration. I lean towards rejection in its current form, with a clear path to acceptance (estimated-rescaling and per-pair joint-Bartlett baselines on all real data, resolve the anchor inconsistency, a robust null for rhythmic signals).
+
+REVIEW JSON:
+```json
+{
+  "Summary": "The paper introduces adaptive Time Delay Stability (aTDS), which replaces the fixed sample-based TDS parameters (window 60, lag ±30, tolerance ±1) with three data-driven rules: a window containing 30 effective independent samples of the slowest signal (via a first-zero-truncated Bartlett factor), a lag range of half the window capped at half a rhythm period, and the widest tolerance for which circularly rotated, coupling-free copies stay within a 5 % mean false-stability budget (mean + 2 SE). Each rule is evaluated in isolation on simulated AR(1) pairs with known delays, followed by a slow-down test, time-varying delay patterns and further signal classes (fGn, AR(2) rhythms, Rulkov maps, mixed-speed systems). On recorded data the pyTDS implementation reproduces the MATLAB TDS benchmark, aTDS reproduces but does not improve the sleep-stage network pattern in 35 polysomnograms, detects ECG-to-finger-pulse coupling at 125 Hz in 50 of 53 ICU patients (vs 14 for fixed parameters applied unchanged), and recovers known delays in rainfall-runoff and temperature-demand records.",
+  "Strengths": [
+    "Addresses a real, practically relevant problem: TDS parameters are expressed in samples and have no principled transfer to other sampling rates or time scales; the lag-range experiment convincingly shows that fixed TDS can return high scores (72-96 %) with wrong, even sign-flipped delays.",
+    "Each rule is motivated (effective sample size, aliasing of circular correlation, chance-calibrated tolerance) and evaluated in isolation, with a sensitivity analysis of the design constants (Table 2).",
+    "Careful statistical practice: separation of calibration and scoring data, paired bootstrap intervals, Wilson intervals, TOST equivalence, oracle and rescaled references.",
+    "Unusually honest reporting of negative and neutral results (no gain in 1-Hz sleep data, weaker wake contrast, higher false stability, worse agreement with pulse arrival time, failures on seasonal and weekly price data).",
+    "Within-recording rotation null makes the method applicable to single systems without a cohort; computational cost is analysed.",
+    "Breadth of applications (synthetic, physiological at two rates, hydrology, energy, economics) and open code with fixed seeds."
+  ],
+  "Weaknesses": [
+    "Limited originality: the method is essentially a principled rescaling of three parameters. The authors acknowledge that simply multiplying the fixed parameters by a factor estimated from the correlation time performed similarly in the slow-down test, yet this baseline is not evaluated on any other experiment, including all real-data applications. The added value of the specific rules over such rescaling is therefore not demonstrated.",
+    "Many headline gains are against fixed parameters applied far outside their design regime (e.g. a 0.48 s window at 125 Hz, shorter than one heartbeat). This is close to a strawman; the ECG result (AUC 0.96 vs 0.69) would be much more informative against estimated rescaling, a physiologically chosen window, or other delay-estimation baselines.",
+    "Inconsistency regarding the stability anchor: Sec. 2.2 states that the non-causal anchor is the offline definition of Bashan et al., but the benchmark is reproduced only with the causal anchor (43.53 vs 43.61 %), while the non-causal anchor used everywhere else gives 58.1 %. The abstract's claim of reproducing the benchmark thus uses a different definition from the rest of the paper.",
+    "The rotation null fails for quasi-periodic signals: in 12 of 53 ECG pairs calibration could not meet the budget even at tolerance 0, and these pairs were scored with tolerance 0 ad hoc. A method intended for physiology needs a null that is robust to rhythms (e.g. rotation by non-integer periods, phase-randomised or twin surrogates).",
+    "The 5 % budget controls the mean window-level chance score, not a link-level error rate; under aTDS false stability in controls is 4-6 % versus <1 % for fixed TDS, and link significance requires a separate test, so the calibration has limited inferential meaning.",
+    "The first-zero-truncated Bartlett factor loses the Cauchy-Schwarz guarantee, grows with record length for long-memory signals, and fails on seasonal data (3-year window, 19 windows); the window is therefore a property of the record rather than the system.",
+    "In the main use case of TDS (stage-resolved sleep networks) aTDS gives no improvement, loses the wake contrast in significant links, and the uncapped window cannot resolve stages, so an analyst-chosen or stage-derived cap is still required.",
+    "Wide calibrated tolerances (up to ~10 % of the lag range, e.g. ±136 s in the uncapped sleep setting) make aTDS scores incomparable to the existing TDS literature.",
+    "The Table 8 vote count (14 of 21 'better') aggregates non-independent comparisons and isolated-rule tests and overstates the strength of evidence.",
+    "Presentation is very dense and number-heavy; sign conventions (tau0 vs reported delay) are confusing; the sleep cohort data are not public, limiting reproducibility of that part."
+  ],
+  "Originality": 2,
+  "Quality": 3,
+  "Clarity": 2,
+  "Significance": 2,
+  "Questions": [
+    "How does aTDS compare with fixed TDS rescaled by an estimated factor (e.g. from the correlation time or the Bartlett factor) on the ECG/PPG, sleep and hydrology/energy data? What concrete benefit remains beyond such rescaling?",
+    "Please reconcile the anchor definitions: is the original Bashan et al./MATLAB implementation causal or non-causal? If causal, why is the non-causal anchor described as the original offline definition and used throughout?",
+    "For the 12 ECG pairs where calibration failed, what is the score and detection outcome if a rhythm-robust surrogate (e.g. phase randomisation, rotation avoiding multiples of the beat period) is used instead of setting tolerance to 0?",
+    "What is the link-level false-positive rate of aTDS when the rotation p-value with FDR control is applied on coupling-free networks, and how does it compare with fixed TDS?",
+    "How sensitive is the window to record length for long-memory signals (H = 0.9), and would a full-sum or spectral estimate of the effective sample size behave better on seasonal data?",
+    "Why use the absolute correlation |C| for tau0 given that it allows locking onto anti-phase lags half a beat away in rhythmic signals? Was a signed-maximum variant tested?",
+    "In the delay-pattern simulations, how do the accuracy and stable-window share degrade at weak coupling (c = 0.3) and for faster delay changes relative to the window length?"
+  ],
+  "Limitations": [
+    "Not a parameter optimiser: an oracle and longer windows detect better under permanent coupling; the constant 30 is a convention.",
+    "Rhythmic and seasonal signals and stage-resolved analyses still require a manual window or lag cap.",
+    "Rotation null fails for strongly periodic signals; the false-stability budget is window-level, not link-level.",
+    "Wider tolerances make scores incomparable with prior TDS studies; long windows inherit stability near regime boundaries.",
+    "Pairwise TDS cannot reliably separate direct from indirect links; correlation-based delay does not capture non-monotonic coupling.",
+    "No obvious negative societal impact; clinical use of ICU-derived conclusions would require further validation."
+  ],
+  "Ethical Concerns": false,
+  "Soundness": 3,
+  "Presentation": 2,
+  "Contribution": 2,
+  "Overall": 5,
+  "Confidence": 4,
+  "Decision": "Reject"
+}
+```
