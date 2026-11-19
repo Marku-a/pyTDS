@@ -1,0 +1,79 @@
+THOUGHT:
+All three reviewers agree on what the paper is and how good it is. Overall scores are 4, 5 and 5, all three recommend Reject, and every reviewer gives Originality 2, Quality 3, Clarity 2, Significance 2, Soundness 3, Presentation 2, Contribution 2 and Confidence 4. My reading of the reviews matches theirs.
+
+What the paper does well: it targets a real reproducibility problem. TDS parameters are counted in samples and were tuned for 1-Hz sleep data. Each of the three rules has an explicit statistical rationale (Bartlett effective sample size, the aliasing limit of circular correlation, and a surrogate-calibrated false-stability budget). The evaluation is unusually fair: it includes a true-r rescaling, an estimated-r rescaling, an oracle, and full-record cross-correlation and GCC-PHAT, plus a held-out replication and sensitivity analyses. The authors report their negative results candidly. The demonstration that a fixed +/-30 lag range gives high TDS scores with edge-pinned, sometimes sign-flipped delays is a useful cautionary result on its own.
+
+The decisive problem, raised by all three reviewers, is that the paper does not show a benefit over a trivial baseline. The large gains are measured against the published setting used outside its design regime. Against the obvious alternative, rescaling the published setting by an estimated correlation time, aTDS is at best equivalent. That baseline has higher per-link power at r = 4 (0.82 vs 0.66) and lower false stability in the regime-switching test (2.0% vs 8.1%). Reviewers 1 and 2 also note that the rhythm cap made aTDS report the wrong delay in a case the rescaling got right. In the motivating domain, the 35-subject sleep cohort, there is no gain, and the uncapped window cannot resolve sleep stages. The real-data advantage rests on a single hourly rainfall-runoff record whose reference delay is partly circular, and one of the catchments fails.
+
+Several secondary concerns are shared by all reviewers:
+- Calibrated tolerances widen to as much as +/-56 samples and can exceed the delay itself. This changes the meaning of "stable" and breaks comparability with published TDS scores, and some of the gain may come from this looser criterion.
+- The 5% budget controls only the mean chance score. Single records reach 20%, regime boundaries give 8-9%, and the rotation null ignores shared slow co-modulation, which makes it anti-conservative.
+- Truncating the Bartlett sum at the first zero crossing ignores seasonal and negative lobes and makes the window depend on record length for long-memory signals.
+- All main results use the non-causal stability anchor, which moves the benchmark score from 43.5% to 58.1%.
+- Presentation is dense and repetitive.
+
+The reviewers disagree on one factual point. Reviewer 1 says equivalence to the estimated rescaling is not formally tested on the held-out set. Reviewers 2 and 3 credit the paper with TOST equivalence testing. In either case the per-link power results argue against strict equivalence, so the authors should qualify that claim.
+
+Reviewer 3 raises two further points: the sleep cohort's source and its ethics approval or consent are not documented, and long delays under circular correlation depend on wrap-around overlap. The cohort documentation is a reporting gap that should be fixed, but it does not by itself amount to an ethics concern.
+
+Decision: the work is careful and honest, but its contribution beyond a simple rescaling is not shown, and the original contributions are modest. I recommend Reject with an Overall score of 5, the reviewers' modal score, which credits the rigour and candour. A revision would be much stronger if it found a setting where aTDS beats the estimated rescaling with statistical support, separated the tolerance effect from the window effect, used a stronger null and a causal anchor, and tightened the presentation.
+
+REVIEW JSON:
+```json
+{
+  "Summary": "The paper proposes adaptive Time Delay Stability (aTDS), a set of data-driven rules for the three sample-counted TDS parameters. (1) The window holds about 30 Bartlett-effective independent samples of the slowest signal, using the variance-inflation factor truncated at the first autocorrelation zero crossing, with a floor of 61 samples and a cap of 10% of the record. (2) The lag range is (L-1)/2, the circular-correlation aliasing limit, capped at half the shortest detected rhythm period. (3) The tolerance is the widest one whose chance score on circularly rotated copies (mean + 2 SE) stays within a 5% false-stability budget. On AR(1) slow-down benchmarks, aTDS clearly beats the published 60/+/-30/+/-1 setting once the system is slower than 1-Hz sleep data (AUC 0.92 vs 0.59 at r = 4, replicated on held-out seeds). It performs about the same as the published setting rescaled by an estimated correlation time, and below an oracle and full-record cross-correlation/GCC-PHAT. The paper shows that a fixed lag range can report wrong delays, sometimes of the wrong sign, at high TDS scores. Further experiments cover long-memory, rhythmic, Rulkov, mixed-speed, non-stationary, regime-switching, nonlinear and drifting-delay signals, and networks with per-link rotation tests and BH-FDR. On real data, aTDS reproduces the MATLAB EEG benchmark and recovers known delays in an hourly rainfall-runoff record and an energy record. It fails on a seasonal catchment without a window cap and gives no improvement in a 35-subject sleep cohort.",
+  "Strengths": [
+    "Addresses a real reproducibility problem: TDS parameters are counted in samples, tuned for 1-Hz sleep data, and routinely transferred across time scales without justification.",
+    "Demonstrates a concrete, practically important failure mode: a fixed +/-30 lag range yields high TDS scores (72-96%) with edge-pinned, sometimes sign-flipped delays.",
+    "Each rule has an explicit, interpretable statistical rationale (Bartlett effective sample size, circular-correlation aliasing limit, surrogate-calibrated false-stability budget). The algorithm is fully specified, cheap, and uses no coupling labels.",
+    "Fair and strong baseline design: true-r and estimated-r rescaling, a labelled oracle, full-record cross-correlation and GCC-PHAT, with paired bootstrap intervals, equivalence testing, Wilson intervals and FDR-controlled network tests.",
+    "Broad coverage of signal classes and several real-data domains, a held-out replication with new seeds, and a sensitivity analysis of every design constant.",
+    "Unusually candid reporting of negative results: no gain on the sleep cohort, inferiority to full-record estimators for constant delays, false stability near regime boundaries, failure on a seasonal catchment, and poor performance under non-monotone coupling.",
+    "Practical guidance and reproducibility support (fixed seeds, released code and raw outputs, reproduction of the MATLAB benchmark at 43.53% vs 43.61%)."
+  ],
+  "Weaknesses": [
+    "The paper does not show a benefit over a trivial baseline. By the authors' own analysis, no synthetic test shows aTDS beating the estimated-r rescaling with statistical support. The rescaling has higher per-link power at r = 4 (0.82 vs 0.66) and lower false stability under regime switching (2.0% vs 8.1%). The large gains are measured against the published setting used outside its design regime.",
+    "The equivalence claim in the abstract and conclusion is overstated. The per-link power results argue against strict equivalence, and one reviewer questions whether equivalence was formally tested on the held-out set and on every comparison table row.",
+    "The advertised additions (explicit false-alarm budget, rhythm cap, single mixed-speed rule) are not shown to add value. On the d = 30 rhythm, the cap makes aTDS report the wrong (anti-phase) delay where the rescaling succeeds.",
+    "Calibrated tolerances grow to about 5-10% of the lag range (up to +/-56 samples) and can exceed the delay itself. This coarsens the meaning of 'stable', makes aTDS scores incomparable with the TDS literature, and some of the detection gain may come from the looser criterion. The oracle prefers tolerance 0 with longer windows.",
+    "The false-stability budget controls only the mean chance score. Single recordings reach a 95th percentile of 20%, regime boundaries give 8-9%, the SE treats correlated rotations as independent, and the rotation null ignores shared slow co-modulation. These biases favour wider tolerances and smaller p-values on non-stationary physiological data. Block, IAAFT or multivariate nulls were not evaluated.",
+    "The window rule is fragile. Truncating the Bartlett sum at the first zero crossing ignores seasonal and negative lobes, which causes the L0123002 failure, and makes the window record-length dependent for long-memory signals. Per-signal truncation also weakens the Cauchy-Schwarz justification. The constant 30 is a convention, and 45-60 detect better.",
+    "There is no improvement in the target domain. On 35 polysomnograms aTDS does not improve sleep-stage contrasts, the uncapped window cannot resolve stages, and the wake contrast weakens. There is no comparison with time-resolved alternatives such as sliding-window GCC-PHAT.",
+    "Real-data evidence of an advantage is thin. It rests on one hourly rainfall-runoff record whose reference delay is partly defined by full-record cross-correlation, and several real analyses use very few windows (12-19).",
+    "All main results use the non-causal stability anchor, which changes the benchmark score from 43.5% to 58.1%, and robustness to the causal anchor is untested. Long delays under circular correlation rely on wrap-around overlap, and a zero-padded alternative is not discussed.",
+    "Originality is modest: the ingredients (effective sample size, surrogate calibration, BH-FDR) are standard, and the novelty lies in combining them for TDS.",
+    "Presentation is dense and repetitive (duplicated guidance bullets, numbers restated across the text and tables), which dilutes the core message. The sleep cohort's source, inclusion criteria and ethics approval or consent are not documented."
+  ],
+  "Originality": 2,
+  "Quality": 3,
+  "Clarity": 2,
+  "Significance": 2,
+  "Questions": [
+    "Is there any realistic setting, synthetic or real (for example, heterogeneous or mixed-speed networks with weak coupling), where aTDS beats the estimated-r rescaling with paired statistical support? If not, what is the case for recommending aTDS over the simpler rule?",
+    "Can you report TOST equivalence tests against the estimated rescaling on the held-out set and on every comparison row, and revise the 'equivalent' claim in light of the per-link power results?",
+    "How much of the detection gain comes from the wider tolerance versus the longer window? Would a tolerance tied to the delay-estimate variance (for example, a Cramer-Rao or Carter bound) keep scores interpretable and comparable?",
+    "How do the results change with block, IAAFT or multivariate surrogates and with recording-clustered standard errors, particularly on the sleep cohort?",
+    "Would a tapered Bartlett estimator, or the joint factor B_xy, fix the seasonal-catchment failure without a manual cap, and how does per-signal truncation affect the Cauchy-Schwarz bound?",
+    "Do the main conclusions hold under the causal stability anchor that matches the original MATLAB implementation?",
+    "Why not adopt 45 independent samples as the default, given the sensitivity analysis?",
+    "Is there an independent hydrological estimate of the rainfall-runoff delay that does not rely on full-record cross-correlation?",
+    "What is the source of the 35 polysomnographic recordings, and was ethics approval or consent obtained?"
+  ],
+  "Limitations": [
+    "aTDS performs about the same as, and in some respects worse than, a simple rescaling by the estimated correlation time. Full-record estimators dominate it for constant, always-on coupling.",
+    "The false-stability budget applies only to the mean chance score. Individual recordings and regime boundaries can exceed it substantially, and the rotation null may underestimate chance under shared slow co-modulation.",
+    "Wide calibrated tolerances make aTDS scores incomparable with published TDS values and coarsen the notion of stability.",
+    "The window rule fails for seasonal signals and depends on record length for long-memory signals. Long windows sacrifice time resolution and cannot resolve short physiological states without a user-imposed cap.",
+    "Without a user-supplied d_max, delays beyond half the window or half a rhythm period are missed or misreported, and the output gives no warning.",
+    "Like TDS itself, the method is correlation-based: it cannot detect non-monotone coupling and cannot separate direct from indirect links.",
+    "No direct negative societal impacts, but wide-tolerance scores could be over-interpreted as evidence of physiological coupling in clinical contexts."
+  ],
+  "Ethical Concerns": false,
+  "Soundness": 3,
+  "Presentation": 2,
+  "Contribution": 2,
+  "Overall": 5,
+  "Confidence": 4,
+  "Decision": "Reject"
+}
+```
