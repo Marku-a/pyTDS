@@ -26,5 +26,9 @@
   {
     "name": "fig_cohort_stages.png",
     "caption": "35 overnight recordings, 10 physiological signals, 45 links. (a) Mean TDS over the 45 links per subject and sleep stage; (b) number of links whose TDS exceeds the 95th percentile of the cross-subject, stage-matched null. Small dots: subjects; large markers: mean with 95 % interval. Published setting vs aTDS with the window capped at 300 s. Scores of the two settings are not comparable in (a) because aTDS uses a wider tolerance; (b) is calibrated against each setting's own null."
+  },
+  {
+    "name": "fig_baselines_regimes.png",
+    "caption": "(a) Slow-down benchmark (tc = 2r, d = 5r, coupling 0.3; 100 coupled and 100 uncoupled pairs per r): AUC with bootstrap 95 % intervals for the published setting, the published setting rescaled by the true and by an estimated slow-down factor, aTDS, and full-record cross-correlation and GCC-PHAT (identical, AUC 1.0 at every r). (b) Coupling that switches with the regime (blocks of 2000 samples; regime A coupled, tc 8, delay 20; regime B uncoupled, tc 32; 40 coupled pairs): percentage of stable windows in the coupled regime and false stability in the uncoupled regime; dotted line: 5 % budget."
   }
 ]
