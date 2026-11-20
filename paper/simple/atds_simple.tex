@@ -32,7 +32,7 @@
 \maketitle
 
 \begin{abstract}
-Time Delay Stability (TDS) identifies coupling between two signals when the delay that maximises their cross-correlation remains approximately constant over consecutive windows. Its three parameters---window length, lag range and stability tolerance---are expressed in samples, and their original values (60, $\pm30$, $\pm1$) were chosen for sleep recordings at 1\,Hz. At other time scales or sampling rates a fixed choice can fail without any indication: with a fixed $\pm30$ lag range, every coupled pair with a delay beyond 30 samples yielded an incorrect delay, in 16 of 50 cases with the opposite sign, at TDS scores of 72--96\,\%. We introduce adaptive TDS (aTDS), which derives the three parameters from the signals: the window contains 30 independent samples of the slowest signal, the lag range is half the window (limited to half a rhythm period), and the tolerance is the largest value for which coupling-free, circularly rotated copies remain within a 5\,\% false-stability budget. On simulated signals, aTDS restores detection where fixed TDS fails (AUC 0.92 vs 0.59 for a system four times slower) and tracks fixed, step-changing, drifting, oscillating and intermittent delays. In 35 overnight polysomnograms, the design case of fixed TDS, both settings reproduce the established sleep-stage pattern. In ECG and finger-pulse recordings of 53 intensive-care patients at 125\,Hz, aTDS with one parameter set detects the coupling in 50 of 53 patients, compared with 14 for the fixed parameters. Fixed TDS rescaled by a time scale estimated from the data captures most of this detection gain, but without the rhythm cap and the calibrated tolerance of aTDS its uncoupled controls reach high scores. In hydrological and energy records, aTDS recovers the known delays (8\,h and 1\,h). Rhythmic and seasonal signals and stage-resolved analyses still require a window or lag cap.
+Time Delay Stability (TDS) detects coupling when the delay maximising the cross-correlation of two signals stays nearly constant over consecutive windows. Its window length, lag range and stability tolerance are expressed in samples; the original values (60, $\pm30$, $\pm1$) were chosen for sleep recordings at 1\,Hz. At other time scales or sampling rates a fixed choice can fail silently: with a fixed $\pm30$ lag range, every delay beyond 30 samples was reported incorrectly, in 16 of 50 cases with the opposite sign, at TDS scores of 72--96\,\%. Adaptive TDS (aTDS) derives them from the signals: the window holds 30 independent samples of the slowest signal, the lag range is half the window (at most half a rhythm period), and the tolerance is the largest that keeps circularly rotated, coupling-free copies within a 5\,\% false-stability budget. On simulated signals, aTDS restores detection where fixed TDS fails (AUC 0.92 vs 0.59 for a system four times slower) and tracks time-varying delays. Both settings reproduce the sleep-stage pattern in 35 polysomnograms, the design case of fixed TDS. In ECG and finger-pulse recordings of 53 intensive-care patients at 125\,Hz, aTDS with one parameter set detects the coupling in 50 patients, fixed TDS in 14. Fixed TDS rescaled by a data-estimated time scale captures most of this gain, but without the rhythm cap and calibrated tolerance its uncoupled controls reach high scores. aTDS recovers known hydrological and energy delays (8\,h, 1\,h). Rhythmic and seasonal signals and stage-resolved analyses still require a window or lag cap.
 %%%%%%%%% ABSTRACT %%%%%%%%%
 \end{abstract}
 
@@ -417,7 +417,7 @@ Crude oil $\to$ gasoline, weekly changes & 1--2 weeks & 64 / 31 / 3 weeks & 92.5
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.72\textwidth]{figures/fig_fields_traces.png}
+\includegraphics[width=0.62\textwidth]{figures/fig_fields_traces.png}
 \caption{Delay found by aTDS in each window for the five records from other fields. Orange: stable windows; grey: unstable; band or dashed line: expected delay.}
 \label{fig:fieldstraces}
 \end{figure}
@@ -564,8 +564,8 @@ Two cases indicate possible refinements. In a mixed-speed system, a single windo
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{figures/fig_signal_classes.png}
-\caption{Other signal classes. (a) AUC, coupled vs uncoupled pairs, with bootstrap 95\,\% intervals where available; dotted: chance. (b) Share of coupled pairs whose stable windows report the true delay, with Wilson 95\,\% intervals. Hollow markers: aTDS variants (optional $d_{\max} = 60$ for the fast signal; one window per half for the memory change; joint Bartlett factor for the slow--fast pair). For Rulkov neurons ``delay found'' uses the strict rule: aTDS reports the delay a constant 3 steps too long (19 and 35), so it counts as found only at $d = 32$ within the tolerance of the rule; its AUC is 1.0 at both delays.}
+\includegraphics[width=0.7\textwidth]{figures/fig_signal_classes.png}
+\caption{Other signal classes. (a) AUC with bootstrap 95\,\% intervals where available; dotted: chance. (b) Share of coupled pairs with the true delay, Wilson 95\,\% intervals. Hollow markers: aTDS variants (optional $d_{\max} = 60$ for the fast signal; one window per half for the memory change; joint Bartlett factor for the slow--fast pair). For Rulkov neurons ``delay found'' uses the strict rule: aTDS reports the delay a constant 3 steps too long (19 and 35), so it counts as found only at $d = 32$ within the tolerance of the rule; its AUC is 1.0 at both delays.}
 \label{fig:classes}
 \end{figure}
 
@@ -575,8 +575,8 @@ Two cases indicate possible refinements. In a mixed-speed system, a single windo
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/fig_physio_traces.png}
-\caption{$\tau_0$ in each window (the reported delay is $-\tau_0$), fixed TDS (left) and aTDS (right). Coloured: stable windows; grey: unstable windows; shaded band: the lag range searched; dotted line: the reference delay (0 for the EEG pair; the full-record alignment of the two waveforms for the ECG pair). EEG: parameters set on the first half of the night and scored on the second. ECG: the patient with the median aTDS score among the 53. For the EEG pair both settings recover the delay; for the ECG pair only aTDS yields a continuous line of stable windows at the reference delay.}
+\includegraphics[width=0.7\textwidth]{figures/fig_physio_traces.png}
+\caption{$\tau_0$ per window, fixed TDS (left) and aTDS (right). Coloured: stable; grey: unstable; band: lag range; dotted: reference delay (0 for EEG; full-record alignment for ECG). EEG: parameters set on the first half of the night, scored on the second. ECG: the patient with the median aTDS score among the 53; only aTDS yields a continuous line of stable windows at the reference delay.}
 \label{fig:physiotraces}
 \end{figure}
 
@@ -586,7 +586,7 @@ Because the heartbeat is periodic, a delay between the ECG and pulse waveforms i
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/fig_bidmc_delay.png}
+\includegraphics[width=0.72\textwidth]{figures/fig_bidmc_delay.png}
 \caption{ECG to finger pulse, 53 patients: (a) delay found per patient against the reference delay (full-record alignment of the two waveforms), fixed TDS (blue, 41 patients with a delay) and aTDS (orange, 53); found delays modulo one heartbeat around the reference. (b) Distribution of the difference.}
 \label{fig:bidmcdelay}
 \end{figure}
@@ -628,14 +628,14 @@ The 300-s cap above was chosen by the analyst, and the tolerance was calibrated 
 
 \section{Records from Other Fields: Seasonal Catchment and Summary}
 \label{app:seasonal}
-For the daily catchment L0123002, the aTDS score is not significant ($p = 0.10$) and the reported delay is 162 days. The river flow of this catchment is strongly seasonal (autocorrelation 0.62 at a lag of one year); the first-zero Bartlett factor of the flow (38.8) ignores the seasonal lobe and yields a window of approximately three years with only 19 windows, of which 4 were stable. No domain value is available for the delay of this catchment; the full-record cross-correlation has its positive peak at +1 day ($r = 0.054$; the absolute peak lies at the boundary of the search). Capping the window at 120 days recovered this 1-day delay (score 10.3\,\% vs a 95th percentile of 7.4\,\%, $p = 0.015$), whereas a cap at 365 days did not (no stable window). Seasonal signals, like rhythmic signals, therefore require a window cap below the seasonal period. \Cref{fig:fieldssummary} compares the delay found by aTDS with the expected delay for all records.
-
-\begin{figure}[!htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=0.6\textwidth]{figures/fig_fields_summary.png}
 \caption{Delay found by aTDS (dots) against the delay expected from the domain (bars), per record. Hollow dot: not significant ($p > 0.05$).}
 \label{fig:fieldssummary}
 \end{figure}
+For the daily catchment L0123002, the aTDS score is not significant ($p = 0.10$) and the reported delay is 162 days. The river flow of this catchment is strongly seasonal (autocorrelation 0.62 at a lag of one year); the first-zero Bartlett factor of the flow (38.8) ignores the seasonal lobe and yields a window of approximately three years with only 19 windows, of which 4 were stable. No domain value is available for the delay of this catchment; the full-record cross-correlation has its positive peak at +1 day ($r = 0.054$; the absolute peak lies at the boundary of the search). Capping the window at 120 days recovered this 1-day delay (score 10.3\,\% vs a 95th percentile of 7.4\,\%, $p = 0.015$), whereas a cap at 365 days did not (no stable window). Seasonal signals, like rhythmic signals, therefore require a window cap below the seasonal period. \Cref{fig:fieldssummary} compares the delay found by aTDS with the expected delay for all records.
+
 
 \end{appendices}
 
