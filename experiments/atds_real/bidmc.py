@@ -12,7 +12,7 @@ pair itself. Reference delay: median beat-by-beat PAT from the R peak to the ste
 full-record cross-correlation peak within half a beat (the waveform alignment). Because the heartbeat repeats,
 a delay is only defined modulo one beat period; delays are compared modulo the median RR interval.
 
-    python experiments/atds_real/bidmc.py <bidmc_csv_dir> [out_dir] [--common | --rescaled]
+    python experiments/atds_real/bidmc.py <bidmc_csv_dir> [out_dir] [--common | --rescaled | --ablation | --split]
 
 <bidmc_csv_dir> holds bidmc_XX_Signals.csv from https://physionet.org/files/bidmc/1.0.0/bidmc_csv/
 TDS via this repo's pyTDS only (through atds21).
@@ -263,11 +263,111 @@ def main_rescaled(d, out_dir):
     print(json.dumps(S, indent=1))
 
 
+
+# ---------------------------------------------------------------- ablation and train/test split (reviewer requests)
+def _metrics(rows, ref):
+    c = [q for q in rows if q["coupled"]]; u = [q for q in rows if not q["coupled"]]
+    a = [q["score"] for q in c]; b = [q["score"] for q in u]; thr = float(np.percentile(b, 95))
+    ex = [wrap(q["delay"] - ref[q["ecg"]]["xcorr_delay"], ref[q["ecg"]]["rr_samples"]) / FS for q in c if q["delay"] is not None]
+    return {"n_coupled": len(c), "n_controls": len(u), "coupled_mean": float(np.mean(a)), "control_mean": float(np.mean(b)),
+            "control_95pct": thr, "auc": auc(a, b), "auc_ci95": boot_auc(a, b),
+            "n_coupled_above_control95": int(sum(x > thr for x in a)), "n_with_delay": len(ex),
+            "n_within_0p04s_of_xcorr": int(sum(abs(e) <= 0.04 for e in ex))}
+
+
+def _score(p, jobs):
+    with Pool(A.WORKERS) as pool:
+        return pool.map(_score_common, [(ij, p) for ij in jobs])
+
+
+def _atds_common(ids):
+    """aTDS common set from the patients in ids: median window and lag (rhythm cap included), tolerance calibrated on
+    rotations pooled over their true pairs (calib uses at most 50 pairs, seeded) -- as main_common."""
+    from dataclasses import replace
+    with Pool(A.WORKERS) as pool:
+        wl = pool.map(_pair_window, ids)
+    L = int(np.median([w for w, _ in wl])); lag = int(np.median([g for _, g in wl]))
+    p0 = replace(A.PUBLISHED, window=L, overlap=L // 2, max_lag=min(lag, (L - 1) // 2), tolerance=0)
+    p, fail = A.calib(p0, [_pair_signals((i, i)) for i in ids])
+    return p, bool(fail), lag
+
+
+def _rescaled_common(ids):
+    from dataclasses import replace
+    with Pool(A.WORKERS) as pool:
+        rh = pool.map(_rhat, ids)
+    r = int(np.median(rh))
+    return replace(A.PUBLISHED, window=60 * r, overlap=30 * r, max_lag=30 * r, tolerance=r), r
+
+
+def _pd(p):
+    return {"window": p.window, "step": p.overlap, "max_lag": p.max_lag, "tolerance": p.tolerance}
+
+
+def main_ablation(d, out_dir):
+    """Rescaled fixed TDS with aTDS's calibrated tolerance and/or rhythm cap added (all 106 pairs, one common set).
+    Rhythm cap = the lag range of the common aTDS set (median per-patient aTDS lag, which the half-period cap sets here).
+    Tolerance calibration = aTDS's rule (A.calib) applied to the rescaled window and lag."""
+    global DIR
+    DIR = d
+    from dataclasses import replace
+    t0 = time.time()
+    ref = {q["ecg"]: q for q in json.load(open(os.path.join(out_dir, "bidmc_ecg_ppg.json")))["records"] if q["coupled"]}
+    jobs = [(i, i) for i in IDS] + [(i, IDS[(k + SHIFT) % len(IDS)]) for k, i in enumerate(IDS)]
+    resc, r = _rescaled_common(IDS)
+    at, fail, cap = _atds_common(IDS)
+    true_pairs = [_pair_signals((i, i)) for i in IDS]
+    capped = replace(resc, max_lag=min(resc.max_lag, cap))
+    calib_tol, f1 = A.calib(replace(resc, tolerance=0), true_pairs)
+    both, f2 = A.calib(replace(capped, tolerance=0), true_pairs)
+    del true_pairs
+    variants = [("rescaled", resc, False), ("rescaled_plus_calibrated_tolerance", calib_tol, f1),
+                ("rescaled_plus_rhythm_cap", capped, False), ("rescaled_plus_both", both, f2), ("atds", at, fail)]
+    out = {"r_hat": r, "rhythm_cap_samples": cap}
+    for name, p, f in variants:
+        out[name] = {"params": _pd(p), "calibration_failed": bool(f), **_metrics(_score(p, jobs), ref)}
+        print(name, out[name]["params"], round(out[name]["auc"], 3), out[name]["control_mean"], out[name]["control_95pct"],
+              out[name]["n_coupled_above_control95"], flush=True)
+    out["wall_seconds"] = time.time() - t0
+    json.dump(out, open(os.path.join(out_dir, "bidmc_ablation.json"), "w"), indent=1)
+
+
+def main_split(d, out_dir, seed=0):
+    """Train/test separation: patients split at random (seeded) into halves A and B. All common parameters (aTDS,
+    rescaled fixed TDS) are set on the train half only and scored on the test half: its true pairs and controls built
+    within the test half (ECG of test patient k with PPG of the next test patient, cyclically). Both directions."""
+    global DIR
+    DIR = d
+    t0 = time.time()
+    ref = {q["ecg"]: q for q in json.load(open(os.path.join(out_dir, "bidmc_ecg_ppg.json")))["records"] if q["coupled"]}
+    perm = list(np.random.default_rng(seed).permutation(IDS))
+    halves = {"A": sorted(int(x) for x in perm[:len(IDS) // 2]), "B": sorted(int(x) for x in perm[len(IDS) // 2:])}
+    out = {"seed": seed, "halves": halves}
+    for train, test in (("A", "B"), ("B", "A")):
+        tr, te = halves[train], halves[test]
+        jobs = [(i, i) for i in te] + [(i, te[(k + 1) % len(te)]) for k, i in enumerate(te)]
+        at, fail, _ = _atds_common(tr)
+        resc, r = _rescaled_common(tr)
+        res = {}
+        for name, p, f in (("fixed", A.PUBLISHED, False), ("rescaled", resc, False), ("atds", at, fail)):
+            res[name] = {"params": _pd(p), "calibration_failed": bool(f), **_metrics(_score(p, jobs), ref)}
+            print(f"train {train} -> test {test}", name, res[name]["params"], round(res[name]["auc"], 3),
+                  res[name]["auc_ci95"], res[name]["control_95pct"], res[name]["n_coupled_above_control95"], "/", len(te), flush=True)
+        res["r_hat"] = r
+        out[f"train_{train}_test_{test}"] = res
+    out["wall_seconds"] = time.time() - t0
+    json.dump(out, open(os.path.join(out_dir, "bidmc_split.json"), "w"), indent=1)
+
+
 if __name__ == "__main__":
     out = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("--") else os.path.join(HERE, "results")
     if "--common" in sys.argv:
         main_common(sys.argv[1], out)
     elif "--rescaled" in sys.argv:
         main_rescaled(sys.argv[1], out)
+    elif "--ablation" in sys.argv:
+        main_ablation(sys.argv[1], out)
+    elif "--split" in sys.argv:
+        main_split(sys.argv[1], out)
     else:
         main(sys.argv[1], out)

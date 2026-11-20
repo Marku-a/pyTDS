@@ -188,6 +188,29 @@ Because the heartbeat is periodic, a delay between the ECG and pulse waveforms i
 \label{fig:bidmcdelay}
 \end{figure}
 
+\subsection*{Ablation: aTDS rules added to rescaled fixed TDS}
+All settings use one parameter set for the 106 pairs. Rhythm cap: the lag range of the common aTDS set ($\pm42$ samples). Calibrated tolerance: the aTDS tolerance rule applied to the given window and lag range.
+
+\begin{table}[h]
+\centering
+\caption{ECG and finger pulse, 53 patients: rescaled fixed TDS ($\hat r = 8$) with the aTDS rules added one at a time.}
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+Setting & $L$ / $\tau_{\max}$ / tol & AUC & Controls mean (95th pct) & Above controls & \\
+\midrule
+Rescaled fixed TDS & 480 / $\pm240$ / $\pm8$ & 0.962 & 6.8\,\% (39.2\,\%) & 43 / 53 & \\
++ calibrated tolerance & 480 / $\pm240$ / 0 & 0.928 & 0.10\,\% (0.0\,\%) & 46 / 53 & \\
++ rhythm cap & 480 / $\pm42$ / $\pm8$ & 0.973 & 20.6\,\% (60.0\,\%) & 48 / 53 & \\
++ both & 480 / $\pm42$ / 0 & 0.945 & 0.26\,\% (1.6\,\%) & 46 / 53 & \\
+aTDS & 539 / $\pm42$ / 0 & 0.963 & 0.25\,\% (1.26\,\%) & 50 / 53 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Held-out halves}
+Patients were split at random (seed 0) into halves of 26 and 27. Parameters set on one half (aTDS: $L$ = 537 and 543, $\tau_{\max} = \pm41$ and $\pm42$, tolerance 0; rescaled fixed TDS: $\hat r$ = 7 and 8) were applied to the other half, whose controls pair the ECG of each patient with the pulse of the next patient of the same half. AUC [95\,\% interval], test half of 27 / 26: fixed TDS 0.648 [0.487, 0.800] / 0.746 [0.603, 0.878]; rescaled fixed TDS 0.968 [0.926, 0.996] / 0.994 [0.978, 1.0]; aTDS 0.980 [0.936, 1.0] / 0.976 [0.932, 1.0].
+
 \section{Sleep Cohort: Design, Stage Contrasts and Stage-Aware Selection}
 \label{app:cohort}
 \paragraph{Data and design.} We analysed 35 overnight polysomnographic recordings prepared in the author's MSc project to reproduce the network analysis of Bashan et al.~\cite{Bashan2012NetworkPhysiology}. Each recording has 10 channels at 1\,Hz: heart rate, respiratory rate, the standard deviation of chin EMG, leg EMG and EOG, and the $\delta$, $\theta$, $\alpha$, $\sigma$ and $\beta$ EEG band powers; recordings last 23\,150--31\,752\,s and are scored into wake (W), light sleep (LS), deep sleep (DS) and REM. The cohort analysis uses the default, non-causal stability anchor. We compared three settings, each a single parameter set for the whole cohort: fixed TDS; aTDS, with the window from the median over subjects of $\max_i B_i$ (228) and the tolerance calibrated on rotations pooled over 50 random subject--pair combinations, giving $L = 2\,868$\,s (the 10\,\% cap), $\tau_{\max} = \pm1\,433$\,s and $\mathrm{tol} = \pm136$\,s; and aTDS with the window capped at 300\,s ($\tau_{\max} = \pm149$\,s, $\mathrm{tol} = \pm14$\,s). For each subject, each of the 45 links and each setting, the delay series and stability labels were computed over the whole night; a window was assigned to a stage if at least 80\,\% of its seconds carried that stage, and the per-stage TDS is the percentage of stable windows among those assigned (at least 3 required). Significance used the cross-subject, stage-matched null of the original studies~\cite{Bashan2012NetworkPhysiology}: for each link, 100 surrogate pairs combined channel $i$ of one subject with channel $j$ of another, scored with the first subject's stages, and a link was significant in a subject and stage if its TDS exceeded the 95th percentile of this null.

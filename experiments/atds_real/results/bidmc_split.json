@@ -1,0 +1,201 @@
+{
+ "seed": 0,
+ "halves": {
+  "A": [
+   2,
+   3,
+   4,
+   5,
+   7,
+   11,
+   12,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   28,
+   29,
+   35,
+   36,
+   37,
+   39,
+   45,
+   47,
+   50,
+   51
+  ],
+  "B": [
+   1,
+   6,
+   8,
+   9,
+   10,
+   13,
+   14,
+   15,
+   16,
+   26,
+   27,
+   30,
+   31,
+   32,
+   33,
+   34,
+   38,
+   40,
+   41,
+   42,
+   43,
+   44,
+   46,
+   48,
+   49,
+   52,
+   53
+  ]
+ },
+ "train_A_test_B": {
+  "fixed": {
+   "params": {
+    "window": 60,
+    "step": 30,
+    "max_lag": 30,
+    "tolerance": 1
+   },
+   "calibration_failed": false,
+   "n_coupled": 27,
+   "n_controls": 27,
+   "coupled_mean": 8.591332703388732,
+   "control_mean": 1.7527282159598314,
+   "control_95pct": 9.329664832416206,
+   "auc": 0.6481481481481481,
+   "auc_ci95": [
+    0.4869513031550069,
+    0.8004115226337448
+   ],
+   "n_coupled_above_control95": 5,
+   "n_with_delay": 20,
+   "n_within_0p04s_of_xcorr": 11
+  },
+  "rescaled": {
+   "params": {
+    "window": 420,
+    "step": 210,
+    "max_lag": 210,
+    "tolerance": 7
+   },
+   "calibration_failed": false,
+   "n_coupled": 27,
+   "n_controls": 27,
+   "coupled_mean": 56.25978090766824,
+   "control_mean": 4.18622848200313,
+   "control_95pct": 19.47183098591549,
+   "auc": 0.9684499314128944,
+   "auc_ci95": [
+    0.9259259259259259,
+    0.9958847736625515
+   ],
+   "n_coupled_above_control95": 23,
+   "n_with_delay": 27,
+   "n_within_0p04s_of_xcorr": 22
+  },
+  "atds": {
+   "params": {
+    "window": 537,
+    "step": 268,
+    "max_lag": 41,
+    "tolerance": 0
+   },
+   "calibration_failed": false,
+   "n_coupled": 27,
+   "n_controls": 27,
+   "coupled_mean": 29.245912579245918,
+   "control_mean": 0.1334668001334668,
+   "control_95pct": 1.26126126126126,
+   "auc": 0.9801097393689986,
+   "auc_ci95": [
+    0.9362139917695473,
+    1.0
+   ],
+   "n_coupled_above_control95": 26,
+   "n_with_delay": 26,
+   "n_within_0p04s_of_xcorr": 20
+  },
+  "r_hat": 7
+ },
+ "train_B_test_A": {
+  "fixed": {
+   "params": {
+    "window": 60,
+    "step": 30,
+    "max_lag": 30,
+    "tolerance": 1
+   },
+   "calibration_failed": false,
+   "n_coupled": 26,
+   "n_controls": 26,
+   "coupled_mean": 10.586062261900178,
+   "control_mean": 0.6118443837303268,
+   "control_95pct": 1.3381690845422711,
+   "auc": 0.7455621301775148,
+   "auc_ci95": [
+    0.602810650887574,
+    0.8779585798816568
+   ],
+   "n_coupled_above_control95": 15,
+   "n_with_delay": 21,
+   "n_within_0p04s_of_xcorr": 11
+  },
+  "rescaled": {
+   "params": {
+    "window": 480,
+    "step": 240,
+    "max_lag": 240,
+    "tolerance": 8
+   },
+   "calibration_failed": false,
+   "n_coupled": 26,
+   "n_controls": 26,
+   "coupled_mean": 66.04881062712387,
+   "control_mean": 4.5875810936051895,
+   "control_95pct": 31.72690763052209,
+   "auc": 0.9940828402366864,
+   "auc_ci95": [
+    0.977810650887574,
+    1.0
+   ],
+   "n_coupled_above_control95": 25,
+   "n_with_delay": 26,
+   "n_within_0p04s_of_xcorr": 20
+  },
+  "atds": {
+   "params": {
+    "window": 543,
+    "step": 271,
+    "max_lag": 42,
+    "tolerance": 0
+   },
+   "calibration_failed": false,
+   "n_coupled": 26,
+   "n_controls": 26,
+   "coupled_mean": 27.395104895104893,
+   "control_mean": 0.13986013986013984,
+   "control_95pct": 0.0,
+   "auc": 0.9763313609467456,
+   "auc_ci95": [
+    0.9319526627218935,
+    1.0
+   ],
+   "n_coupled_above_control95": 25,
+   "n_with_delay": 25,
+   "n_within_0p04s_of_xcorr": 19
+  },
+  "r_hat": 8
+ },
+ "wall_seconds": 69.44337892532349
+}

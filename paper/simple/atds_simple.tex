@@ -294,9 +294,13 @@ To evaluate aTDS on physiological data to which TDS, mostly applied to 1-Hz seri
 
 \Cref{tab:bidmc} compares the three settings, each with one parameter set for all 106 pairs. At 125\,Hz the fixed window spans less than one heartbeat and its lag range less than half a beat, and fixed TDS detected the coupling in few patients. For aTDS, the window and lag range are the medians over the 53 patients of their per-pair aTDS values (six to seven heartbeats; a lag range of approximately half a heartbeat, set by the rhythm cap without information on the sampling rate or the heart rate), and the tolerance was calibrated on rotations pooled over the true pairs (at most 50 pairs). This gave $L = 539$ samples, step 269, $\tau_{\max} = \pm42$ samples and tolerance 0; calibration did not fail. aTDS detected the coupling in nearly all patients while its controls stayed near zero, and the result held with parameters set separately for each pair (49 of 53 patients, AUC 0.95; \cref{fig:bidmc}; Supplementary Section S6). Rescaled fixed TDS, with the estimated factor $\hat r = 8$ (median over patients; range 5--10), reached the same AUC as aTDS. Without a rhythm cap, however, its lag range spans three heartbeats, and without a calibrated tolerance its uncoupled controls reach high scores, so that fewer patients exceed the controls' 95th percentile. Because the heartbeat is periodic, a delay between these waveforms is defined only up to one beat; the reference delay of each patient is the alignment of the two waveforms over the entire record (the peak of the full-record cross-correlation within half a beat), which is independent of any window setting. Relative to the beat-by-beat pulse arrival time, a different reference that marks a single point of the pulse wave, fixed TDS agreed more often than aTDS (Supplementary Section S6).
 
+\emph{Attribution of the difference.} Adding the aTDS rules one at a time to rescaled fixed TDS (Supplementary Section S6) shows which rule is responsible. The calibrated tolerance removes the false stability of the controls (control mean 0.10\,\%, 95th percentile 0.0\,\%; AUC 0.928; 46 of 53 patients above the controls). The rhythm cap alone does not: with a lag range of half a beat and a tolerance of $\pm8$ samples nearly every delay counts as stable, and the control mean rises to 20.6\,\% (95th percentile 60.0\,\%). Its role is to keep the reported delay unambiguous. With both rules, rescaled fixed TDS approaches aTDS (control mean 0.26\,\%, 95th percentile 1.6\,\%; AUC 0.945; 46 of 53), and the remaining difference reflects the window (480 vs 539 samples).
+
+\emph{Held-out patients.} To separate parameter selection from scoring, the patients were split at random (seeded) into halves of 26 and 27; all common parameters were set on one half and applied to the other, whose controls were formed within that half. aTDS reached AUC 0.980 [0.936, 1.0] and 0.976 [0.932, 1.0] on the two held-out halves, with 26 of 27 and 25 of 26 patients above the controls' 95th percentile (1.26\,\% and 0.0\,\%); rescaled fixed TDS reached 0.968 and 0.994 with controls up to 19.5\,\% and 31.7\,\% (23 of 27 and 25 of 26), and fixed TDS 0.648 and 0.746 (\cref{tab:bidmc}).
+
 \begin{table}[t]
 \centering
-\caption{ECG and finger pulse at 125\,Hz, 53 intensive-care patients (BIDMC); controls: ECG and pulse of different patients. One parameter set for all 106 pairs in every setting (per-pair aTDS: Supplementary Section S6). Delay agreement modulo one heartbeat.}
+\caption{ECG and finger pulse at 125\,Hz, 53 intensive-care patients (BIDMC); controls: ECG and pulse of different patients. One parameter set for all 106 pairs in every setting (per-pair aTDS: Supplementary Section S6). Held-out halves: parameters set on one random half of the patients and scored on the other (both directions). Delay agreement modulo one heartbeat.}
 \label{tab:bidmc}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -312,6 +316,9 @@ AUC [95\,\% interval] & 0.69 [0.58, 0.79] & 0.962 [0.922, 0.992] & 0.963 [0.926,
 Patients above the controls' 95th percentile & 14 / 53 & 43 / 53 & \textbf{50 / 53} \\
 Patients with a delay (3+ stable windows) & 41 / 53 & 53 / 53 & 50 / 53 \\
 Delay within 0.04\,s of full-record alignment & 22 / 41 & 41 / 53 & 38 / 50 \\
+\midrule
+Held-out halves: AUC & 0.648 / 0.746 & 0.968 / 0.994 & 0.980 / 0.976 \\
+Held-out halves: patients above controls & 5 / 27, 15 / 26 & 23 / 27, 25 / 26 & \textbf{26 / 27, 25 / 26} \\
 \bottomrule
 \end{tabular}}
 \end{table}
