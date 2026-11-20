@@ -1,0 +1,74 @@
+THOUGHT:
+The paper tackles a real and under-discussed practical problem: the three TDS parameters (L=60, tau_max=+-30, tol=+-1) are specified in samples and were tuned for 1-Hz sleep series. Applied unchanged at other sampling rates or time scales, they can fail without any warning. The lag-range experiment (Fig. 2) makes this concrete: high TDS scores (72-96 %) coexist with a delay pinned at the search boundary, sometimes with the wrong sign. I see this as the most useful and least disputable message of the paper.
+
+The proposed rules are simple heuristics built from standard ingredients (Bartlett effective sample size, the aliasing limit of circular correlation, rotation surrogates). The author says openly that none of the ingredients is new. The main contribution is engineering and a validation protocol, not a new method. The most important honest finding is that a crude data-driven one-factor rescaling ("rescaled fixed TDS") recovers most of the detection gain. It is even slightly better in AUC at r=2 and r=4, and equal on the ECG data. This weakens the case for the full per-parameter machinery: the extra value of aTDS comes down to (i) the calibrated tolerance, which lowers control scores, and (ii) the rhythm cap, which keeps the reported delay unambiguous. Both are demonstrated mainly on the ECG/pulse data.
+
+Technical concerns I want to raise:
+1. Tolerance growth. The calibrated tolerance scales with the time scale (+-56 samples at r=16, +-13 for tau_c=8). At that point "stable delay" means agreement within a band about 100 samples wide, which dilutes the notion of a stable time delay. It also makes aTDS scores incomparable across datasets and with the literature (the author acknowledges this). Fig. 3b shows the coupled score barely depends on tol, so the tolerance mainly sets the false-stability level rather than detection. That is fine, but it should be framed that way.
+2. False stability. aTDS deliberately runs at about 4 % false stability, against about 1 % for fixed TDS. AUC comparisons partly reflect a different operating point, and an ROC-at-matched-false-stability analysis would be fairer.
+3. Synthetic validation. It is dominated by linear Gaussian AR(1) with a pure lag. Non-linear, non-stationary and multi-delay settings appear only in the supplement, so robustness claims rest on material I cannot fully assess.
+4. ECG delay reference. The "full-record alignment" reference is itself a cross-correlation peak. That is partly circular for a cross-correlation-based method. Against the physiologically meaningful beat-by-beat pulse arrival time, fixed TDS agreed more often than aTDS. This is a notable negative for a method whose selling point is a correct delay, and it deserves more analysis rather than a supplement reference.
+5. Window rule. It rests on a truncated Bartlett sum and the arbitrary constant 30. It fails for seasonal signals (L0123002), and the oracle beats it consistently. The window is admittedly a compromise, not an optimum.
+6. Sleep cohort. On the physiology that motivated TDS, aTDS brings no gain and loses power for wake. The uncapped window is 48 min.
+7. Other fields. The delay is recovered in 3 of 5 records. These are illustrative case studies, not a validation.
+
+Strengths in rigor: training/scoring separation, held-out patient halves, paired bootstrap, equivalence tests (TOST), Wilson intervals, fixed seeds and open code. The limitations are reported unusually candidly. The writing is dense but precise. The notation table and algorithm box help. Some sentences pack many numbers, and frequent deferral to the supplement makes key evidence hard to check.
+
+Overall, the major claims are supported, and the paper is careful and honest. Novelty and significance are moderate and confined largely to the TDS / network-physiology community, and the rescaling baseline shows most of the gain is simply "match the time scale". This is a borderline paper. I lean toward a weak accept as a useful, reproducible methods contribution, conditional on clarifying the matched-false-stability comparison and the delay-accuracy result against pulse arrival time.
+
+REVIEW JSON:
+```json
+{
+  "Summary": "The paper proposes adaptive Time Delay Stability (aTDS), a set of three data-driven rules for choosing the window length, lag range and stability tolerance of the TDS coupling measure, which in its original form uses sample-based constants tuned for 1-Hz sleep recordings. The window holds about 30 effective independent samples of the slowest signal (truncated Bartlett factor), clipped between 61 samples and 10 % of the record. The lag range is half the window, the aliasing limit of circular cross-correlation, capped at half a detected rhythm period. The tolerance is the largest value for which circularly rotated, coupling-free copies stay within a 5 % window-level false-stability budget (mean + 2 SE). Each rule is evaluated in isolation on AR(1) simulations. The combined method is compared with fixed TDS, a one-factor data-driven rescaling of fixed TDS, a manually rescaled setting and an oracle in a slow-down test and on time-varying delays. It is then applied to a benchmark sleep-EEG pair, a 35-subject sleep cohort, 53 BIDMC ICU ECG/finger-pulse recordings at 125 Hz, and hydrological, energy and fuel-price records. aTDS restores detection where fixed TDS fails when the time scale is mismatched, and avoids silent wrong-delay reports when the delay exceeds the fixed lag range. However, a crude data-driven rescaling captures most of the detection gain, and aTDS brings no gain in the original 1-Hz sleep setting.",
+  "Strengths": [
+    "Identifies a concrete, practically important failure mode of fixed TDS: delays outside the fixed lag range yield high TDS scores with an incorrect, sometimes sign-flipped delay. Fig. 2 demonstrates it clearly.",
+    "Each rule has an explicit rationale (Bartlett variance inflation, circular-correlation aliasing limit, rotation-based false-stability budget) and is tested in isolation with the other two held fixed.",
+    "Strong evaluation hygiene: separate training data for parameter selection, held-out patient halves on the ECG data, paired bootstrap AUC differences, TOST equivalence tests, Wilson intervals and fixed seeds.",
+    "Includes strong and fair baselines, notably a data-driven rescaled fixed TDS, a manually rescaled setting given the true scale, and a labelled-data oracle. It reports honestly when the baselines match or beat aTDS.",
+    "Candid limitations section: no gain in the 1-Hz sleep design regime, failure on a seasonal catchment, no delay in weekly fuel prices, oracle superiority, and worse agreement with beat-by-beat pulse arrival time.",
+    "The ECG/finger-pulse attribution analysis, which adds rules one at a time to the rescaled baseline, clarifies what the calibrated tolerance and the rhythm cap each contribute.",
+    "Open implementation with scripts and raw results supports reproducibility."
+  ],
+  "Weaknesses": [
+    "Limited novelty: all ingredients are standard, and a one-factor data-driven rescaling of fixed TDS achieves similar AUC in the slow-down test (slightly higher at r=2 and r=4) and on the ECG data. The incremental value of the full rule set rests mainly on control-level reduction and the rhythm cap in one dataset.",
+    "The calibrated tolerance grows with the time scale (e.g. +-56 samples at r=16). This dilutes the meaning of a 'stable' delay, makes scores incomparable across datasets and with prior TDS studies, and Fig. 3b suggests it mostly tunes false stability rather than detection.",
+    "aTDS operates at a higher false-stability level than fixed TDS (about 4 % vs about 1 % in controls). Comparisons are not made at a matched false-stability operating point, so part of the AUC and detection difference reflects operating-point choice.",
+    "The ECG delay reference (peak of the full-record cross-correlation) is itself correlation-based and partly circular. Against the physiologically meaningful beat-by-beat pulse arrival time, fixed TDS agreed more often than aTDS. For a method that emphasises correct delays, this is under-analysed and relegated to the supplement.",
+    "The synthetic validation in the main text is almost entirely linear Gaussian AR(1) with a pure lag and fixed coupling. Non-linear, non-stationary and multi-delay signal classes are only summarised, with evidence in the supplement.",
+    "The window rule depends on a truncated Bartlett estimate and an arbitrary constant (30). It fails for seasonal or long-memory signals without a manual cap, and it is consistently beaten by the oracle, which selects much longer windows.",
+    "In the sleep cohort (the original application domain) aTDS gives no improvement and loses power for wake. The uncapped window (48 min) cannot resolve sleep stages, so practical use often still needs a user-specified cap, partially undermining the 'data-driven' claim.",
+    "The cross-domain case studies recover the expected delay in only 3 of 5 records and are illustrative rather than validating.",
+    "The default non-causal stability anchor uses look-ahead. Its effect on the main comparisons, and why it is preferred over the causal MATLAB-compatible anchor, is not fully discussed.",
+    "The presentation is dense and number-heavy, and much of the supporting evidence is deferred to nine supplementary sections, which makes it hard to check key claims from the main text."
+  ],
+  "Originality": 2,
+  "Quality": 3,
+  "Clarity": 3,
+  "Significance": 2,
+  "Questions": [
+    "Can you report detection (e.g. partial AUC or sensitivity) for fixed TDS, rescaled fixed TDS and aTDS at a matched false-stability level in controls, to separate operating-point effects from genuine detection gains?",
+    "How should a reader interpret a 'stable delay' when the tolerance is +-56 samples, i.e. a band covering a large fraction of the lag range? Would it be better to report the delay spread of stable windows alongside the score?",
+    "Why does aTDS agree less often than fixed TDS with the beat-by-beat pulse arrival time in the ECG data? Is this due to the window spanning several beats, the rhythm cap, or the zero tolerance? What is the distribution of aTDS delay errors relative to PAT?",
+    "How sensitive is the tolerance calibration to residual coupling in the rotated copies for strongly autocorrelated or periodic signals (e.g. if the rotation shift happens to be close to a multiple of the rhythm period)?",
+    "Would replacing the first-zero truncation of the Bartlett sum with a more robust estimator (e.g. tapered sum or spectral estimate at zero frequency) fix the seasonal-catchment failure without a manual cap?",
+    "How much do the main results (slow-down test, ECG) change under the causal anchor instead of the non-causal default?",
+    "Have you compared against a simpler calibrated variant, i.e. rescaled fixed TDS plus calibrated tolerance plus rhythm cap with the rescaled window, across all simulated signal classes, to show whether the Bartlett-based window adds anything beyond the 1/e correlation-time rescaling?",
+    "In the time-varying delay experiments, how do the results change at weaker coupling (e.g. c=0.3), where fixed TDS and aTDS may differ in their ability to track the delay?"
+  ],
+  "Limitations": [
+    "The method scales parameters but does not optimise them, and an oracle with longer windows performs better under permanent coupling.",
+    "Most of the gain over fixed TDS stems from correcting a time-scale mismatch that a simple data-driven rescaling also corrects.",
+    "Rhythmic, seasonal and regime-resolved analyses still require a user-specified window or lag cap. Delays beyond half a rhythm period are excluded, and long delays in fast signals require dmax.",
+    "The 5 % budget is a window-level average false-stability rate, not a link-level error rate. Link significance requires separate testing, and false stability is higher than with fixed TDS.",
+    "Pairwise TDS cannot distinguish direct from indirect links, and only one small common-driver configuration was tested.",
+    "aTDS scores are not comparable with published TDS values. Misinterpreting them in clinical or physiological contexts could lead to overstated coupling claims. No other negative societal impacts are apparent."
+  ],
+  "Ethical Concerns": false,
+  "Soundness": 3,
+  "Presentation": 3,
+  "Contribution": 2,
+  "Overall": 6,
+  "Confidence": 4,
+  "Decision": "Accept"
+}
+```
